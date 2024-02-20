@@ -5,10 +5,10 @@ $_SERVER['SITE_URL'] = $_SERVER['HTTP_HOST'];
 return array(
         'db' => array(
                 'driver'         => 'Pdo',
-                'dsn'            => 'mysql:dbname=test_manage;host=localhost',
+                'dsn'            => 'mysql:dbname=goms_exam;host=localhost',
                 'username' => 'root',
-                'password' => '951753',
-                'dbname' => 'test_manage',
+                'password' => '1234',
+                'dbname' => 'goms_exam',
                 'host' => 'localhost',
                 'driver_options' => array(
                         PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8mb4",

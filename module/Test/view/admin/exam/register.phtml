@@ -1,0 +1,90 @@
+<div class="p-5 align-self-center" style="width: 800px;">
+  <p class="mb-5 h2">試験登録</p>
+  <form id="form_exam" method="post">
+    <input type="hidden" name="typeTitle">
+
+    <p class="mt-4 mb-3">user information</p>
+    <div class="p-3 rounded-3 bg-light">
+      <div class="d-flex flex-row mb-3   align-items-baseline gap-2">
+        <span class="w-25">(*)応募者名</span>
+        <input class="form-control" name="name" placeholder="名前を入力してください">
+      </div>
+      <div class="d-flex flex-row mb-3 align-items-baseline gap-2">
+        <span class="w-25">(*)ログインID</span>
+        <input class="form-control" name="id" placeholder="ログインIDを入力してください" value="<?= $rndId ?>">
+      </div>
+      <div class="d-flex flex-row mb-1 align-items-baseline gap-2">
+        <span class="w-25">(*)パスワード</span>
+        <input class="form-control" name="password" placeholder="パスワードを入力してください" value="<?= $rndPassword ?>">
+      </div>
+    </div>
+
+    <p class="mt-4 mb-3">setting</p>
+    <div class="p-3 rounded-3 bg-light">
+      <div class="d-flex flex-row mb-3 align-items-baseline gap-2">
+        <span class="w-25">(*)レベル</span>
+        <select class="form-select w-50" name="level">
+          <option value=1>初級</option>
+          <option value=2>中級</option>
+          <option value=3>高級</option>
+        </select>
+
+        <span class="w-25">(*)問題種別</span>
+        <select class="form-select w-50" name="type">
+          <?php foreach ($types as $type) : ?>
+          <option value="<?= $type["question_type"] ?>"><?= $type["question_title"] ?></option>
+          <?php endforeach; ?>
+        </select>
+      </div>
+
+      <div class="d-flex flex-row mb-1 align-items-baseline">
+        <span class="w-25">(*)問題数</span>
+        <select class="form-select" name="num">
+          <option value=10>10</option>
+          <option value=20>20</option>
+        </select>
+      </div>
+    </div>
+  </form>
+  <div class="mt-2 d-flex flex-row justify-content-center gap-3">
+    <button class="btn btn-primary" id="bt_confirm">次へ</button>
+    <button class="btn btn-primary" onclick="window.location.href='./list?page=1'">キャンセル</button>
+  </div>
+</div>
+
+<script>
+const form = document.getElementById("form_exam")
+
+if (sessionStorage.getItem("return") == "exam") {
+  sessionStorage.removeItem("return");
+  form.name.value = sessionStorage.getItem("name");
+  form.id.value = sessionStorage.getItem("id");
+  form.password.value = sessionStorage.getItem("password");
+  form.level.value = sessionStorage.getItem("level");
+  form.type.value = sessionStorage.getItem("type");
+  form.num.value = sessionStorage.getItem("num");
+}
+
+document.getElementById("bt_confirm").addEventListener("click", () => {
+  if ((form.name.value.trim()) == "") {
+    alert("名前を入力してください。");
+    form.name.focus();
+    return false;
+  }
+
+  if ((form.id.value.trim()) == "") {
+    alert("ログインIDを入力してください。");
+    form.id.focus();
+    return false;
+  }
+
+  if ((form.password.value.trim()) == "") {
+    alert("パスワードを入力してください。");
+    form.password.focus();
+    return false;
+  }
+
+  form.typeTitle.value = form.type.options[form.type.selectedIndex].text;
+  form.submit();
+});
+</script>

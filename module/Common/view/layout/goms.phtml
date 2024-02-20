@@ -1,0 +1,113 @@
+<?php echo $this->doctype();
+$mm=$_SERVER['REQUEST_URI'];
+$exp=explode("/",$mm);
+$expp=explode("?",$exp[1]);
+$topMenu=$expp[0];
+
+if($this->title==''){$this->title='G&GService';}
+
+?>
+
+<html lang="jp">
+<head>
+    <meta charset="utf-8">
+        <?php
+        echo $this->headTitle($this->title)->setSeparator(' - ')->setAutoEscape(false);
+
+        echo $this->headMeta()
+            ->appendName('title', $this->title)
+            ->appendName('description', $this->description)
+            ->appendName('keywords', $this->keywords)
+            ->appendName('robots', 'ALL')
+            ->appendName('Distribution', 'GNGService')
+            ->appendName('author', 'drapiece@gngs.co.jp')
+            ->appendName('viewport', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no')
+            ->appendHttpEquiv('X-UA-Compatible', 'IE=edge');
+        ?>
+    <link href="/css/bootstrap.min.css" media="screen" rel="stylesheet" type="text/css">
+    <link href="/css/bootstrap-grid.css" media="screen" rel="stylesheet" type="text/css">
+    <link href="/css/open-iconic-bootstrap.min.css" rel="stylesheet">
+    <link href="/css/default_goms.css" rel="stylesheet" type="text/css">
+    <script type="text/javascript" src="/js/jquery-3.4.1.min.js"></script>
+    <script type="text/javascript" src="/js/addclear.js"></script>
+    <script type="text/javascript" src="/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/js/bootstrap.bundle.min.js"></script>
+</head>
+<body style='padding-top:0;margin-top:0;'>
+  <!--Double navigation-->
+  <header>
+    <!-- Sidebar navigation -->
+    <nav class="navbar fixed-top navbar-expand-sm navbar-dark bg-dark">
+      <div class="container-fluid" style='min-width:291px !important;'>
+        <a class="navbar-brand" href="/" style='line-height:17px;min-width:240px !important'>
+            <img src='/img/Gnglogo_icon.gif' style='width:25px;float:left;margin-right:5px;'>
+            <div style='float:left;'>GOMS 社内支援システム<br/><small><small><small><small>Gngservice Operating Management System</small></small></small></small></div>
+            <p class='clearfix'></p>
+        </a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <?php if(isset($_SESSION['ankenInfo'])):
+            if($_SESSION['ankenInfo']['userid']!=''):?>
+            <a href='/?act=logout' class="btn btn-secondary btn-sm" id='loginbtn' type="button">
+              ログアウト
+            </a>
+          <?php else:?>
+<!--             <a href='/' class="btn btn-secondary btn-sm" id='loginbtn' type="button">
+              ログイン
+            </a>
+ -->          <?php endif?>
+          <?php else:?>
+          <?php endif?>
+      </div>
+    </nav>
+    <style type='text/css'>
+        .form-control::placeholder { color: #dddddd; opacity: 1; }
+        .form-control:-ms-input-placeholder { color: #dddddd;}
+        .form-control::-ms-input-placeholder { color: #dddddd; }
+    </style>
+    <!-- /.Navbar -->
+  </header>
+
+
+
+    <main style='margin-top:62px;'>
+
+
+<nav class="navbar navbar-expand-sm navbar-dark bg-secondary" id='menubars'>
+  <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+    <div class="navbar-nav">
+      <!-- <a class="nav-item nav-link active" href="/">トップ <span class="sr-only">(current)</span></a> -->
+      <?php if(isset($_SESSION['ankenInfo'])):
+        if($_SESSION['ankenInfo']['userid']!=''):?>
+        <a class="nav-item nav-link" id='logoutmenubtn' href='/?act=logout'>ログアウト</a>
+      <?php else:?>
+        <a href='/' class="nav-item nav-link" id='logoutmenubtn'>
+          ログイン
+        </a>
+      <?php endif?>
+
+      <?php else:?>
+        <a href='/' class="nav-item nav-link" id='logoutmenubtn'>
+          ログイン
+        </a>
+      <?php endif?>
+    </div>
+  </div>
+</nav>
+
+
+
+        <?php echo $this->content; ?>
+    </main>
+
+<footer>
+    <div class="">
+        <div class='text-muted text-center'>
+            <p style='background-color:#555555;color:white;font-size:11px;padding:7px;margin:0;margin-top:30px;'>Copyright G&GService. All Right Reserved.</p>
+        </div>
+    </div>
+</footer>
+<?php echo $this->inlineScript() ?>
+</body>
+</html>

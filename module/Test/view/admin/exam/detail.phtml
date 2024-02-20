@@ -1,0 +1,101 @@
+<?php
+if (!isset($_SESSION)) {
+  session_start();
+}
+
+$level[1] = "初級";
+$level[2] = "中級";
+$level[3] = "高級";
+
+$levelTitle = "";
+switch ($examData["question_level"]) {
+  case 1:
+    $levelTitle = "初級";
+    break;
+  case 2:
+    $levelTitle = "中級";
+    break;
+  case 3:
+    $levelTitle = "高級";
+    break;
+}
+?>
+
+<div class="p-5 align-self-center w-75">
+  <p class="mb-5 h2">試験詳細</p>
+  <p class="mt-4 mb-3">user information</p>
+  <div class="p-3 rounded-3 bg-light">
+    <table class="w-100">
+      <tr style="height: 50px;">
+        <td class="col-2 text-right border-light">応募者名 : </td>
+        <td class="col-4 text-left border-light"><?= $examData["name"] ?></td>
+
+        <td class="col-2 text-right border-light">固有URL :</td>
+        <td class="col-4 text-left border-light">gngtest/user/login/<?= $examData["url"] ?></td>
+      </tr>
+
+      <tr style="height: 50px;">
+        <td class="col-2 text-right border-light">ログインID : </td>
+        <td class="col-4 text-left border-light"><?= $examData["user_id"] ?></td>
+
+        <td class="col-2 text-right border-light">パスワード :</td>
+        <td class="col-4 text-left border-light"><?= $examData["user_pw"] ?></td>
+      </tr>
+    </table>
+  </div>
+
+  <p class="mt-4 mb-3">setting</p>
+  <div class="p-3 rounded-3 bg-light">
+    <table class="w-100">
+      <tr style="height: 50px;">
+        <td class="col-2 text-right border-light">レベル : </td>
+        <td class="col-4 text-left border-light"><?= $levelTitle ?></td>
+
+        <td class="col-2 text-right border-light">問題数 :</td>
+        <td class="col-4 text-left border-light"><?= $examData["question_nums"] ?>問題</td>
+      </tr>
+
+      <tr style="height: 50px;">
+        <td class="col-2 text-right border-light">実施日 : </td>
+        <td class="col-4 text-left border-light">
+          <?php echo $examData["execute_date"] == null ? "未対応" : date("Y-m-d H:i:s", strtotime($examData["execute_date"])) ?>
+        </td>
+
+        <td class="col-2 text-right border-light">点数 :</td>
+        <td class="col-4 text-left border-light">
+          <?php echo $examData["get_point"] == null ? "未対応" : $examData["question_nums"] . "-" . $examData["get_point"] ?>
+      </tr>
+    </table>
+
+    <div class="d-flex flex-row mb-1 align-items-baseline">
+      <table class="table striped mt-3 table-bordered">
+        <tr>
+          <th class="col-1 bg-secondary text-white">No.</th>
+          <th class="col-1 bg-secondary text-white">種別</th>
+          <th class="col-9 bg-secondary text-white">問題</th>
+          <th class="col-1 bg-secondary text-white">結果</th>
+        </tr>
+
+        <?php foreach ($questionDatas as $index => $data) : ?>
+          <tr style="cursor: pointer;" onclick="Move2Detail(<?= $data['idx'] ?>)">
+            <td><?= $index + 1 ?></td>
+            <td><?= $typeTitles[$index] ?></td>
+            <td><?= $data["question"] ?></td>
+            <td><?= $corrects[$index] ?></td>
+          </tr>
+        <?php endforeach; ?>
+      </table>
+    </div>
+  </div>
+
+  <div class="mt-2 d-flex flex-row justify-content-center gap-3">
+    <button class="btn btn-primary" id="bt_return">戻る</button>
+  </div>
+</div>
+
+<script>
+  document.getElementById("bt_return").addEventListener("click", function() {
+    let page = sessionStorage.getItem("listPage");
+    window.location.href = "../../list?page=" + page;
+  });
+</script>

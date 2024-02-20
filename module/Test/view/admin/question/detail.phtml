@@ -1,0 +1,68 @@
+<?php
+$level[1] = "初級";
+$level[2] = "中級";
+$level[3] = "高級";
+
+$answers = explode("|", $questionData["answers"]);
+
+$nums[0] = "①";
+$nums[1] = "②";
+$nums[2] = "③";
+$nums[3] = "④";
+$nums[4] = "⑤";
+?>
+
+<div class="p-5 align-self-center" style="width: 800px;">
+
+  <p class="mb-5 h2">問題詳細</p>
+
+  <p class="mt-4 mb-3">setting</p>
+  <div class="p-3 rounded-3 bg-light">
+    <table class="w-100">
+      <tr style="height: 50px;">
+        <td class="col-3 text-right border-light">問題種別 : </td>
+        <td class="col-3 text-left border-light"><?= $typeData["question_title"] ?></td>
+
+        <td class="col-3 text-right border-light">レベル :</td>
+        <td class="col-3 text-left border-light"><?= $level[$questionData["question_level"]] ?></td>
+      </tr>
+    </table>
+  </div>
+
+  <p class="mt-4 mb-3">question</p>
+  <div class="p-3 rounded-3 d-flex flex-column bg-light">
+    <table class="w-100">
+      <tr style="height: 50px;">
+        <td class="col-2 text-right">問題 : </td>
+        <td class="col-10 text-left"><?= $questionData["question"] ?></td>
+      </tr>
+      <?php foreach ($answers as $index => $answer) : ?>
+      <tr style="height: 50px;">
+        <td class="col-2 text-right"><?= $nums[$index] ?> :</td>
+        <td class="col-10 text-left"><?= $answer ?></td>
+      </tr>
+      <?php endforeach; ?>
+    </table>
+  </div>
+
+  <p class="mt-4 mb-3">correct</p>
+  <div class="p-3 rounded-3 d-flex flex-column bg-light">
+    <table class="w-100">
+      <tr style="height: 50px;">
+        <td class="col-2 text-right">正解番号 :</td>
+        <td class="col-10 text-left"><?= $questionData["correct_answer"] ?></td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="mt-2 d-flex flex-row justify-content-center gap-3">
+    <button class="btn btn-primary" id="return-bt">戻る</button>
+  </div>
+</div>
+
+<script>
+document.getElementById("return-bt").addEventListener("click", function() {
+  let page = sessionStorage.getItem("listPage");
+  window.location.href = "/admin/question/list?page=" + page;
+});
+</script>

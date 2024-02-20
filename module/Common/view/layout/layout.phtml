@@ -1,0 +1,68 @@
+<?php echo $this->doctype();
+$mm=$_SERVER['REQUEST_URI'];
+$exp=explode("/",$mm);
+$expp=explode("?",$exp[1]);
+$topMenu=$expp[0];
+
+if($this->title==''){$this->title='G&GService';}
+
+?>
+
+<html lang="jp">
+<head>
+    <meta charset="utf-8">
+        <?php
+        echo $this->headTitle($this->title)->setSeparator(' - ')->setAutoEscape(false);
+
+        echo $this->headMeta()
+            ->appendName('title', $this->title)
+            ->appendName('description', $this->description)
+            ->appendName('keywords', $this->keywords)
+            ->appendName('robots', 'ALL')
+            ->appendName('Distribution', 'GNGService')
+            ->appendName('author', 'drapiece@gngs.co.jp')
+            ->appendName('viewport', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no')
+            ->appendHttpEquiv('X-UA-Compatible', 'IE=edge');
+        ?>
+    <link href="/css/bootstrap.min.css" media="screen" rel="stylesheet" type="text/css">
+    <link href="/css/bootstrap-grid.css" media="screen" rel="stylesheet" type="text/css">
+    <link href="/css/open-iconic-bootstrap.min.css" rel="stylesheet">
+    <link href="/css/default.css" rel="stylesheet" type="text/css">
+    <script type="text/javascript" src="/js/jquery-3.4.1.min.js"></script>
+    <script type="text/javascript" src="/js/addclear.js"></script>
+    <script type="text/javascript" src="/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/js/bootstrap.bundle.min.js"></script>
+</head>
+<body style='padding-top:0;margin-top:0;'>
+  <!--Double navigation-->
+  <header>
+    <!-- Sidebar navigation -->
+    <nav class="navbar fixed-top navbar-expand-sm navbar-dark bg-dark">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="/">GNGSERVICE</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample07" aria-controls="navbarsExample07" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+      </div>
+    </nav>
+    <!-- /.Navbar -->
+  </header>
+
+
+
+    <main style='margin-top:80px;'>
+        <div class="container-fluid">
+            <?php echo $this->content; ?>
+        </div>
+    </main>
+
+<footer>
+    <div class="">
+        <div class='text-muted text-center'>
+            <p style='background-color:#555555;color:white;font-size:11px;padding:7px;margin:0;margin-top:30px;'>Copyright G&GService. All Right Reserved.</p>
+        </div>
+    </div>
+</footer>
+<?php echo $this->inlineScript() ?>
+</body>
+</html>

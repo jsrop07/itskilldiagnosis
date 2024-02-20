@@ -1,0 +1,120 @@
+<?php
+if (!isset($_SESSION)) {
+  session_start();
+}
+
+$examData = $_SESSION["exam"];
+
+$level[1] = "初級";
+$level[2] = "中級";
+$level[3] = "高級";
+
+$levelTitle = "";
+switch ($examData["level"]) {
+  case 1:
+    $levelTitle = "初級";
+    break;
+  case 2:
+    $levelTitle = "中級";
+    break;
+  case 3:
+    $levelTitle = "高級";
+    break;
+}
+?>
+
+<div class="p-5 align-self-center w-75">
+  <form id="from_exam" method="post">
+    <input name="url" type="hidden" value="<?= $rndUrl ?>">
+    <input name="id" type="hidden" value="<?= $examData["id"] ?>">
+    <input name="password" type="hidden" value="<?= $examData["password"] ?>">
+    <input name="name" type="hidden" value="<?= $examData["name"] ?>">
+    <input name="level" type="hidden" value="<?= $examData["level"] ?>">
+    <input name="num" type="hidden" value="<?= $examData["num"] ?>">
+    <input name="question_data" type="hidden" value="<?= $question_data ?>">
+  </form>
+  <p class="mb-5 h2">試験登録/確認</p>
+
+  <p class="mt-4 mb-3">user information</p>
+  <div class="p-3 rounded-3 bg-light">
+    <table class="w-100">
+      <tr style="height: 50px;">
+        <td class="col-2 text-right border-light">応募者名 : </td>
+        <td class="col-4 text-left border-light"><?= $examData["name"] ?></td>
+
+        <td class="col-2 text-right border-light">固有URL :</td>
+        <td class="col-4 text-left border-light">gngtest/user/login/<?= $rndUrl ?></td>
+      </tr>
+
+      <tr style="height: 50px;">
+        <td class="col-2 text-right border-light">ログインID : </td>
+        <td class="col-4 text-left border-light"><?= $examData["id"] ?></td>
+
+        <td class="col-2 text-right border-light">パスワード :</td>
+        <td class="col-4 text-left border-light"><?= $examData["password"] ?></td>
+      </tr>
+    </table>
+  </div>
+
+  <p class="mt-4 mb-3">setting</p>
+  <div class="p-3 rounded-3 d-flex flex-column bg-light">
+    <table class="w-100">
+      <tr style="height: 50px;">
+        <td class="col-2 text-right border-light">レベル : </td>
+        <td class="col-4 text-left border-light"><?= $levelTitle ?></td>
+
+        <td class="col-2 text-right border-light">問題種別 :</td>
+        <td class="col-4 text-left border-light"><?= $examData["typeTitle"] ?></td>
+      </tr>
+
+      <tr style="height: 50px;">
+        <td class="col-2 text-right border-light">問題数 : </td>
+        <td class="col-4 text-left border-light"><?= $examData["num"] ?></td>
+      </tr>
+    </table>
+
+    <div class="d-flex flex-row mb-1 align-items-baseline">
+      <table class="table striped mt-3 table-bordered">
+        <tr>
+          <th class="col-1 bg-secondary text-white">No.</th>
+          <th class="col-1 bg-secondary text-white">レベル</th>
+          <th class="col-1 bg-secondary text-white">種別</th>
+          <th class="col-7 bg-secondary text-white">問題</th>
+          <th class="col-2 bg-secondary text-white">登録日</th>
+        </tr>
+
+        <?php foreach ($questionDatas as $index => $data) : ?>
+          <tr style="cursor: pointer;" onclick="Move2Detail(<?= $data['idx'] ?>)">
+            <td><?= $index + 1 ?></td>
+            <td><?= $level[$data["question_level"]] ?></td>
+            <td><?= $typeTitles[$index] ?></td>
+            <td><?= $data["question"] ?></td>
+            <td><?= date("Y-m-d", strtotime($data["wdate"])) ?></td>
+          </tr>
+        <?php endforeach; ?>
+      </table>
+    </div>
+  </div>
+
+  <div class="mt-2 d-flex flex-row justify-content-center gap-3">
+    <button class="btn btn-primary" id="bt_regist">登録</button>
+    <button class="btn btn-primary" id="bt_return">戻る</button>
+  </div>
+</div>
+
+<script>
+  document.getElementById("bt_regist").addEventListener("click", function() {
+    var result = confirm("問題を登録しますか？");
+    if (result === true) {
+      document.getElementById("from_exam").submit();
+    }
+  });
+
+  document.getElementById("bt_return").addEventListener("click", function() {
+    sessionStorage.setItem("return", "exam");
+    <?php foreach ($examData as $key => $data) : ?>
+      sessionStorage.setItem("<?= $key ?>", "<?= $data ?>");
+    <?php endforeach; ?>
+    window.location.href = "../register";
+  });
+</script>

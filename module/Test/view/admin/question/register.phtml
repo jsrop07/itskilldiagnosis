@@ -1,0 +1,156 @@
+<div class="p-5 align-self-center" style="width: 800px;">
+  <p class="mb-5 h2">問題登録</p>
+  <form id="form_question" method="post">
+    <input type="hidden" name="typeTitle">
+
+    <p class="mt-4 mb-3">setting</p>
+    <div class="p-3 rounded-3 bg-light">
+      <div class="d-flex flex-row mb-1 align-items-baseline gap-2">
+        <span class="w-25">(*)問題種別</span>
+        <select class="form-select w-50" id="type" name="type">
+          <?php
+          foreach ($typeDatas as $type) : ?>
+          <option value="<?= $type["question_type"] ?>"><?= $type["question_title"] ?></option>
+          <?php endforeach; ?>
+        </select>
+
+        <span class="w-25">(*)レベル</span>
+        <select class="form-select w-50" id="level" name="level">
+          <option value=1>初級</option>
+          <option value=2>中級</option>
+          <option value=3>高級</option>
+        </select>
+      </div>
+    </div>
+
+    <p class="mt-4 mb-3">question</p>
+    <div class="p-3 rounded-3 bg-light">
+      <div class="d-flex flex-row mb-4 align-items-baseline">
+        <span class="w-25">(*)問題</span>
+        <input class="form-control" id="question" name="question" placeholder="問題テキストを入力してください">
+      </div>
+
+      <div class="d-flex flex-row mb-4 align-items-baseline">
+        <span class="w-25">(*)選択肢①</span>
+        <input class="form-control" id="answer1" name="answer1" placeholder="選択肢①を入力してください（必須）">
+      </div>
+
+      <div class="d-flex flex-row mb-4 align-items-baseline">
+        <span class="w-25">(*)選択肢②</span>
+        <input class="form-control" id="answer2" name="answer2" placeholder="選択肢②を入力してください（必須）">
+      </div>
+
+      <div class="d-flex flex-row mb-4 align-items-baseline">
+        <span class="w-25">選択肢③</span>
+        <input class="form-control" id="answer3" name="answer3" placeholder="選択肢③を入力してください（オプション）">
+      </div>
+
+      <div class="d-flex flex-row mb-4 align-items-baseline">
+        <span class="w-25">選択肢④</span>
+        <input class="form-control" id="answer4" name="answer4" placeholder="選択肢④を入力してください（オプション）">
+      </div>
+
+      <div class="d-flex flex-row mb-1 align-items-baseline">
+        <span class="w-25">選択肢⑤</span>
+        <input class="form-control" id="answer5" name="answer5" placeholder="選択肢⑤を入力してください（オプション）">
+      </div>
+    </div>
+
+    <p class="mt-4 mb-3">correct</p>
+    <div class="p-3 rounded-3 bg-light">
+      <div class="d-flex flex-row mb-1 align-items-baseline">
+        <span class="w-25">(*)正解番号</span>
+        <select class="form-select" id="correct" name="correct">
+          <option value=1>①</option>
+          <option value=2>②</option>
+          <option value=3>③</option>
+          <option value=4>④</option>
+          <option value=5>⑤</option>
+        </select>
+      </div>
+    </div>
+  </form>
+
+  <div class="mt-2 d-flex flex-row justify-content-center gap-3">
+    <button class="btn btn-primary" id="confirm-bt">次へ</button>
+    <button class="btn btn-primary" id="cancel-bt">キャンセル</button>
+  </div>
+</div>
+
+<script>
+const form = document.getElementById("form_question");
+
+const type = document.getElementById("type");
+const level = document.getElementById("level");
+const question = document.getElementById("question");
+const answer1 = document.getElementById("answer1");
+const answer2 = document.getElementById("answer2");
+const answer3 = document.getElementById("answer3");
+const answer4 = document.getElementById("answer4");
+const answer5 = document.getElementById("answer5");
+const correct = document.getElementById("correct");
+
+if (sessionStorage.getItem("return") == "question") {
+  sessionStorage.removeItem("return");
+  type.value = sessionStorage.getItem("type");
+  level.value = sessionStorage.getItem("level");
+  question.value = sessionStorage.getItem("question");
+  answer1.value = sessionStorage.getItem("answer1");
+  answer2.value = sessionStorage.getItem("answer2");
+  answer3.value = sessionStorage.getItem("answer3");
+  answer4.value = sessionStorage.getItem("answer4");
+  answer5.value = sessionStorage.getItem("answer5");
+  correct.value = sessionStorage.getItem("correct");
+}
+
+document.getElementById("confirm-bt").addEventListener("click", function() {
+  if ((question.value.trim()) == "") {
+    alert("問題を入力ください");
+    question.focus();
+    return false;
+  }
+  if ((answer1.value.trim()) == "") {
+    alert("選択肢①を入力ください");
+    answer1.focus();
+    return false;
+  }
+  if ((answer2.value.trim()) == "") {
+    alert("選択肢②を入力ください");
+    answer2.focus();
+    return false;
+  }
+  if (((answer3.value.trim()) == "") && !((answer4.value.trim()) == "")) {
+    alert("順番に入力してください");
+    answer3.focus();
+    return false;
+  }
+  if (((answer4.value.trim()) == "") && !((answer5.value.trim()) == "")) {
+    alert("順番に入力してください");
+    answer4.focus();
+    return false;
+  }
+  if ((correct.value == 3) && ((answer3.value.trim()) == "")) {
+    alert("正解に該当する問題を入力してください");
+    answer3.focus();
+    return false;
+  }
+  if ((correct.value == 4) && ((answer4.value.trim()) == "")) {
+    alert("正解に該当する問題を入力してください");
+    answer4.focus();
+    return false;
+  }
+  if ((correct.value == 5) && ((answer5.value.trim()) == "")) {
+    alert("正解に該当する問題を入力してください");
+    answer5.focus();
+    return false;
+  }
+
+  form.typeTitle.value = type.options[type.selectedIndex].text;
+  form.submit();
+
+});
+
+document.getElementById("cancel-bt").addEventListener("click", function() {
+  window.location.href = "../question/list?page=1";
+});
+</script>

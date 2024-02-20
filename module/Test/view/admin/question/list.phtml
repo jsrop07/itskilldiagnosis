@@ -1,0 +1,61 @@
+<?php
+$level[1] = "初級";
+$level[2] = "中級";
+$level[3] = "高級";
+?>
+
+<div class="p-5 align-self-center w-75">
+  <p class="mb-5 h2">問題一覧</p>
+  <table class="table striped mt-5 table-bordered">
+    <tr>
+      <th class="col-1 bg-secondary text-white">No.</th>
+      <th class="col-1 bg-secondary text-white">レベル</th>
+      <th class="col-1 bg-secondary text-white">種別</th>
+      <th class="col-7 bg-secondary text-white">問題</th>
+      <th class="col-2 bg-secondary text-white">登録日</th>
+    </tr>
+
+    <?php foreach ($questionDatas as $index => $data) : ?>
+      <tr style="cursor: pointer;" onclick="Move2Detail(<?= $data['idx'] ?>)">
+        <td><?= $dataIndex - $index ?></td>
+        <td><?= $level[$data["question_level"]] ?></td>
+        <td><?= $typeTitles[$index] ?></td>
+        <td><?= $data["question"] ?></td>
+        <td><?= date("Y-m-d", strtotime($data["wdate"])) ?></td>
+      </tr>
+    <?php endforeach; ?>
+  </table>
+
+  <nav class="mt-2 d-flex flex-row justify-content-center gap-3">
+    <ul class="pagination">
+      <li class="page-item">
+        <a class="page-link" href="list?page=1">first</a>
+      </li>
+      <li class="page-item">
+        <a class="page-link" href="list?page=<?php echo $cPage != 1 ? "1" : $cPage - 1 ?>">
+          <span class=" unclick">&laquo;</span>
+        </a>
+      </li>
+      <?php for ($page = 1; $page <= $totalPage; $page = $page + 1) : ?>
+        <li class=" page-item <?php echo $page == $cPage ? "active" : "" ?>">
+          <a class="page-link" href="list?page=<?= $page ?>"><?= $page ?></a>
+        </li>
+      <?php endfor; ?>
+      <li class="page-item">
+        <a class="page-link" href="list?page=<?php echo $cPage != $totalPage ? $totalPage : $cPage + 1 ?>">
+          <span class="unclick">&raquo;</span>
+        </a>
+      </li>
+      <li class="page-item">
+        <a class="page-link" href="list?page=<?= $totalPage ?>">last</a>
+      </li>
+    </ul>
+  </nav>
+</div>
+
+<script>
+  function Move2Detail(idx) {
+    sessionStorage.setItem("listPage", <?= $cPage ?>);
+    window.location.href = " ./list/detail/" + idx;
+  }
+</script>

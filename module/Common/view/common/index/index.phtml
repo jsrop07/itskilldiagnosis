@@ -1,0 +1,123 @@
+<?php
+if (isset($_SESSION['ankenInfo'])) {
+	if ($_SESSION['ankenInfo']['userid']) {
+		$logged = true;
+	} else {
+		$logged = false;
+	}
+} else {
+	$logged = false;
+}
+?>
+
+
+
+
+
+<?php if ($logged == true) : ?>
+
+<nav aria-label="breadcrumb" style='margin:0;padding:0;'>
+  <ol class="breadcrumb" style='margin:0;'>
+    <li class="breadcrumb-item"><a href="/" style='margin-left:0;'>トップ</a></li>
+    <li class="breadcrumb-item active"><a href="#" style='margin-left:0;'>事業社選択</a></li>
+  </ol>
+</nav>
+
+<div class="container-fluid">
+
+  <div class='' style='padding-top:20px;'>
+    <div class='col-xs-12'>
+      操作する事業社を選択してください。
+    </div>
+  </div>
+
+  <table class='table table-bordered table-striped table-hover table-sm'>
+    <thead class='thead-dark'>
+      <tr style='vertical-align:middle;'>
+        <th class='d-none d-sm-block d-md-block d-lg-block d-xl-block'>事業社コード</th>
+        <th>事業社名</th>
+        <th class='d-none d-sm-block d-md-block d-lg-block d-xl-block'>会社コード</th>
+        <th>会社名</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr style='vertical-align:middle;'>
+        <td class='d-none d-sm-block d-md-block d-lg-block d-xl-block'>002322</td>
+        <td>株式会社テストシステム</td>
+        <td class='d-none d-sm-block d-md-block d-lg-block d-xl-block'>000001</td>
+        <td>株式会社ジエンジサービス</td>
+        <td class='text-center' style='min-width:70px;'><a class='btn btn-danger btn-sm'
+            href='/case?sub=1&offer=2'>選択</a></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<?php else : ?>
+<nav aria-label="breadcrumb" style='margin:0;padding:0;'>
+  <ol class="breadcrumb" style='margin:0;'>
+    <li class="breadcrumb-item active"><a href="#" style='margin-left:0;'>ログイン</a></li>
+  </ol>
+</nav>
+
+<div class="container-fluid">
+
+  <div class='justify-content-xs-center align-items-center' style='padding-top:60px;text-align:center;'>
+    <div class='col-xs-12 text-center'>
+      このページはアクセス制限の認証が必要です。
+      <br />所属IDとパスワードを入力してください。
+    </div>
+  </div>
+  <script type='text/javascript'>
+  function chksub(f) {
+    if (f.userid.value.length == 0) {
+      alert("所属IDを入力してください。");
+      f.userid.focus();
+      return false;
+    }
+    if (f.userpw.value.length == 0) {
+      alert("パスワードを入力してください。");
+      f.userpw.focus();
+      return false;
+    }
+
+    f.submit();
+  }
+  </script>
+  <div class='row justify-content-sm-center align-items-center' style='margin-top:20px;padding-bottom:20px;'>
+    <div class='col-lg-5 col-md-7 col-sm-8 col-xs-12'>
+      <form method='post' style='border:1px solid #aaaaaa;border-radius:10px;overflow:hidden;'
+        onsubmit='chksub(this);return false;'>
+        <div class="form-group row" style='margin:10px;'>
+          <label for="staticEmail" class="col-sm-4 col-form-label">所属ID</label>
+          <div class="col-sm-8">
+            <input type="text" name='userid' id='userid' class="form-control" id="staticEmail" placeholder="所属 IDを入力">
+          </div>
+        </div>
+        <div class="form-group row" style='margin-bottom:0;margin:10px;margin-bottom:20px;'>
+          <label for="inputPassword" class="col-sm-4 col-form-label">パスワード</label>
+          <div class="col-sm-8">
+            <input type="password" name='userpw' class="form-control" id="inputPassword" placeholder="パスワードを入力">
+          </div>
+        </div>
+        <div style='background-color:#dddddd;padding:10px;' class='text-center'>
+          <button class='btn btn-danger'>ログイン</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class='row justify-content-sm-center align-items-center text-center'
+    style='padding-top:0px;padding-bottom:50px;height:;'>
+    <div class='' style='margin:10px;'>
+      所属IDやパスワードを忘れた方は業務局にお知らせください。
+    </div>
+  </div>
+
+  <script type='text/javascript'>
+  document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById("userid").focus();
+  });
+  </script>
+</div>
+<?php endif ?>

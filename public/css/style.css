@@ -1,0 +1,535 @@
+body {
+  padding-top: 20px;
+  padding-bottom: 40px;
+  font-family: 'メイリオ',Meiryo,'ヒラギノ角ゴ Pro W3','Hiragino Kaku Gothic Pro','ＭＳ Ｐゴシック',sans-serif;
+}
+pre {font-family: 'メイリオ',Meiryo,'ヒラギノ角ゴ Pro W3','Hiragino Kaku Gothic Pro','ＭＳ Ｐゴシック',sans-serif;}
+
+
+
+
+@font-face {
+  font-family: IconicStroke;
+  font-weight: normal;
+  src: url(/font/iconic_stroke.eot);
+  src: local('IconicStroke'), url(/font/iconic_stroke.eot?#iefix) format('embedded-opentype'), url(/font/iconic_stroke.woff) format('woff'), url(/font/iconic_stroke.ttf) format('truetype'), url(/font/iconic_stroke.svg#iconic) format('svg'), url(/font/iconic_stroke.otf) format('opentype');
+}
+
+@font-face {
+  font-family: IconicFill;
+  font-weight: normal;
+  src: url(/font/iconic_fill.eot);
+  src: local('IconicFill'), url(/font/iconic_fill.eot?#iefix) format('embedded-opentype'), url(/font/iconic_fill.woff) format('woff'), url(/font/iconic_fill.ttf) format('truetype'), url(/font/iconic_fill.svg#iconic) format('svg'), url(/font/iconic_fill.otf) format('opentype');
+}
+
+
+
+.btn-success {
+  background-color: #57a900;
+  background-image: -moz-linear-gradient(top, #70d900, #57a900);
+  background-image: -ms-linear-gradient(top, #70d900, #57a900);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#70d900), to(#57a900));
+  background-image: -webkit-linear-gradient(top, #70d900, #57a900);
+  background-image: -o-linear-gradient(top, #70d900, #57a900);
+  background-image: linear-gradient(top, #70d900, #57a900);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#70d900', endColorstr='#57a900', GradientType=0);
+}
+
+.btn-success:hover,
+.btn-success:active,
+.btn-success.active,
+.btn-success.disabled,
+.btn-success[disabled] {
+  background-color: #57a900;
+}
+
+.btn-success:active, .btn-success.active {
+  background-color: #57a900;
+}
+
+div.container a.brand {
+    background: url("../img/zf2-logo.png") no-repeat scroll 0 10px transparent;
+    margin-left: 0;
+    padding: 8px 20px 12px 40px;
+}
+
+.titles{margin-left:10px;}
+
+.clearfix{clear:both;padding:0;margin:0;height:1px;width:1px;line-height:1px;font-size:1px;}
+.icon{vertical-align:middle;width:16px;height:16px;}
+.wordwrap{word-wrap: break-word;-ms-word-wrap: break-word;width:100%;overflow:hidden;}
+
+
+.main-icon{width:40px;cursor:pointer;position:relative;z-index:2000;}
+
+.logbtn{background-color:#ff6200;}
+
+
+.suninnoosirase{float:left;color:#1348ae;font-weight:bold;font-size:12pt;margin-top:40px;text-align:center;}
+.suninnonaiyou{float:left;color:#1348ae;font-weight:bold;font-size:12pt;margin-left:40px;margin-top:25px;text-align:center;width:290px;}
+.suninnobotan{float:right;width:300px;margin-top:20px;margin-right:20px;}
+
+@media (min-width: 1200px) {
+  .main_top_layout_confirmbox{width:940px;margin:0 auto;}
+}
+@media (max-width: 991px) {
+  .main_top_layout_confirmbox{}
+  .main_top_layout_confirmbox .suninnoosirase{}
+  .main_top_layout_confirmbox .suninnonaiyou{width:280px;}
+  .main_top_layout_confirmbox .suninnobotan{width:240px;}
+}
+@media (max-width: 991px) {
+  body{padding-top:30px;}
+  .main_top_layout_confirmbox .suninnonaiyou{margin-left:5px;width:240px;padding:5px;font-size:11pt;}
+}
+
+.fanclub_title{font-size:15pt;margin-bottom:5px;}
+.fanclub_desc{padding:5px;padding-left:10px;}
+.fanclub_ranking_desc{padding:5px;padding-left:10px;margin-top:0px;}
+.ranking_number{float:left;font-size:33px;width:50px;text-align:right;margin:15px;margin-left:0px;margin-right:25px;padding:0;}
+.ranking-list h4{height:1.1em;overflow:hidden;}
+
+.main-right-context{}
+
+.fanclub_list{list-style:none;margin:0;padding:0;margin-bottom:10px;}
+.fanclub_list li{padding-top:5px;padding-bottom:5px;border-bottom:1px solid #eeeeee;}
+.fanclub_list a{color:#777777}
+.fanclub_list a:hover{color:#111111;text-decoration:none;}
+
+.fanclub_notice{list-style:none;margin:0;padding:0;}
+.fanclub_notice li{margin-top:40px;}
+.fanclub_notice .title{font-size:20px;}
+.fanclub_notice .panel-body a{color:black;}
+
+
+table .menu{}
+
+
+/* user profile layer */
+.user-profile .content{margin:0;padding:15px;color:black;}
+.user-profile .content .content_line{padding:0;margin:0;color:black;}
+.user-profile .content .content_line .ll{float:left;width:140px;padding:0;margin:0;margin-top:3px;margin-bottom:3px;color:black;}
+.user-profile .content .content_line .rr{float:left;padding:0;margin:0;margin-top:3px;margin-bottom:3px;color:black;}
+
+.color_pickers{width:70px;padding-left:0;padding-right:0;}
+
+
+
+.searchbox{
+  margin-top:-50px;
+  background-image:url('/img/backgroundimage/concert_1.jpg');
+  padding-top:200px;padding-bottom:400px;
+}
+.searchbox h3{color:white;}
+
+.signin{}
+.signin h2{}
+.signin h4{border-left:4px solid #aaaaaa;margin-left:5px;padding-left:5px;margin-top:20px;}
+
+.signin #nickname_icon,
+.signin #password_confirm_icon,.signin #password_icon,.signin #email_confirm_icon,.signin #email_icon{display:none;}
+
+.signin .terms{border:1px solid #dddddd;padding:10px;height:400px;overflow:scroll;overflow-x:hidden;}
+.signin .terms h3{font-size:10pt;font-weight:bold;}
+
+.messagebox .comment{height:1.2em;overflow:hidden;margin:0;}
+.messagebox .nicknames span{padding-bottom:0;margin-bottom:0;}
+
+
+
+
+
+
+@media (max-width: 767px) {
+  .fanclub{margin-top:-80px;padding-top:0px;
+  }
+}
+@media (min-width: 767px) {
+  .fanclub{margin-top:-30px;padding-top:50px;padding-bottom:20px;
+  }
+  .design_setting_pages{padding-left:0;}
+}
+.fanclub .container{padding-left:0;padding-right:0;}
+.fanclub h3 a{text-decoration:none;color:white;}
+.fanclub h3 small{color:#dddddd;font-size:12pt;}
+@media (min-width: 767px) {
+  .fanclub .fbmenus{margin-left:-30px;}
+  .fanclub .site_menu{position: absolute;left: 0;overflow:hidden;}
+  .fanclub .site_menu ol{overflow:hidden;}
+  .fanclub .main_contents{margin-left:200px;}
+}
+
+
+.default_site  .navbar-nav li a{font-size:12px;color:white;padding-top:10px;padding-bottom:10px;}
+.default_site  .language_selecter a{font-family:'Lato',sans-serif;font-weight:bold;font-size:10px;display:inline-block;padding-left:0px;padding-right:0px;}
+
+@media (min-width: 767px) {
+  .default_site .language_selecter a{font-family:'Lato',sans-serif;font-weight:bold;font-size:10px;display:inline-block;padding-left:0px;padding-right:0px;}
+  .default_site .language_selecter{margin-left:20px;}
+  .default_site .navbar{min-height:40px;background-color:black;}
+  .default_site .navbar-brand{font-size:14px;font-weight:bold;color:white;padding: 10px 10px;height:40px;}
+  .default_site .navbar-brand a{font-size:14px;font-weight:bold;color:white;height:40px;}
+
+}
+@media (max-width: 768px) {
+  .default_site .language_selecter{padding-left:15px;}
+  .default_site .navbar{min-height:50px;background-color:black;}
+  .default_site .navbar-brand{font-size:14px;font-weight:bold;color:white;height:50px;}
+  .default_site .navbar-brand a{font-size:14px;font-weight:bold;color:white;height:50px;}
+}
+
+
+
+.fanclub .navbar-default .navbar-nav>li>a{color:white;}
+.fanclub .navbar-brand{color:white;}
+.fanclub .navbar-nav .active a,.fanclub .navbar-nav .active a:hover{background-color:white;}
+.topbox #topbox_topmenu{overflow:hidden;}
+
+
+@media (min-width: 767px) {
+  .fanclub .main-right-context, .fanclub .search-list div{padding-right:0;}
+}
+@media (max-width: 767px) {
+  .fanclub .site_menu{display:none;}
+  .fanclub .main_contents{margin:0}
+}
+
+
+.main_top_box_1 .min_14{font-size:1.4em}
+.main_top_box_1 .min_21{font-size:2.1em}
+.main_top_box_1 .min_3{font-size:3em;}
+.main_top_box_1 .min_18{font-size:1.8em;}
+.main_top_box_3 .fonts-13{font-size:1.3em;}
+.main_top_box_3 .fonts-15{font-size:1.3em;}
+.main_top_box_4 .fonts-22{font-size:2.2em;}
+.main_top_box_4 .right_imgs{float:right;}
+.main_top_box_4 .fonts-15{font-size:1.5em;}
+.main_top_box_4 h2{float:left;}
+.main_top_box_5 .fonts-15{font-size:1.5em;}
+
+.main_top_box_0 .flags{background-size:200px;background-repeat:no-repeat;font-size:2.5em;}
+.main_top_box_0 .contents{border:10px solid #d0dafe;padding:20px;padding-top:100px;font-size: 20px;font-weight: bold;height:250px;}
+@media (max-width: 1207px) and (min-width: 1000px) {
+  .main_top_box_3 .fonts-15{font-size:1.1em;}
+  .main_top_box_3 .fonts-13{font-size:1.0em;}
+  .status_graph{width:900px;}
+}
+
+@media (max-width: 1000px) {
+  .main_top_box_0 .flags{background-size:160px;background-repeat:no-repeat;font-size:2em;}
+  .main_top_box_3 .fonts-15{font-size:1.2em;}
+  .main_top_box_3 .fonts-13{font-size:1.0em;}
+  .main_top_box_3 .fonts-15{font-size:1.1em;}
+  .main_top_box_4 .fonts-22{font-size:1.7em;}
+  .main_top_box_4 .fonts-15{font-size:1.2em;}
+  .main_top_box_4 h2{clear:both;}
+  .main_top_box_5 .fonts-15{font-size:1.2em;}
+  .status_graph{width:900px;}
+}
+@media (min-width: 992px) {
+  .status_graph{width:900px;}
+}
+@media (max-width:991px){
+    .status_graph{width:600px;}
+}
+.main_top_box_2{font-size:1.4em;}
+@media (max-width: 687px) {
+  .main_top_box_0 .flags{background-size:130px;background-repeat:no-repeat;font-size:1.5em;}
+  .main_top_box_0 .contents{border:10px solid #d0dafe;padding:10px;padding-top:100px;font-size: 15px;font-weight: bold;height:250px;}
+    .status_graph{width:450px;}
+}
+@media (max-width: 627px) {
+  .main_top_box_0 .flags{background-size:130px;background-repeat:no-repeat;}
+  .main_top_box_2{font-size:1.2em;}
+  .main_top_box_0 .contents{border:10px solid #d0dafe;padding:5px;padding-top:70px;font-size: 13px;font-weight: bold;height:200px;}
+}
+@media (max-width: 587px) {
+  .main_top_box_0 .flags{background-size:100px;background-repeat:no-repeat;font-size:1em;}
+  .main_top_box_1 .min_14{font-size:1.1em}
+  .main_top_box_1 .min_21{font-size:1.3em}
+  .main_top_box_1 .min_3{font-size:1.7em;}
+  .main_top_box_1 .min_18{font-size:1.5em;}
+    .status_graph{width:300px;}
+}
+@media (max-width: 535px) {
+  .main_top_box_2{font-size:1em;}
+}
+
+
+/* Bootstrap Custom */
+.btn-pink { 
+  color: #000000; 
+  background-color: #F789C3; 
+  border-color: #F789C3; 
+} 
+ 
+.btn-pink:hover, 
+.btn-pink:focus, 
+.btn-pink:active, 
+.btn-pink.active, 
+.open .dropdown-toggle.btn-pink { 
+  color: #000000; 
+  background-color: #EF5EAA; 
+  border-color: #F789C3; 
+} 
+ 
+.btn-pink:active, 
+.btn-pink.active, 
+.open .dropdown-toggle.btn-pink { 
+  background-image: none; 
+} 
+ 
+.btn-pink.disabled, 
+.btn-pink[disabled], 
+fieldset[disabled] .btn-pink, 
+.btn-pink.disabled:hover, 
+.btn-pink[disabled]:hover, 
+fieldset[disabled] .btn-pink:hover, 
+.btn-pink.disabled:focus, 
+.btn-pink[disabled]:focus, 
+fieldset[disabled] .btn-pink:focus, 
+.btn-pink.disabled:active, 
+.btn-pink[disabled]:active, 
+fieldset[disabled] .btn-pink:active, 
+.btn-pink.disabled.active, 
+.btn-pink[disabled].active, 
+fieldset[disabled] .btn-pink.active { 
+  background-color: #F789C3; 
+  border-color: #F789C3; 
+} 
+ 
+.btn-pink .badge { 
+  color: #F789C3; 
+  background-color: #000000; 
+}
+.btn-lightgreen { 
+  color: #000000; 
+  background-color: #CBE83E; 
+  border-color: #D4E96E; 
+} 
+ 
+.btn-lightgreen:hover, 
+.btn-lightgreen:focus, 
+.btn-lightgreen:active, 
+.btn-lightgreen.active, 
+.open .dropdown-toggle.btn-lightgreen { 
+  color: #000000; 
+  background-color: #D4E96E; 
+  border-color: #D4E96E; 
+} 
+ 
+.btn-lightgreen:active, 
+.btn-lightgreen.active, 
+.open .dropdown-toggle.btn-lightgreen { 
+  background-image: none; 
+} 
+ 
+.btn-lightgreen.disabled, 
+.btn-lightgreen[disabled], 
+fieldset[disabled] .btn-lightgreen, 
+.btn-lightgreen.disabled:hover, 
+.btn-lightgreen[disabled]:hover, 
+fieldset[disabled] .btn-lightgreen:hover, 
+.btn-lightgreen.disabled:focus, 
+.btn-lightgreen[disabled]:focus, 
+fieldset[disabled] .btn-lightgreen:focus, 
+.btn-lightgreen.disabled:active, 
+.btn-lightgreen[disabled]:active, 
+fieldset[disabled] .btn-lightgreen:active, 
+.btn-lightgreen.disabled.active, 
+.btn-lightgreen[disabled].active, 
+fieldset[disabled] .btn-lightgreen.active { 
+  background-color: #CBE83E; 
+  border-color: #D4E96E; 
+} 
+.btn-lightgreen .badge { 
+  color: #CBE83E; 
+  background-color: #000000; 
+}
+.btn-lightyellow { 
+  color: #000000; 
+  background-color: #FEDE58; 
+  border-color: #EED981; 
+} 
+ 
+.btn-lightyellow:hover, 
+.btn-lightyellow:focus, 
+.btn-lightyellow:active, 
+.btn-lightyellow.active, 
+.open .dropdown-toggle.btn-lightyellow { 
+  color: #000000; 
+  background-color: #EED981; 
+  border-color: #EED981; 
+} 
+ 
+.btn-lightyellow:active, 
+.btn-lightyellow.active, 
+.open .dropdown-toggle.btn-lightyellow { 
+  background-image: none; 
+} 
+ 
+.btn-lightyellow.disabled, 
+.btn-lightyellow[disabled], 
+fieldset[disabled] .btn-lightyellow, 
+.btn-lightyellow.disabled:hover, 
+.btn-lightyellow[disabled]:hover, 
+fieldset[disabled] .btn-lightyellow:hover, 
+.btn-lightyellow.disabled:focus, 
+.btn-lightyellow[disabled]:focus, 
+fieldset[disabled] .btn-lightyellow:focus, 
+.btn-lightyellow.disabled:active, 
+.btn-lightyellow[disabled]:active, 
+fieldset[disabled] .btn-lightyellow:active, 
+.btn-lightyellow.disabled.active, 
+.btn-lightyellow[disabled].active, 
+fieldset[disabled] .btn-lightyellow.active { 
+  background-color: #FEDE58; 
+  border-color: #EED981; 
+} 
+ 
+.btn-lightyellow .badge { 
+  color: #FEDE58; 
+  background-color: #000000; 
+}
+.btn-lightblue { 
+  color: #000000; 
+  background-color: #8ADBFF; 
+  border-color: #A6D8EE; 
+} 
+ 
+.btn-lightblue:hover, 
+.btn-lightblue:focus, 
+.btn-lightblue:active, 
+.btn-lightblue.active, 
+.open .dropdown-toggle.btn-lightblue { 
+  color: #000000; 
+  background-color: #A6D8EE; 
+  border-color: #A6D8EE; 
+} 
+ 
+.btn-lightblue:active, 
+.btn-lightblue.active, 
+.open .dropdown-toggle.btn-lightblue { 
+  background-image: none; 
+} 
+ 
+.btn-lightblue.disabled, 
+.btn-lightblue[disabled], 
+fieldset[disabled] .btn-lightblue, 
+.btn-lightblue.disabled:hover, 
+.btn-lightblue[disabled]:hover, 
+fieldset[disabled] .btn-lightblue:hover, 
+.btn-lightblue.disabled:focus, 
+.btn-lightblue[disabled]:focus, 
+fieldset[disabled] .btn-lightblue:focus, 
+.btn-lightblue.disabled:active, 
+.btn-lightblue[disabled]:active, 
+fieldset[disabled] .btn-lightblue:active, 
+.btn-lightblue.disabled.active, 
+.btn-lightblue[disabled].active, 
+fieldset[disabled] .btn-lightblue.active { 
+  background-color: #8ADBFF; 
+  border-color: #A6D8EE; 
+} 
+ 
+.btn-lightblue .badge { 
+  color: #8ADBFF; 
+  background-color: #000000; 
+}
+
+.btn-darkorange { 
+  color: #FFFFFF; 
+  background-color: #FF6200; 
+  border-color: #FF6200; 
+} 
+ 
+.btn-darkorange:hover, 
+.btn-darkorange:focus, 
+.btn-darkorange:active, 
+.btn-darkorange.active, 
+.open .dropdown-toggle.btn-darkorange { 
+  color: #FFFFFF; 
+  background-color: #FFAF7D; 
+  border-color: #FF6200; 
+} 
+ 
+.btn-darkorange:active, 
+.btn-darkorange.active, 
+.open .dropdown-toggle.btn-darkorange { 
+  background-image: none; 
+} 
+ 
+.btn-darkorange.disabled, 
+.btn-darkorange[disabled], 
+fieldset[disabled] .btn-darkorange, 
+.btn-darkorange.disabled:hover, 
+.btn-darkorange[disabled]:hover, 
+fieldset[disabled] .btn-darkorange:hover, 
+.btn-darkorange.disabled:focus, 
+.btn-darkorange[disabled]:focus, 
+fieldset[disabled] .btn-darkorange:focus, 
+.btn-darkorange.disabled:active, 
+.btn-darkorange[disabled]:active, 
+fieldset[disabled] .btn-darkorange:active, 
+.btn-darkorange.disabled.active, 
+.btn-darkorange[disabled].active, 
+fieldset[disabled] .btn-darkorange.active { 
+  background-color: #FF6200; 
+  border-color: #FF6200; 
+} 
+ 
+.btn-darkorange .badge { 
+  color: #FF6200; 
+  background-color: #FFFFFF; 
+}
+.btn-blue { 
+  color: #FFFFFF; 
+  background-color: #436ABE; 
+  border-color: #436ABE; 
+} 
+ 
+.btn-blue:hover, 
+.btn-blue:focus, 
+.btn-blue:active, 
+.btn-blue.active, 
+.open .dropdown-toggle.btn-blue { 
+  color: #FFFFFF; 
+  background-color: #91A7D6; 
+  border-color: #436ABE; 
+} 
+ 
+.btn-blue:active, 
+.btn-blue.active, 
+.open .dropdown-toggle.btn-blue { 
+  background-image: none; 
+} 
+ 
+.btn-blue.disabled, 
+.btn-blue[disabled], 
+fieldset[disabled] .btn-blue, 
+.btn-blue.disabled:hover, 
+.btn-blue[disabled]:hover, 
+fieldset[disabled] .btn-blue:hover, 
+.btn-blue.disabled:focus, 
+.btn-blue[disabled]:focus, 
+fieldset[disabled] .btn-blue:focus, 
+.btn-blue.disabled:active, 
+.btn-blue[disabled]:active, 
+fieldset[disabled] .btn-blue:active, 
+.btn-blue.disabled.active, 
+.btn-blue[disabled].active, 
+fieldset[disabled] .btn-blue.active { 
+  background-color: #436ABE; 
+  border-color: #436ABE; 
+} 
+ 
+.btn-blue .badge { 
+  color: #436ABE; 
+  background-color: #FFFFFF; 
+}
+
+
+.mincho {
+    font-family: "HG����E", "�l�r �o����", "MS PMincho", "MS ����", serif;
+}
+

@@ -1,3 +1,7 @@
+<!-- html修正
+作成：丁錫圓
+作成日：2024/02/21 -->
+<!-- 修正前：<?php /* ?>
 <?php
 if (!isset($_SESSION)) {
   session_start();
@@ -108,3 +112,144 @@ document.getElementById("return-bt").addEventListener("click", function() {
   window.location.href = "../register";
 });
 </script>
+<?php */ ?> -->
+<!-- 修正後： -->
+<?php
+if (!isset($_SESSION)) {
+  session_start();
+}
+
+$questionData = $_SESSION["question"];
+
+$academicTitle = "";
+switch ($questionData["academic"]) {
+  case 1:
+    $academicTitle = "その他";
+    break;
+  case 2:
+    $academicTitle = "高等学校";
+    break;
+  case 3:
+    $academicTitle = "専門学校";
+    break;
+  case 4:
+    $academicTitle = "短期大学";
+    break;  
+  case 5:
+    $academicTitle = "大学";
+    break;  
+  case 6:
+    $academicTitle = "大学院";
+    break;    
+}
+
+$questionData['career'];
+
+$certificate = "";
+switch ($questionData["certificate"]){
+  case 1:
+    $certificateTitle = "無";
+  case 2:
+    $certificateTitle= "有";
+}
+
+
+$nums[1] = "①";
+$nums[2] = "②";
+$nums[3] = "③";
+$nums[4] = "④";
+$nums[5] = "⑤";
+?>
+
+<form id="form_question" method="post">
+  <input name="type" type="hidden" value="<?= $questionData["type"] ?>">
+  <input name="academic" type="hidden" value="<?= $questionData["academic"] ?>">
+  <input name="career" type="hidden" value="<?= $questionData["career"] ?>">
+  <input name="certificate" type="hidden" value="<?= $questionData["certificate"] ?>">
+  <input name="question" type="hidden" value="<?= $questionData["question"] ?>">
+  <input name="answer1" type="hidden" value="<?= $questionData["answer1"] ?>">
+  <input name="answer2" type="hidden" value="<?= $questionData["answer2"] ?>">
+  <input name="answer3" type="hidden" value="<?= $questionData["answer3"] ?>">
+  <input name="answer4" type="hidden" value="<?= $questionData["answer4"] ?>">
+  <input name="answer5" type="hidden" value="<?= $questionData["answer5"] ?>">
+  <input name="correct" type="hidden" value="<?= $questionData["correct"] ?>">
+</form>
+
+<div class="p-5 align-self-center" style="width: 800px;">
+
+  <p class="mb-5 h2">問題登録/確認</p>
+
+  <p class="mt-4 mb-3">setting</p>
+  <div class="p-3 rounded-3 bg-light">
+    <table class="w-100">
+      <tr style="height: 50px;">
+        <td class="col-3 text-right border-light">問題種別 : </td>
+        <td class="col-3 text-left border-light"><?= $questionData["typeTitle"] ?></td>
+
+        <td class="col-3 text-right border-light">アカデミック :</td>
+        <td class="col-3 text-left border-light"><?= $academicTitle ?></td>
+
+        <td class="col-3 text-right border-light">キャリア :</td>
+        <td class="col-3 text-left border-light"><?= $questionData['career'] ?>年</td>
+        
+        <td class="col-3 text-right border-light">資格(IT) :</td>
+        <td class="col-3 text-left border-light"><?= $certificateTitle ?></td>
+      </tr>
+    </table>
+  </div>
+
+  <p class="mt-4 mb-3">question</p>
+  <div class="p-3 rounded-3 d-flex flex-column bg-light">
+    <table class="w-100">
+      <tr style="height: 50px;">
+        <td class="col-2 text-right">問題 : </td>
+        <td class="col-10 text-left"><?= $questionData["question"] ?></td>
+      </tr>
+      <?php
+      for ($i = 1; $i <= 5; $i++) :
+        if ($questionData["answer" . $i] != "") :
+      ?>
+      <tr style="height: 50px;">
+        <td class="col-2 text-right"><?= $nums[$i] ?> :</td>
+        <td class="col-10 text-left"><?= $questionData["answer" . $i] ?></td>
+      </tr>
+      <?php
+        endif;
+      endfor;
+      ?>
+    </table>
+  </div>
+
+  <p class="mt-4 mb-3">correct</p>
+  <div class="p-3 rounded-3 d-flex flex-column bg-light">
+    <table class="w-100">
+      <tr style="height: 50px;">
+        <td class="col-2 text-right">正解番号 :</td>
+        <td class="col-10 text-left"><?= $questionData["correct"] ?></td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="mt-2 d-flex flex-row justify-content-center gap-3">
+    <button class="btn btn-primary" id="regist-bt">登録</button>
+    <button class="btn btn-primary" id="return-bt">戻る</button>
+  </div>
+</div>
+
+<script>
+document.getElementById("regist-bt").addEventListener("click", function() {
+  var result = confirm("問題を登録しますか？");
+  if (result === true) {
+    document.getElementById("form_question").submit();
+  }
+});
+
+document.getElementById("return-bt").addEventListener("click", function() {
+  sessionStorage.setItem("return", "question");
+  <?php foreach ($questionData as $key => $data) : ?>
+  sessionStorage.setItem("<?= $key ?>", "<?= $data ?>");
+  <?php endforeach; ?>
+  window.location.href = "../register";
+});
+</script>
+<!-- ここまで -->

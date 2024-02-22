@@ -42,7 +42,9 @@ class ExamTable
       "user_pw" => $post["password"],
       "name" => $post["name"],
       "write_date" => date("Y-m-d H:i:s"),
-      "question_level" => $post["level"],
+      "academic" => $post["academic"],
+      "career" => $post["career"],
+      "certificate" => $post["certificate"],
       "question_nums" => $post["num"],
       "question_data" => $post["question_data"],
     );

@@ -21,6 +21,14 @@
 
     <p class="mt-4 mb-3">setting</p>
     <div class="p-3 rounded-3 bg-light">
+
+			<!-- 機能変更
+				作成：朴夏成
+				修正：朴夏成
+				修正日：2024/02/21
+			-->
+
+			<!-- 修正前： <?php /* ?>
       <div class="d-flex flex-row mb-3 align-items-baseline gap-2">
         <span class="w-25">(*)レベル</span>
         <select class="form-select w-50" name="level">
@@ -36,6 +44,40 @@
           <?php endforeach; ?>
         </select>
       </div>
+			<?php */ ?> -->
+
+			<!-- 修正後： -->
+			<span>(*)最後の学歴</span>
+			<select name="academic">
+				<option value=1>高等学校</option>
+				<option value=2>専門学校</option>
+				<option value=3>短期大学</option>
+				<option value=4 selected>大学</option>
+				<option value=5>大学院</option>
+				<option value=0>その他</option>
+			</select>
+
+			<br/>
+			
+			<span>(*)問題種別</span>
+			<select name="type">
+				<?php foreach ($types as $type): ?>
+					<option value="<?php echo $type["question_type"] ?>"><?php echo $type["question_title"] ?></option>
+				<?php endforeach; ?>
+			</select>
+			
+			<br/>
+			
+			<span>(*)</span>
+			<input class="form-control" name="career" placeholder="年単位に数字だけ入力してください。">
+				<br/>
+			
+			<span>(*)資格(IT)</span>
+			<select name="certificate">
+				<option value=0 selected>無</option>
+				<option value=1>有</option>
+			</select>
+			<!-- ここまで -->
 
       <div class="d-flex flex-row mb-1 align-items-baseline">
         <span class="w-25">(*)問題数</span>
@@ -60,7 +102,23 @@ if (sessionStorage.getItem("return") == "exam") {
   form.name.value = sessionStorage.getItem("name");
   form.id.value = sessionStorage.getItem("id");
   form.password.value = sessionStorage.getItem("password");
+
+	/* 機能削除と追加
+		作成：朴夏成
+		修正：朴夏成
+		修正日：2024/02/21
+	*/
+
+	/*　修正前：
   form.level.value = sessionStorage.getItem("level");
+	*/
+
+	/* 修正後： */
+  form.academic.value = sessionStorage.getItem("academic");
+  form.career.value = sessionStorage.getItem("career");
+  form.certificate.value = sessionStorage.getItem("certificate");
+	/* ここまで */
+
   form.type.value = sessionStorage.getItem("type");
   form.num.value = sessionStorage.getItem("num");
 }
@@ -83,6 +141,22 @@ document.getElementById("bt_confirm").addEventListener("click", () => {
     form.password.focus();
     return false;
   }
+
+	/* 機能の追加
+		追加：朴夏成
+		追加日：2024/02/21
+	*/
+	
+	if (isNaN(form.career.value)) {
+		alert("経歴に数字だけ入力してください。");
+		form.career.focus();
+		return false;
+	}
+
+	if (form.career.value.trim() == "") {
+		form.career.value = 0;
+	}	
+	/* ここまで */
 
   form.typeTitle.value = form.type.options[form.type.selectedIndex].text;
   form.submit();

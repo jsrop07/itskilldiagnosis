@@ -103,9 +103,32 @@ class QuestionPoolTable
     return count($this->sql->prepareStatementForSqlObject($qry)->execute());
   }
 
+	/* 機能変更
+		作成：朴夏成
+		修正：朴夏成
+		修正日：2024/02/21
+	*/
+
+	/* 修正前：
   public function ReadRandByTypenLevelnNum($type, $level, $num)
   {
     $qry = $this->sql->select("question_pool")->where(["question_type" => $type, "question_level" => $level])->order(new Expression("Rand()"))->limit($num);
     return $this->sql->prepareStatementForSqlObject($qry)->execute();
   }
+	*/
+
+	/* 修正後： */
+  public function ReadRandForExam($type, $academic, $career, $certificate, $num)
+  {
+    $whereData = array (
+      "question_type" => $type,
+      "academic" => $academic,
+      "career" => $career,
+      "certificate" => $certificate
+    );
+
+    $qry = $this->sql->select("question_pool")->where($whereData)->order(new Expression("Rand()"))->limit($num);
+    return $this->sql->prepareStatementForSqlObject($qry)->execute();
+  }
+	/* ここまで */
 }

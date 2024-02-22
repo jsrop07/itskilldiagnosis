@@ -265,7 +265,19 @@ class AdminController extends AbstractActionController
     $questionTb = $this->getServiceLocator()->get("QuestionPoolTable");
     $typeTb = $this->getServiceLocator()->get("QuestionTypeTable");
 
+    /* 機能変更
+      作成：朴夏成
+      修正：朴夏成
+      修正日：2024/02/21
+    */
+
+    /* 修正前：
     $tempDatas = $questionTb->ReadRandByTypenLevelnNum($session->offsetGet("type"), $session->offsetGet("level"), $session->offsetGet("num"));
+    */
+
+    /* 修正後： */
+    $tempDatas = $questionTb->ReadRandForExam($session->offsetGet("type"), $session->offsetGet("academic"), $session->offsetGet("career"), $session->offsetGet("certificate"), $session->offsetGet("num"));
+    /* ここまで */
 
     $questionDatas = [];
     $typeTitles = [];

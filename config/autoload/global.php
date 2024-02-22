@@ -7,7 +7,7 @@ return array(
                 'driver'         => 'Pdo',
                 'dsn'            => 'mysql:dbname=goms_exam;host=localhost',
                 'username' => 'root',
-                'password' => '1234',
+                'password' => '951753',
                 'dbname' => 'goms_exam',
                 'host' => 'localhost',
                 'driver_options' => array(

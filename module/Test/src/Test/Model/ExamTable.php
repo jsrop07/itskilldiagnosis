@@ -42,9 +42,23 @@ class ExamTable
       "user_pw" => $post["password"],
       "name" => $post["name"],
       "write_date" => date("Y-m-d H:i:s"),
-      "academic" => $post["academic"],
-      "career" => $post["career"],
-      "certificate" => $post["certificate"],
+
+			/* データの変更
+				作成：朴夏成
+				修正：朴夏成
+				修正日：2024/02/22
+			*/
+
+			/* 修正前：
+      "question_level" => $post["level"],
+			*/
+
+			/* 修正後： */
+			"academic" => $post["academic"],
+			"career" => $post["career"],
+			"certificate" => $post["certificate"],
+			/* ここまで */
+
       "question_nums" => $post["num"],
       "question_data" => $post["question_data"],
     );

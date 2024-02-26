@@ -133,20 +133,20 @@ switch ($examData["level"]) {
 		<?php */ ?> -->
 
 		<!-- 修正後： -->
-		<p>学歴 : <?php echo $academicTexts[$examData["academic"]]; ?></p>
+		<p>最終学歴 : <?php echo $academicTexts[$examData["academic"]]; ?></p>
 		<p>種別 : <?php echo $examData["typeTitle"]; ?></p>
 		<p>経歴 : <?php echo $examData["career"]; ?></p>
-		<p>資格 : <?php echo $certificateTexts[$examData["certificate"]]; ?></p>
+		<p>資格(IT) : <?php echo $certificateTexts[$examData["certificate"]]; ?></p>
 		<p>問題数 : <?php echo $examData["num"]; ?></p>
 		
 		<table>
 			<thead>
 				<tr>
 					<th>No.</th>
-					<th>学歴</th>
+					<th>最終学歴</th>
 					<th>種別</th>
 					<th>経歴</th>
-					<th>資格</th>
+					<th>資格(IT)</th>
 					<th>問題</th>
 					<th>登録日</th>
 				</tr>
@@ -154,7 +154,7 @@ switch ($examData["level"]) {
 
 			<tbody>
 				<?php foreach ($questionDatas as $index => $data): ?>
-					<tr style="cursor: pointer;" onclick="Move2Detail(<?= $data['idx']; ?>)">
+					<tr style="cursor: pointer;" onclick="window.location.href='../../question/list/detail/<?php echo $data['idx'] ?>'">
 						<td><?= $index + 1; ?></td>
 						<td><?php echo $academicTexts[$data["academic"]]; ?></td>
             <td><?php echo $typeTitles[$index] ?></td>
@@ -196,13 +196,12 @@ switch ($examData["level"]) {
     }
   });
 
-	/* 機能の削除と追加
+	/* 機能の削除
 		作成：朴夏成
-		修正：朴夏成
-		修正日：2024/02/22
-	*/
+		削除：朴夏成
+		削除日：2024/02/22
 
-	/* 修正前： <?php /* ?>
+	削除前： <?php /* ?>
   document.getElementById("bt_return").addEventListener("click", function() {
     sessionStorage.setItem("return", "exam");
     <?php foreach ($examData as $key => $data) : ?>
@@ -210,11 +209,5 @@ switch ($examData["level"]) {
     <?php endforeach; ?>
     window.location.href = "../register";
   });
-	<?php */ ?> */
-
-	/* 修正後： */
-	function Move2Detail(idx) {
-		window.location.href = "../../question/list/detail/" + idx;
-	}
-	/* ここまで */
+	ここまで <?php */ ?> */
 </script>

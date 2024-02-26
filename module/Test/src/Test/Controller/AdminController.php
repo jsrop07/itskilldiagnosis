@@ -234,8 +234,21 @@ class AdminController extends AbstractActionController
     }
     $datas["rndPassword"] = $rndPassword;
 
+		/* コードデバッグ
+			作成：朴昰成
+			修正：朴昰成
+			修正日：2027/02/26
+		*/
+
+		/* 修正前
     $breadcrumb[0] = "応募者状況管理";
     $breadcrumb[1] = "試験登録";
+		*/
+
+		/* 修正後 */
+		$breadcrumb = array("応募者状況管理", "試験登録");
+		/* ここまで */
+
     $this->layout()->breadcrumb = json_encode($breadcrumb);
 
     //view==============================================================
@@ -250,7 +263,6 @@ class AdminController extends AbstractActionController
     $examTb = $this->getServiceLocator()->get("ExamTable");
 
     if (isset($post["url"])) {
-
       $examTb->createExam($post);
 
       echo "
@@ -265,7 +277,7 @@ class AdminController extends AbstractActionController
     $questionTb = $this->getServiceLocator()->get("QuestionPoolTable");
     $typeTb = $this->getServiceLocator()->get("QuestionTypeTable");
 
-		/* 機能の変更
+		/* 機能の変更と改善
 			作成：朴夏成
 			修正：朴夏成
 			修正日：2024/02/21
@@ -273,11 +285,6 @@ class AdminController extends AbstractActionController
 
 		/* 修正前：
     $tempDatas = $questionTb->ReadRandByTypenLevelnNum($session->offsetGet("type"), $session->offsetGet("level"), $session->offsetGet("num"));
-		*/
-
-		/* 修正後： */
-		$tempDatas = $questionTb->ReadRandForExam($session->offsetGet("type"), $session->offsetGet("academic"), $session->offsetGet("career"), $session->offsetGet("certificate"), $session->offsetGet("num"));
-		/* ここまで */
 
     $questionDatas = [];
     $typeTitles = [];
@@ -291,6 +298,23 @@ class AdminController extends AbstractActionController
     $datas["questionDatas"] = $questionDatas;
     $datas["typeTitles"] = $typeTitles;
     $datas["question_data"] = $question_data;
+		*/
+
+		/* 修正後： */
+		$questionDatas = iterator_to_array($questionTb->ReadRandForExam($session->offsetGet("type"), $session->offsetGet("academic"), $session->offsetGet("career"), $session->offsetGet("certificate"), $session->offsetGet("num")));
+		$datas["questionDatas"] = $questionDatas;
+		
+		$typeTitles = [];
+		$question_data = "";
+		foreach ($questionDatas as $index => $data) {
+			$typeTitles[$index] = $typeTb->readByType($data["question_type"])["question_title"];
+			$question_data = $question_data . $data["idx"] . ",";
+		}
+		$question_data = substr($question_data, 0, -1);
+		
+		$datas["typeTitles"] = $typeTitles;
+		$datas["question_data"] = $question_data;
+		/* ここまで */
 
     $rndUrl = "";
     do {
@@ -311,9 +335,22 @@ class AdminController extends AbstractActionController
     } while (!empty($examTb->readByUrl($rndUrl)));
     $datas["rndUrl"] = $rndUrl;
 
+		/* コードデバッグ
+			作成：朴昰成
+			修正：朴昰成
+			修正日：2027/02/26
+		*/
+
+		/* 修正前
     $breadcrumb[0] = "応募者状況管理";
     $breadcrumb[1] = "試験登録";
     $breadcrumb[2] = "確認";
+		*/
+
+		/* 修正後 */
+		$breadcrumb = array("応募者状況管理", "試験登録", "確認");
+		/* ここまで */
+		
     $this->layout()->breadcrumb = json_encode($breadcrumb);
 
     //view==============================================================
@@ -331,8 +368,21 @@ class AdminController extends AbstractActionController
     $datas["totalPage"] = intval($examTb->readCount() / 10 + 1);
     $datas["cPage"] = $page;
 
+		/* コードデバッグ
+			作成：朴昰成
+			修正：朴昰成
+			修正日：2027/02/26
+		*/
+
+		/* 修正前
     $breadcrumb[0] = "応募者状況管理";
     $breadcrumb[1] = "試験一覧";
+		*/
+
+		/* 修正後 */
+		$breadcrumb = array("応募者状況管理", "試験一覧");
+		/* ここまで */
+		
     $this->layout()->breadcrumb = json_encode($breadcrumb);
 
     //view==============================================================

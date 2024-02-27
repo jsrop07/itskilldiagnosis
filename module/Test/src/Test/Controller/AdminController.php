@@ -191,8 +191,26 @@ class AdminController extends AbstractActionController
   {
     $post = $this->params()->fromPost();
 
+		/* 機能変更
+			作成：朴夏成
+			修正：朴夏成
+			修正日：2024/02/27
+		*/
+		
+		/* 修正前：
     if (isset($post["type"])) {
+		*/
+
+		/* 修正後： */
+		if (isset($post["name"])) {
+		/* ここまで */
       $session = new Container("exam");
+			/* 機能追加
+				作成：朴夏成
+				作成日：2027/02/27
+			*/
+			$session->getManager()->getStorage()->clear();
+			/* ここまで */
 
       foreach ($post as $key => $data) {
         $session->offsetSet($key, $data);
@@ -248,7 +266,6 @@ class AdminController extends AbstractActionController
 		/* 修正後 */
 		$breadcrumb = array("応募者状況管理", "試験登録");
 		/* ここまで */
-
     $this->layout()->breadcrumb = json_encode($breadcrumb);
 
     //view==============================================================
@@ -350,7 +367,6 @@ class AdminController extends AbstractActionController
 		/* 修正後 */
 		$breadcrumb = array("応募者状況管理", "試験登録", "確認");
 		/* ここまで */
-		
     $this->layout()->breadcrumb = json_encode($breadcrumb);
 
     //view==============================================================
@@ -382,7 +398,6 @@ class AdminController extends AbstractActionController
 		/* 修正後 */
 		$breadcrumb = array("応募者状況管理", "試験一覧");
 		/* ここまで */
-		
     $this->layout()->breadcrumb = json_encode($breadcrumb);
 
     //view==============================================================

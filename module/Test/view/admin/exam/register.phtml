@@ -46,37 +46,40 @@
 			<?php */ ?> -->
 
 			<!-- 修正後： -->
-			<span>(*)最終学歴</span>
-			<select name="academic">
-				<option value=1>高等学校</option>
-				<option value=2>専門学校</option>
-				<option value=3>短期大学</option>
-				<option value=4 selected>大学</option>
-				<option value=5>大学院</option>
-				<option value=0>その他</option>
-			</select>
+			<input type="checkbox" id="chk_only_url"/>URLのみ発給
+
+			<div id="input_place">
+				<span>(*)最終学歴</span>
+				<select name="academic">
+					<option value=1>高等学校</option>
+					<option value=2>専門学校</option>
+					<option value=3>短期大学</option>
+					<option value=4 selected>大学</option>
+					<option value=5>大学院</option>
+					<option value=0>その他</option>
+				</select>
 			
-			<br/>
+				<br/>
 			
-			<span>(*)問題種別</span>
-			<select name="type">
-				<?php foreach ($types as $type): ?>
-					<option value="<?php echo $type["question_type"]; ?>"><?php echo $type["question_title"]; ?></option>
-				<?php endforeach; ?>
-			</select>
+				<span>(*)問題種別</span>
+				<select name="type">
+					<?php foreach ($types as $type): ?>
+						<option value="<?php echo $type["question_type"]; ?>"><?php echo $type["question_title"]; ?></option>
+					<?php endforeach; ?>
+				</select>
 			
-			<br/>
+				<br/>
 			
-			<span>(*)経歴</span>
-			<input class="form-control" name="career" placeholder="年単位に数字だけ入力してください。">
+				<span>(*)経歴</span>
+				<input class="form-control" name="career" placeholder="年単位に数字だけ入力してください。">
 			
-			<br/>
+				<br/>
 			
-			<span>(*)資格(IT)</span>
-			<select name="certificate">
-				<option value=0 selected>無</option>
-				<option value=1>有</option>
-			</select>
+				<span>(*)資格(IT)</span>
+				<select name="certificate">
+					<option value=0 selected>無</option>
+					<option value=1>有</option>
+				</select>
 			<!-- ここまで -->
 
       <div class="d-flex flex-row mb-1 align-items-baseline">
@@ -86,6 +89,12 @@
           <option value=20>20</option>
         </select>
       </div>
+			<!-- div追加
+				作成：朴夏成
+				作成日：2024/02/27
+			-->
+			</div>
+			<!-- ここまで -->
     </div>
   </form>
   <div class="mt-2 d-flex flex-row justify-content-center gap-3">

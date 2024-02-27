@@ -100,14 +100,14 @@ $level[3] = "高級";
 			<?php foreach ($examDatas as $idx => $data): ?>
 				<tr onclick="self.location.href='./list/detail/<?php echo $data['idx']; ?>'">
 					<td><?= $dataIndex - $idx; ?></td>
-					<td><?php echo $academicText[$data["academic"]]; ?></td>
-					<td><?php echo $data["career"]; ?></td>
-					<td><?php echo $certificateText[$data["certificate"]]; ?></td>
+					<td><?php echo ($data["academic"] == null) ? "未対応" : $academicText[$data["academic"]]; ?></td>
+					<td><?php echo ($data["career"] == null) ? "未対応" : $data["career"]; ?></td>
+					<td><?php echo ($data["certificate"] == null) ? "未対応" : $certificateText[$data["certificate"]]; ?></td>
 					<td><?php echo $data["name"]; ?></td>
 					<td><?php echo date("Y-m-d", strtotime($data["write_date"])); ?></td>
-					<td><?php echo $data["execute_date"] == null ? "未対応" : date("Y-m-d", strtotime($data["execute_date"])); ?></td>
-					<td><?php echo $data["question_nums"]; ?></td>
-					<td><?php echo $data["get_point"] == null ? "未対応" : $data["get_point"]; ?></td>
+					<td><?php echo ($data["execute_date"] == null) ? "未対応" : date("Y-m-d", strtotime($data["execute_date"])); ?></td>
+					<td><?php echo ($data["question_nums"] == null) ? "未対応" : $data["question_nums"]; ?></td>
+					<td><?php echo ($data["get_point"] == null) ? "未対応" : $data["get_point"]; ?></td>
 				</tr>
 			<?php endforeach; ?>
 		</tbody>
@@ -116,29 +116,29 @@ $level[3] = "高級";
 	<nav>
 		<ul class="pagination">
 			<li class="page-item">
-				<a class="page-link <?php echo $cPage == 1 ? "disabled" : ""; ?>" href="list?page=1">first</a>
+				<a class="page-link <?php echo ($cPage == 1) ? "disabled" : ""; ?>" href="list?page=1">first</a>
 			</li>
 			
 			<li class="page-item">
-				<a class="page-link <?php echo $cPage == 1 ? "disabled" : ""; ?>"	 href="list?page=<?= $cPage - 1; ?>">
+				<a class="page-link <?php echo ($cPage == 1) ? "disabled" : ""; ?>" href="list?page=<?= $cPage - 1; ?>">
 					<span class="unclick">&laquo;</span>
 				</a>
 			</li>
 			
 			<?php for ($page = 1; $page <= $totalPage; $page = $page + 1): ?>
-				<li class="page-item <?php echo $page == $cPage ? "active" : ""; ?>">
+				<li class="page-item <?php echo ($page == $cPage) ? "active" : ""; ?>">
 					<a class="page-link" href="list?page=<?= $page; ?>"><?= $page; ?></a>
 				</li>
 			<?php endfor; ?>
 			
 			<li class="page-item">
-				<a class="page-link <?php echo $cPage == $totalPage ? "disabled" : ""; ?>"	 href="list?page=<?= $cPage + 1; ?>">
+				<a class="page-link <?php echo ($cPage == $totalPage) ? "disabled" : ""; ?>" href="list?page=<?= $cPage + 1; ?>">
 					<span class="unclick">&raquo;</span>
 				</a>
 			</li>
 			
 			<li class="page-item">
-			<a class="page-link <?php echo $cPage == $totalPage ? "disabled" : ""; ?>" href="list?page=<?= $totalPage ?>">last</a>
+				<a class="page-link <?php echo ($cPage == $totalPage) ? "disabled" : ""; ?>" href="list?page=<?= $totalPage; ?>">last</a>
 			</li>
 		</ul>
 	</nav>

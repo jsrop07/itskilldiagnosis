@@ -248,7 +248,6 @@ class AdminController extends AbstractActionController
 		/* 修正後 */
 		$breadcrumb = array("応募者状況管理", "試験登録");
 		/* ここまで */
-
     $this->layout()->breadcrumb = json_encode($breadcrumb);
 
     //view==============================================================
@@ -350,7 +349,6 @@ class AdminController extends AbstractActionController
 		/* 修正後 */
 		$breadcrumb = array("応募者状況管理", "試験登録", "確認");
 		/* ここまで */
-		
     $this->layout()->breadcrumb = json_encode($breadcrumb);
 
     //view==============================================================
@@ -382,7 +380,6 @@ class AdminController extends AbstractActionController
 		/* 修正後 */
 		$breadcrumb = array("応募者状況管理", "試験一覧");
 		/* ここまで */
-		
     $this->layout()->breadcrumb = json_encode($breadcrumb);
 
     //view==============================================================

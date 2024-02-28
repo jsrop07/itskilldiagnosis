@@ -123,36 +123,28 @@ $questionData = $_SESSION["question"];
 
 $academicTitle = "";
 switch ($questionData["academic"]) {
-  case 1:
+  case 0:
     $academicTitle = "その他";
     break;
-  case 2:
+  case 1:
     $academicTitle = "高等学校";
     break;
-  case 3:
+  case 2:
     $academicTitle = "専門学校";
     break;
-  case 4:
+  case 3:
     $academicTitle = "短期大学";
     break;  
-  case 5:
+  case 4:
     $academicTitle = "大学";
     break;  
-  case 6:
+  case 5:
     $academicTitle = "大学院";
     break;    
 }
 
-$questionData['career'];
 
-$certificate = "";
-switch ($questionData["certificate"]){
-  case 1:
-    $certificateTitle = "無";
-  case 2:
-    $certificateTitle= "有";
-}
-
+$certificateTitle=array("無","有");
 
 $nums[1] = "①";
 $nums[2] = "②";
@@ -193,7 +185,7 @@ $nums[5] = "⑤";
         <td class="col-3 text-left border-light"><?= $questionData['career'] ?>年</td>
         
         <td class="col-3 text-right border-light">資格(IT) :</td>
-        <td class="col-3 text-left border-light"><?= $certificateTitle ?></td>
+        <td class="col-3 text-left border-light"><?= $certificateTitle[$questionData["certificate"]] ?></td>
       </tr>
     </table>
   </div>
@@ -232,7 +224,7 @@ $nums[5] = "⑤";
 
   <div class="mt-2 d-flex flex-row justify-content-center gap-3">
     <button class="btn btn-primary" id="regist-bt">登録</button>
-    <button class="btn btn-primary" id="return-bt">戻る</button>
+    <button class="btn btn-primary" id="return-bt" onclick="history.back()">戻る</button>
   </div>
 </div>
 
@@ -244,12 +236,5 @@ document.getElementById("regist-bt").addEventListener("click", function() {
   }
 });
 
-document.getElementById("return-bt").addEventListener("click", function() {
-  sessionStorage.setItem("return", "question");
-  <?php foreach ($questionData as $key => $data) : ?>
-  sessionStorage.setItem("<?= $key ?>", "<?= $data ?>");
-  <?php endforeach; ?>
-  window.location.href = "../register";
-});
 </script>
 <!-- ここまで -->

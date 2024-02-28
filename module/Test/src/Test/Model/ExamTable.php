@@ -65,13 +65,11 @@ class ExamTable
 		);
 
 		if (isset($post["academic"])) {
-			array_push($data,
-				"academic" => $post["academic"],
-				"career" => $post["career"],
-				"certificate" => $post["certificate"]
-				"question_nums" => $post["num"],
-				"question_data" => $post["question_data"]
-			);
+			$data["academic"] = $post["academic"];
+			$data["career"] = $post["career"];
+			$data["certificate"] = $post["certificate"];
+			$data["question_nums"] = $post["num"];
+			$data["question_data"] = $post["question_data"];
 		}
 		/* ここまで */
 

@@ -191,7 +191,7 @@ class AdminController extends AbstractActionController
   {
     $post = $this->params()->fromPost();
 
-		/* 機能変更
+		/* 機能変更と追加
 			作成：朴夏成
 			修正：朴夏成
 			修正日：2024/02/27
@@ -199,18 +199,14 @@ class AdminController extends AbstractActionController
 		
 		/* 修正前：
     if (isset($post["type"])) {
+      $session = new Container("exam");
 		*/
 
 		/* 修正後： */
 		if (isset($post["name"])) {
-		/* ここまで */
-      $session = new Container("exam");
-			/* 機能追加
-				作成：朴夏成
-				作成日：2027/02/27
-			*/
+			$session = new Container("exam");
 			$session->getManager()->getStorage()->clear();
-			/* ここまで */
+		/* ここまで */
 
       foreach ($post as $key => $data) {
         $session->offsetSet($key, $data);

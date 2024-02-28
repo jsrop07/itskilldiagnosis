@@ -50,15 +50,19 @@ switch ($examData["level"]) {
 
 		<!-- 修正前： <?php /* ?>
     <input name="level" type="hidden" value="<?= $examData["level"] ?>">
+    <input name="num" type="hidden" value="<?= $examData["num"] ?>">
+    <input name="question_data" type="hidden" value="<?= $question_data ?>">
 		<?php */ ?> -->
 
 		<!-- 修正後： -->
-		<input name="academic" type="hidden" value="<?= $examData["academic"]; ?>"/>
-		<input name="career" type="hidden" value="<?= $examData["career"]; ?>"/>
-		<input name="certificate" type="hidden" value="<?= $examData["certificate"]; ?>"/>
+		<?php if(!isset($examData["setLevel"])): ?>
+			<input name="academic" type="hidden" value="<?= $examData["academic"]; ?>"/>
+			<input name="career" type="hidden" value="<?= $examData["career"]; ?>"/>
+			<input name="certificate" type="hidden" value="<?= $examData["certificate"]; ?>"/>
+			<input name="num" type="hidden" value="<?= $examData["num"]; ?>"/>
+			<input name="question_data" type="hidden" value="<?= $question_data; ?>"/>
+		<?php endif; ?>
 		<!-- ここまで -->
-    <input name="num" type="hidden" value="<?= $examData["num"] ?>">
-    <input name="question_data" type="hidden" value="<?= $question_data ?>">
   </form>
   <p class="mb-5 h2">試験登録/確認</p>
 

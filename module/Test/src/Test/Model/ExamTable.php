@@ -36,32 +36,44 @@ class ExamTable
 
   public function createExam($post)
   {
+		/* データの変更
+			作成：朴夏成
+			修正：朴夏成
+			修正日：2024/02/22
+		*/
+
+		/* 修正前：
     $data = array(
       "url" => $post["url"],
       "user_id" => $post["id"],
       "user_pw" => $post["password"],
       "name" => $post["name"],
       "write_date" => date("Y-m-d H:i:s"),
-
-			/* データの変更
-				作成：朴夏成
-				修正：朴夏成
-				修正日：2024/02/22
-			*/
-
-			/* 修正前：
       "question_level" => $post["level"],
-			*/
-
-			/* 修正後： */
-			"academic" => $post["academic"],
-			"career" => $post["career"],
-			"certificate" => $post["certificate"],
-			/* ここまで */
-
       "question_nums" => $post["num"],
       "question_data" => $post["question_data"],
     );
+		*/
+
+		/* 修正後： */
+		$data = array(
+			"url" => $post["url"],
+			"user_id" => $post["id"],
+			"user_pw" => $post["password"],
+			"name" => $post["name"],
+			"write_date" => date("Y-m-d H:i:s"),
+		);
+
+		if (isset($post["academic"])) {
+			array_push($data,
+				"academic" => $post["academic"],
+				"career" => $post["career"],
+				"certificate" => $post["certificate"]
+				"question_nums" => $post["num"],
+				"question_data" => $post["question_data"]
+			);
+		}
+		/* ここまで */
 
     $qry = $this->sql->insert("exam")->values($data);
     return $this->sql->prepareStatementForSqlObject($qry)->execute();

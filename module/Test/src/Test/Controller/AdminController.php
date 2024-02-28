@@ -290,10 +290,6 @@ class AdminController extends AbstractActionController
       ";
     }
 
-    $session = new Container("exam");
-    $questionTb = $this->getServiceLocator()->get("QuestionPoolTable");
-    $typeTb = $this->getServiceLocator()->get("QuestionTypeTable");
-
 		/* 機能の変更と改善
 			作成：朴夏成
 			修正：朴夏成
@@ -301,6 +297,11 @@ class AdminController extends AbstractActionController
 		*/
 
 		/* 修正前：
+    $session = new Container("exam");
+
+    $questionTb = $this->getServiceLocator()->get("QuestionPoolTable");
+    $typeTb = $this->getServiceLocator()->get("QuestionTypeTable");
+
     $tempDatas = $questionTb->ReadRandByTypenLevelnNum($session->offsetGet("type"), $session->offsetGet("level"), $session->offsetGet("num"));
 
     $questionDatas = [];
@@ -318,19 +319,26 @@ class AdminController extends AbstractActionController
 		*/
 
 		/* 修正後： */
-		$questionDatas = iterator_to_array($questionTb->ReadRandForExam($session->offsetGet("type"), $session->offsetGet("academic"), $session->offsetGet("career"), $session->offsetGet("certificate"), $session->offsetGet("num")));
-		$datas["questionDatas"] = $questionDatas;
+		if (!isset($post["setLevel"])) {
+			$session = new Container("exam");
+
+			$questionTb = $this->getServiceLocator()->get("QuestionPoolTable");
+			$typeTb = $this->getServiceLocator()->get("QuestionTypeTable");
+
+			$questionDatas = iterator_to_array($questionTb->ReadRandForExam($session->offsetGet("type"), $session->offsetGet("academic"), $session->offsetGet("career"), $session->offsetGet("certificate"), $session->offsetGet("num")));
+			$datas["questionDatas"] = $questionDatas;
 		
-		$typeTitles = [];
-		$question_data = "";
-		foreach ($questionDatas as $index => $data) {
-			$typeTitles[$index] = $typeTb->readByType($data["question_type"])["question_title"];
-			$question_data = $question_data . $data["idx"] . ",";
+			$typeTitles = [];
+			$question_data = "";
+			foreach ($questionDatas as $index => $data) {
+				$typeTitles[$index] = $typeTb->readByType($data["question_type"])["question_title"];
+				$question_data = $question_data . $data["idx"] . ",";
+			}
+			$datas["typeTitles"] = $typeTitles;
+
+			$question_data = substr($question_data, 0, -1);
+			$datas["question_data"] = $question_data;
 		}
-		$question_data = substr($question_data, 0, -1);
-		
-		$datas["typeTitles"] = $typeTitles;
-		$datas["question_data"] = $question_data;
 		/* ここまで */
 
     $rndUrl = "";

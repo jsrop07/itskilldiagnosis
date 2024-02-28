@@ -5,7 +5,7 @@ if (!isset($_SESSION)) {
 
 $examData = $_SESSION["exam"];
 
-	/* 機能削除と追加
+	/* 機能の削除と追加
 		作成：朴夏成
 		修正：朴夏成
 		修正日：2024/02/21
@@ -34,7 +34,6 @@ switch ($examData["level"]) {
 	$certificateTexts = array("無", "有");
 	$academicTexts = array("その他", "高等学校", "専門学校", "短期大学", "大学", "大学院");
 	/* ここまで */
-
 ?>
 
 <div class="p-5 align-self-center w-75">
@@ -43,25 +42,27 @@ switch ($examData["level"]) {
     <input name="id" type="hidden" value="<?= $examData["id"] ?>">
     <input name="password" type="hidden" value="<?= $examData["password"] ?>">
     <input name="name" type="hidden" value="<?= $examData["name"] ?>">
-
-		<!-- 機能削除と追加
+		<!-- 機能の削除と追加
 			作成：朴夏成
 			修正：朴夏成
 			修正日：2024/02/21
 		-->
-		
+
 		<!-- 修正前： <?php /* ?>
     <input name="level" type="hidden" value="<?= $examData["level"] ?>">
+    <input name="num" type="hidden" value="<?= $examData["num"] ?>">
+    <input name="question_data" type="hidden" value="<?= $question_data ?>">
 		<?php */ ?> -->
 
 		<!-- 修正後： -->
-    <input name="academic" type="hidden" value="<?= $examData["academic"]; ?>">
-    <input name="career" type="hidden" value="<?= $examData["career"]; ?>">
-    <input name="certificate" type="hidden" value="<?= $examData["certificate"]; ?>">
+		<?php if(!isset($examData["setLevel"])): ?>
+			<input name="academic" type="hidden" value="<?= $examData["academic"]; ?>"/>
+			<input name="career" type="hidden" value="<?= $examData["career"]; ?>"/>
+			<input name="certificate" type="hidden" value="<?= $examData["certificate"]; ?>"/>
+			<input name="num" type="hidden" value="<?= $examData["num"]; ?>"/>
+			<input name="question_data" type="hidden" value="<?= $question_data; ?>"/>
+		<?php endif; ?>
 		<!-- ここまで -->
-
-    <input name="num" type="hidden" value="<?= $examData["num"] ?>">
-    <input name="question_data" type="hidden" value="<?= $question_data ?>">
   </form>
   <p class="mb-5 h2">試験登録/確認</p>
 
@@ -86,16 +87,15 @@ switch ($examData["level"]) {
     </table>
   </div>
 
+	<!-- 機能の修正
+		作成：朴夏成
+		修正：朴夏成
+		修正日：2024/02/21
+	-->
+
+	<!-- 修正前： <?php /* ?>
   <p class="mt-4 mb-3">setting</p>
   <div class="p-3 rounded-3 d-flex flex-column bg-light">
-
-		<!-- 機能修正
-			作成：朴夏成
-			修正：朴夏成
-			修正日：2024/02/21
-		-->
-
-		<!-- 修正前： <?php /* ?>
     <table class="w-100">
       <tr style="height: 50px;">
         <td class="col-2 text-right border-light">レベル : </td>
@@ -132,48 +132,65 @@ switch ($examData["level"]) {
         <?php endforeach; ?>
       </table>
     </div>
-		<?php */ ?> -->
-		
-		<!-- 修正後： -->
-		<p>学歴 : <?php echo $academicTexts[$examData["academic"]]; ?></p>
-		<p>種別 : <?php echo $examData["typeTitle"]; ?></p>
-		<p>経歴 : <?php echo $examData["career"]; ?></p>
-		<p>資格 : <?php echo $certificateTexts[$examData["certificate"]]; ?></p>
-		<p>問題数 : <?php echo $examData["num"]; ?></p>
-		
-		<table>
-			<thead>
-				<tr>
-					<th>No.</th>
-					<th>学歴</th>
-					<th>種別</th>
-					<th>経歴</th>
-					<th>資格</th>
-					<th>問題</th>
-					<th>登録日</th>
-				</tr>
-			</thead>
-
-			<tbody>
-				<?php foreach ($questionDatas as $index => $data) : ?>
-					<tr style="cursor: pointer;" onclick="Move2Detail(<?= $data['idx'] ?>)">
-						<td><?= $index + 1; ?></td>
-						<td><?php echo $academicTexts[$data["academic"]]; ?></td>
-            <td><?php echo $typeTitles[$index] ?></td>
-						<td><?php echo $data["career"]; ?></td>
-						<td><?php echo $certificateTexts[$data["certificate"]]; ?></td>
-						<td><?php echo $data["question"]; ?></td>
-						<td><?php echo date("Y-m-d", strtotime($data["wdate"])); ?></td>
-					</tr>
-				<?php endforeach; ?>
-			</tbody>
-		</table>
-		<!-- ここまで -->
   </div>
+	<?php */ ?> -->
+
+	<!-- 修正後： -->
+	<?php if(!isset($examData["setLevel"])): ?>
+		<p>setting</p>
+		<div>
+			<p>最終学歴 : <?php echo $academicTexts[$examData["academic"]]; ?></p>
+			<p>種別 : <?php echo $examData["typeTitle"]; ?></p>
+			<p>経歴 : <?php echo $examData["career"]; ?></p>
+			<p>資格(IT) : <?php echo $certificateTexts[$examData["certificate"]]; ?></p>
+			<p>問題数 : <?php echo $examData["num"]; ?></p>
+		
+			<table>
+				<thead>
+					<tr>
+						<th>No.</th>
+						<th>最終学歴</th>
+						<th>種別</th>
+						<th>経歴</th>
+						<th>資格(IT)</th>
+						<th>問題</th>
+						<th>登録日</th>
+					</tr>
+				</thead>
+
+				<tbody>
+					<?php foreach ($questionDatas as $index => $data): ?>
+						<tr onclick="window.location.href='../../question/list/detail/<?php echo $data['idx'] ?>'">
+							<td><?= $index + 1; ?></td>
+							<td><?php echo $academicTexts[$data["academic"]]; ?></td>
+							<td><?php echo $typeTitles[$index] ?></td>
+							<td><?php echo $data["career"]; ?></td>
+							<td><?php echo $certificateTexts[$data["certificate"]]; ?></td>
+							<td><?php echo $data["question"]; ?></td>
+							<td><?php echo date("Y-m-d", strtotime($data["wdate"])); ?></td>
+						</tr>
+					<?php endforeach; ?>
+				</tbody>
+			</table>
+		<?php endif; ?>
+	</div>
+	<!-- ここまで -->
 
   <div class="mt-2 d-flex flex-row justify-content-center gap-3">
     <button class="btn btn-primary" id="bt_regist">登録</button>
+		<!-- 機能の追加
+			作成：朴夏成
+			修正：朴夏成
+			修正日：2024/02/22
+		-->
+
+		<!-- 修正前： <?php /* ?>
     <button class="btn btn-primary" id="bt_return">戻る</button>
+		<?php */ ?> -->
+
+		<!-- 修正後： -->
+		<button class="btn btn-primary" id="bt_return" onclick="history.back()">戻る</button>
+		<!-- ここまで -->
   </div>
 </div>
 
@@ -185,6 +202,12 @@ switch ($examData["level"]) {
     }
   });
 
+	/* 機能の削除
+		作成：朴夏成
+		削除：朴夏成
+		削除日：2024/02/22
+
+	削除前： <?php /* ?>
   document.getElementById("bt_return").addEventListener("click", function() {
     sessionStorage.setItem("return", "exam");
     <?php foreach ($examData as $key => $data) : ?>
@@ -192,4 +215,5 @@ switch ($examData["level"]) {
     <?php endforeach; ?>
     window.location.href = "../register";
   });
+	ここまで <?php */ ?> */
 </script>

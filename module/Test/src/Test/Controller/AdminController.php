@@ -416,6 +416,13 @@ class AdminController extends AbstractActionController
     $examData = $examTb->readByIdx($idx);
     $datas["examData"] = $examData;
 
+		/* 機能の追加と変更
+			作成：朴夏成
+			修正：朴夏成
+			修正日：2024/02/28
+		*/
+
+		/* 修正前：
     $questionTb = $this->getServiceLocator()->get("QuestionPoolTable");
     $typeTb = $this->getServiceLocator()->get("QuestionTypeTable");
 
@@ -449,6 +456,43 @@ class AdminController extends AbstractActionController
     $breadcrumb[0] = "応募者状況管理";
     $breadcrumb[1] = "試験一覧";
     $breadcrumb[2] = "試験詳細";
+		*/
+
+		/* 修正後 */
+		if ($examData["academic"] != null) {
+			$questionTb = $this->getServiceLocator()->get("QuestionPoolTable");
+			$typeTb = $this->getServiceLocator()->get("QuestionTypeTable");
+	
+			$questionDatas = [];
+			$typeTitles = [];
+			$questionIdxs = explode(",", $examData["question_data"]);
+			foreach ($questionIdxs as $index => $idx) {
+				$questionDatas[$index] = $questionTb->readByIdx($idx);
+				$typeTitles[$index] = $typeTb->readByType($questionDatas[$index]["question_type"])["question_title"];
+			}
+			$datas["questionDatas"] = $questionDatas;
+			$datas["typeTitles"] = $typeTitles;
+	
+			$corrects = [];
+			if ($examData["get_point"] == null) {
+				for ($i = 0; $i < $examData["question_nums"]; $i++) {
+					$corrects[$i] = "未対応";
+				}
+			} else {
+				$answers = explode(",", $examData["answer_data"]);
+				foreach ($answers as $index => $answer) {
+					if ($answer == $questionDatas[$index]["correct_answer"]) {
+						$corrects[$index] = "O";
+					} else {
+						$corrects[$index] = "X";
+					}
+				}
+			}
+			$datas["corrects"] = $corrects;
+		}
+
+		$breadcrumb = array("応募者状況管理", "試験一覧", "試験詳細");
+		/* ここまで */
     $this->layout()->breadcrumb = json_encode($breadcrumb);
 
     //view==============================================================

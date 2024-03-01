@@ -46,23 +46,28 @@
 			<?php */ ?> -->
 
 			<!-- 修正後： -->
-			<input type="checkbox" name="setLevel"/>URLのみ発給
+			<input type="radio" name="setQuestion" id="set" value="true" checked="checked"/><label for="set">問題出題後配信（試験画面へ）</label><br/>
+			<input type="radio" name="setQuestion" id="unset" value="false"/><label for="unset">情報確認後試験（情報確認画面へ）</label>
 
 			<div id="setting_place">
 				<span>(*)最終学歴</span>
 				<select name="academic">
+					<option value="" selected disabled hidden>選択してください</option>
 					<option value=1>高等学校</option>
 					<option value=2>専門学校</option>
 					<option value=3>短期大学</option>
-					<option value=4 selected>大学</option>
+					<option value=4>大学</option>
 					<option value=5>大学院</option>
 					<option value=0>その他</option>
 				</select>
+
+				<input type="checkbox" name="major"/>IT専攻
 			
 				<br/>
 			
 				<span>(*)問題種別</span>
 				<select name="type">
+					<option value="" selected disabled hidden>選択してください</option>
 					<?php foreach ($types as $type): ?>
 						<option value="<?php echo $type["question_type"]; ?>"><?php echo $type["question_title"]; ?></option>
 					<?php endforeach; ?>
@@ -75,11 +80,8 @@
 			
 				<br/>
 			
-				<span>(*)資格(IT)</span>
-				<select name="certificate">
-					<option value=0 selected>無</option>
-					<option value=1>有</option>
-				</select>
+				<span>(*)資格</span>
+				<input class="form-control" name="certificate" placeholder="資格の名を入力してください。">
 			<!-- ここまで -->
 
       <div class="d-flex flex-row mb-1 align-items-baseline">

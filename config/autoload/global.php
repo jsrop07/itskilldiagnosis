@@ -5,11 +5,11 @@ $_SERVER['SITE_URL'] = $_SERVER['HTTP_HOST'];
 return array(
         'db' => array(
                 'driver'         => 'Pdo',
-                'dsn'            => 'mysql:dbname=goms_exam;host=localhost',
+                'dsn'            => 'mysql:dbname=gngservice_goms_qb;host=namecardtest.gngservice.jp',
                 'username' => 'root',
-                'password' => '951753',
-                'dbname' => 'goms_exam',
-                'host' => 'localhost',
+                'password' => 'gngs12345',
+                'dbname' => 'gngservice_goms_qb',
+                'host' => 'namecardtest.gngservice.jp',
                 'driver_options' => array(
                         PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8mb4",
                         'buffer_results' => true,

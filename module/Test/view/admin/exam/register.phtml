@@ -16,8 +16,21 @@
         <input class="form-control" name="name" placeholder="名前を入力してください">
       </div>
       <div class="d-flex flex-row mb-3 align-items-baseline gap-2">
+				<!-- 表示するデータの変更
+					作成：朴夏成
+					修正：朴夏成
+					修正前：2024/03/01
+				-->
+
+				<!-- 修正前： <?php /* ?>
         <span class="w-25">(*)ログインID</span>
         <input class="form-control" name="id" placeholder="ログインIDを入力してください" value="<?= $rndId ?>">
+				<?php */ ?> -->
+
+				<!-- 修正後： -->
+        <span class="w-25">(*)ログインID(メイル)</span>
+        <input class="form-control" name="id" placeholder="ログインID(メイル)を入力してください">
+				<!-- ここまで -->
       </div>
       <div class="d-flex flex-row mb-1 align-items-baseline gap-2">
         <span class="w-25">(*)パスワード</span>

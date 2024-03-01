@@ -219,6 +219,12 @@ class AdminController extends AbstractActionController
     $typeTb = $this->getServiceLocator()->get("QuestionTypeTable");
     $datas["types"] = $typeTb->readAll();
 
+		/* 機能の削除
+			作成：朴夏成
+			削除：朴夏成
+			削除日：2024/03/01
+
+		削除前：
     $rndId = "";
     for ($i = 0; $i < 10; $i++) {
       switch (rand(0, 1)) {
@@ -231,6 +237,7 @@ class AdminController extends AbstractActionController
       }
     }
     $datas["rndId"] = $rndId;
+		ここまで */
 
     $rndPassword = "";
     for ($i = 0; $i < 8; $i++) {

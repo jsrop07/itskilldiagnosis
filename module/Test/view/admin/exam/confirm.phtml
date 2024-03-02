@@ -136,23 +136,33 @@ switch ($examData["level"]) {
 	<?php */ ?> -->
 
 	<!-- 修正後： -->
-	<?php if(!isset($examData["setLevel"])): ?>
-		<p>setting</p>
-		<div>
-			<p>最終学歴 : <?php echo $academicTexts[$examData["academic"]]; ?></p>
-			<p>種別 : <?php echo $examData["typeTitle"]; ?></p>
-			<p>経歴 : <?php echo $examData["career"]; ?></p>
-			<p>資格(IT) : <?php echo $certificateTexts[$examData["certificate"]]; ?></p>
-			<p>問題数 : <?php echo $examData["num"]; ?></p>
+	<p>設定</p>
+	<div>
+		<p>最終学歴 : <?php echo ($examData["academic"] == "") ? "未設定" : $academicTexts[$examData["academic"]]; ?></p>
+		<p>IT専攻 <?php echo (isset($examData["major"])) ? "O" : "X"; ?></p>
+		<p>種別 : <?php echo ($examData["type"] == "") ? "未設定" : $examData["typeTitle"]; ?></p>
+		<p>経歴 : <?php echo ($examData["career"] == "") ? "未設定" : $examData["career"]; ?></p>
+		<p>
+			資格(IT) : 
+			<?php if ($examData["certificate"] == ""): ?>
+				<?php if ($examData["setQuestion"] == "true"): ?>
+					無
+				<?php else: ?>
+					未設定
+				<?php endif; ?>
+			<?php else: ?>
+				<?php foreach ($examData["certificate"] as $data): ?>
+					<?php echo $data; ?>
+				<?php endforeach; ?>
+			<?php endif; ?>
+		</p>
+		<p>問題数 : <?php echo $examData["num"]; ?></p>
 		
+		<?php if ($examData["setQuestion"] == "true"): ?>
 			<table>
 				<thead>
 					<tr>
 						<th>No.</th>
-						<th>最終学歴</th>
-						<th>種別</th>
-						<th>経歴</th>
-						<th>資格(IT)</th>
 						<th>問題</th>
 						<th>登録日</th>
 					</tr>
@@ -162,10 +172,6 @@ switch ($examData["level"]) {
 					<?php foreach ($questionDatas as $index => $data): ?>
 						<tr onclick="window.location.href='../../question/list/detail/<?php echo $data['idx'] ?>'">
 							<td><?= $index + 1; ?></td>
-							<td><?php echo $academicTexts[$data["academic"]]; ?></td>
-							<td><?php echo $typeTitles[$index] ?></td>
-							<td><?php echo $data["career"]; ?></td>
-							<td><?php echo $certificateTexts[$data["certificate"]]; ?></td>
 							<td><?php echo $data["question"]; ?></td>
 							<td><?php echo date("Y-m-d", strtotime($data["wdate"])); ?></td>
 						</tr>

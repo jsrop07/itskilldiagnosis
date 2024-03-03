@@ -31,6 +31,8 @@ switch ($examData["level"]) {
 	*/
 
 	/* 修正後： */
+	$setQ = $examData["setQuestion"];
+
 	$certificateTexts = array("無", "有");
 	$academicTexts = array("その他", "高等学校", "専門学校", "短期大学", "大学", "大学院");
 	/* ここまで */
@@ -55,12 +57,14 @@ switch ($examData["level"]) {
 		<?php */ ?> -->
 
 		<!-- 修正後： -->
-		<?php if(!isset($examData["setLevel"])): ?>
-			<input name="academic" type="hidden" value="<?= $examData["academic"]; ?>"/>
-			<input name="career" type="hidden" value="<?= $examData["career"]; ?>"/>
-			<input name="certificate" type="hidden" value="<?= $examData["certificate"]; ?>"/>
-			<input name="num" type="hidden" value="<?= $examData["num"]; ?>"/>
-			<input name="question_data" type="hidden" value="<?= $question_data; ?>"/>
+		<input name="academic" type="hidden" value="<?php echo $examData["academic"]; ?>"/>
+		<input name="major" type="hidden" value="<?php echo $examData["major"]; ?>"/>
+		<input name="career" type="hidden" value="<?php echo $examData["career"]; ?>"/>
+		<input name="certificates" type="hidden" value=""/>
+		<input name="num" type="hidden" value="<?php echo $examData["num"]; ?>"/>
+
+		<?php if ($setQ == "true"): ?>
+			<input name="question_data" type="hidden" value="<?php echo $question_data; ?>"/>
 		<?php endif; ?>
 		<!-- ここまで -->
   </form>
@@ -145,7 +149,7 @@ switch ($examData["level"]) {
 		<p>
 			資格(IT) : 
 			<?php if ($examData["certificate"] == ""): ?>
-				<?php if ($examData["setQuestion"] == "true"): ?>
+				<?php if ($setQ == "true"): ?>
 					無
 				<?php else: ?>
 					未設定
@@ -158,7 +162,7 @@ switch ($examData["level"]) {
 		</p>
 		<p>問題数 : <?php echo $examData["num"]; ?></p>
 		
-		<?php if ($examData["setQuestion"] == "true"): ?>
+		<?php if ($setQ == "true"): ?>
 			<table>
 				<thead>
 					<tr>
@@ -183,7 +187,6 @@ switch ($examData["level"]) {
 	<!-- ここまで -->
 
   <div class="mt-2 d-flex flex-row justify-content-center gap-3">
-    <button class="btn btn-primary" id="bt_regist">登録</button>
 		<!-- 機能の追加
 			作成：朴夏成
 			修正：朴夏成
@@ -191,16 +194,25 @@ switch ($examData["level"]) {
 		-->
 
 		<!-- 修正前： <?php /* ?>
+    <button class="btn btn-primary" id="bt_regist">登録</button>
     <button class="btn btn-primary" id="bt_return">戻る</button>
 		<?php */ ?> -->
 
 		<!-- 修正後： -->
+    <button class="btn btn-primary" id="bt_regist" onclick="Submit()">登録</button>
 		<button class="btn btn-primary" id="bt_return" onclick="history.back()">戻る</button>
 		<!-- ここまで -->
   </div>
 </div>
 
 <script>
+	/* 機能の削除と変更
+		作成：朴夏成
+		修正：朴夏成
+		修正日：2024/02/22
+	*/
+
+	/* 修正前： <?php /* ?>
   document.getElementById("bt_regist").addEventListener("click", function() {
     var result = confirm("問題を登録しますか？");
     if (result === true) {
@@ -208,12 +220,6 @@ switch ($examData["level"]) {
     }
   });
 
-	/* 機能の削除
-		作成：朴夏成
-		削除：朴夏成
-		削除日：2024/02/22
-
-	削除前： <?php /* ?>
   document.getElementById("bt_return").addEventListener("click", function() {
     sessionStorage.setItem("return", "exam");
     <?php foreach ($examData as $key => $data) : ?>
@@ -221,5 +227,23 @@ switch ($examData["level"]) {
     <?php endforeach; ?>
     window.location.href = "../register";
   });
-	ここまで <?php */ ?> */
+	<?php */ ?> */
+
+	/* 修正後： */
+	const form = document.getElementById("from_exam");
+
+	function Submit() {
+		<?php if (isset($examData["certificate"])): ?>
+			<?php foreach ($examData["certificate"] as $data): ?>
+				form.certificates.value += "<?php echo $data; ?>" + ",";
+			<?php endforeach; ?>
+			form.certificates.value = form.certificates.value.slice(0, -1);
+		<?php endif; ?>
+
+		var result = confirm("問題を登録しますか？");
+		if (result === true) {
+			form.submit();
+		}
+	}
+	/* ここまで */
 </script>

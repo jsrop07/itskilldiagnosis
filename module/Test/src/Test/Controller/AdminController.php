@@ -8,6 +8,8 @@ use Zend\View\Model\ViewModel;
 use Zend\View\Model\JsonModel;
 use Zend\Session\Container;
 
+use Test\Model\MailSender;
+
 class AdminController extends AbstractActionController
 {
   public function loginAction()
@@ -191,8 +193,22 @@ class AdminController extends AbstractActionController
   {
     $post = $this->params()->fromPost();
 
+		/* 機能変更と追加
+			作成：朴夏成
+			修正：朴夏成
+			修正日：2024/02/27
+		*/
+		
+		/* 修正前：
     if (isset($post["type"])) {
       $session = new Container("exam");
+		*/
+
+		/* 修正後： */
+		if (isset($post["name"])) {
+			$session = new Container("exam");
+			$session->getManager()->getStorage()->clear();
+		/* ここまで */
 
       foreach ($post as $key => $data) {
         $session->offsetSet($key, $data);
@@ -205,6 +221,12 @@ class AdminController extends AbstractActionController
     $typeTb = $this->getServiceLocator()->get("QuestionTypeTable");
     $datas["types"] = $typeTb->readAll();
 
+		/* 機能の削除
+			作成：朴夏成
+			削除：朴夏成
+			削除日：2024/03/01
+
+		削除前：
     $rndId = "";
     for ($i = 0; $i < 10; $i++) {
       switch (rand(0, 1)) {
@@ -217,6 +239,7 @@ class AdminController extends AbstractActionController
       }
     }
     $datas["rndId"] = $rndId;
+		ここまで */
 
     $rndPassword = "";
     for ($i = 0; $i < 8; $i++) {
@@ -234,8 +257,20 @@ class AdminController extends AbstractActionController
     }
     $datas["rndPassword"] = $rndPassword;
 
+		/* コードデバッグ
+			作成：朴昰成
+			修正：朴昰成
+			修正日：2027/02/26
+		*/
+
+		/* 修正前
     $breadcrumb[0] = "応募者状況管理";
     $breadcrumb[1] = "試験登録";
+		*/
+
+		/* 修正後 */
+		$breadcrumb = array("応募者状況管理", "試験登録");
+		/* ここまで */
     $this->layout()->breadcrumb = json_encode($breadcrumb);
 
     //view==============================================================
@@ -250,7 +285,6 @@ class AdminController extends AbstractActionController
     $examTb = $this->getServiceLocator()->get("ExamTable");
 
     if (isset($post["url"])) {
-
       $examTb->createExam($post);
 
       echo "
@@ -261,7 +295,15 @@ class AdminController extends AbstractActionController
       ";
     }
 
+		/* 機能の変更と改善
+			作成：朴夏成
+			修正：朴夏成
+			修正日：2024/02/21
+		*/
+
+		/* 修正前：
     $session = new Container("exam");
+
     $questionTb = $this->getServiceLocator()->get("QuestionPoolTable");
     $typeTb = $this->getServiceLocator()->get("QuestionTypeTable");
 
@@ -279,6 +321,30 @@ class AdminController extends AbstractActionController
     $datas["questionDatas"] = $questionDatas;
     $datas["typeTitles"] = $typeTitles;
     $datas["question_data"] = $question_data;
+		*/
+
+		/* 修正後： */
+		if (!isset($post["setLevel"])) {
+			$session = new Container("exam");
+
+			$questionTb = $this->getServiceLocator()->get("QuestionPoolTable");
+			$typeTb = $this->getServiceLocator()->get("QuestionTypeTable");
+
+			$questionDatas = iterator_to_array($questionTb->ReadRandForExam($session->offsetGet("type"), $session->offsetGet("academic"), $session->offsetGet("career"), $session->offsetGet("certificate"), $session->offsetGet("num")));
+			$datas["questionDatas"] = $questionDatas;
+		
+			$typeTitles = [];
+			$question_data = "";
+			foreach ($questionDatas as $index => $data) {
+				$typeTitles[$index] = $typeTb->readByType($data["question_type"])["question_title"];
+				$question_data = $question_data . $data["idx"] . ",";
+			}
+			$datas["typeTitles"] = $typeTitles;
+
+			$question_data = substr($question_data, 0, -1);
+			$datas["question_data"] = $question_data;
+		}
+		/* ここまで */
 
     $rndUrl = "";
     do {
@@ -299,9 +365,21 @@ class AdminController extends AbstractActionController
     } while (!empty($examTb->readByUrl($rndUrl)));
     $datas["rndUrl"] = $rndUrl;
 
+		/* コードデバッグ
+			作成：朴昰成
+			修正：朴昰成
+			修正日：2027/02/26
+		*/
+
+		/* 修正前
     $breadcrumb[0] = "応募者状況管理";
     $breadcrumb[1] = "試験登録";
     $breadcrumb[2] = "確認";
+		*/
+
+		/* 修正後 */
+		$breadcrumb = array("応募者状況管理", "試験登録", "確認");
+		/* ここまで */
     $this->layout()->breadcrumb = json_encode($breadcrumb);
 
     //view==============================================================
@@ -319,8 +397,20 @@ class AdminController extends AbstractActionController
     $datas["totalPage"] = intval($examTb->readCount() / 10 + 1);
     $datas["cPage"] = $page;
 
+		/* コードデバッグ
+			作成：朴昰成
+			修正：朴昰成
+			修正日：2027/02/26
+		*/
+
+		/* 修正前
     $breadcrumb[0] = "応募者状況管理";
     $breadcrumb[1] = "試験一覧";
+		*/
+
+		/* 修正後 */
+		$breadcrumb = array("応募者状況管理", "試験一覧");
+		/* ここまで */
     $this->layout()->breadcrumb = json_encode($breadcrumb);
 
     //view==============================================================
@@ -335,6 +425,13 @@ class AdminController extends AbstractActionController
     $examData = $examTb->readByIdx($idx);
     $datas["examData"] = $examData;
 
+		/* 機能の追加と変更
+			作成：朴夏成
+			修正：朴夏成
+			修正日：2024/02/28
+		*/
+
+		/* 修正前：
     $questionTb = $this->getServiceLocator()->get("QuestionPoolTable");
     $typeTb = $this->getServiceLocator()->get("QuestionTypeTable");
 
@@ -368,6 +465,43 @@ class AdminController extends AbstractActionController
     $breadcrumb[0] = "応募者状況管理";
     $breadcrumb[1] = "試験一覧";
     $breadcrumb[2] = "試験詳細";
+		*/
+
+		/* 修正後 */
+		if ($examData["academic"] != null) {
+			$questionTb = $this->getServiceLocator()->get("QuestionPoolTable");
+			$typeTb = $this->getServiceLocator()->get("QuestionTypeTable");
+	
+			$questionDatas = [];
+			$typeTitles = [];
+			$questionIdxs = explode(",", $examData["question_data"]);
+			foreach ($questionIdxs as $index => $idx) {
+				$questionDatas[$index] = $questionTb->readByIdx($idx);
+				$typeTitles[$index] = $typeTb->readByType($questionDatas[$index]["question_type"])["question_title"];
+			}
+			$datas["questionDatas"] = $questionDatas;
+			$datas["typeTitles"] = $typeTitles;
+	
+			$corrects = [];
+			if ($examData["get_point"] == null) {
+				for ($i = 0; $i < $examData["question_nums"]; $i++) {
+					$corrects[$i] = "未対応";
+				}
+			} else {
+				$answers = explode(",", $examData["answer_data"]);
+				foreach ($answers as $index => $answer) {
+					if ($answer == $questionDatas[$index]["correct_answer"]) {
+						$corrects[$index] = "O";
+					} else {
+						$corrects[$index] = "X";
+					}
+				}
+			}
+			$datas["corrects"] = $corrects;
+		}
+
+		$breadcrumb = array("応募者状況管理", "試験一覧", "試験詳細");
+		/* ここまで */
     $this->layout()->breadcrumb = json_encode($breadcrumb);
 
     //view==============================================================
@@ -375,4 +509,64 @@ class AdminController extends AbstractActionController
     $vm->setTemplate("/admin/exam/detail.phtml");
     return $vm;
   }
+
+	public function estimateAction(){
+
+
+		// 메일 센더 초기화
+	$mail = new MailSender();
+
+	$this->layout("layout/none");
+	// 기본 메일 전송 관련 설정 로드
+			$param['config']=$this->getConfig();
+
+			// 메일 제목 지정 (일반적으로 DB에 메일폼 테이블을 만들어서 그것을 가져와서 아래의 title contents에 넣지만, 이건 샘플이므로 간단히.)
+			// 사람마다 변환해야 할 부분은 {{이렇게}} 메일폼에 넣어놓는다.
+			$param['title']="{{user_name}}様、株式会社ジエンジサービスでございます。";
+			$param['content']="送信する内容\n\n以下のURLから情報を登録してください。\n\n{{URL}}";
+
+			// 사람이름이나, URL등 고유하게 변경해야 하는 것은 이렇게 처리한다.
+			// 메일 제목과 내용 부분 모두 변환처리.
+			$param['title']=str_replace("{{user_name}}","testTitle",$param['title']);
+
+			// $param['content']=str_replace("{{user_name}}","変換する試験受け者名",$param['content']);
+			$param['content']=str_replace("{{URL}}","個人の試験URL",$param['content']);
+
+
+			// 수신자 이메일과 이름 설정
+			$param['email']='spredempt@gmail.com';
+			$param['name']="temp";
+
+			// 전송
+			$result = $mail->mailsender($param);
+			$result_row = $result['transport']->getConnection()->getResponse();
+
+			$results = str_replace("\r","",str_replace("\n","",str_replace(" ","",$result_row[0])));
+			switch(substr(strtolower($results),0,5)){
+				// 250ok 가 나오면 전송 의뢰 성공이다.
+					case "250ok":
+						$status = 'OK';
+							break;
+					// 그외의 것은 모두 실패로 처리한다.
+					default:
+						$status = 'FALSE';
+							break;
+			}
+
+
+			return $vm;
+	}
+	public function getConfig(){
+		if(isset($_SERVER['DOCUMENT_ROOT']) && $_SERVER['DOCUMENT_ROOT']!=''){
+				$droot = $_SERVER['DOCUMENT_ROOT'];
+		}else{
+				$droot = "abc";
+		}
+		if(is_file($droot.'/../config/autoload/local.php')){
+				$config = require $droot.'/../config/autoload/local.php';
+		}else{
+				$config = require $droot.'/../config/autoload/global.php';
+		}
+		return $config;
+}
 }

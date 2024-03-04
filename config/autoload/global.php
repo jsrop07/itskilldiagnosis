@@ -32,5 +32,18 @@ return array(
                 'gc_maxlifetime'    => 2419200,
                 'cookie_domain' => '.gngservice.jp',
         ),
+				'smtp' => array(
+					'name'              => 'gngs.co.jp',
+					'host'              => 'smtp.mail.us-east-1.awsapps.com',
+					'port' => 465,
+					'fromemail' => 'spredempt@gngs.co.jp',
+					'fromname' => 'paku',
+					'connection_class' => 'login',
+					'connection_config' => array(
+							'username' => 'spredempt@gngs.co.jp',
+							'password' => '1Corinthians13:13',
+							'ssl'=> 'ssl',
+					),
+				),
 
 );

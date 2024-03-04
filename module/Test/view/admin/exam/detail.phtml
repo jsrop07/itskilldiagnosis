@@ -3,6 +3,13 @@ if (!isset($_SESSION)) {
   session_start();
 }
 
+	/* 機能の削除と追加
+		作成：朴夏成
+		修正：朴夏成
+		修正日：2024/02/28
+	*/
+
+	/* 修正前：
 $level[1] = "初級";
 $level[2] = "中級";
 $level[3] = "高級";
@@ -19,6 +26,12 @@ switch ($examData["question_level"]) {
     $levelTitle = "高級";
     break;
 }
+	*/
+
+	/* 修正後： */
+	$certificateTexts = array("無", "有");
+	$academicTexts = array("その他", "高等学校", "専門学校", "短期大学", "大学", "大学院");
+	/* ここまで */
 ?>
 
 <div class="p-5 align-self-center w-75">
@@ -44,6 +57,13 @@ switch ($examData["question_level"]) {
     </table>
   </div>
 
+	<!-- 機能の変更
+		作成：朴夏成
+		修正：朴夏成
+		修正日：2024/02/28
+	-->
+	
+	<!-- 修正前： <?php /* ?>
   <p class="mt-4 mb-3">setting</p>
   <div class="p-3 rounded-3 bg-light">
     <table class="w-100">
@@ -91,11 +111,59 @@ switch ($examData["question_level"]) {
   <div class="mt-2 d-flex flex-row justify-content-center gap-3">
     <button class="btn btn-primary" id="bt_return">戻る</button>
   </div>
+	<?php */ ?> -->
+
+	<!-- 修正後： -->
+	<?php if(isset($examData["academic"])): ?>
+		<p>setting</p>
+		<div>
+			<p>最終学歴 : <?php echo $academicTexts[$examData["academic"]]; ?></p>
+			<p>経歴 : <?php echo $examData["career"]; ?></p>
+			<p>資格(IT) : <?php echo $certificateTexts[$examData["certificate"]]; ?></p>
+			<p>問題数 : <?php echo $examData["question_nums"]; ?></p>
+			<p>実施日 : <?php echo $examData["execute_date"] == null ? "未対応" : date("Y-m-d H:i:s", strtotime($examData["execute_date"])); ?></p>
+			<p>点数 : <?php echo $examData["execute_date"] == null ? "未対応" : $examData["question_nums"] . "-" . $examData["get_point"]; ?></p>
+
+			<table>
+				<thead>
+					<tr>
+						<th>No.</th>
+						<th>種別</th>
+						<th>問題</th>
+						<th>結果</th>
+					</tr>
+				</thead>
+			
+				<tbody>
+					<?php foreach ($questionDatas as $index => $data): ?>
+						<tr onclick="window.location.href='../../../question/list/detail/<?php echo $data['idx']; ?>'">
+							<td><?= $index + 1; ?></td>
+							<td><?php echo $typeTitles[$index]; ?></td>
+							<td><?php echo $data["question"]; ?></td>
+							<td><?php echo $corrects[$index]; ?></td>
+						</tr>
+					<?php endforeach; ?>
+				</tbody>
+			</table>
+		</div>
+	<?php endif; ?>
+
+	<div>
+		<button class="btn btn-primary" onclick="history.back()">戻る</button>
+	</div>
+	<!-- ここまで -->
 </div>
 
+<!-- 機能の削除
+	作成：朴夏成
+	削除：朴夏成
+	削除日：2027/02/29
+
+削除前： <?php /* ?>
 <script>
   document.getElementById("bt_return").addEventListener("click", function() {
     let page = sessionStorage.getItem("listPage");
     window.location.href = "../../list?page=" + page;
   });
 </script>
+ここまで <?php */ ?> -->

@@ -36,6 +36,13 @@ class ExamTable
 
   public function createExam($post)
   {
+		/* データの変更
+			作成：朴夏成
+			修正：朴夏成
+			修正日：2024/02/22
+		*/
+
+		/* 修正前：
     $data = array(
       "url" => $post["url"],
       "user_id" => $post["id"],
@@ -46,6 +53,24 @@ class ExamTable
       "question_nums" => $post["num"],
       "question_data" => $post["question_data"],
     );
+		*/
+
+		/* 修正後： */
+		$data = array(
+			"url" => $post["url"],
+			"user_id" => $post["id"],
+			"user_pw" => $post["password"],
+			"name" => $post["name"],
+			"write_date" => date("Y-m-d H:i:s"),
+			"question_nums" => $post["num"]
+		);
+		
+		if (isset($post["academic"]) && $post["academic"] != "") { $data["academic"] = $post["academic"]; }
+		if (isset($post["major"]) && $post["major"] == "on") { $data["major"] = 1; }
+		if (isset($post["career"]) && $post["career"] != "") { $data["career"] = $post["career"]; }
+		if (isset($post["certificates"])) { $data["certificates"] = $post["certificates"]; }
+		if (isset($post["question_data"])) { $data["question_data"] = $post["question_data"]; }
+		/* ここまで */
 
     $qry = $this->sql->insert("exam")->values($data);
     return $this->sql->prepareStatementForSqlObject($qry)->execute();

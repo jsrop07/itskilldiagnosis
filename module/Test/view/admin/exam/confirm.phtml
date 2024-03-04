@@ -5,6 +5,13 @@ if (!isset($_SESSION)) {
 
 $examData = $_SESSION["exam"];
 
+	/* 機能の削除と追加
+		作成：朴夏成
+		修正：朴夏成
+		修正日：2024/02/21
+	*/
+
+	/* 修正前：
 $level[1] = "初級";
 $level[2] = "中級";
 $level[3] = "高級";
@@ -21,6 +28,14 @@ switch ($examData["level"]) {
     $levelTitle = "高級";
     break;
 }
+	*/
+
+	/* 修正後： */
+	$setQ = $examData["setQuestion"];
+
+	$certificateTexts = array("無", "有");
+	$academicTexts = array("その他", "高等学校", "専門学校", "短期大学", "大学", "大学院");
+	/* ここまで */
 ?>
 
 <div class="p-5 align-self-center w-75">
@@ -29,9 +44,29 @@ switch ($examData["level"]) {
     <input name="id" type="hidden" value="<?= $examData["id"] ?>">
     <input name="password" type="hidden" value="<?= $examData["password"] ?>">
     <input name="name" type="hidden" value="<?= $examData["name"] ?>">
+		<!-- 機能の削除と追加
+			作成：朴夏成
+			修正：朴夏成
+			修正日：2024/02/21
+		-->
+
+		<!-- 修正前： <?php /* ?>
     <input name="level" type="hidden" value="<?= $examData["level"] ?>">
     <input name="num" type="hidden" value="<?= $examData["num"] ?>">
     <input name="question_data" type="hidden" value="<?= $question_data ?>">
+		<?php */ ?> -->
+
+		<!-- 修正後： -->
+		<input name="academic" type="hidden" value="<?php echo $examData["academic"]; ?>"/>
+		<input name="major" type="hidden" value="<?php echo $examData["major"]; ?>"/>
+		<input name="career" type="hidden" value="<?php echo $examData["career"]; ?>"/>
+		<input name="certificates" type="hidden" value=""/>
+		<input name="num" type="hidden" value="<?php echo $examData["num"]; ?>"/>
+
+		<?php if ($setQ == "true"): ?>
+			<input name="question_data" type="hidden" value="<?php echo $question_data; ?>"/>
+		<?php endif; ?>
+		<!-- ここまで -->
   </form>
   <p class="mb-5 h2">試験登録/確認</p>
 
@@ -56,6 +91,13 @@ switch ($examData["level"]) {
     </table>
   </div>
 
+	<!-- 機能の修正
+		作成：朴夏成
+		修正：朴夏成
+		修正日：2024/02/21
+	-->
+
+	<!-- 修正前： <?php /* ?>
   <p class="mt-4 mb-3">setting</p>
   <div class="p-3 rounded-3 d-flex flex-column bg-light">
     <table class="w-100">
@@ -95,14 +137,82 @@ switch ($examData["level"]) {
       </table>
     </div>
   </div>
+	<?php */ ?> -->
+
+	<!-- 修正後： -->
+	<p>設定</p>
+	<div>
+		<p>最終学歴 : <?php echo ($examData["academic"] == "") ? "未設定" : $academicTexts[$examData["academic"]]; ?></p>
+		<p>IT専攻 <?php echo (isset($examData["major"])) ? "O" : "X"; ?></p>
+		<p>種別 : <?php echo ($examData["type"] == "") ? "未設定" : $examData["typeTitle"]; ?></p>
+		<p>経歴 : <?php echo ($examData["career"] == "") ? "未設定" : $examData["career"]; ?></p>
+		<p>
+			資格(IT) : 
+			<?php if ($examData["certificate"] == ""): ?>
+				<?php if ($setQ == "true"): ?>
+					無
+				<?php else: ?>
+					未設定
+				<?php endif; ?>
+			<?php else: ?>
+				<?php foreach ($examData["certificate"] as $data): ?>
+					<?php echo $data; ?>
+				<?php endforeach; ?>
+			<?php endif; ?>
+		</p>
+		<p>問題数 : <?php echo $examData["num"]; ?></p>
+		
+		<?php if ($setQ == "true"): ?>
+			<table>
+				<thead>
+					<tr>
+						<th>No.</th>
+						<th>問題</th>
+						<th>登録日</th>
+					</tr>
+				</thead>
+
+				<tbody>
+					<?php foreach ($questionDatas as $index => $data): ?>
+						<tr onclick="window.location.href='../../question/list/detail/<?php echo $data['idx'] ?>'">
+							<td><?= $index + 1; ?></td>
+							<td><?php echo $data["question"]; ?></td>
+							<td><?php echo date("Y-m-d", strtotime($data["wdate"])); ?></td>
+						</tr>
+					<?php endforeach; ?>
+				</tbody>
+			</table>
+		<?php endif; ?>
+	</div>
+	<!-- ここまで -->
 
   <div class="mt-2 d-flex flex-row justify-content-center gap-3">
+		<!-- 機能の追加
+			作成：朴夏成
+			修正：朴夏成
+			修正日：2024/02/22
+		-->
+
+		<!-- 修正前： <?php /* ?>
     <button class="btn btn-primary" id="bt_regist">登録</button>
     <button class="btn btn-primary" id="bt_return">戻る</button>
+		<?php */ ?> -->
+
+		<!-- 修正後： -->
+    <button class="btn btn-primary" id="bt_regist" onclick="Submit()">登録</button>
+		<button class="btn btn-primary" id="bt_return" onclick="history.back()">戻る</button>
+		<!-- ここまで -->
   </div>
 </div>
 
 <script>
+	/* 機能の削除と変更
+		作成：朴夏成
+		修正：朴夏成
+		修正日：2024/02/22
+	*/
+
+	/* 修正前： <?php /* ?>
   document.getElementById("bt_regist").addEventListener("click", function() {
     var result = confirm("問題を登録しますか？");
     if (result === true) {
@@ -117,4 +227,23 @@ switch ($examData["level"]) {
     <?php endforeach; ?>
     window.location.href = "../register";
   });
+	<?php */ ?> */
+
+	/* 修正後： */
+	const form = document.getElementById("from_exam");
+
+	function Submit() {
+		<?php if (isset($examData["certificate"])): ?>
+			<?php foreach ($examData["certificate"] as $data): ?>
+				form.certificates.value += "<?php echo $data; ?>" + ",";
+			<?php endforeach; ?>
+			form.certificates.value = form.certificates.value.slice(0, -1);
+		<?php endif; ?>
+
+		var result = confirm("問題を登録しますか？");
+		if (result === true) {
+			form.submit();
+		}
+	}
+	/* ここまで */
 </script>

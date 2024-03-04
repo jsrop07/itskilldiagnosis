@@ -33,7 +33,32 @@ class QuestionPoolTable
     //簡単に共通Sql宣言
     $this->sql = new Sql($this->adapter);
   }
+  // 登録修正
+  // 作成：丁錫圓
+  // 作成日：2024/02/21
+  // 修正前：
+  // public function createQuestion($post)
+  // {
+  //   for ($i = 1; $i <= 5; $i++) {
+  //     if ($post["answer" . $i] != null) {
+  //       $answerArr[$i - 1] = $post["answer" . $i];
+  //     }
+  //   }
+  //   $answers = implode("|", $answerArr);
 
+  //   $data = array(
+  //     "question_type" => $post["type"],
+  //     "question_level" => $post["level"],
+  //     "question" => $post["question"],
+  //     "answers" => $answers,
+  //     "correct_answer" => $post["correct"],
+  //     "wdate" => date("Y-m-d H:i:s"),
+  //   );
+
+  //   $qry = $this->sql->insert("question_pool")->values($data);
+  //   return $this->sql->prepareStatementForSqlObject($qry)->execute();
+  // }
+  // 修正後：
   public function createQuestion($post)
   {
     for ($i = 1; $i <= 5; $i++) {
@@ -45,7 +70,9 @@ class QuestionPoolTable
 
     $data = array(
       "question_type" => $post["type"],
-      "question_level" => $post["level"],
+      "academic" => $post["academic"],
+      "career" => $post["career"],
+      "certificate" => $post["certificate"],
       "question" => $post["question"],
       "answers" => $answers,
       "correct_answer" => $post["correct"],
@@ -55,6 +82,8 @@ class QuestionPoolTable
     $qry = $this->sql->insert("question_pool")->values($data);
     return $this->sql->prepareStatementForSqlObject($qry)->execute();
   }
+  // ここまで
+
   public function readTenByPage($page)
   {
     $index = ($page - 1) * 10;
@@ -74,9 +103,32 @@ class QuestionPoolTable
     return count($this->sql->prepareStatementForSqlObject($qry)->execute());
   }
 
+	/* 機能変更
+		作成：朴夏成
+		修正：朴夏成
+		修正日：2024/02/21
+	*/
+
+	/* 修正前：
   public function ReadRandByTypenLevelnNum($type, $level, $num)
   {
     $qry = $this->sql->select("question_pool")->where(["question_type" => $type, "question_level" => $level])->order(new Expression("Rand()"))->limit($num);
     return $this->sql->prepareStatementForSqlObject($qry)->execute();
   }
+	*/
+
+	/* 修正後： */
+  public function ReadRandForExam($type, $academic, $career, $certificate, $num)
+  {
+    $whereData = array (
+      "question_type" => $type,
+      "academic" => $academic,
+      "career" => $career,
+      "certificate" => $certificate
+    );
+
+    $qry = $this->sql->select("question_pool")->where($whereData)->order(new Expression("Rand()"))->limit($num);
+    return $this->sql->prepareStatementForSqlObject($qry)->execute();
+  }
+	/* ここまで */
 }

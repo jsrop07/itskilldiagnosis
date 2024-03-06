@@ -1,0 +1,213 @@
+<!-- 問題がいない場合の機能追加
+		作成：朴昰成
+		作成日：2024/03/04
+-->
+<html>
+	<head>
+		<title>試験案内</title>
+
+		<style type="text/css">
+			:root {
+				--user-gradient: linear-gradient(111deg, #87D782 0%, #22BC8E 100%);
+				--user-background: #F0F8F1;
+			}
+
+			body {
+				height: 100%;
+				width: 100%;
+				display: grid;
+				grid-template-columns: 100px 1fr 100px;
+				grid-template-areas: ". main .";
+				background: var(--user-background);
+			}
+			main {
+				grid-area: main;
+				height: 100%;
+				width: 100%;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+			}
+			content {
+				max-width: 1000px;
+				padding: 30px;
+				background: white;
+			}
+
+
+			.emegra-card {
+				margin-top: 40px;
+				border: 1px solid #CED4DA;
+				border-radius: 6px;
+				padding: 40px;
+				background: white;
+			}
+			.emegra-card > .card-header {
+				border-bottom: 1px solid #CED4DA;
+				padding-bottom: 8px;
+				display: flex;
+				line-height: 32px;
+				font-size: 20px;
+				font-weight: 700;
+			}
+			.emegra-card > .card-header::before {
+				content: " ";
+				height: 32px;
+				width: 4px;
+				margin-right: 16px;
+				border-radius: 100px;
+				background: var(--user-gradient);
+			}
+
+			
+			/* =========================== */
+			dl.emegra, dl.emegra > dt, dl.emegra > dd, form {
+				margin: 0;
+				border: 0;
+				padding: 0;
+			}
+
+			dl.emegra {
+				display: grid;
+				grid-template-columns: repeat(2, 100px 1fr);
+			}
+			dl.emegra > dt { text-align: right; }
+			dl.emegra > dd {
+				display: flex;
+				text-align: left;
+				align-items: left;
+			}
+		</style>
+	</head>
+
+	<body>
+		<?php
+			$certificateDatas = explode(",", $examData["certificates"]);		// certificatesデータをarrayに変更
+		?>
+
+		<main>
+			<content>
+				<form id="form" method="post">
+					<input name="ready" type="hidden"/>
+					<input name="certificates" type="hidden"/>
+
+					<div class="emegra-card">
+						<div class="card-header"><?php echo $examData["name"]; ?> 様の情報</div>
+						<div class="card-body">
+							<dl class="emegra">
+								<dt>最終学歴</dt>
+								<dd>
+									<select name="academic">
+										<option value="" selected disabled hidden>選択してください</option>
+										<option value=2>高等学校</option>
+										<option value=4>専門学校</option>
+										<option value=6>短期大学</option>
+										<option value=8>大学</option>
+										<option value=10>大学院</option>
+										<option value=0>その他</option>
+									</select>
+								</dd>
+
+								<dt>IT専攻</dt>
+								<dd><input type="checkbox" name="major"/></dd>
+
+								<dt>問題種別</dt>
+								<dd>
+									<select name="type">
+										<option value="" selected disabled hidden>選択してください</option>
+										<?php foreach ($typeDatas as $data): ?>		<!-- typeデータを表示 -->
+											<option value=<?php echo $data["question_type"]; ?>><?php echo $data["question_title"]; ?></option>
+										<?php endforeach; ?>
+									</select>
+								</dd>
+							
+								<dt>経歴</dt>
+								<dd><input name="career" placeholder="年単位に数字だけ入力してください。" value="<?php echo $examData["career"]; ?>"/></dd>
+							</dl>
+
+							<span>資格</span>
+							<button type="button" onclick="addCertificate()">+</button>
+							<div id="place-certificate">
+								<?php foreach ($certificateDatas as $data): ?>		<!-- certificateデータ表示 -->
+									<div>
+										<input class="form-control" name="certificate[]" placeholder="資格の名を入力してください。" value="<?php echo $data; ?>">
+										<button type="button" onclick="event.target.parentNode.remove();">-</button>
+									</div>
+								<?php endforeach; ?>
+							</div>		
+						</div>
+					</div>
+					</form>
+				<button class="btn btn-primary" onclick="Confirm()">確認</button>
+				<button class="btn btn-primary" onclick="history.back()">キャンセル</button>
+			</content>
+		</main>
+
+		<script type="text/javascript">
+			const form = document.getElementById("form");
+			const certificatePlace = document.getElementById("place-certificate");
+
+			<?php if ($examData["academic"] != ""): ?>		// academicデータがある場合
+				form.academic.value = "<?php echo $examData["academic"]; ?>";
+				<?php if ($examData["academic"] % 2 == 1): ?>
+					form.major.checked = true;
+				<?php endif; ?>
+			<?php endif; ?>
+
+			<?php if ($examData["question_type"] != ""): ?>		// typeデータがある場合
+				form.type.value = "<?php echo $examData["question_type"]; ?>";
+			<?php endif; ?>
+			
+			function addCertificate() {		// 資格入力空間追加ボタンを押した時
+				const newDiv = document.createElement("div");
+
+				newDiv.innerHTML =
+					"<input class='form-control' name='certificate[]' placeholder='資格の名を入力してください。'>" +
+					"<button type='button' onclick='event.target.parentNode.remove();'>-</button>";
+				
+				certificatePlace.appendChild(newDiv);
+			}
+
+			function Confirm() {		//Confirm Validation
+				if (form.academic.value == "") {
+					alert("学歴を選択してください。");
+					form.academic.focus();
+					return false;
+				}
+		
+				if (form.type.value == "") {
+					alert("問題種別を選択してください。");
+					form.type.focus();
+					return false;
+				}
+
+				if (form.career.value.trim() == "") {
+					alert("経歴を入力してください。");
+					form.career.focus();
+					return false;
+				}
+				
+				if (isNaN(form.career.value)) {
+					alert("経歴に数字だけ入力してください。");
+					form.career.focus();
+					return false;
+				}
+
+				var certificateArray = document.getElementsByName("certificate[]");
+				var certificates = "";
+				for (let i = 0; i < certificateArray.length; i++) {
+					if (certificateArray[i].value.trim() == "") {
+						alert("資格を入力してください。");
+						certificateArray[i].focus();
+						return false;
+					}
+					else { certificates += certificateArray[i].value.trim() + ","; }
+				}
+				form.certificates.value = certificates.slice(0, -1);
+				
+				form.submit();
+			}
+		</script>
+	</body>
+</html>
+<!-- ここまで -->

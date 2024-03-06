@@ -118,16 +118,18 @@ class QuestionPoolTable
 	*/
 
 	/* 修正後： */
-  public function ReadRandForExam($type, $academic, $career, $certificate, $num)
-  {
-    $whereData = array (
-      "question_type" => $type,
-      "academic" => $academic,
-      "career" => $career,
-      "certificate" => $certificate
+	/** Get Question Data */
+  public function ReadRandForExam($datas) {
+    $whereDatas = array (
+      "question_type" => $datas["type"],
+      "academic" => $datas["academic"],
+      "career" => $datas["career"]
     );
+		
+		if ($datas["certificates"] == NULL) { $whereDatas["certificate"] = 0; }
+		else { $whereDatas["certificate"] = 1; }
 
-    $qry = $this->sql->select("question_pool")->where($whereData)->order(new Expression("Rand()"))->limit($num);
+    $qry = $this->sql->select("question_pool")->where($whereDatas)->order(new Expression("Rand()"))->limit($datas["num"]);
     return $this->sql->prepareStatementForSqlObject($qry)->execute();
   }
 	/* ここまで */

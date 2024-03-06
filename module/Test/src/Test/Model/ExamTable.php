@@ -121,6 +121,24 @@ class ExamTable
     return "wrong password";
   }
 
+	/* 機能の追加
+		作成：朴昰成
+		作成日：2024/03/05
+	*/
+	public function updateExamSetting($url, $post) {
+		$datas = array(
+			"academic" => $post["academic"],
+			"question_type" => $post["type"],
+			"career" => $post["career"],
+			"certificates" => $post["certificates"],
+			"question_data" => $post["question_data"]	
+		);
+		
+		$qry = $this->sql->update("exam")->where(["url" => $url])->set($datas);
+		$this->sql->prepareStatementForSqlObject($qry)->execute();
+	}
+	/* ここまで */
+
   public function updateSubmit($url, $answers, $point)
   {
     $qry = $this->sql->update("exam")->where(["url" => $url])->set(

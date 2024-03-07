@@ -29,7 +29,6 @@ switch ($examData["question_level"]) {
 	*/
 
 	/* 修正後： */
-	$certificateTexts = array("無", "有");
 	$academicTexts = array("その他", "高等学校", "専門学校", "短期大学", "大学", "大学院");
 	/* ここまで */
 ?>
@@ -117,9 +116,9 @@ switch ($examData["question_level"]) {
 	<?php if(isset($examData["academic"])): ?>
 		<p>setting</p>
 		<div>
-			<p>最終学歴 : <?php echo $academicTexts[$examData["academic"]]; ?></p>
+			<p>最終学歴 : <?php echo $academicTexts[$examData["academic"] / 2]; ?> <?php echo ($examData["academic"] % 2 == 1) ? "IT専攻" : ""; ?></p>
 			<p>経歴 : <?php echo $examData["career"]; ?></p>
-			<p>資格(IT) : <?php echo $certificateTexts[$examData["certificate"]]; ?></p>
+			<p>資格(IT) : <?php echo ($examData["certificates"] == null) ? "無" : $examData["certificates"]; ?></p>
 			<p>問題数 : <?php echo $examData["question_nums"]; ?></p>
 			<p>実施日 : <?php echo $examData["execute_date"] == null ? "未対応" : date("Y-m-d H:i:s", strtotime($examData["execute_date"])); ?></p>
 			<p>点数 : <?php echo $examData["execute_date"] == null ? "未対応" : $examData["question_nums"] . "-" . $examData["get_point"]; ?></p>

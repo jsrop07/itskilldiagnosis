@@ -62,15 +62,14 @@ class ExamTable
 			"user_pw" => $post["password"],
 			"name" => $post["name"],
 			"write_date" => date("Y-m-d H:i:s"),
+			"question_nums" => $post["num"]
 		);
-
-		if (isset($post["academic"])) {
-			$data["academic"] = $post["academic"];
-			$data["career"] = $post["career"];
-			$data["certificate"] = $post["certificate"];
-			$data["question_nums"] = $post["num"];
-			$data["question_data"] = $post["question_data"];
-		}
+		
+		if (isset($post["academic"]) && $post["academic"] != "") { $data["academic"] = $post["academic"]; }
+		if (isset($post["major"]) && $post["major"] == "on") { $data["major"] = 1; }
+		if (isset($post["career"]) && $post["career"] != "") { $data["career"] = $post["career"]; }
+		if (isset($post["certificates"])) { $data["certificates"] = $post["certificates"]; }
+		if (isset($post["question_data"])) { $data["question_data"] = $post["question_data"]; }
 		/* ここまで */
 
     $qry = $this->sql->insert("exam")->values($data);
@@ -121,6 +120,24 @@ class ExamTable
     }
     return "wrong password";
   }
+
+	/* 機能の追加
+		作成：朴昰成
+		作成日：2024/03/05
+	*/
+	public function updateExamSetting($url, $post) {
+		$datas = array(
+			"academic" => $post["academic"],
+			"question_type" => $post["type"],
+			"career" => $post["career"],
+			"certificates" => $post["certificates"],
+			"question_data" => $post["question_data"]	
+		);
+		
+		$qry = $this->sql->update("exam")->where(["url" => $url])->set($datas);
+		$this->sql->prepareStatementForSqlObject($qry)->execute();
+	}
+	/* ここまで */
 
   public function updateSubmit($url, $answers, $point)
   {

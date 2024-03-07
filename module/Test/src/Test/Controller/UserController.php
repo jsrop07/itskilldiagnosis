@@ -73,6 +73,13 @@ class UserController extends AbstractActionController
 
   public function examAction()
   {
+		/* 問題がいない場合の機能追加
+			作成：朴昰成
+			修正：朴昰成
+			修正日：2024/03/04
+		*/
+
+		/* 修正前：
     $this->layout("layout/none");
 
     //main==============================================================
@@ -118,5 +125,103 @@ class UserController extends AbstractActionController
     $vm = new ViewModel($datas);
     $vm->setTemplate("/user/exam.phtml");
     return $vm;
+		*/
+
+		/* 修正後： */
+		$post = $this->params()->fromPost();
+    $url = $this->params()->fromRoute()["url"];
+
+    $examTb = $this->getServiceLocator()->get("ExamTable");
+    $examData = $examTb->readByUrl($url);
+
+		if ($examData["answer_data"] != "") {
+      $message[0] = "該当試験は受け済みの試験になります。";
+      $message[1] = "ご協力ありがとうございました。";
+			return $this->SetViewModel(["message" => $message], "user/alert.phtml");
+		}
+
+		if ($examData["question_data"] == "") {		// 問題がいない場合
+			if (isset($post["academic"])) { $this->MakeExam($url, $post); }		// 応募者が情報を確認した時
+			else { return $this->Setting($examData); }		// 問題設定ページに移動
+		}
+
+		// 試験受けるページに移動
+		if (isset($post["start"])) {
+			$datas["examData"] = $examData;
+
+			$questionTb = $this->getServiceLocator()->get("QuestionPoolTable");
+      $questionIdxs = explode(",", $examData["question_data"]);
+			$questionDatas = array();
+			foreach ($questionIdxs as $index => $idx) {
+				$questionDatas[$index] = $questionTb->readByIdx($idx);
+			}
+
+			$datas["questionDatas"] = $questionDatas;
+
+			return $this->SetViewModel($datas, "user/exam.phtml");
+		}
+
+		if (isset($post["end"])) {
+			unset($post["end"]);
+			$answers = implode(",", $post);
+			
+			$questionTb = $this->getServiceLocator()->get("QuestionPoolTable");
+      $questionIdxs = explode(",", $examData["question_data"]);
+      $point = 0;
+      foreach ($questionIdxs as $index => $questionIdx) {
+        $questionData = $questionTb->readByIdx($questionIdx);
+        if ($post["question" . $index] == $questionData["correct_answer"]) {
+          $point = $point + 1;
+        }
+      }
+
+      $examTb->updateSubmit($url, $answers, $point);
+
+			return $this->SetViewModel([] , "user/finish.phtml");
+		}
+
+		// 試験案内ページに移動
+		return $this->SetViewModel(["name" => $examData["name"]] , "user/announce.phtml");
+		/* ここまで */
   }
+
+	/* 問題がいない場合の機能追加
+		作成：朴昰成
+		作成日：2024/03/04
+	*/
+	public function Setting($examData) {		// 問題設定ページに移動
+		$datas["examData"] = $examData;
+
+    $typeTb = $this->getServiceLocator()->get("QuestionTypeTable");
+		$datas["typeDatas"] = $typeTb->readAll();
+		
+		return $this->SetViewModel($datas, "user/setting.phtml");
+	}
+
+	/** Make Exam */
+	public function MakeExam($url, $post) {		// 試験の問題を登録
+		if (isset($post["major"])) { $post["academic"] += 1; }
+
+		$questionTb = $this->getServiceLocator()->get("QuestionPoolTable");
+    $examTb = $this->getServiceLocator()->get("ExamTable");
+		
+		$post["num"] = 5;	//temp
+		$questionDatas = iterator_to_array($questionTb->ReadRandForExam($post));
+		
+		$question_data = "";
+		foreach ($questionDatas as $data) {		// 選択した問題のidxを保存
+			$question_data .= $data["idx"] . ",";
+		}
+		$post["question_data"] = substr($question_data , 0, -1);
+
+		$examTb->updateExamSetting($url, $post);
+	}
+
+	public function SetViewModel($datas, $template) {
+		$vm = new ViewModel($datas);
+		$vm->setTerminal(true);		// 本当レイアウト未設定
+		$vm->setTemplate($template);
+		return $vm;
+	}
+	 /* ここまで */
 }

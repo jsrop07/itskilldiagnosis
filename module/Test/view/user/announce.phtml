@@ -1,0 +1,28 @@
+<html>
+	<head>
+		<title>ご案内</title>
+	</head>
+
+	<body>
+		こんにちは　<?php echo $name ?>　様
+		試験が始まります
+		一度だけ受けません
+
+		ボタンを押すとすぐ始まります
+
+		受けますか？
+
+		<form id="form" method="post">
+			<input name="start" type="hidden"/>
+		</form>
+		<button onclick="Submit();">受ける</button>
+
+		<script type="text/javascript">
+			const form = document.getElementById("form");
+
+			function Submit() {
+				form.submit();
+			}
+		</script>
+	</body>
+</html>

@@ -136,7 +136,7 @@ switch ($examData["question_level"]) {
 			
 				<tbody>
 					<?php foreach ($questionDatas as $index => $data): ?>
-						<tr onclick="window.location.href='../../list?page=<?php echo $data['idx']; ?>'">
+						<tr onclick="window.location.href='../../../question/list/detail/<?php echo $data['idx']; ?>'">
 							<td><?= $index + 1; ?></td>
 							<td><?php echo $typeTitles[$index]; ?></td>
 							<td><?php echo $data["question"]; ?></td>

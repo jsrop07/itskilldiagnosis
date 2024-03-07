@@ -134,6 +134,12 @@ class UserController extends AbstractActionController
     $examTb = $this->getServiceLocator()->get("ExamTable");
     $examData = $examTb->readByUrl($url);
 
+		if ($examData["answer_data"] != "") {
+      $message[0] = "該当試験は受け済みの試験になります。";
+      $message[1] = "ご協力ありがとうございました。";
+			return $this->SetViewModel(["message" => $message], "user/alert.phtml");
+		}
+
 		if ($examData["question_data"] == "") {		// 問題がいない場合
 			if (isset($post["academic"])) { $this->MakeExam($url, $post); }		// 応募者が情報を確認した時
 			else { return $this->Setting($examData); }		// 問題設定ページに移動
@@ -170,8 +176,8 @@ class UserController extends AbstractActionController
       }
 
       $examTb->updateSubmit($url, $answers, $point);
-			echo "success";
-			exit;
+
+			return $this->SetViewModel([] , "user/finish.phtml");
 		}
 
 		// 試験案内ページに移動

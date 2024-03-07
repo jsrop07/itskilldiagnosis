@@ -139,12 +139,43 @@ class UserController extends AbstractActionController
 			else { return $this->Setting($examData); }		// 問題設定ページに移動
 		}
 
-		echo "here";
-		exit;
+		// 試験受けるページに移動
+		if (isset($post["start"])) {
+			$datas["examData"] = $examData;
 
-		if (isset($post["ready"])) {		// 試験準備画面に移動
-			return $this->SetViewModel($examData , "/user/exam.phtml");
+			$questionTb = $this->getServiceLocator()->get("QuestionPoolTable");
+      $questionIdxs = explode(",", $examData["question_data"]);
+			$questionDatas = array();
+			foreach ($questionIdxs as $index => $idx) {
+				$questionDatas[$index] = $questionTb->readByIdx($idx);
+			}
+
+			$datas["questionDatas"] = $questionDatas;
+
+			return $this->SetViewModel($datas, "user/exam.phtml");
 		}
+
+		if (isset($post["end"])) {
+			unset($post["end"]);
+			$answers = implode(",", $post);
+			
+			$questionTb = $this->getServiceLocator()->get("QuestionPoolTable");
+      $questionIdxs = explode(",", $examData["question_data"]);
+      $point = 0;
+      foreach ($questionIdxs as $index => $questionIdx) {
+        $questionData = $questionTb->readByIdx($questionIdx);
+        if ($post["question" . $index] == $questionData["correct_answer"]) {
+          $point = $point + 1;
+        }
+      }
+
+      $examTb->updateSubmit($url, $answers, $point);
+			echo "success";
+			exit;
+		}
+
+		// 試験案内ページに移動
+		return $this->SetViewModel(["name" => $examData["name"]] , "user/announce.phtml");
 		/* ここまで */
   }
 
@@ -152,14 +183,13 @@ class UserController extends AbstractActionController
 		作成：朴昰成
 		作成日：2024/03/04
 	*/
-
 	public function Setting($examData) {		// 問題設定ページに移動
 		$datas["examData"] = $examData;
 
     $typeTb = $this->getServiceLocator()->get("QuestionTypeTable");
 		$datas["typeDatas"] = $typeTb->readAll();
 		
-		return $this->SetViewModel($datas, "user/announce.phtml");
+		return $this->SetViewModel($datas, "user/setting.phtml");
 	}
 
 	/** Make Exam */

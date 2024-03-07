@@ -62,13 +62,12 @@ class ExamTable
 			"user_pw" => $post["password"],
 			"name" => $post["name"],
 			"write_date" => date("Y-m-d H:i:s"),
-			"question_nums" => $post["num"]
+			"question_nums" => $post["num"],
 		);
 		
 		if (isset($post["academic"]) && $post["academic"] != "") { $data["academic"] = $post["academic"]; }
-		if (isset($post["major"]) && $post["major"] == "on") { $data["major"] = 1; }
 		if (isset($post["career"]) && $post["career"] != "") { $data["career"] = $post["career"]; }
-		if (isset($post["certificates"])) { $data["certificates"] = $post["certificates"]; }
+		if (isset($post["certificates"]) && $post["certificates"] != "") { $data["certificates"] = $post["certificates"]; }
 		if (isset($post["question_data"])) { $data["question_data"] = $post["question_data"]; }
 		/* ここまで */
 

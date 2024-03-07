@@ -324,13 +324,23 @@ class AdminController extends AbstractActionController
 		*/
 
 		/* 修正後： */
-		if (!isset($post["setLevel"])) {
-			$session = new Container("exam");
+		$session = new Container("exam");
 
+		if ($session->offsetGet("setQuestion") == "true") {
 			$questionTb = $this->getServiceLocator()->get("QuestionPoolTable");
 			$typeTb = $this->getServiceLocator()->get("QuestionTypeTable");
 
-			$questionDatas = iterator_to_array($questionTb->ReadRandForExam($session->offsetGet("type"), $session->offsetGet("academic"), $session->offsetGet("career"), $session->offsetGet("certificate"), $session->offsetGet("num")));
+			$questionValueDatas = array (
+				"type" => $session->offsetGet("type"),
+				"academic" => $session->offsetGet("academic"),
+				"career" => $session->offsetGet("career"),
+				"certificates" => $session->offsetGet("certificates"),
+				"num" => $session->offsetGet("num"),
+			);
+
+			if ($session->offsetExists("major")) { $questionValueDatas["academic"] += 1; }
+
+			$questionDatas = iterator_to_array($questionTb->ReadRandForExam($questionValueDatas));
 			$datas["questionDatas"] = $questionDatas;
 		
 			$typeTitles = [];

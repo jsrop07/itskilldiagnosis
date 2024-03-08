@@ -121,6 +121,13 @@ if (!isset($_SESSION)) {
 
 $questionData = $_SESSION["question"];
 
+	/* 値の変更とデバッグ
+		作成：丁錫圓
+		修正：朴昰成
+		修正日：2024/03/08
+	*/
+
+	/* 修正前：
 $academicTitle = "";
 switch ($questionData["academic"]) {
   case 0:
@@ -142,6 +149,11 @@ switch ($questionData["academic"]) {
     $academicTitle = "大学院";
     break;    
 }
+	*/
+	
+	/* 修正後： */
+	$academicText = array("その他", "高等学校", "専門学校", "短期大学", "大学", "大学院");
+	/* ここまで */
 
 
 $certificateTitle=array("無","有");
@@ -179,7 +191,20 @@ $nums[5] = "⑤";
         <td class="col-3 text-left border-light"><?= $questionData["typeTitle"] ?></td>
 
         <td class="col-3 text-right border-light">アカデミック :</td>
+				<!-- 値の変更と機能の追加	
+					作成：丁錫圓
+					修正：朴昰成
+					修正日：2024/03/08
+				-->
+
+				<!-- 修正前： <?php /* ?>
         <td class="col-3 text-left border-light"><?= $academicTitle ?></td>
+				<?php */ ?> -->
+
+				<!-- 修正後： -->
+        <td class="col-3 text-left border-light"><?= $academicText[$questionData["academic"] / 2]; ?></td>
+				<td>IT専攻 : <?php echo (isset($questionData["major"])) ? "O" : "X"; ?></td>
+				<!-- ここまで -->
 
         <td class="col-3 text-right border-light">キャリア :</td>
         <td class="col-3 text-left border-light"><?= $questionData['career'] ?>年</td>

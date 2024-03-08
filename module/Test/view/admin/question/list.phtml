@@ -93,7 +93,22 @@ $cert=array("無","有");
     <?php foreach ($questionDatas as $index => $data) : ?>
       <tr style="cursor: pointer;" onclick="Move2Detail(<?= $data['idx'] ?>)">
         <td><?= $dataIndex - $index ?></td>
+				<!-- 表示するデータの変更
+					作成：丁錫圓
+					修正：朴昰成
+					修正日：2024/03/08
+				-->
+
+				<!-- 修正前： <?php /* ?>
         <td><?= $level[$data["academic"]] ?></td>
+				<?php */ ?> -->
+
+				<!-- 修正後： -->
+        <td>
+					<?php echo $level[$data["academic"] / 2]; ?>
+					<?php echo ($data["academic"] % 2 == 1) ? "" : "&nbspIT専攻"; ?>
+				</td>
+				<!-- ここまで -->
         <td><?= $data["career"]?>年</td>
         <td><?= $cert[$data["certificate"]] ?></td>
         <td><?= $typeTitles[$index] ?></td>

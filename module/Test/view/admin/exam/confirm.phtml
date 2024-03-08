@@ -58,9 +58,8 @@ switch ($examData["level"]) {
 
 		<!-- 修正後： -->
 		<input name="academic" type="hidden" value="<?php echo $examData["academic"]; ?>"/>
-		<input name="major" type="hidden" value="<?php echo $examData["major"]; ?>"/>
 		<input name="career" type="hidden" value="<?php echo $examData["career"]; ?>"/>
-		<input name="certificates" type="hidden" value=""/>
+		<input name="certificates" type="hidden"/>
 		<input name="num" type="hidden" value="<?php echo $examData["num"]; ?>"/>
 
 		<?php if ($setQ == "true"): ?>
@@ -142,8 +141,15 @@ switch ($examData["level"]) {
 	<!-- 修正後： -->
 	<p>設定</p>
 	<div>
-		<p>最終学歴 : <?php echo ($examData["academic"] == "") ? "未設定" : $academicTexts[$examData["academic"]]; ?></p>
-		<p>IT専攻 <?php echo (isset($examData["major"])) ? "O" : "X"; ?></p>
+		<p>最終学歴 : <?php echo ($examData["academic"] == "") ? "未設定" : $academicTexts[$examData["academic"] / 2]; ?></p>
+		<p>
+			IT専攻 :  
+			<?php if ($examData["academic"] == ""): ?>
+				未設定
+			<?php else: ?>
+				<?php echo (isset($examData["major"])) ? "O" : "X"; ?>
+			<?php endif; ?>
+		</p>
 		<p>種別 : <?php echo ($examData["type"] == "") ? "未設定" : $examData["typeTitle"]; ?></p>
 		<p>経歴 : <?php echo ($examData["career"] == "") ? "未設定" : $examData["career"]; ?></p>
 		<p>
@@ -155,9 +161,7 @@ switch ($examData["level"]) {
 					未設定
 				<?php endif; ?>
 			<?php else: ?>
-				<?php foreach ($examData["certificate"] as $data): ?>
-					<?php echo $data; ?>
-				<?php endforeach; ?>
+				<?php echo $examData["certificates"]; ?>
 			<?php endif; ?>
 		</p>
 		<p>問題数 : <?php echo $examData["num"]; ?></p>
@@ -239,6 +243,10 @@ switch ($examData["level"]) {
 			<?php endforeach; ?>
 			form.certificates.value = form.certificates.value.slice(0, -1);
 		<?php endif; ?>
+
+		if (<?php echo isset($examData["major"]) ? "true" : "false"; ?>) {
+			form.academic.value = parseInt(form.academic.value) + 1;
+		}
 
 		var result = confirm("問題を登録しますか？");
 		if (result === true) {

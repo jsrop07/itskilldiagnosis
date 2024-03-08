@@ -87,10 +87,25 @@ class AdminController extends AbstractActionController
 
     if (isset($post["type"])) {
       $session = new Container("question");
+			/* 機能の追加
+				作成：朴昰成
+				作成日：2024/03/08
+			*/
+			$session->getManager()->getStorage()->clear();
+			/* ここまで */
 
       foreach ($post as $key => $data) {
         $session->offsetSet($key, $data);
       }
+
+			/* 機能の追加
+				作成：朴昰成
+				作成日：2024/03/08
+			*/
+			if ($session->offsetExists("major")) {
+				$session->offsetSet("academic", $session->offsetGet("academic") + 1);
+			}
+			/* ここまで */
 
       header("Location: ./register/confirm");
       exit;
@@ -101,8 +116,20 @@ class AdminController extends AbstractActionController
 
     $datas["typeDatas"] = $typeDatas;
 
+		/* コードデバッグ
+			作成：朴昰成
+			修正：朴昰成
+			修正日：2027/03/08
+		*/
+
+		/* 修正前
     $breadcrumb[0] = "問題管理";
     $breadcrumb[1] = "問題登録";
+		*/
+
+		/* 修正後 */
+		$breadcrumb = array("問題管理", "問題登録");
+		/* ここまで */
     $this->layout()->breadcrumb = json_encode($breadcrumb);
 
     //view==============================================================
@@ -127,9 +154,21 @@ class AdminController extends AbstractActionController
       ";
     }
 
+		/* コードデバッグ
+			作成：朴昰成
+			修正：朴昰成
+			修正日：2027/03/08
+		*/
+
+		/* 修正前
     $breadcrumb[0] = "問題管理";
     $breadcrumb[1] = "問題登録";
     $breadcrumb[2] = "確認";
+		*/
+
+		/* 修正後 */
+		$breadcrumb = array("問題管理", "問題登録", "確認");
+		/* ここまで */
     $this->layout()->breadcrumb = json_encode($breadcrumb);
 
     //view==============================================================
@@ -324,13 +363,23 @@ class AdminController extends AbstractActionController
 		*/
 
 		/* 修正後： */
-		if (!isset($post["setLevel"])) {
-			$session = new Container("exam");
+		$session = new Container("exam");
 
+		if ($session->offsetGet("setQuestion") == "true") {
 			$questionTb = $this->getServiceLocator()->get("QuestionPoolTable");
 			$typeTb = $this->getServiceLocator()->get("QuestionTypeTable");
 
-			$questionDatas = iterator_to_array($questionTb->ReadRandForExam($session->offsetGet("type"), $session->offsetGet("academic"), $session->offsetGet("career"), $session->offsetGet("certificate"), $session->offsetGet("num")));
+			$questionValueDatas = array (
+				"type" => $session->offsetGet("type"),
+				"academic" => $session->offsetGet("academic"),
+				"career" => $session->offsetGet("career"),
+				"certificates" => $session->offsetGet("certificates"),
+				"num" => $session->offsetGet("num"),
+			);
+
+			if ($session->offsetExists("major")) { $questionValueDatas["academic"] += 1; }
+
+			$questionDatas = iterator_to_array($questionTb->ReadRandForExam($questionValueDatas));
 			$datas["questionDatas"] = $questionDatas;
 		
 			$typeTitles = [];

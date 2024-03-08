@@ -176,6 +176,13 @@ document.getElementById("cancel-bt").addEventListener("click", function() {
           <?php endforeach; ?>
         </select>
 
+				<!-- 値の変更と機能の追加	
+					作成：丁錫圓
+					修正：朴昰成
+					修正日：2024/03/08
+				-->
+
+				<!-- 修正前：
         <span class="w-25">(*)アカデミック</span>
         <select class="form-select w-50" id="academic" name="academic">
           <option value=0>その他　</option>
@@ -185,6 +192,22 @@ document.getElementById("cancel-bt").addEventListener("click", function() {
           <option value=4>大学  　</option>        
           <option value=5>大学院　</option>        
         </select>
+				-->
+
+				<!-- 修正後： -->
+				<span class="w-25">(*)最後学歴</span>
+				<select class="form-select w-50" id="academic" name="academic" onclick="determineCheckboxActivation(event);">
+					<option value="" selected disabled hidden>選択してください</option>
+					<option value=2>高等学校</option>
+					<option value=4>専門学校</option>
+					<option value=6>短期大学</option>
+					<option value=8>大学</option>
+					<option value=10>大学院</option>
+					<option value=0>その他</option>
+				</select>
+
+				<input type="checkbox" name="major" disabled/>IT専攻
+				<!-- ここまで -->
       </div>
         <div class="d-flex flex-row mb-1 align-items-baseline gap-2">
         <span class="w-25">(*)キャリア</span>
@@ -281,6 +304,16 @@ if (sessionStorage.getItem("return") == "question") {
   answer5.value = sessionStorage.getItem("answer5");
   correct.value = sessionStorage.getItem("correct");
 }
+
+/* 機能の追加
+	作成：朴昰成
+	作成日：2024/03/08
+*/
+function determineCheckboxActivation(event) {
+		if (event.target.value == "" || event.target.value < 2) { form.major.disabled = true; }
+		else { form.major.disabled = false; }
+	}
+/* ここまで */
 
 document.getElementById("confirm-bt").addEventListener("click", function() {
   if (carrer.value.trim() === "" || isNaN(carrer.value.trim())) {

@@ -75,17 +75,17 @@
 
 			<div id="setting_place">
 				<span class="essential">最終学歴</span>
-				<select name="academic">
+				<select name="academic" onclick="determineCheckboxActivation(event);">
 					<option value="" selected disabled hidden>選択してください</option>
-					<option value=1>高等学校</option>
-					<option value=2>専門学校</option>
-					<option value=3>短期大学</option>
-					<option value=4>大学</option>
-					<option value=5>大学院</option>
+					<option value=2>高等学校</option>
+					<option value=4>専門学校</option>
+					<option value=6>短期大学</option>
+					<option value=8>大学</option>
+					<option value=10>大学院</option>
 					<option value=0>その他</option>
 				</select>
 
-				<input type="checkbox" name="major"/>IT専攻
+				<input type="checkbox" name="major" disabled/>IT専攻
 			
 				<br/>
 			
@@ -105,7 +105,7 @@
 				<br/>
 			
 				<span>資格</span>
-				<button type="button" onclick="addCertificate()">+</button>
+				<button type="button" onclick="addCertificate();">+</button>
 				<div id="place-certificate">
 				</div>	
 			<!-- ここまで -->
@@ -155,6 +155,13 @@ if (sessionStorage.getItem("return") == "exam") {
 	HTMLCollection.prototype.forEach = Array.prototype.forEach;
 	const essentials = document.getElementsByClassName("essential");
 	const certificatePlace = document.getElementById("place-certificate");
+
+	
+
+	function determineCheckboxActivation(event) {
+		if (event.target.value == "" || event.target.value < 2) { form.major.disabled = true; }
+		else { form.major.disabled = false; }
+	}
 
 	function chkSetQuestion(event) {
 		if (event.target.value == "false") {
@@ -229,15 +236,17 @@ document.getElementById("bt_confirm").addEventListener("click", () => {
 			return false;
 		}
 
-		var certificates = document.getElementsByName("certificate");
-		for (let i = 0; i < certificates.length; i++) {
-			if (certificates[i].value.trim() == "") {
+		form.certificates.value = "";
+		var certificateArray = document.getElementsByName("certificate[]");
+		for (let i = 0; i < certificateArray.length; i++) {
+			if (certificateArray[i].value.trim() == "") {
 				alert("資格を入力してください。");
-				certificates[i].focus();
+				certificateArray[i].focus();
 				return false;
 			}
-			else { certificates[i].value = certificates[i].value.trim(); }
+			else { form.certificates.value += certificateArray[i].value.trim() + ","; }
 		}
+		form.certificates.value = form.certificates.value.slice(0, -1);
 
 		form.typeTitle.value = form.type.options[form.type.selectedIndex].text;
 		/* ここまで */

@@ -297,7 +297,7 @@ document.getElementById("bt_confirm").addEventListener("click", () => {
 			設定
 		</div>
 
-		<div class="card-body">
+		<div class="card-body" style="margin-top: 24px;">
 			<div style="display: grid; grid-template-columns: repeat(2, 1fr);">
 				<div>
 					<input type="radio" name="setQuestion" id="set" value="true" onclick="chkSetQuestion(event)" checked="checked"/><label for="set">問題出題後配信（試験画面へ）</label>
@@ -310,13 +310,13 @@ document.getElementById("bt_confirm").addEventListener("click", () => {
 			<style type="text/css">
 				dl.emegra.setting {
 					margin-top: 24px;
-					grid-template-columns: repeat(2, 150px 1fr);
+					grid-template-columns: repeat(2, 120px 1fr);
 				}
 			</style>
 			<dl class="emegra setting">
 				<dt class="essential select">最終学歴</dt>
-				<dd style="display: grid; grid-template-columns: 1fr 100px; grid-column-gap: 8px">
-					<select class="form-select" name="academic" onclick="determineCheckboxActivation(event);">
+				<dd>
+					<select class="form-select" style="max-width: calc(100% - 80px); margin-right: 8px;" name="academic" onclick="determineCheckboxActivation(event);">
 						<option value="" selected disabled hidden>選択してください</option>
 						<option value=2>高等学校</option>
 						<option value=4>専門学校</option>
@@ -396,8 +396,8 @@ document.getElementById("bt_confirm").addEventListener("click", () => {
 		const newDiv = document.createElement("div");
 		newDiv.innerHTML =
 			"<div style='margin-top: 8px; display: flex; align-items: center;'>" +
-				"<input class='form-control' style='margin-right: 8px;' name='certificate[]' placeholder='資格の名を入力してください。'>" +
-				"<button class='btn-remove' type='button' onclick='event.target.parentNode.remove();'>-</button>"
+				"<input class='form-control' style='max-width: calc(100% - 46px); margin-right: 8px;' name='certificate[]' placeholder='資格の名を入力してください。'>" +
+				"<button class='btn-minus' type='button' onclick='event.target.parentNode.remove();'>-</button>"
 			"</div>"
 		certificatePlace.appendChild(newDiv);
 	}
@@ -408,20 +408,21 @@ document.getElementById("bt_confirm").addEventListener("click", () => {
 		if ((form.name.value.trim()) == "") {
 			alert("名前を入力してください。");
 			form.name.focus();
-    return false;
-  }
+			return false;
+		}
 
-  if ((form.id.value.trim()) == "") {
-    alert("ログインIDを入力してください。");
-    form.id.focus();
-    return false;
-  }
+		if ((form.id.value.trim()) == "") {
+			alert("ログインIDを入力してください。");
+			form.id.focus();
+			return false;
+		}
 
-  if ((form.password.value.trim()) == "") {
-    alert("パスワードを入力してください。");
-    form.password.focus();
-    return false;
-  }
+		if ((form.password.value.trim()) == "") {
+			alert("パスワードを入力してください。");
+			form.password.focus();
+			return false;
+		}
+		
 		if (form.setQuestion.value == "true") {
 			if (form.academic.value == "") {
 				alert("学歴を選択してください。");

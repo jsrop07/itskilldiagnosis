@@ -6,6 +6,13 @@
 	border: 0;	
 	font-family: "Roboto", "Noto Sans JP", sans-serif !important;
 }
+dl, ol, ul { margin-bottom: 0; }
+table {
+	border-collapse: initial;
+	border-spacing: 0;
+}
+a { text-decoration: none; }
+p { margin: 0; }
 
 :root {
 	--title-gradient: linear-gradient(111deg, #1bc8d7 0%, #40ADF0 100%);
@@ -162,32 +169,23 @@ main {
 }
 
 
-button.btn-plus {
-	height: 30px;
-	width: 30px;
+button.btn-plus, button.btn-minus {
+	height: 38px;
+	width: 38px;
 	border-radius: 5px;
 	background: var(--gradient);
 
 	color: white;
 }
+button.btn-minus { background: red; }
 button.btn-plus:hover { background: var(--emegra-blue); }
-
-button.btn-remove {
-	height: 30px;
-	width: 30px;
-	border-radius: 5px;
-	background: red;
-
-	color: white;
-}
-button.btn-remove:hover { background: #CE2F2D; }
+button.btn-remove:hover { 	background: #CE2F2D; }
 
 .btn-place {
 	display: flex;
 	justify-content: center;
 	gap: 8px;
 }
-
 button.emegra {
 	height: 38px;
 	width: 120px;
@@ -197,15 +195,15 @@ button.emegra {
 	color: white;
 }
 button.emegra:hover { background: var(--emegra-blue); }
-
 button.emegra.cancle { background: #C1C5C9; }
 button.emegra.cancle:hover { background: #A4A8AD; }
 
 
 
 ul.emegra.breadcrumb {
-	height: 19px;
+	height: 28px;
 	width: 100%;
+	margin: 0;
 	border-bottom: 1px solid var(--line);
 	padding-bottom: 8px;
 
@@ -239,13 +237,12 @@ ul.emegra.pagination {
 	display: flex;
 
 	justify-content: center;
-
 	
   list-style: none;
 }
 ul.emegra.pagination li.item {
-	height: 36px;
-	width: 36px;
+	height: 38px;
+	width: 38px;
 	margin: 0 4px;
 	border: 1px solid var(--line);
 	border-radius: 4px;
@@ -254,20 +251,16 @@ ul.emegra.pagination li.item {
 	cursor: pointer;
 }
 ul.emegra.pagination li.item.active {
-	height: 38px;
-	width: 38px;
 	border: 0;
 	background: var(--gradient);
 }
 ul.emegra.pagination li.item:hover {
-	height: 38px;
-	width: 38px;
 	border: 0;
 	background: var(--emegra-blue);
 }
 ul.emegra.pagination li.item a {
-	height: 38px;
-	width: 38px;
+	height: 100%;
+	width: 100%;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -298,7 +291,6 @@ ul.emegra.pagination li.item:hover a { color: white; }
 	border: 1px solid var(--line);
 	padding: 40px;
 	border-radius: 6px;
-	box-sizing: border-box;
 	background: white;
 }
 .emegra.card .card-header {
@@ -319,15 +311,15 @@ ul.emegra.pagination li.item:hover a { color: white; }
 	margin-right: 16px;
 	background: var(--gradient);
 }
+.emegra.card .card-body {
+	padding: 0 40px;
+}
 
 
 
 dl.emegra {
-	margin: 0;
-	padding: 0 40px;
 	display: grid;
-	grid-column-gap: 8px;	
-	grid-row-gap: 24px;
+	grid-gap: 24px 8px;
 
 	line-height: 40px;
 	font-size: 16px;

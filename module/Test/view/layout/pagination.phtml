@@ -1,70 +1,7 @@
-<?php if ($this->pageCount): ?>
-	<div class='hidden-lg hidden-md' style='margin-top:-18px;margin-bottom:-10px;'>
-		<ul class="pagination pagination-sm">
-			<?php if (isset($this->previous)): ?>
-				<li>
-					<a href="<?php echo $this->url;?><?php echo ($this->url=='')?"?":"&"?>page=<?php echo $this->previous;?>">&laquo;</a>
-				</li>
-			<?php else: ?>
-				<li class="disabled">
-					<a href="#">&laquo;</a>
-				</li>
-			<?php endif; ?>
-			<?php foreach ($this->pagesInRange as $page): ?>
-				<?php if ($page != $this->current): ?>
-					<li>
-						<a href="<?php echo $this->url;?><?php echo ($this->url=='')?"?":"&"?>page=<?php echo $page;?>"><?php echo $page;?></a>
-					</li>
-				<?php else: ?>
-					<li class="active">
-						<a href="#"><?php echo $page; ?></a>
-					</li>
-				<?php endif; ?>
-			<?php endforeach; ?>
-			<?php if (isset($this->next)): ?>
-				<li>
-					<a href="<?php echo $this->url; ?><?php echo ($this->url=='')?"?":"&"?>page=<?php echo $this->next;?>">&raquo;</a>
-				</li>
-			<?php else: ?>
-				<li class="disabled">
-					<a href="#">&raquo;</a>
-				</li>
-			<?php endif; ?>
-		</ul>
-	</div>
-<?php endif; ?>
-<?php if ($this->pageCount): ?>
-	<div class='hidden-xs hidden-sm' style='margin-top:-18px;margin-bottom:-10px;'>
-		<ul class="pagination">
-			<?php if (isset($this->previous)): ?>
-				<li>
-					<a href="<?php echo $this->url;?><?php echo ($this->url=='')?"?":"&"?>page=<?php echo $this->previous;?>">&laquo;</a>
-				</li>
-			<?php else: ?>
-				<li class="disabled">
-					<a href="#">&laquo;</a>
-				</li>
-			<?php endif; ?>
-			<?php foreach ($this->pagesInRange as $page): ?>
-				<?php if ($page != $this->current): ?>
-					<li>
-						<a href="<?php echo $this->url;?><?php echo ($this->url=='')?"?":"&"?>page=<?php echo $page;?>"><?php echo $page;?></a>
-					</li>
-				<?php else: ?>
-					<li class="active">
-						<a href="#"><?php echo $page; ?></a>
-					</li>
-				<?php endif; ?>
-			<?php endforeach; ?>
-			<?php if (isset($this->next)): ?>
-				<li>
-					<a href="<?php echo $this->url; ?><?php echo ($this->url=='')?"?":"&"?>page=<?php echo $this->next;?>">&raquo;</a>
-				</li>
-			<?php else: ?>
-				<li class="disabled">
-					<a href="#">&raquo;</a>
-				</li>
-			<?php endif; ?>
-		</ul>
-	</div>
-<?php endif; ?>
+<ul class="emegra pagination">
+	<?php for ($i = 1; $i <= $totalPage; $i++): ?>
+		<li class="item<?php echo ($currentPage == $i) ? " active" : ""; ?>">
+			<a href="<?php echo $url . $i; ?>"><?= $i ?></a>
+		</li>
+	<?php endfor; ?>
+</ul>

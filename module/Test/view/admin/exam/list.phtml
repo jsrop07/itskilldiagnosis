@@ -78,67 +78,46 @@ $level[3] = "高級";
 	$certificateText = array("無", "有");
 ?>
 
-<div>
-	<p>試験一覧</p>
+<?php echo $this->partial("breadcrumb", ["datas" => $breadcrumbData]); ?>
 
-	<table>
-		<thead>
-			<tr>
-				<th>No.</th>
-				<th>最終学歴</th>
-				<th>経歴</th>
-				<th>応募者</th>
-				<th>登録日</th>
-				<th>実施日</th>
-				<th>問題数</th>
-				<th>得点</th>
-			</tr>
-		</thead>
+<h1 class="title">試験一覧</h1>
 
-		<tbody>
-			<?php foreach ($examDatas as $idx => $data): ?>
-				<tr onclick="self.location.href='./list/detail/<?php echo $data['idx']; ?>'">
-					<td><?= $dataIndex - $idx; ?></td>
-					<td><?php echo ($data["academic"] == null) ? "未設定" : $academicText[$data["academic"]]; ?> <?php echo ($data["academic"] % 2 == 1) ? "IT専攻" : ""; ?></td>
-					<td><?php echo ($data["career"] == null) ? "未設定" : $data["career"]; ?></td>
-					<td><?php echo $data["name"]; ?></td>
-					<td><?php echo date("Y-m-d", strtotime($data["write_date"])); ?></td>
-					<td><?php echo ($data["execute_date"] == null) ? "未対応" : date("Y-m-d", strtotime($data["execute_date"])); ?></td>
-					<td><?php echo ($data["question_nums"] == null) ? "未設定" : $data["question_nums"]; ?></td>
-					<td><?php echo ($data["get_point"] == null) ? "未対応" : $data["get_point"]; ?></td>
+<style text="text/css">
+	table.emegra tr {
+		grid-template-columns: 40px 3fr 1fr 1fr 2fr 2fr 1fr 1fr;
+	}
+</style>
+<table class="emegra">
+	<thead>
+		<tr>
+			<th>No.</th>
+			<th>最終学歴</th>
+			<th>経歴</th>
+			<th>応募者</th>
+			<th>登録日</th>
+			<th>実施日</th>
+			<th>問題数</th>
+			<th>得点</th>
+		</tr>
+	</thead>
+
+	<tbody>
+		<?php foreach ($examDatas as $idx => $data): ?>
+			<tr onclick="self.location.href='./list/detail/<?php echo $data['idx']; ?>'">
+				<td><?= $dataIndex - $idx; ?></td>
+				<td><?php echo ($data["academic"] == null) ? "未設定" : $academicText[$data["academic"]]; ?> <?php echo ($data["academic"] % 2 == 1) ? "IT専攻" : ""; ?></td>
+				<td><?php echo ($data["career"] == null) ? "未設定" : $data["career"]; ?></td>
+				<td><?php echo $data["name"]; ?></td>
+				<td><?php echo date("Y-m-d", strtotime($data["write_date"])); ?></td>
+				<td><?php echo ($data["execute_date"] == null) ? "未対応" : date("Y-m-d", strtotime($data["execute_date"])); ?></td>
+				<td><?php echo ($data["question_nums"] == null) ? "未設定" : $data["question_nums"]; ?></td>
+				<td><?php echo ($data["get_point"] == null) ? "未対応" : $data["get_point"]; ?></td>
 				</tr>
-			<?php endforeach; ?>
-		</tbody>
-	</table>
-	
-	<nav>
-		<ul class="pagination">
-			<li class="page-item">
-				<a class="page-link <?php echo ($cPage == 1) ? "disabled" : ""; ?>" href="list?page=1">first</a>
-			</li>
-			
-			<li class="page-item">
-				<a class="page-link <?php echo ($cPage == 1) ? "disabled" : ""; ?>" href="list?page=<?= $cPage - 1; ?>">
-					<span class="unclick">&laquo;</span>
-				</a>
-			</li>
-			
-			<?php for ($page = 1; $page <= $totalPage; $page = $page + 1): ?>
-				<li class="page-item <?php echo ($page == $cPage) ? "active" : ""; ?>">
-					<a class="page-link" href="list?page=<?= $page; ?>"><?= $page; ?></a>
-				</li>
-			<?php endfor; ?>
-			
-			<li class="page-item">
-				<a class="page-link <?php echo ($cPage == $totalPage) ? "disabled" : ""; ?>" href="list?page=<?= $cPage + 1; ?>">
-					<span class="unclick">&raquo;</span>
-				</a>
-			</li>
-			
-			<li class="page-item">
-				<a class="page-link <?php echo ($cPage == $totalPage) ? "disabled" : ""; ?>" href="list?page=<?= $totalPage; ?>">last</a>
-			</li>
-		</ul>
-	</nav>
+		<?php endforeach; ?>
+	</tbody>
+</table>
+
+<div style="margin-top: 32px;">
+	<?php echo $this->partial("pagination", $paginationData); ?>
 </div>
 <!-- ここまで -->

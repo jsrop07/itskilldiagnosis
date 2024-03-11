@@ -33,6 +33,13 @@ class AdminController extends AbstractActionController
 
   public function questionAction()
   {
+		$submenuArray = array(
+			"問題一覧" => ["list", "detail"],
+			"問題登録" => ["register", "confirm"],
+		);
+		$this->layout("admin");
+		$this->layout()->submenuArray = json_encode($submenuArray);
+		
     $route = $this->params()->fromRoute();
     $query = $this->params()->fromQuery();
 
@@ -52,12 +59,22 @@ class AdminController extends AbstractActionController
         }
         die();
       }
-      return $this->questionList($query["page"]);
+			
+			$page = 1;
+			if (in_array("page", $query)) { $page = $query["page"]; }
+      return $this->questionList($page);
     }
   }
 
   public function examAction()
   {
+		$submenuArray = array(
+			"試験一覧" => ["list", "detail"],
+			"試験登録" => ["register", "confirm"],
+		);
+		$this->layout("admin");
+		$this->layout()->submenuArray = json_encode($submenuArray);
+
     $route = $this->params()->fromRoute();
     $query = $this->params()->fromQuery();
 
@@ -77,7 +94,10 @@ class AdminController extends AbstractActionController
         }
         die();
       }
-      return $this->examList($query["page"]);
+
+			$page = 1;
+			if (in_array("page", $query)) { $page = $query["page"]; }
+      return $this->examList($page);
     }
   }
 
@@ -305,12 +325,13 @@ class AdminController extends AbstractActionController
 		/* 修正前
     $breadcrumb[0] = "応募者状況管理";
     $breadcrumb[1] = "試験登録";
+    $this->layout()->breadcrumb = json_encode($breadcrumb);
 		*/
 
 		/* 修正後 */
 		$breadcrumb = array("応募者状況管理", "試験登録");
+    $datas["breadcrumbData"] = $breadcrumb;
 		/* ここまで */
-    $this->layout()->breadcrumb = json_encode($breadcrumb);
 
     //view==============================================================
     $vm = new ViewModel($datas);
@@ -443,8 +464,24 @@ class AdminController extends AbstractActionController
 
     $datas["examDatas"] = $examTb->readTenByPage($page);
     $datas["dataIndex"] = $examTb->readCount() - (($page - 1) * 10);
+		/* 機能の変更
+			作成：朴昰成
+			修正：朴昰成
+			修正日：2027/03/11
+		*/
+
+		/* 修正前
     $datas["totalPage"] = intval($examTb->readCount() / 10 + 1);
     $datas["cPage"] = $page;
+		*/
+
+		/* 修正後 */
+
+    $paginationData["totalPage"] = intval($examTb->readCount() / 10 + 1);
+    $paginationData["currentPage"] = $page;
+		$paginationData["url"] = "list?page=";
+		$datas["paginationData"] = $paginationData;
+		/* ここまで */
 
 		/* コードデバッグ
 			作成：朴昰成
@@ -455,12 +492,13 @@ class AdminController extends AbstractActionController
 		/* 修正前
     $breadcrumb[0] = "応募者状況管理";
     $breadcrumb[1] = "試験一覧";
+    $this->layout()->breadcrumb = json_encode($breadcrumb);
 		*/
 
 		/* 修正後 */
 		$breadcrumb = array("応募者状況管理", "試験一覧");
+    $datas["breadcrumbData"] = $breadcrumb;
 		/* ここまで */
-    $this->layout()->breadcrumb = json_encode($breadcrumb);
 
     //view==============================================================
     $vm = new ViewModel($datas);

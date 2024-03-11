@@ -312,6 +312,7 @@ ul.emegra.pagination li.item:hover a { color: white; }
 	background: var(--gradient);
 }
 .emegra.card .card-body {
+	margin-top: 24px;
 	padding: 0 40px;
 }
 

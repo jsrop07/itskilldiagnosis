@@ -291,27 +291,22 @@ document.getElementById("bt_confirm").addEventListener("click", () => {
 	</div>
 
 	<div class="emegra card" style="margin-top: 32px;">
-		<div class="card-header">
-			設定
-		</div>
+		<div class="card-header">設定</div>
 
-		<div class="card-body" style="margin-top: 24px;">
+		<div class="card-body">
 			<div style="display: grid; grid-template-columns: repeat(2, 1fr);">
 				<div>
 					<input type="radio" name="setQuestion" id="set" value="true" onclick="chkSetQuestion(event)" checked="checked"/><label for="set">問題出題後配信（試験画面へ）</label>
 				</div>
 				<div>
-					<input type="radio" name="setQuestion" id="unset" value="false" onclick="chkSetQuestion(event)"/><label for="unset">情報確認後試験（情報確認画面へ）</label>	
+					<input type="radio" name="setQuestion" id="unset" value="false" onclick="chkSetQuestion(event)"/><label for="unset">情報確認後試験（情報確認画面へ）</label>
 				</div>
-			</div>	
+			</div>
 
 			<style type="text/css">
-				dl.emegra.setting {
-					margin-top: 24px;
-					grid-template-columns: repeat(2, 120px 1fr);
-				}
+				dl.emegra.setting { grid-template-columns: repeat(2, 120px 1fr); }
 			</style>
-			<dl class="emegra setting">
+			<dl class="emegra setting" style="margin-top: 24px;">
 				<dt class="essential select">最終学歴</dt>
 				<dd>
 					<select class="form-select" style="max-width: calc(100% - 80px); margin-right: 8px;" name="academic" onclick="determineCheckboxActivation(event);">
@@ -353,8 +348,7 @@ document.getElementById("bt_confirm").addEventListener("click", () => {
 
 			<div style="margin-top: 24px;">
 				<span style="font-size: 16px; font-weight: 700;">資格</span>
-				<div id="place-certificate">
-				</div>	
+				<div id="place-certificate"></div>	
 				<button class="btn-plus" style="margin-top: 8px; float: right;" type="button" onclick="addCertificate();">+</button>
 			</div>
 		</div>
@@ -395,8 +389,8 @@ document.getElementById("bt_confirm").addEventListener("click", () => {
 		newDiv.innerHTML =
 			"<div style='margin-top: 8px; display: flex; align-items: center;'>" +
 				"<input class='form-control' style='max-width: calc(100% - 46px); margin-right: 8px;' name='certificate[]' placeholder='資格の名を入力してください。'>" +
-				"<button class='btn-minus' type='button' onclick='event.target.parentNode.remove();'>-</button>"
-			"</div>"
+				"<button class='btn-minus' type='button' onclick='event.target.parentNode.remove();'>-</button>" +
+			"</div>";
 		certificatePlace.appendChild(newDiv);
 	}
 
@@ -460,6 +454,7 @@ document.getElementById("bt_confirm").addEventListener("click", () => {
 		form.certificates.value = form.certificates.value.slice(0, -1);
 
 		form.typeTitle.value = form.type.options[form.type.selectedIndex].text;
-  form.submit();
+
+		form.submit();
 	}
 </script>

@@ -96,7 +96,7 @@ class AdminController extends AbstractActionController
       }
 
 			$page = 1;
-			if (in_array("page", $query)) { $page = $query["page"]; }
+			if (array_key_exists("page", $query)) { $page = $query["page"]; }
       return $this->examList($page);
     }
   }
@@ -553,6 +553,7 @@ class AdminController extends AbstractActionController
     $breadcrumb[0] = "応募者状況管理";
     $breadcrumb[1] = "試験一覧";
     $breadcrumb[2] = "試験詳細";
+    $this->layout()->breadcrumb = json_encode($breadcrumb);
 		*/
 
 		/* 修正後 */
@@ -589,8 +590,8 @@ class AdminController extends AbstractActionController
 		}
 
 		$breadcrumb = array("応募者状況管理", "試験一覧", "試験詳細");
+    $datas["breadcrumbData"] = $breadcrumb;
 		/* ここまで */
-    $this->layout()->breadcrumb = json_encode($breadcrumb);
 
     //view==============================================================
     $vm = new ViewModel($datas);

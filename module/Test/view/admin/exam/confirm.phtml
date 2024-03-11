@@ -279,24 +279,10 @@ switch ($examData["level"]) {
 
 <h1 class="title">試験登録/確認</h1>
 
-<form id="from" method="post">
-	<input name="name" type="hidden" value="<?php echo $examData["name"]; ?>"/>
-	<input name="url" type="hidden" value="<?php echo $rndUrl; ?>"/>
-	<input name="id" type="hidden" value="<?php echo $examData["id"]; ?>"/>
-	<input name="password" type="hidden" value="<?php echo $examData["password"]; ?>"/>
-	<input name="academic" type="hidden" value="<?php echo $examData["academic"]; ?>"/>
-	<input name="career" type="hidden" value="<?php echo $examData["career"]; ?>"/>
-	<input name="num" type="hidden" value="<?php echo $examData["num"]; ?>"/>
-	<input name="certificates" type="hidden" value="<?php echo $examData["certificates"]; ?>"/>
-	<?php if ($setQ == "true"): ?>
-		<input name="question_data" type="hidden" value="<?php echo $question_data; ?>"/>
-	<?php endif; ?>
-</form>
-
 <div class="emegra card">
 		<div class="card-header">応募者情報	</div>
 
-		<div class="card-body" style="margin-top: 24px;">
+		<div class="card-body">
 			<style type="text/css">
 				dl.emegra.info { grid-template-columns: repeat(2, 100px 1fr); }
 			</style>
@@ -317,9 +303,9 @@ switch ($examData["level"]) {
 </div>
 
 <div class="emegra card" style="margin-top: 32px;">
-	<div class="card-header">応募者情報	</div>
+	<div class="card-header">設定</div>
 
-	<div class="card-body" style="margin-top: 24px;">
+	<div class="card-body">
 		<style type="text/css">
 			dl.emegra.setting { grid-template-columns: repeat(2, 100px 1fr); }
 		</style>
@@ -329,13 +315,7 @@ switch ($examData["level"]) {
 				<dd><?php echo ($examData["academic"] == "") ? "未設定" : $academicTexts[$examData["academic"] / 2]; ?></dd>
 			
 				<dt>IT専攻</dt>
-				<dd>
-					<?php if ($examData["academic"] == ""): ?>
-						未設定
-					<?php else: ?>
-						<?php echo (isset($examData["major"])) ? "O" : "X"; ?>
-					<?php endif; ?>
-				</dd>
+				<dd><?php echo (isset($examData["major"])) ? "O" : "X"; ?></dd>
 			</div>
 			
 			<dt>種別</dt>
@@ -363,9 +343,7 @@ switch ($examData["level"]) {
 		
 		<?php if ($setQ == "true"): ?>
 			<style text="text/css">
-				table.emegra tr {
-					grid-template-columns: 40px 1fr 100px;
-				}
+				table.emegra tr { grid-template-columns: 40px 1fr 100px; }
 			</style>
 			<table class="emegra" style="margin-top: 24px;">
 				<thead>
@@ -395,8 +373,22 @@ switch ($examData["level"]) {
 	<button class="emegra" onclick="submit();">登録</button>
 </div>
 
+<form id="form" method="post">
+	<input name="name" type="hidden" value="<?php echo $examData["name"]; ?>"/>
+	<input name="url" type="hidden" value="<?php echo $rndUrl; ?>"/>
+	<input name="id" type="hidden" value="<?php echo $examData["id"]; ?>"/>
+	<input name="password" type="hidden" value="<?php echo $examData["password"]; ?>"/>
+	<input name="academic" type="hidden" value="<?php echo $examData["academic"]; ?>"/>
+	<input name="career" type="hidden" value="<?php echo $examData["career"]; ?>"/>
+	<input name="num" type="hidden" value="<?php echo $examData["num"]; ?>"/>
+	<input name="certificates" type="hidden" value="<?php echo $examData["certificates"]; ?>"/>
+	<?php if ($setQ == "true"): ?>
+		<input name="question_data" type="hidden" value="<?php echo $question_data; ?>"/>
+	<?php endif; ?>
+</form>
+
 <script>
-	const form = document.getElementById("from");
+	const form = document.getElementById("form");
 
 	function submit() {
 		if (<?php echo isset($examData["major"]) ? "true" : "false"; ?>) {

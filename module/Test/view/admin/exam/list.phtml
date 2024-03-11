@@ -73,10 +73,7 @@ $level[3] = "高級";
 <?php */ ?> -->
 
 <!-- 修正後： -->
-<?php
-	$academicText = array("その他", "高等学校", "専門学校", "短期大学", "大学", "大学院");
-	$certificateText = array("無", "有");
-?>
+<?php $academicTexts = array("その他", "高等学校", "専門学校", "短期大学", "大学", "大学院"); ?>
 
 <?php echo $this->partial("breadcrumb", ["datas" => $breadcrumbData]); ?>
 
@@ -105,7 +102,7 @@ $level[3] = "高級";
 		<?php foreach ($examDatas as $idx => $data): ?>
 			<tr onclick="self.location.href='./list/detail/<?php echo $data['idx']; ?>'">
 				<td><?= $dataIndex - $idx; ?></td>
-				<td><?php echo ($data["academic"] == null) ? "未設定" : $academicText[$data["academic"]]; ?> <?php echo ($data["academic"] % 2 == 1) ? "IT専攻" : ""; ?></td>
+				<td><?php echo ($data["academic"] == null) ? "未設定" : $academicTexts[$data["academic"]]; ?> <?php echo ($data["academic"] % 2 == 1) ? "IT専攻" : ""; ?></td>
 				<td><?php echo ($data["career"] == null) ? "未設定" : $data["career"]; ?></td>
 				<td><?php echo $data["name"]; ?></td>
 				<td><?php echo date("Y-m-d", strtotime($data["write_date"])); ?></td>

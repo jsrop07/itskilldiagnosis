@@ -445,12 +445,13 @@ class AdminController extends AbstractActionController
     $breadcrumb[0] = "応募者状況管理";
     $breadcrumb[1] = "試験登録";
     $breadcrumb[2] = "確認";
+    $this->layout()->breadcrumb = json_encode($breadcrumb);
 		*/
 
 		/* 修正後 */
 		$breadcrumb = array("応募者状況管理", "試験登録", "確認");
+    $datas["breadcrumbData"] = $breadcrumb;
 		/* ここまで */
-    $this->layout()->breadcrumb = json_encode($breadcrumb);
 
     //view==============================================================
     $vm = new ViewModel($datas);

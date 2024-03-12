@@ -72,7 +72,6 @@ return array(
             'layout/layout'           => __DIR__ . '/../view/layout/layout.phtml',
             'layout/mylayout'           => __DIR__ . '/../view/layout/mylayout.phtml',
             "layout/exam_layout" => __DIR__ . "/../view/layout/exam_layout.phtml",
-            'layout/pagination'           => __DIR__ . '/../view/layout/pagination.phtml',
             "layout/none" => __DIR__ . "/../view/layout/none_layout.phtml",
         ),
         'template_path_stack' => array(

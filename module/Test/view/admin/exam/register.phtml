@@ -262,6 +262,7 @@ document.getElementById("bt_confirm").addEventListener("click", () => {
 </script>
 <?php */ ?> -->
 
+<!-- 修正後： -->
 <?php echo $this->partial("breadcrumb", ["datas" => $breadcrumbData]); ?>
 
 <h1 class="title">試験登録</h1>
@@ -273,7 +274,7 @@ document.getElementById("bt_confirm").addEventListener("click", () => {
 	<div class="emegra card">
 		<div class="card-header">応募者情報</div>
 
-		<div class="card-body" style="margin-top: 24px;">
+		<div class="card-body">
 			<style type="text/css">
 				dl.emegra.info { grid-template-columns: 200px 1fr; }
 			</style>
@@ -356,7 +357,7 @@ document.getElementById("bt_confirm").addEventListener("click", () => {
 </form>
 
 <div class="btn-place" style="margin-top: 32px;">
-	<button class="emegra cancle" onclick="window.location.href='./list?page=1';">キャンセル</button>
+	<button class="emegra cancel" onclick="window.location.href='./list?page=1';">キャンセル</button>
 	<button class="emegra" onclick="confirm();">次へ</button>
 </div>
 
@@ -458,3 +459,4 @@ document.getElementById("bt_confirm").addEventListener("click", () => {
 		form.submit();
 	}
 </script>
+<!-- ここまで -->

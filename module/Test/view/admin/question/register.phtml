@@ -1,3 +1,387 @@
+<!-- 画面変更
+	作成：朴昰成
+	修正：朴昰成
+	修正日：2027/03/12
+-->
+
+<!-- 修正前： <?php /* ?>
+!-- HTML修正
+作成：丁錫圓
+作成日：2024/02/21 --
+!-- 修正前：<?php !* ?>
+<div class="p-5 align-self-center" style="width: 800px;">
+  <p class="mb-5 h2">問題登録</p>
+  <form id="form_question" method="post">
+    <input type="hidden" name="typeTitle">
+
+    <p class="mt-4 mb-3">setting</p>
+    <div class="p-3 rounded-3 bg-light">
+      <div class="d-flex flex-row mb-1 align-items-baseline gap-2">
+        <span class="w-25">(*)問題種別</span>
+        <select class="form-select w-50" id="type" name="type">
+          <?php
+          foreach ($typeDatas as $type) : ?>
+          <option value="<?= $type["question_type"] ?>"><?= $type["question_title"] ?></option>
+          <?php endforeach; ?>
+        </select>
+
+        <span class="w-25">(*)レベル</span>
+        <select class="form-select w-50" id="level" name="level">
+          <option value=1>初級</option>
+          <option value=2>中級</option>
+          <option value=3>高級</option>
+        </select>
+      </div>
+    </div>
+
+    <p class="mt-4 mb-3">question</p>
+    <div class="p-3 rounded-3 bg-light">
+      <div class="d-flex flex-row mb-4 align-items-baseline">
+        <span class="w-25">(*)問題</span>
+        <input class="form-control" id="question" name="question" placeholder="問題テキストを入力してください">
+      </div>
+
+      <div class="d-flex flex-row mb-4 align-items-baseline">
+        <span class="w-25">(*)選択肢①</span>
+        <input class="form-control" id="answer1" name="answer1" placeholder="選択肢①を入力してください（必須）">
+      </div>
+
+      <div class="d-flex flex-row mb-4 align-items-baseline">
+        <span class="w-25">(*)選択肢②</span>
+        <input class="form-control" id="answer2" name="answer2" placeholder="選択肢②を入力してください（必須）">
+      </div>
+
+      <div class="d-flex flex-row mb-4 align-items-baseline">
+        <span class="w-25">選択肢③</span>
+        <input class="form-control" id="answer3" name="answer3" placeholder="選択肢③を入力してください（オプション）">
+      </div>
+
+      <div class="d-flex flex-row mb-4 align-items-baseline">
+        <span class="w-25">選択肢④</span>
+        <input class="form-control" id="answer4" name="answer4" placeholder="選択肢④を入力してください（オプション）">
+      </div>
+
+      <div class="d-flex flex-row mb-1 align-items-baseline">
+        <span class="w-25">選択肢⑤</span>
+        <input class="form-control" id="answer5" name="answer5" placeholder="選択肢⑤を入力してください（オプション）">
+      </div>
+    </div>
+
+    <p class="mt-4 mb-3">correct</p>
+    <div class="p-3 rounded-3 bg-light">
+      <div class="d-flex flex-row mb-1 align-items-baseline">
+        <span class="w-25">(*)正解番号</span>
+        <select class="form-select" id="correct" name="correct">
+          <option value=1>①</option>
+          <option value=2>②</option>
+          <option value=3>③</option>
+          <option value=4>④</option>
+          <option value=5>⑤</option>
+        </select>
+      </div>
+    </div>
+  </form>
+
+  <div class="mt-2 d-flex flex-row justify-content-center gap-3">
+    <button class="btn btn-primary" id="confirm-bt">次へ</button>
+    <button class="btn btn-primary" id="cancel-bt">キャンセル</button>
+  </div>
+</div>
+
+<script>
+const form = document.getElementById("form_question");
+
+const type = document.getElementById("type");
+const level = document.getElementById("level");
+const question = document.getElementById("question");
+const answer1 = document.getElementById("answer1");
+const answer2 = document.getElementById("answer2");
+const answer3 = document.getElementById("answer3");
+const answer4 = document.getElementById("answer4");
+const answer5 = document.getElementById("answer5");
+const correct = document.getElementById("correct");
+
+if (sessionStorage.getItem("return") == "question") {
+  sessionStorage.removeItem("return");
+  type.value = sessionStorage.getItem("type");
+  level.value = sessionStorage.getItem("level");
+  question.value = sessionStorage.getItem("question");
+  answer1.value = sessionStorage.getItem("answer1");
+  answer2.value = sessionStorage.getItem("answer2");
+  answer3.value = sessionStorage.getItem("answer3");
+  answer4.value = sessionStorage.getItem("answer4");
+  answer5.value = sessionStorage.getItem("answer5");
+  correct.value = sessionStorage.getItem("correct");
+}
+
+document.getElementById("confirm-bt").addEventListener("click", function() {
+  if ((question.value.trim()) == "") {
+    alert("問題を入力ください");
+    question.focus();
+    return false;
+  }
+  if ((answer1.value.trim()) == "") {
+    alert("選択肢①を入力ください");
+    answer1.focus();
+    return false;
+  }
+  if ((answer2.value.trim()) == "") {
+    alert("選択肢②を入力ください");
+    answer2.focus();
+    return false;
+  }
+  if (((answer3.value.trim()) == "") && !((answer4.value.trim()) == "")) {
+    alert("順番に入力してください");
+    answer3.focus();
+    return false;
+  }
+  if (((answer4.value.trim()) == "") && !((answer5.value.trim()) == "")) {
+    alert("順番に入力してください");
+    answer4.focus();
+    return false;
+  }
+  if ((correct.value == 3) && ((answer3.value.trim()) == "")) {
+    alert("正解に該当する問題を入力してください");
+    answer3.focus();
+    return false;
+  }
+  if ((correct.value == 4) && ((answer4.value.trim()) == "")) {
+    alert("正解に該当する問題を入力してください");
+    answer4.focus();
+    return false;
+  }
+  if ((correct.value == 5) && ((answer5.value.trim()) == "")) {
+    alert("正解に該当する問題を入力してください");
+    answer5.focus();
+    return false;
+  }
+
+  form.typeTitle.value = type.options[type.selectedIndex].text;
+  form.submit();
+
+});
+
+document.getElementById("cancel-bt").addEventListener("click", function() {
+  window.location.href = "../question/list?page=1";
+});
+</script>
+<?php *! ?> --
+!-- 修正後： --
+<div class="p-5 align-self-center" style="width: 800px;">
+  <p class="mb-5 h2">問題登録</p>
+  <form id="form_question" method="post">
+    <input type="hidden" name="typeTitle">
+
+    <p class="mt-4 mb-3">setting</p>
+    <div class="p-3 rounded-3 bg-light">
+      <div class="d-flex flex-row mb-1 align-items-baseline gap-2">
+        <span class="w-25">(*)問題種別</span>
+        <select class="form-select w-50" id="type" name="type">
+          <?php
+          foreach ($typeDatas as $type) : ?>
+          <option value="<?= $type["question_type"] ?>"><?= $type["question_title"] ?></option>
+          <?php endforeach; ?>
+        </select>
+
+				!-- 値の変更と機能の追加	
+					作成：丁錫圓
+					修正：朴昰成
+					修正日：2024/03/08
+				--
+
+				!-- 修正前：
+        <span class="w-25">(*)アカデミック</span>
+        <select class="form-select w-50" id="academic" name="academic">
+          <option value=0>その他　</option>
+          <option value=1>高等学校</option>
+          <option value=2>専門学校</option>
+          <option value=3>短期大学</option>
+          <option value=4>大学  　</option>        
+          <option value=5>大学院　</option>        
+        </select>
+				--
+
+				!-- 修正後： --
+				<span class="w-25">(*)最後学歴</span>
+				<select class="form-select w-50" id="academic" name="academic" onclick="determineCheckboxActivation(event);">
+					<option value="" selected disabled hidden>選択してください</option>
+					<option value=2>高等学校</option>
+					<option value=4>専門学校</option>
+					<option value=6>短期大学</option>
+					<option value=8>大学</option>
+					<option value=10>大学院</option>
+					<option value=0>その他</option>
+				</select>
+
+				<input type="checkbox" name="major" disabled/>IT専攻
+				!-- ここまで --
+      </div>
+        <div class="d-flex flex-row mb-1 align-items-baseline gap-2">
+        <span class="w-25">(*)キャリア</span>
+        <input class="form-control" id="career" name="career" placeholder="">
+
+        <span class="w-25">(*)資格(IT)</span>
+        <select class="form-select w-50" id="certificate" name="certificate">
+          <option value=0>無</option>
+          <option value=1>有</option>
+        </select>
+      </div>
+    </div>
+
+    <p class="mt-4 mb-3">question</p>
+    <div class="p-3 rounded-3 bg-light">
+      <div class="d-flex flex-row mb-4 align-items-baseline">
+        <span class="w-25">(*)問題</span>
+        <input class="form-control" id="question" name="question" placeholder="問題テキストを入力してください">
+      </div>
+
+      <div class="d-flex flex-row mb-4 align-items-baseline">
+        <span class="w-25">(*)選択肢①</span>
+        <input class="form-control" id="answer1" name="answer1" placeholder="選択肢①を入力してください（必須）">
+      </div>
+
+      <div class="d-flex flex-row mb-4 align-items-baseline">
+        <span class="w-25">(*)選択肢②</span>
+        <input class="form-control" id="answer2" name="answer2" placeholder="選択肢②を入力してください（必須）">
+      </div>
+
+      <div class="d-flex flex-row mb-4 align-items-baseline">
+        <span class="w-25">選択肢③</span>
+        <input class="form-control" id="answer3" name="answer3" placeholder="選択肢③を入力してください（オプション）">
+      </div>
+
+      <div class="d-flex flex-row mb-4 align-items-baseline">
+        <span class="w-25">選択肢④</span>
+        <input class="form-control" id="answer4" name="answer4" placeholder="選択肢④を入力してください（オプション）">
+      </div>
+
+      <div class="d-flex flex-row mb-1 align-items-baseline">
+        <span class="w-25">選択肢⑤</span>
+        <input class="form-control" id="answer5" name="answer5" placeholder="選択肢⑤を入力してください（オプション）">
+      </div>
+    </div>
+
+    <p class="mt-4 mb-3">correct</p>
+    <div class="p-3 rounded-3 bg-light">
+      <div class="d-flex flex-row mb-1 align-items-baseline">
+        <span class="w-25">(*)正解番号</span>
+        <select class="form-select" id="correct" name="correct">
+          <option value=1>①</option>
+          <option value=2>②</option>
+          <option value=3>③</option>
+          <option value=4>④</option>
+          <option value=5>⑤</option>
+        </select>
+      </div>
+    </div>
+  </form>
+
+  <div class="mt-2 d-flex flex-row justify-content-center gap-3">
+    <button class="btn btn-primary" id="confirm-bt">次へ</button>
+    <button class="btn btn-primary" id="cancel-bt">キャンセル</button>
+  </div>
+</div>
+
+<script>
+const form = document.getElementById("form_question");
+
+const type = document.getElementById("type");
+const academic = document.getElementById("academic");
+const carrer = document.getElementById("career");
+const certificate = document.getElementById("certificate");
+const question = document.getElementById("question");
+const answer1 = document.getElementById("answer1");
+const answer2 = document.getElementById("answer2");
+const answer3 = document.getElementById("answer3");
+const answer4 = document.getElementById("answer4");
+const answer5 = document.getElementById("answer5");
+const correct = document.getElementById("correct");
+
+if (sessionStorage.getItem("return") == "question") {
+  sessionStorage.removeItem("return");
+  type.value = sessionStorage.getItem("type");
+  academic.value = sessionStorage.getItem("academic");
+  carrer.value = sessionStorage.getItem("carrer");
+  certificate.value = sessionStorage.getItem("certificate");
+  question.value = sessionStorage.getItem("question");
+  answer1.value = sessionStorage.getItem("answer1");
+  answer2.value = sessionStorage.getItem("answer2");
+  answer3.value = sessionStorage.getItem("answer3");
+  answer4.value = sessionStorage.getItem("answer4");
+  answer5.value = sessionStorage.getItem("answer5");
+  correct.value = sessionStorage.getItem("correct");
+}
+
+!* 機能の追加
+	作成：朴昰成
+	作成日：2024/03/08
+*!
+function determineCheckboxActivation(event) {
+		if (event.target.value == "" || event.target.value < 2) { form.major.disabled = true; }
+		else { form.major.disabled = false; }
+	}
+!* ここまで *!
+
+document.getElementById("confirm-bt").addEventListener("click", function() {
+  if (carrer.value.trim() === "" || isNaN(carrer.value.trim())) {
+    alert("数字を入力してください");
+    carrer.focus();
+    return false;
+  }  
+  if ((question.value.trim()) == "") {
+    alert("問題を入力ください");
+    question.focus();
+    return false;
+  }
+  if ((answer1.value.trim()) == "") {
+    alert("選択肢①を入力ください");
+    answer1.focus();
+    return false;
+  }
+  if ((answer2.value.trim()) == "") {
+    alert("選択肢②を入力ください");
+    answer2.focus();
+    return false;
+  }
+  if (((answer3.value.trim()) == "") && !((answer4.value.trim()) == "")) {
+    alert("順番に入力してください");
+    answer3.focus();
+    return false;
+  }
+  if (((answer4.value.trim()) == "") && !((answer5.value.trim()) == "")) {
+    alert("順番に入力してください");
+    answer4.focus();
+    return false;
+  }
+  if ((correct.value == 3) && ((answer3.value.trim()) == "")) {
+    alert("正解に該当する問題を入力してください");
+    answer3.focus();
+    return false;
+  }
+  if ((correct.value == 4) && ((answer4.value.trim()) == "")) {
+    alert("正解に該当する問題を入力してください");
+    answer4.focus();
+    return false;
+  }
+  if ((correct.value == 5) && ((answer5.value.trim()) == "")) {
+    alert("正解に該当する問題を入力してください");
+    answer5.focus();
+    return false;
+  }
+
+  form.typeTitle.value = type.options[type.selectedIndex].text;
+  form.submit();
+
+});
+
+document.getElementById("cancel-bt").addEventListener("click", function() {
+  window.location.href = "../question/list?page=1";
+});
+</script>
+!-- ここまで --
+<?php */ ?> -->
+
+<!-- 修正後： -->
 <!-- HTML修正
 作成：丁錫圓
 作成日：2024/02/21 -->
@@ -159,216 +543,174 @@ document.getElementById("cancel-bt").addEventListener("click", function() {
 });
 </script>
 <?php */ ?> -->
+
 <!-- 修正後： -->
-<div class="p-5 align-self-center" style="width: 800px;">
-  <p class="mb-5 h2">問題登録</p>
-  <form id="form_question" method="post">
-    <input type="hidden" name="typeTitle">
+<?php echo $this->partial("breadcrumb", ["datas" => $breadcrumbData]); ?>
 
-    <p class="mt-4 mb-3">setting</p>
-    <div class="p-3 rounded-3 bg-light">
-      <div class="d-flex flex-row mb-1 align-items-baseline gap-2">
-        <span class="w-25">(*)問題種別</span>
-        <select class="form-select w-50" id="type" name="type">
-          <?php
-          foreach ($typeDatas as $type) : ?>
-          <option value="<?= $type["question_type"] ?>"><?= $type["question_title"] ?></option>
-          <?php endforeach; ?>
-        </select>
+<h1 class="title">問題登録</h1>
 
-				<!-- 値の変更と機能の追加	
-					作成：丁錫圓
-					修正：朴昰成
-					修正日：2024/03/08
-				-->
+<form id="form" method="post">
+	<input type="hidden" name="typeTitle">
+	
+	<div class="emegra card">
+		<div class="card-header">設定</div>
 
-				<!-- 修正前：
-        <span class="w-25">(*)アカデミック</span>
-        <select class="form-select w-50" id="academic" name="academic">
-          <option value=0>その他　</option>
-          <option value=1>高等学校</option>
-          <option value=2>専門学校</option>
-          <option value=3>短期大学</option>
-          <option value=4>大学  　</option>        
-          <option value=5>大学院　</option>        
-        </select>
-				-->
+		<div class="card-body">
+			<style type="text/css">
+				dl.emegra.setting { grid-template-columns: repeat(2, 120px 1fr); }
+			</style>
+			<dl class="emegra setting">
+				<dt class="essential">問題種別</dt>
+				<dd>
+					<select class="form-select w-50" name="type">
+						<option value="" selected disabled hidden>選択してください</option>
+						<?php foreach ($typeDatas as $type): ?>
+							<option value="<?php echo $type["question_type"]; ?>"><?php echo $type["question_title"]; ?></option>
+							<?php endforeach; ?>
+						</select>
+				</dd>
 
-				<!-- 修正後： -->
-				<span class="w-25">(*)最後学歴</span>
-				<select class="form-select w-50" id="academic" name="academic" onclick="determineCheckboxActivation(event);">
-					<option value="" selected disabled hidden>選択してください</option>
-					<option value=2>高等学校</option>
-					<option value=4>専門学校</option>
-					<option value=6>短期大学</option>
-					<option value=8>大学</option>
-					<option value=10>大学院</option>
-					<option value=0>その他</option>
-				</select>
+				<dt class="essential">最後学歴</dt>
+				<dd>
+					<select class="form-select w-50" style="margin-right: 8px;" name="academic" onclick="determineCheckboxActivation(event);">
+						<option value="" selected disabled hidden>選択してください</option>
+						<option value=2>高等学校</option>
+						<option value=4>専門学校</option>
+						<option value=6>短期大学</option>
+						<option value=8>大学</option>
+						<option value=10>大学院</option>
+						<option value=0>その他</option>
+					</select>
 
-				<input type="checkbox" name="major" disabled/>IT専攻
-				<!-- ここまで -->
-      </div>
-        <div class="d-flex flex-row mb-1 align-items-baseline gap-2">
-        <span class="w-25">(*)キャリア</span>
-        <input class="form-control" id="career" name="career" placeholder="">
+					<input type="checkbox" name="major" disabled/>IT専攻
+				</dd>
 
-        <span class="w-25">(*)資格(IT)</span>
-        <select class="form-select w-50" id="certificate" name="certificate">
-          <option value=0>無</option>
-          <option value=1>有</option>
-        </select>
-      </div>
-    </div>
+				<dt class="essential">資格(IT)</dt>
+				<dd>
+					<select class="form-select w-25" name="certificate">
+						<option value="" selected disabled hidden>選択してください</option>
+						<option value=0>無</option>
+						<option value=1>有</option>
+					</select>
+				</dd>
 
-    <p class="mt-4 mb-3">question</p>
-    <div class="p-3 rounded-3 bg-light">
-      <div class="d-flex flex-row mb-4 align-items-baseline">
-        <span class="w-25">(*)問題</span>
-        <input class="form-control" id="question" name="question" placeholder="問題テキストを入力してください">
-      </div>
+				<dt class="essential">履歴</dt>
+				<dd><input class="form-control" name="career" placeholder="年単位に数字だけ入力してください。">年</dd>
+			</dl>
+		</div>
+	</div>
 
-      <div class="d-flex flex-row mb-4 align-items-baseline">
-        <span class="w-25">(*)選択肢①</span>
-        <input class="form-control" id="answer1" name="answer1" placeholder="選択肢①を入力してください（必須）">
-      </div>
+	<div class="emegra card" style="margin-top: 32px;">
+		<div class="card-header">問題</div>
 
-      <div class="d-flex flex-row mb-4 align-items-baseline">
-        <span class="w-25">(*)選択肢②</span>
-        <input class="form-control" id="answer2" name="answer2" placeholder="選択肢②を入力してください（必須）">
-      </div>
+		<div class="card-body">
+			<style type="text/css">
+				dl.emegra.question { grid-template-columns: 120px 1fr; }
+			</style>
 
-      <div class="d-flex flex-row mb-4 align-items-baseline">
-        <span class="w-25">選択肢③</span>
-        <input class="form-control" id="answer3" name="answer3" placeholder="選択肢③を入力してください（オプション）">
-      </div>
+			<dl class="emegra question">
+				<dt class="essential">問題</dt>
+				<dd><input class="form-control" name="question" placeholder="問題テキストを入力してください"></dd>
 
-      <div class="d-flex flex-row mb-4 align-items-baseline">
-        <span class="w-25">選択肢④</span>
-        <input class="form-control" id="answer4" name="answer4" placeholder="選択肢④を入力してください（オプション）">
-      </div>
+				<dt class="essential">選択肢①</dt>
+				<dd><input class="form-control" name="answer1" placeholder="選択肢①を入力してください"></dd>
 
-      <div class="d-flex flex-row mb-1 align-items-baseline">
-        <span class="w-25">選択肢⑤</span>
-        <input class="form-control" id="answer5" name="answer5" placeholder="選択肢⑤を入力してください（オプション）">
-      </div>
-    </div>
+				<dt class="essential">選択肢②</dt>
+				<dd><input class="form-control" name="answer2" placeholder="選択肢①を入力してください"></dd>
 
-    <p class="mt-4 mb-3">correct</p>
-    <div class="p-3 rounded-3 bg-light">
-      <div class="d-flex flex-row mb-1 align-items-baseline">
-        <span class="w-25">(*)正解番号</span>
-        <select class="form-select" id="correct" name="correct">
-          <option value=1>①</option>
-          <option value=2>②</option>
-          <option value=3>③</option>
-          <option value=4>④</option>
-          <option value=5>⑤</option>
-        </select>
-      </div>
-    </div>
-  </form>
+				<dt>選択肢③</dt>
+				<dd><input class="form-control" name="answer3" placeholder="選択肢①を入力してください"></dd>
+				
+				<dt>選択肢④</dt>
+				<dd><input class="form-control" name="answer4" placeholder="選択肢①を入力してください"></dd>
+				
+				<dt>選択肢⑤</dt>
+				<dd><input class="form-control" name="answer5" placeholder="選択肢①を入力してください"></dd>
+				
+				<dt class="essential">正解番号</dt>
+				<dd>
+					<select class="form-select w-25" name="correct">
+						<option value=1>①</option>
+						<option value=2>②</option>
+						<option value=3>③</option>
+						<option value=4>④</option>
+						<option value=5>⑤</option>
+					</select>
+				</dd>
+			</dl>
+		</div>
+	</div>
+</form>
 
-  <div class="mt-2 d-flex flex-row justify-content-center gap-3">
-    <button class="btn btn-primary" id="confirm-bt">次へ</button>
-    <button class="btn btn-primary" id="cancel-bt">キャンセル</button>
-  </div>
+<div class="btn-place" style="margin-top: 32px;">
+	<button class="emegra cancel" onclick="window.location.href='../question/list?page=1';" id="cancel-bt">キャンセル</button>
+	<button class="emegra" onclick="confirm();">次へ</button>
 </div>
 
-<script>
-const form = document.getElementById("form_question");
+<script type="text/javascript">
+	const form = document.getElementById("form");
 
-const type = document.getElementById("type");
-const academic = document.getElementById("academic");
-const carrer = document.getElementById("career");
-const certificate = document.getElementById("certificate");
-const question = document.getElementById("question");
-const answer1 = document.getElementById("answer1");
-const answer2 = document.getElementById("answer2");
-const answer3 = document.getElementById("answer3");
-const answer4 = document.getElementById("answer4");
-const answer5 = document.getElementById("answer5");
-const correct = document.getElementById("correct");
-
-if (sessionStorage.getItem("return") == "question") {
-  sessionStorage.removeItem("return");
-  type.value = sessionStorage.getItem("type");
-  academic.value = sessionStorage.getItem("academic");
-  carrer.value = sessionStorage.getItem("carrer");
-  certificate.value = sessionStorage.getItem("certificate");
-  question.value = sessionStorage.getItem("question");
-  answer1.value = sessionStorage.getItem("answer1");
-  answer2.value = sessionStorage.getItem("answer2");
-  answer3.value = sessionStorage.getItem("answer3");
-  answer4.value = sessionStorage.getItem("answer4");
-  answer5.value = sessionStorage.getItem("answer5");
-  correct.value = sessionStorage.getItem("correct");
-}
-
-/* 機能の追加
-	作成：朴昰成
-	作成日：2024/03/08
-*/
-function determineCheckboxActivation(event) {
+	function determineCheckboxActivation(event) {
 		if (event.target.value == "" || event.target.value < 2) { form.major.disabled = true; }
 		else { form.major.disabled = false; }
 	}
-/* ここまで */
 
-document.getElementById("confirm-bt").addEventListener("click", function() {
-  if (carrer.value.trim() === "" || isNaN(carrer.value.trim())) {
-    alert("数字を入力してください");
-    carrer.focus();
-    return false;
-  }  
-  if ((question.value.trim()) == "") {
-    alert("問題を入力ください");
-    question.focus();
-    return false;
-  }
-  if ((answer1.value.trim()) == "") {
-    alert("選択肢①を入力ください");
-    answer1.focus();
-    return false;
-  }
-  if ((answer2.value.trim()) == "") {
-    alert("選択肢②を入力ください");
-    answer2.focus();
-    return false;
-  }
-  if (((answer3.value.trim()) == "") && !((answer4.value.trim()) == "")) {
-    alert("順番に入力してください");
-    answer3.focus();
-    return false;
-  }
-  if (((answer4.value.trim()) == "") && !((answer5.value.trim()) == "")) {
-    alert("順番に入力してください");
-    answer4.focus();
-    return false;
-  }
-  if ((correct.value == 3) && ((answer3.value.trim()) == "")) {
-    alert("正解に該当する問題を入力してください");
-    answer3.focus();
-    return false;
-  }
-  if ((correct.value == 4) && ((answer4.value.trim()) == "")) {
-    alert("正解に該当する問題を入力してください");
-    answer4.focus();
-    return false;
-  }
-  if ((correct.value == 5) && ((answer5.value.trim()) == "")) {
-    alert("正解に該当する問題を入力してください");
-    answer5.focus();
-    return false;
-  }
+	function confirm() {
+		if (form.type.value == "") {
+			alert("種別を入力してください");
+			form.type.focus();
+			return false;
+		} 
 
-  form.typeTitle.value = type.options[type.selectedIndex].text;
-  form.submit();
+		if (form.academic.value.trim() == "") {
+			alert("最終学歴を入力してください");
+			form.academic.focus();
+			return false;
+		} 
 
-});
+		if ((question.value.trim()) == "") {
+			alert("問題を入力ください");
+			question.focus();
+			return false;
+		}
+		if ((answer1.value.trim()) == "") {
+			alert("選択肢①を入力ください");
+			answer1.focus();
+			return false;
+		}
+		if ((answer2.value.trim()) == "") {
+			alert("選択肢②を入力ください");
+			answer2.focus();
+			return false;
+		}
+		if (((answer3.value.trim()) == "") && !((answer4.value.trim()) == "")) {
+			alert("順番に入力してください");
+			answer3.focus();
+			return false;
+		}
+		if (((answer4.value.trim()) == "") && !((answer5.value.trim()) == "")) {
+			alert("順番に入力してください");
+			answer4.focus();
+			return false;
+		}
+		if ((correct.value == 3) && ((answer3.value.trim()) == "")) {
+			alert("正解に該当する問題を入力してください");
+			answer3.focus();
+			return false;
+		}
+		if ((correct.value == 4) && ((answer4.value.trim()) == "")) {
+			alert("正解に該当する問題を入力してください");
+			answer4.focus();
+			return false;
+		}
+		if ((correct.value == 5) && ((answer5.value.trim()) == "")) {
+			alert("正解に該当する問題を入力してください");
+			answer5.focus();
+			return false;
+		}
 
-document.getElementById("cancel-bt").addEventListener("click", function() {
-  window.location.href = "../question/list?page=1";
-});
+		form.typeTitle.value = type.options[type.selectedIndex].text;
+		form.submit();
+	}
 </script>
 <!-- ここまで -->

@@ -1,8 +1,15 @@
-<!-- 
+<!-- 画面変更
+	作成：朴昰成
+	修正：朴昰成
+	修正日：2027/03/12
+-->
+
+<!-- 修正前： <?php /* ?>
+!-- 
 html修正
 作成日：2024/02/22
--->
-<!--修正前：　<?php /*?> 
+--
+!--修正前：　<?php !*?> 
 <?php
 $level[1] = "初級";
 $level[2] = "中級";
@@ -71,8 +78,8 @@ document.getElementById("return-bt").addEventListener("click", function() {
   window.location.href = "/admin/question/list?page=" + page;
 });
 </script>
-<?php */ ?> -->
-<!-- 修正後： -->
+<?php *! ?> --
+!-- 修正後： --
 <?php
 $level[1] = "その他";
 $level[2] = "高等学校";
@@ -102,22 +109,22 @@ $nums[4] = "⑤";
         <td class="col-3 text-left border-light"><?= $typeData["question_title"] ?></td>
 
         <td class="col-3 text-right border-light">アカデミック :</td>
-				<!-- 表示するデータの変更
+				!-- 表示するデータの変更
 					作成：丁錫圓
 					修正：朴昰成
 					修正日：2024/03/08
-				-->
+				--
 
-				<!-- 修正前： <?php /* ?>
+				!-- 修正前： <?php !* ?>
         <td class="col-3 text-left border-light"><?= $level[$questionData["academic"]] ?></td>
-				<?php */ ?> -->
+				<?php *! ?> --
 
-				<!-- 修正前： -->
+				!-- 修正前： --
         <td class="col-3 text-left border-light">
 					<?php echo $level[$questionData["academic"] / 2]; ?>
 					<?php echo ($questionData["academic"] % 2 == 1) ? "" : "&nbspIT専攻"; ?>
 				</td>
-				<!-- ここまで -->
+				!-- ここまで --
 
         <td class="col-3 text-right border-light">キャリア :</td>
         <td class="col-3 text-left border-light"><?= $questionData["career"] ?></td>
@@ -165,4 +172,70 @@ document.getElementById("return-bt").addEventListener("click", function() {
   window.location.href = "/admin/question/list?page=" + page;
 });
 </script>
+!-- ここまで --
+<?php */ ?> -->
+
+<!-- 修正後： -->
+<?php
+	$academicTexts = array("その他", "高等学校", "専門学校", "短期大学", "大学", "大学院");
+	$answers = explode("|", $questionData["answers"]);
+	$numTexts = array("①", "②", "③", "④", "⑤");
+?>
+
+<?php echo $this->partial("breadcrumb", ["datas" => $breadcrumbData]); ?>
+
+<h1 class="title">問題詳細</h1>
+
+<div class="emegra card">
+	<div class="card-header">設定</div>
+
+	<div class="card-body">
+		<style type="text/css">
+			dl.emegra.setting { grid-template-columns: repeat(2, 80px 1fr); }
+		</style>
+		<dl class="emegra setting">
+			<dt>問題種別</dt>
+			<dd><?php echo $typeData["question_title"]; ?></dd>
+
+			<dt>学歴</dt>
+			<dd>
+				<?php echo $academicTexts[$questionData["academic"] / 2]; ?>
+				<?php echo ($questionData["academic"] % 2 == 1) ? "" : "&nbspIT専攻"; ?>
+			</dd>
+		
+			<dt>履歴</dt>
+			<dd><?php echo $questionData["career"]; ?></dd>
+		
+			<dt>資格(IT)</dt>
+			<dd><?php echo $questionData["certificate"]; ?></dd>
+		</dl>
+	</div>
+</div>
+
+<div class="emegra card" style="margin-top: 32px;">
+	<div class="card-header">問題</div>
+
+	<div class="card-body">
+		<style type="text/css">
+			dl.emegra.question { grid-template-columns: 80px 1fr; }
+		</style>
+		<dl class="emegra question">
+			<dt>問題</dt>
+			<dd><?php echo $questionData["question"]; ?></dd>
+
+			<?php foreach ($answers as $index => $answer): ?>
+				<dt><?= $numTexts[$index]; ?></dt>
+				<dd><?php echo $answer; ?></dd>
+			<?php endforeach; ?>
+
+			<dt>正解番号</dt>
+			<dd><?php echo $questionData["correct_answer"]; ?></dd>
+
+		</dl>
+	</div>
+</div>
+
+<div class="btn-place" style="margin-top: 32px;">
+	<button class="emegra cancel" onclick="history.back();">戻る</button>
+</div>
 <!-- ここまで -->

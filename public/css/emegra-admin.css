@@ -6,11 +6,11 @@
 	border: 0;	
 	font-family: "Roboto", "Noto Sans JP", sans-serif !important;
 }
-dl, ol, ul { margin-bottom: 0; }
 table {
 	border-collapse: initial;
 	border-spacing: 0;
 }
+dl, ol, ul { margin-bottom: 0; }
 a { text-decoration: none; }
 p { margin: 0; }
 
@@ -179,7 +179,7 @@ button.btn-plus, button.btn-minus {
 }
 button.btn-minus { background: red; }
 button.btn-plus:hover { background: var(--emegra-blue); }
-button.btn-remove:hover { 	background: #CE2F2D; }
+button.btn-minus:hover { 	background: #CE2F2D; }
 
 .btn-place {
 	display: flex;
@@ -195,8 +195,8 @@ button.emegra {
 	color: white;
 }
 button.emegra:hover { background: var(--emegra-blue); }
-button.emegra.cancle { background: #C1C5C9; }
-button.emegra.cancle:hover { background: #A4A8AD; }
+button.emegra.cancel { background: #C1C5C9; }
+button.emegra.cancel:hover { background: #A4A8AD; }
 
 
 
@@ -268,8 +268,6 @@ ul.emegra.pagination li.item a {
 	font-size: 14px;
 	font-weight: 700;
 	color: var(--font);
-
-	text-decoration: none;
 }
 ul.emegra.pagination li.item.active a { color: white; }
 ul.emegra.pagination li.item:hover a { color: white; }
@@ -289,8 +287,8 @@ ul.emegra.pagination li.item:hover a { color: white; }
 .emegra.card {
 	width: 100%;
 	border: 1px solid var(--line);
-	padding: 40px;
 	border-radius: 6px;
+	padding: 40px;
 	background: white;
 }
 .emegra.card .card-header {
@@ -331,8 +329,6 @@ dl.emegra dt, dl.emegra dd {
 	line-height: 40px;
 	font-size: 16px;
 	font-weight: 700;
-
-	flex-shrink: 0;
 }
 dl.emegra dd { font-weight: 400; }
 dl.emegra input { height: 38px; }

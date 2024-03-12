@@ -61,7 +61,7 @@ class AdminController extends AbstractActionController
       }
 			
 			$page = 1;
-			if (in_array("page", $query)) { $page = $query["page"]; }
+			if (isset($query) && isset($query["page"])) { $page = $query["page"]; }
       return $this->questionList($page);
     }
   }
@@ -96,7 +96,7 @@ class AdminController extends AbstractActionController
       }
 
 			$page = 1;
-			if (array_key_exists("page", $query)) { $page = $query["page"]; }
+			if (isset($query) && isset($query["page"])) { $page = $query["page"]; }
       return $this->examList($page);
     }
   }
@@ -145,12 +145,13 @@ class AdminController extends AbstractActionController
 		/* 修正前
     $breadcrumb[0] = "問題管理";
     $breadcrumb[1] = "問題登録";
+    $this->layout()->breadcrumb = json_encode($breadcrumb);
 		*/
 
 		/* 修正後 */
-		$breadcrumb = array("問題管理", "問題登録");
+				$breadcrumb = array("問題管理", "問題登録");
+				$datas["breadcrumbData"] = $breadcrumb;
 		/* ここまで */
-    $this->layout()->breadcrumb = json_encode($breadcrumb);
 
     //view==============================================================
     $vm = new ViewModel($datas);
@@ -215,12 +216,41 @@ class AdminController extends AbstractActionController
     $datas["questionDatas"] = $questionDatas;
     $datas["typeTitles"] = $typeTitles;
     $datas["dataIndex"] = $questionTb->readCount() - (($page - 1) * 10);
+		/* 機能の変更
+			作成：朴昰成
+			修正：朴昰成
+			修正日：2027/03/12
+		*/
+
+		/* 修正前
     $datas["totalPage"] = intval($questionTb->readCount() / 10 + 1);
     $datas["cPage"] = $page;
+		*/
 
+		/* 修正後 */
+
+		$paginationData["totalPage"] = intval($questionTb->readCount() / 10 + 1);
+		$paginationData["currentPage"] = $page;
+		$paginationData["url"] = "list?page=";
+		$datas["paginationData"] = $paginationData;
+		/* ここまで */
+
+		/* コードデバッグ
+			作成：朴昰成
+			修正：朴昰成
+			修正日：2027/03/12
+		*/
+
+		/* 修正前
     $breadcrumb[0] = "問題管理";
     $breadcrumb[1] = "問題一覧";
     $this->layout()->breadcrumb = json_encode($breadcrumb);
+		*/
+
+		/* 修正後 */
+		$breadcrumb = array("問題管理", "問題一覧");
+		$datas["breadcrumbData"] = $breadcrumb;
+		/* ここまで */
 
     //view==============================================================
     $vm = new ViewModel($datas);
@@ -237,10 +267,25 @@ class AdminController extends AbstractActionController
     $typeTb = $this->getServiceLocator()->get("QuestionTypeTable");
     $datas["typeData"] = $typeTb->readByType($questionData["question_type"]);
 
+		/* ここまで */
+
+		/* コードデバッグ
+			作成：朴昰成
+			修正：朴昰成
+			修正日：2027/03/12
+		*/
+
+		/* 修正前
     $breadcrumb[0] = "問題管理";
     $breadcrumb[1] = "問題一覧";
     $breadcrumb[2] = "問題詳細";
     $this->layout()->breadcrumb = json_encode($breadcrumb);
+		*/
+
+		/* 修正後 */
+		$breadcrumb = array("問題管理", "問題一覧", "問題詳細");
+		$datas["breadcrumbData"] = $breadcrumb;
+		/* ここまで */
 
     //view==============================================================
     $vm = new ViewModel($datas);
@@ -330,7 +375,7 @@ class AdminController extends AbstractActionController
 
 		/* 修正後 */
 		$breadcrumb = array("応募者状況管理", "試験登録");
-    $datas["breadcrumbData"] = $breadcrumb;
+		$datas["breadcrumbData"] = $breadcrumb;
 		/* ここまで */
 
     //view==============================================================
@@ -450,7 +495,7 @@ class AdminController extends AbstractActionController
 
 		/* 修正後 */
 		$breadcrumb = array("応募者状況管理", "試験登録", "確認");
-    $datas["breadcrumbData"] = $breadcrumb;
+		$datas["breadcrumbData"] = $breadcrumb;
 		/* ここまで */
 
     //view==============================================================
@@ -478,8 +523,8 @@ class AdminController extends AbstractActionController
 
 		/* 修正後 */
 
-    $paginationData["totalPage"] = intval($examTb->readCount() / 10 + 1);
-    $paginationData["currentPage"] = $page;
+		$paginationData["totalPage"] = intval($examTb->readCount() / 10 + 1);
+		$paginationData["currentPage"] = $page;
 		$paginationData["url"] = "list?page=";
 		$datas["paginationData"] = $paginationData;
 		/* ここまで */
@@ -498,7 +543,7 @@ class AdminController extends AbstractActionController
 
 		/* 修正後 */
 		$breadcrumb = array("応募者状況管理", "試験一覧");
-    $datas["breadcrumbData"] = $breadcrumb;
+		$datas["breadcrumbData"] = $breadcrumb;
 		/* ここまで */
 
     //view==============================================================
@@ -590,7 +635,7 @@ class AdminController extends AbstractActionController
 		}
 
 		$breadcrumb = array("応募者状況管理", "試験一覧", "試験詳細");
-    $datas["breadcrumbData"] = $breadcrumb;
+		$datas["breadcrumbData"] = $breadcrumb;
 		/* ここまで */
 
     //view==============================================================

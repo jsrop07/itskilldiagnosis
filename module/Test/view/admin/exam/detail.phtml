@@ -230,10 +230,10 @@ switch ($examData["question_level"]) {
 				<dd style="grid-column: 2 / 9;"><?php echo ($examData["certificates"] == null) ? "無" : $examData["certificates"]; ?></dd>
 
 				<dt>実施日</dt>
-				<dd style="grid-column: 2 / 5;"><?php echo $examData["execute_date"] == null ? "未対応" : date("Y-m-d H:i:s", strtotime($examData["execute_date"])); ?></dd>
+				<dd style="grid-column: 2 / 5;"><?php echo ($examData["execute_date"] == null) ? "未対応" : date("Y-m-d H:i:s", strtotime($examData["execute_date"])); ?></dd>
 
 				<dt>点数</dt>
-				<dd style="grid-column: 6 / 9;"><?php echo $examData["execute_date"] == null ? "未対応" : $examData["question_nums"] . "-" . $examData["get_point"]; ?></dd>
+				<dd style="grid-column: 6 / 9;"><?php echo ($examData["execute_date"] == null) ? "未対応" : $examData["question_nums"] . "-" . $examData["get_point"]; ?></dd>
 			</dl>
 
 			<style text="text/css">
@@ -250,7 +250,7 @@ switch ($examData["question_level"]) {
 			
 				<tbody>
 					<?php foreach ($questionDatas as $index => $data): ?>
-						<tr onclick="window.location.href='../../../question/list/detail/<?php echo $data['idx']; ?>'">
+						<tr onclick="window.location.href='../../../question/list/detail/<?php echo $data['idx']; ?>';">
 							<td><?= $index + 1; ?></td>
 							<td><?php echo $data["question"]; ?></td>
 							<td><?php echo $corrects[$index]; ?></td>
@@ -263,6 +263,6 @@ switch ($examData["question_level"]) {
 <?php endif; ?>
 
 <div class="btn-place" style="margin-top: 32px;">
-	<button class="emegra cancle" onclick="history.back();">戻る</button>
+	<button class="emegra cancel" onclick="history.back();">戻る</button>
 </div>
 <!-- ここまで -->

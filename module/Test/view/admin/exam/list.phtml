@@ -98,7 +98,7 @@ $level[3] = "高級";
 
 	<tbody>
 		<?php foreach ($examDatas as $idx => $data): ?>
-			<tr onclick="self.location.href='./list/detail/<?php echo $data['idx']; ?>'">
+			<tr onclick="self.location.href='./list/detail/<?php echo $data['idx']; ?>';">
 				<td><?= $dataIndex - $idx; ?></td>
 				<td><?php echo ($data["academic"] == null) ? "未設定" : $academicTexts[$data["academic"]]; ?> <?php echo ($data["academic"] % 2 == 1) ? "IT専攻" : ""; ?></td>
 				<td><?php echo ($data["career"] == null) ? "未設定" : $data["career"]; ?></td>

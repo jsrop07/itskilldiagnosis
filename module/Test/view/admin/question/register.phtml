@@ -582,7 +582,7 @@ document.getElementById("cancel-bt").addEventListener("click", function() {
 						<option value=0>その他</option>
 					</select>
 
-					<input type="checkbox" name="major" disabled/>IT専攻
+					<input type="checkbox" name="major" disabled/>&nbspIT専攻
 				</dd>
 
 				<dt class="essential">資格(IT)</dt>
@@ -595,7 +595,7 @@ document.getElementById("cancel-bt").addEventListener("click", function() {
 				</dd>
 
 				<dt class="essential">履歴</dt>
-				<dd><input class="form-control" name="career" placeholder="年単位に数字だけ入力してください。">年</dd>
+				<dd><input class="form-control w-25" name="career" placeholder="数字">年</dd>
 			</dl>
 		</div>
 	</div>
@@ -616,16 +616,16 @@ document.getElementById("cancel-bt").addEventListener("click", function() {
 				<dd><input class="form-control" name="answer1" placeholder="選択肢①を入力してください"></dd>
 
 				<dt class="essential">選択肢②</dt>
-				<dd><input class="form-control" name="answer2" placeholder="選択肢①を入力してください"></dd>
+				<dd><input class="form-control" name="answer2" placeholder="選択肢②を入力してください"></dd>
 
 				<dt>選択肢③</dt>
-				<dd><input class="form-control" name="answer3" placeholder="選択肢①を入力してください"></dd>
+				<dd><input class="form-control" name="answer3" placeholder="選択肢③を入力してください"></dd>
 				
 				<dt>選択肢④</dt>
-				<dd><input class="form-control" name="answer4" placeholder="選択肢①を入力してください"></dd>
+				<dd><input class="form-control" name="answer4" placeholder="選択肢④を入力してください"></dd>
 				
 				<dt>選択肢⑤</dt>
-				<dd><input class="form-control" name="answer5" placeholder="選択肢①を入力してください"></dd>
+				<dd><input class="form-control" name="answer5" placeholder="選択肢⑤を入力してください"></dd>
 				
 				<dt class="essential">正解番号</dt>
 				<dd>
@@ -657,59 +657,84 @@ document.getElementById("cancel-bt").addEventListener("click", function() {
 
 	function confirm() {
 		if (form.type.value == "") {
-			alert("種別を入力してください");
+			alert("種別を選択してください");
 			form.type.focus();
 			return false;
-		} 
+		}
 
 		if (form.academic.value.trim() == "") {
-			alert("最終学歴を入力してください");
+			alert("最終学歴を選択してください");
 			form.academic.focus();
 			return false;
-		} 
+		}
 
-		if ((question.value.trim()) == "") {
+		if (form.certificate.value.trim() == "") {
+			alert("資格の有無を選択してください");
+			form.certificate.focus();
+			return false;
+		}
+
+		if (form.career.value.trim() == "") {
+			alert("履歴を入力してください");
+			form.career.focus();
+			return false;
+		}
+
+		if (isNaN(form.career.value)) {
+			alert("経歴に数字だけ入力してください。");
+			form.career.focus();
+			return false;
+		}
+
+		if ((form.question.value.trim()) == "") {
 			alert("問題を入力ください");
-			question.focus();
-			return false;
-		}
-		if ((answer1.value.trim()) == "") {
-			alert("選択肢①を入力ください");
-			answer1.focus();
-			return false;
-		}
-		if ((answer2.value.trim()) == "") {
-			alert("選択肢②を入力ください");
-			answer2.focus();
-			return false;
-		}
-		if (((answer3.value.trim()) == "") && !((answer4.value.trim()) == "")) {
-			alert("順番に入力してください");
-			answer3.focus();
-			return false;
-		}
-		if (((answer4.value.trim()) == "") && !((answer5.value.trim()) == "")) {
-			alert("順番に入力してください");
-			answer4.focus();
-			return false;
-		}
-		if ((correct.value == 3) && ((answer3.value.trim()) == "")) {
-			alert("正解に該当する問題を入力してください");
-			answer3.focus();
-			return false;
-		}
-		if ((correct.value == 4) && ((answer4.value.trim()) == "")) {
-			alert("正解に該当する問題を入力してください");
-			answer4.focus();
-			return false;
-		}
-		if ((correct.value == 5) && ((answer5.value.trim()) == "")) {
-			alert("正解に該当する問題を入力してください");
-			answer5.focus();
+			form.question.focus();
 			return false;
 		}
 
-		form.typeTitle.value = type.options[type.selectedIndex].text;
+		if ((form.answer1.value.trim()) == "") {
+			alert("選択肢①を入力ください");
+			form.answer1.focus();
+			return false;
+		}
+
+		if ((form.answer2.value.trim()) == "") {
+			alert("選択肢②を入力ください");
+			form.answer2.focus();
+			return false;
+		}
+
+		if (((form.answer3.value.trim()) == "") && !((form.answer4.value.trim()) == "")) {
+			alert("順番に入力してください");
+			form.answer3.focus();
+			return false;
+		}
+
+		if (((form.answer4.value.trim()) == "") && !((form.answer5.value.trim()) == "")) {
+			alert("順番に入力してください");
+			form.answer4.focus();
+			return false;
+		}
+
+		if ((form.correct.value == 3) && ((form.answer3.value.trim()) == "")) {
+			alert("正解に該当する問題を入力してください");
+			form.answer3.focus();
+			return false;
+		}
+
+		if ((form.correct.value == 4) && ((form.answer4.value.trim()) == "")) {
+			alert("正解に該当する問題を入力してください");
+			form.answer4.focus();
+			return false;
+		
+		}
+		if ((form.correct.value == 5) && ((form.answer5.value.trim()) == "")) {
+			alert("正解に該当する問題を入力してください");
+			form.answer5.focus();
+			return false;
+		}
+
+		form.typeTitle.value = form.type.options[form.type.selectedIndex].text;
 		form.submit();
 	}
 </script>

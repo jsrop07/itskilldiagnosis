@@ -193,7 +193,7 @@ $cert=array("無","有");
 				<td><?= $dataIndex - $index; ?></td>
 				<td>
 					<?php echo $academicTexts[$data["academic"] / 2]; ?>
-					<?php echo ($data["academic"] % 2 == 1) ? "" : "&nbspIT専攻"; ?>
+					<?php echo ($data["academic"] % 2 == 1) ? "&nbspIT専攻" : ""; ?>
 				</td>
 				<td><?php echo $data["career"]; ?>年</td>
 				<td><?php echo $certificateTexts[$data["certificate"]]; ?></td>

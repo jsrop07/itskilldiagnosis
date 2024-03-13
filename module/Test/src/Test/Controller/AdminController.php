@@ -31,6 +31,20 @@ class AdminController extends AbstractActionController
     return $vm;
   }
 
+	/* 機能の追加
+		作成：朴昰成
+		作成日：2024/03/13
+	*/
+  public function logoutAction() {
+		$session = new Container("user");
+		unset($session["id"]);
+		echo "<script>
+			alert('ログアウトしました。');
+			self.location.href='/admin/login';
+		</script>";
+	}
+	/* ここまで */
+
   public function questionAction()
   {
 		$submenuArray = array(
@@ -118,15 +132,6 @@ class AdminController extends AbstractActionController
         $session->offsetSet($key, $data);
       }
 
-			/* 機能の追加
-				作成：朴昰成
-				作成日：2024/03/08
-			*/
-			if ($session->offsetExists("major")) {
-				$session->offsetSet("academic", $session->offsetGet("academic") + 1);
-			}
-			/* ここまで */
-
       header("Location: ./register/confirm");
       exit;
     }
@@ -149,8 +154,8 @@ class AdminController extends AbstractActionController
 		*/
 
 		/* 修正後 */
-				$breadcrumb = array("問題管理", "問題登録");
-				$datas["breadcrumbData"] = $breadcrumb;
+		$breadcrumb = array("問題管理", "問題登録");
+		$datas["breadcrumbData"] = $breadcrumb;
 		/* ここまで */
 
     //view==============================================================
@@ -185,15 +190,16 @@ class AdminController extends AbstractActionController
     $breadcrumb[0] = "問題管理";
     $breadcrumb[1] = "問題登録";
     $breadcrumb[2] = "確認";
+    $this->layout()->breadcrumb = json_encode($breadcrumb);
 		*/
 
 		/* 修正後 */
 		$breadcrumb = array("問題管理", "問題登録", "確認");
+		$datas["breadcrumbData"] = $breadcrumb;
 		/* ここまで */
-    $this->layout()->breadcrumb = json_encode($breadcrumb);
 
     //view==============================================================
-    $vm = new ViewModel();
+    $vm = new ViewModel($datas);
     $vm->setTemplate("/admin/question/confirm.phtml");
     return $vm;
   }

@@ -1,0 +1,369 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Roboto:wght@400;700&display=swap');
+
+* {
+	margin: 0;
+	padding: 0;
+	border: 0;	
+	font-family: "Roboto", "Noto Sans JP", sans-serif !important;
+}
+table {
+	border-collapse: initial;
+	border-spacing: 0;
+}
+dl, ol, ul { margin-bottom: 0; }
+a { text-decoration: none; }
+p { margin: 0; }
+
+:root {
+	--title-gradient: linear-gradient(111deg, #1bc8d7 0%, #40ADF0 100%);
+	--gradient: linear-gradient(111deg, #50D7C7 0%, #40ADF0 100%);
+	--background: #F2FAF9;
+	--line: #CED4DA;
+	--emegra-blue: #44B0DA;
+	--font: #6C757D;
+}
+
+
+
+body {
+	display: grid;
+	grid-template-columns: 250px 1fr;
+	grid-template-rows: 70px 60px 1fr;
+	grid-template-areas: 
+	"header header"
+	"navbar navbar"
+	"sidebar main";
+
+	background: var(--background);
+}
+
+header {
+	grid-area: header;
+
+	display: flex;
+	justify-content: space-between;
+	background: var(--title-gradient);
+}
+
+.logo {
+	height: 100%;
+	display: flex;
+	align-items: center;
+}
+.logo-title {
+	margin-left: 24px;
+
+	font-size: 14px;
+	font-weight: 500;
+	color: white;
+}
+
+.status {
+	height: 100%;
+	display: flex;
+	align-items: center;
+
+	line-height: 20px;
+	font-size: 14px;
+	color: white;
+}
+.status img {
+	height: 20px;
+	display: flex;
+	align-items: center;
+}
+
+
+
+nav {
+	grid-area: navbar;
+
+	border-bottom: 1px solid var(--line);
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	background: white;
+}
+
+button.btn-main {
+	height: 100%;
+	width: calc(100% - 16px);
+	margin: 0 8px;
+	padding: 3px 0;
+	background: transparent;
+
+	font-size: 14px;
+	font-weight: 700;
+	color: var(--font);
+
+	cursor: pointer;
+}
+button.btn-main:hover { color: black; }
+button.btn-main.active {
+	padding-bottom: 0;
+	border-bottom: 3px solid var(--emegra-blue);
+	
+	color: black;
+}
+
+
+
+aside {
+	grid-area: sidebar;
+
+	min-height: calc(100vh - 130px);
+	border-right: 1px solid var(--line);
+	display: flex;
+	flex-direction: column;
+	background: white;
+}
+
+button.btn-sub {
+	height: 52px;
+	width: 100%;
+	border-bottom: 1px solid var(--line);
+	background: white;
+
+	font-size: 14px;
+	font-weight: 700;
+	color: var(--font);
+
+	cursor: pointer;
+}
+button.btn-sub:hover { color: var(--emegra-blue); }
+button.btn-sub.active {
+	border: 0;
+	background: var(--gradient);
+
+	color: white;
+}
+
+
+
+main {
+	grid-area: main;
+
+	padding: 48px 64px;
+	background: transparent;
+}
+
+
+.essential {
+	display: flex;
+	align-items: center;
+}
+.essential::before {
+	content: "必須";
+
+	height: 20px;
+	width: 40px;
+	margin-right: 8px;
+	border-radius: 4px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background: #CE2F2D;
+
+	font-size: 13px;
+	font-weight: 700;
+	color: white;
+}
+
+
+button.btn-plus, button.btn-minus {
+	height: 38px;
+	width: 38px;
+	border-radius: 5px;
+	background: var(--gradient);
+
+	color: white;
+}
+button.btn-minus { background: red; }
+button.btn-plus:hover { background: var(--emegra-blue); }
+button.btn-minus:hover { 	background: #CE2F2D; }
+
+.btn-place {
+	display: flex;
+	justify-content: center;
+	gap: 8px;
+}
+button.emegra {
+	height: 38px;
+	width: 120px;
+	border-radius: 4px;
+	background: var(--gradient);
+
+	color: white;
+}
+button.emegra:hover { background: var(--emegra-blue); }
+button.emegra.cancel { background: #C1C5C9; }
+button.emegra.cancel:hover { background: #A4A8AD; }
+
+
+
+ul.emegra.breadcrumb {
+	height: 28px;
+	width: 100%;
+	margin: 0;
+	border-bottom: 1px solid var(--line);
+	padding-bottom: 8px;
+
+	font-size: 0;
+	
+  list-style: none;
+}
+ul.emegra.breadcrumb li.item {
+	height: 20px;
+	display: inline;
+
+	font-size: 13px;
+	font-weight: 500;
+	color: var(--font);
+}
+ul.emegra.breadcrumb li.item::before {
+	content: url("/img/ic_breadcrumb.svg");
+
+	margin: 0 8px;
+}
+ul.emegra.breadcrumb li.item:nth-child(1)::before {
+	content: "";
+
+	margin: 0;
+}
+
+
+
+ul.emegra.pagination {
+	width: 100%;
+	display: flex;
+
+	justify-content: center;
+	
+  list-style: none;
+}
+ul.emegra.pagination li.item {
+	height: 38px;
+	width: 38px;
+	margin: 0 4px;
+	border: 1px solid var(--line);
+	border-radius: 4px;
+	background: white;
+
+	cursor: pointer;
+}
+ul.emegra.pagination li.item.active {
+	border: 0;
+	background: var(--gradient);
+}
+ul.emegra.pagination li.item:hover {
+	border: 0;
+	background: var(--emegra-blue);
+}
+ul.emegra.pagination li.item a {
+	height: 100%;
+	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	font-size: 14px;
+	font-weight: 700;
+	color: var(--font);
+}
+ul.emegra.pagination li.item.active a { color: white; }
+ul.emegra.pagination li.item:hover a { color: white; }
+
+
+
+.title {
+	margin: 16px;
+	margin-bottom: 40px;
+	
+	font-size: 32px;
+	font-weight: 700;
+}
+
+
+
+.emegra.card {
+	width: 100%;
+	border: 1px solid var(--line);
+	border-radius: 6px;
+	padding: 40px;
+	background: white;
+}
+.emegra.card .card-header {
+	border-bottom: 1px solid var(--line);
+	padding: 0;
+	padding-bottom: 8px;
+	display: flex;
+	background: white;
+
+	font-size: 20px;
+	font-weight: 700;
+}
+.emegra.card .card-header::before {
+	content: "";
+
+	height: 32px;
+	width: 4px;
+	margin-right: 16px;
+	background: var(--gradient);
+}
+.emegra.card .card-body {
+	margin-top: 24px;
+	padding: 0 40px;
+}
+
+
+
+dl.emegra {
+	display: grid;
+	grid-gap: 24px 8px;
+}
+dl.emegra dt, dl.emegra dd {
+	height: 38px;
+	margin: 0;
+	display: flex;
+	flex-direction: row;
+
+	line-height: 40px;
+	font-size: 16px;
+	font-weight: 700;
+}
+dl.emegra dd { font-weight: 400; }
+dl.emegra input { height: 38px; }
+
+
+
+table.emegra {
+	width: 100%;
+	border: 1px solid var(--line);
+	border-radius: 6px;
+	padding: 0 16px;
+	background: white;
+	
+	text-align: center;
+}
+table.emegra tr {
+	display: grid;
+	column-gap: 8px;
+}
+table.emegra > tbody > tr { border-top: 1px solid var(--line); }
+table.emegra > tbody > tr:hover { background: var(--line) }
+table.emegra thead th {
+	padding-top: 16px;
+	padding-bottom: 8px;
+
+	font-size: 14px;
+	font-weight: 700;
+	color: var(--font);
+}
+table.emegra tbody td {
+	padding: 16px 0;
+
+	font-size: 14px;
+	font-weight: 400;
+	color: #343A40;
+
+	cursor: pointer;
+}

@@ -1,13 +1,20 @@
+<!-- 画面変更
+	作成：朴昰成
+	修正：朴昰成
+	修正日：2027/03/11
+-->
+
+<!-- 修正前： <?php /* ?>
 <div class="p-5 align-self-center" style="width: 800px;">
   <p class="mb-5 h2">試験登録</p>
   <form id="form_exam" method="post">
     <input type="hidden" name="typeTitle">
-			<!-- 機能の追加
+			!-- 機能の追加
 				作成：朴夏成
 				作成日：2024/03/01
-			-->
+			--
     <input type="hidden" name="certificates">
-			<!-- ここまで -->
+			!-- ここまで --
 
     <p class="mt-4 mb-3">user information</p>
     <div class="p-3 rounded-3 bg-light">
@@ -16,21 +23,21 @@
         <input class="form-control" name="name" placeholder="名前を入力してください">
       </div>
       <div class="d-flex flex-row mb-3 align-items-baseline gap-2">
-				<!-- 表示するデータの変更
+				!-- 表示するデータの変更
 					作成：朴夏成
 					修正：朴夏成
 					修正前：2024/03/01
-				-->
+				--
 
-				<!-- 修正前： <?php /* ?>
+				!-- 修正前： <?php * ?>
         <span class="w-25">(*)ログインID</span>
         <input class="form-control" name="id" placeholder="ログインIDを入力してください" value="<?= $rndId ?>">
-				<?php */ ?> -->
+				<?php * ?> --
 
-				<!-- 修正後： -->
+				!-- 修正後： --
         <span class="w-25">(*)ログインID(メイル)</span>
         <input class="form-control" name="id" placeholder="ログインID(メイル)を入力してください">
-				<!-- ここまで -->
+				!-- ここまで --
       </div>
       <div class="d-flex flex-row mb-1 align-items-baseline gap-2">
         <span class="w-25">(*)パスワード</span>
@@ -40,13 +47,13 @@
 
     <p class="mt-4 mb-3">setting</p>
     <div class="p-3 rounded-3 bg-light">
-			<!-- 機能の変更
+			!-- 機能の変更
 				作成：朴夏成
 				修正：朴夏成
 				修正日：2024/02/21
-			-->
+			--
 
-			<!-- 修正前： <?php /* ?>
+			!-- 修正前： <?php * ?>
       <div class="d-flex flex-row mb-3 align-items-baseline gap-2">
         <span class="w-25">(*)レベル</span>
         <select class="form-select w-50" name="level">
@@ -62,9 +69,9 @@
           <?php endforeach; ?>
         </select>
       </div>
-			<?php */ ?> -->
+			<?php * ?> --
 
-			<!-- 修正後： -->
+			!-- 修正後： --
 			<style type="text/css">
 				.essential:before { content: "(*)"; }
 				.essential.not:before { content: ""; }
@@ -108,7 +115,7 @@
 				<button type="button" onclick="addCertificate();">+</button>
 				<div id="place-certificate">
 				</div>	
-			<!-- ここまで -->
+			!-- ここまで --
 
       <div class="d-flex flex-row mb-1 align-items-baseline">
         <span class="w-25">(*)問題数</span>
@@ -117,12 +124,12 @@
           <option value=20>20</option>
         </select>
       </div>
-			<!-- div追加
+			!-- div追加
 				作成：朴夏成
 				作成日：2024/02/27
-			-->
+			--
 			</div>
-			<!-- ここまで -->
+			!-- ここまで --
     </div>
   </form>
   <div class="mt-2 d-flex flex-row justify-content-center gap-3">
@@ -133,13 +140,13 @@
 
 <script>
 const form = document.getElementById("form_exam")
-	/* 機能の追加と削除
+	* 機能の追加と削除
 		作成：朴夏成
 		修正：朴夏成
 		修正日：2024/02/21
-	*/
+	*
 
-	/* 修正前： <?php /* ?>
+	* 修正前： <?php * ?>
 if (sessionStorage.getItem("return") == "exam") {
   sessionStorage.removeItem("return");
   form.name.value = sessionStorage.getItem("name");
@@ -149,9 +156,9 @@ if (sessionStorage.getItem("return") == "exam") {
   form.type.value = sessionStorage.getItem("type");
   form.num.value = sessionStorage.getItem("num");
 }
-	<?php */ ?> */
+	<?php * ?> *
 
-	/* 修正後： */
+	* 修正後： *
 	HTMLCollection.prototype.forEach = Array.prototype.forEach;
 	const essentials = document.getElementsByClassName("essential");
 	const certificatePlace = document.getElementById("place-certificate");
@@ -179,7 +186,7 @@ if (sessionStorage.getItem("return") == "exam") {
 			"<button type='button' onclick='event.target.parentNode.remove();'>-</button>";
 		certificatePlace.appendChild(newDiv);
 	}
-	/* ここまで */
+	* ここまで *
 
 document.getElementById("bt_confirm").addEventListener("click", () => {
   if ((form.name.value.trim()) == "") {
@@ -200,16 +207,16 @@ document.getElementById("bt_confirm").addEventListener("click", () => {
     return false;
   }
 
-		/* 機能の変更と追加
+		* 機能の変更と追加
 			作成：朴夏成
 			作成日：2024/02/21
-		*/
+		*
 
-		/* 修正前：
+		* 修正前：
   form.typeTitle.value = form.type.options[form.type.selectedIndex].text;
-		*/
+		*
 
-		/* 修正後： */
+		* 修正後： *
 		if (form.setQuestion.value == "true") {
 			if (form.academic.value == "") {
 				alert("学歴を選択してください。");
@@ -249,7 +256,207 @@ document.getElementById("bt_confirm").addEventListener("click", () => {
 		form.certificates.value = form.certificates.value.slice(0, -1);
 
 		form.typeTitle.value = form.type.options[form.type.selectedIndex].text;
-		/* ここまで */
+		* ここまで *
   form.submit();
 });
 </script>
+<?php */ ?> -->
+
+<!-- 修正後： -->
+<?php echo $this->partial("breadcrumb", ["datas" => $breadcrumbData]); ?>
+
+<h1 class="title">試験登録</h1>
+
+<form id="form" method="post">
+	<input type="hidden" name="typeTitle">
+	<input type="hidden" name="certificates">
+	
+	<div class="emegra card">
+		<div class="card-header">応募者情報</div>
+
+		<div class="card-body">
+			<style type="text/css">
+				dl.emegra.info { grid-template-columns: 200px 1fr; }
+			</style>
+			<dl class="emegra info">
+				<dt class="essential">応募者名</dt>
+				<dd><input class="form-control" name="name" placeholder="名前を入力してください"></dd>
+
+				<dt class="essential">ログインID(メイル)</dt>
+				<dd><input class="form-control" name="id" placeholder="ログインID(メイル)を入力してください"></dd>
+
+				<dt class="essential">パスワード</dt>
+				<dd><input class="form-control" name="password" placeholder="パスワードを入力してください" value="<?= $rndPassword ?>"></dd>
+			</dl>
+		</div>
+	</div>
+
+	<div class="emegra card" style="margin-top: 32px;">
+		<div class="card-header">設定</div>
+
+		<div class="card-body">
+			<div style="display: grid; grid-template-columns: repeat(2, 1fr);">
+				<div>
+					<input type="radio" name="setQuestion" id="set" value="true" onclick="chkSetQuestion(event)" checked="checked"/><label for="set">問題出題後配信（試験画面へ）</label>
+				</div>
+				<div>
+					<input type="radio" name="setQuestion" id="unset" value="false" onclick="chkSetQuestion(event)"/><label for="unset">情報確認後試験（情報確認画面へ）</label>
+				</div>
+			</div>
+
+			<style type="text/css">
+				dl.emegra.setting { grid-template-columns: repeat(2, 120px 1fr); }
+			</style>
+			<dl class="emegra setting" style="margin-top: 24px;">
+				<dt class="essential select">最終学歴</dt>
+				<dd>
+					<select class="form-select" style="max-width: calc(100% - 80px); margin-right: 8px;" name="academic" onclick="determineCheckboxActivation(event);">
+						<option value="" selected disabled hidden>選択してください</option>
+						<option value=2>高等学校</option>
+						<option value=4>専門学校</option>
+						<option value=6>短期大学</option>
+						<option value=8>大学</option>
+						<option value=10>大学院</option>
+						<option value=0>その他</option>
+					</select>
+
+					<div style="height: 38px; display: flex;">
+						<input type="checkbox" name="major" id="major" disabled/><label for="major">&nbspIT専攻</label>
+					</div>
+				</dd>
+
+				<dt class="essential select">経歴</dt>
+				<dd><input class="form-control" name="career" placeholder="年単位に数字だけ入力してください。"></dd>
+
+				<dt class="essential select">問題種別</dt>
+				<dd>
+					<select class="form-select" name="type">
+						<option value="" selected disabled hidden>選択してください</option>
+						<?php foreach ($types as $type): ?>
+							<option value="<?php echo $type["question_type"]; ?>"><?php echo $type["question_title"]; ?></option>
+						<?php endforeach; ?>
+					</select>
+				</dd>
+
+				<dt class="essential select">問題数</dt>
+				<dd>
+					<select class="form-select" name="num">
+						<option value=10>10</option>
+						<option value=20>20</option>
+					</select>
+				</dd>
+			</dl>
+
+			<div style="margin-top: 24px;">
+				<span style="font-size: 16px; font-weight: 700;">資格</span>
+				<div id="place-certificate"></div>	
+				<button class="btn-plus" style="margin-top: 8px; float: right;" type="button" onclick="addCertificate();">+</button>
+			</div>
+		</div>
+	</div>
+</form>
+
+<div class="btn-place" style="margin-top: 32px;">
+	<button class="emegra cancel" onclick="window.location.href='./list?page=1';">キャンセル</button>
+	<button class="emegra" onclick="confirm();">次へ</button>
+</div>
+
+
+<script>
+	HTMLCollection.prototype.forEach = Array.prototype.forEach;
+	
+	const form = document.getElementById("form");
+	const essentials = document.getElementsByClassName("select");
+	const certificatePlace = document.getElementById("place-certificate");
+
+
+
+	function determineCheckboxActivation(event) {
+		if (event.target.value == "" || event.target.value < 2) { form.major.disabled = true; }
+		else { form.major.disabled = false; }
+	}
+
+	function chkSetQuestion(event) {
+		if (event.target.value == "false") {
+			essentials.forEach(element => { element.classList.remove("essential"); })
+		}
+		else if (event.target.value == "true") {
+			essentials.forEach(element => { element.classList.add("essential"); })
+		}
+	}
+
+	function addCertificate() {
+		const newDiv = document.createElement("div");
+		newDiv.innerHTML =
+			"<div style='margin-top: 8px; display: flex; align-items: center;'>" +
+				"<input class='form-control' style='max-width: calc(100% - 46px); margin-right: 8px;' name='certificate[]' placeholder='資格の名を入力してください。'>" +
+				"<button class='btn-minus' type='button' onclick='event.target.parentNode.remove();'>-</button>" +
+			"</div>";
+		certificatePlace.appendChild(newDiv);
+	}
+
+
+
+	function confirm() {
+		if ((form.name.value.trim()) == "") {
+			alert("名前を入力してください。");
+			form.name.focus();
+			return false;
+		}
+
+		if ((form.id.value.trim()) == "") {
+			alert("ログインIDを入力してください。");
+			form.id.focus();
+			return false;
+		}
+
+		if ((form.password.value.trim()) == "") {
+			alert("パスワードを入力してください。");
+			form.password.focus();
+			return false;
+		}
+		
+		if (form.setQuestion.value == "true") {
+			if (form.academic.value == "") {
+				alert("学歴を選択してください。");
+				form.academic.focus();
+				return false;
+			}
+		
+			if (form.type.value == "") {
+				alert("問題種別を選択してください。");
+				form.type.focus();
+				return false;
+			}
+
+			if (form.career.value.trim() == "") {
+				alert("経歴を入力してください。");
+				form.career.focus();
+				return false;
+			}
+		}
+
+		if (isNaN(form.career.value)) {
+			alert("経歴に数字だけ入力してください。");
+			form.career.focus();
+			return false;
+		}
+
+		form.certificates.value = "";
+		var certificateArray = document.getElementsByName("certificate[]");
+		for (let i = 0; i < certificateArray.length; i++) {
+			if (certificateArray[i].value.trim() == "") {
+				alert("資格を入力してください。");
+				certificateArray[i].focus();
+				return false;
+			}
+			else { form.certificates.value += certificateArray[i].value.trim() + ","; }
+		}
+		form.certificates.value = form.certificates.value.slice(0, -1);
+
+		form.typeTitle.value = form.type.options[form.type.selectedIndex].text;
+
+		form.submit();
+	}
+</script>
+<!-- ここまで -->

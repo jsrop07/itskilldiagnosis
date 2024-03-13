@@ -1,8 +1,15 @@
-<!-- 
+<!-- 画面変更
+	作成：丁錫圓
+	修正：朴昰成
+	修正日：2027/03/12
+-->
+
+<!-- 修正前： <?php /* ?>
+!-- 
 html修正
 作成日：2024/02/22
--->
-<!--修正前：　<?php /*?> 
+--
+!--修正前：　<?php !*?> 
 <?php
 $level[1] = "初級";
 $level[2] = "中級";
@@ -64,8 +71,8 @@ $level[3] = "高級";
     window.location.href = " ./list/detail/" + idx;
   }
 </script>
-<?php */ ?> -->
-<!-- 修正後： -->
+<?php *! ?> --
+!-- 修正後： --
 <?php
 $level[0] = "その他";
 $level[1] = "高等学校";
@@ -93,22 +100,22 @@ $cert=array("無","有");
     <?php foreach ($questionDatas as $index => $data) : ?>
       <tr style="cursor: pointer;" onclick="Move2Detail(<?= $data['idx'] ?>)">
         <td><?= $dataIndex - $index ?></td>
-				<!-- 表示するデータの変更
+				!-- 表示するデータの変更
 					作成：丁錫圓
 					修正：朴昰成
 					修正日：2024/03/08
-				-->
+				--
 
-				<!-- 修正前： <?php /* ?>
+				!-- 修正前： <?php !* ?>
         <td><?= $level[$data["academic"]] ?></td>
-				<?php */ ?> -->
+				<?php *! ?> --
 
-				<!-- 修正後： -->
+				!-- 修正後： --
         <td>
 					<?php echo $level[$data["academic"] / 2]; ?>
 					<?php echo ($data["academic"] % 2 == 1) ? "" : "&nbspIT専攻"; ?>
 				</td>
-				<!-- ここまで -->
+				!-- ここまで --
         <td><?= $data["career"]?>年</td>
         <td><?= $cert[$data["certificate"]] ?></td>
         <td><?= $typeTitles[$index] ?></td>
@@ -151,4 +158,54 @@ $cert=array("無","有");
     window.location.href = " ./list/detail/" + idx;
   }
 </script>
+!-- ここまで --
+<?php */ ?> -->
+
+<!-- 修正後： -->
+<?php
+	$academicTexts = array("その他", "高等学校", "専門学校", "短期大学", "大学", "大学院");
+	$certificateTexts = array("無", "有");
+?>
+
+<?php echo $this->partial("breadcrumb", ["datas" => $breadcrumbData]); ?>
+
+<h1 class="title">問題一覧</h1>
+
+<style text="text/css">
+	table.emegra tr { grid-template-columns: 40px 3fr 1fr 1fr 2fr 2fr 1fr 1fr; }
+</style>
+<table class="emegra">
+	<thead>
+		<tr>
+			<th>No.</th>
+			<th>学歴</th>
+			<th>履歴</th>
+			<th>資格(IT)</th>
+			<th>種別</th>
+			<th>問題</th>
+			<th>登録日</th>
+		</tr>
+	</thead>
+
+	<tbody>
+		<?php foreach ($questionDatas as $index => $data): ?>
+			<tr onclick="self.location.href='./list/detail/<?php echo $data['idx']; ?>';">
+				<td><?= $dataIndex - $index; ?></td>
+				<td>
+					<?php echo $academicTexts[$data["academic"] / 2]; ?>
+					<?php echo ($data["academic"] % 2 == 1) ? "&nbspIT専攻" : ""; ?>
+				</td>
+				<td><?php echo $data["career"]; ?>年</td>
+				<td><?php echo $certificateTexts[$data["certificate"]]; ?></td>
+				<td><?php echo $typeTitles[$index]; ?></td>
+				<td><?php echo $data["question"]; ?></td>
+				<td><?php echo date("Y-m-d", strtotime($data["wdate"])); ?></td>
+			</tr>
+		<?php endforeach; ?>
+	</tbody>
+</table>
+
+<div style="margin-top: 32px;">
+	<?php echo $this->partial("pagination", $paginationData); ?>
+</div>
 <!-- ここまで -->

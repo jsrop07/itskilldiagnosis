@@ -1,15 +1,22 @@
+<!-- 画面変更
+	作成：朴昰成
+	修正：朴昰成
+	修正日：2027/03/11
+-->
+
+<!-- 修正前： <?php /* ?>
 <?php
 if (!isset($_SESSION)) {
   session_start();
 }
 
-	/* 機能の削除と追加
+	!* 機能の削除と追加
 		作成：朴夏成
 		修正：朴夏成
 		修正日：2024/02/28
-	*/
+	*!
 
-	/* 修正前：
+	!* 修正前：
 $level[1] = "初級";
 $level[2] = "中級";
 $level[3] = "高級";
@@ -26,11 +33,11 @@ switch ($examData["question_level"]) {
     $levelTitle = "高級";
     break;
 }
-	*/
+	*!
 
-	/* 修正後： */
+	!* 修正後： *!
 	$academicTexts = array("その他", "高等学校", "専門学校", "短期大学", "大学", "大学院");
-	/* ここまで */
+	!* ここまで *!
 ?>
 
 <div class="p-5 align-self-center w-75">
@@ -56,13 +63,13 @@ switch ($examData["question_level"]) {
     </table>
   </div>
 
-	<!-- 機能の変更
+	!-- 機能の変更
 		作成：朴夏成
 		修正：朴夏成
 		修正日：2024/02/28
-	-->
+	--
 	
-	<!-- 修正前： <?php /* ?>
+	!-- 修正前： <?php !* ?>
   <p class="mt-4 mb-3">setting</p>
   <div class="p-3 rounded-3 bg-light">
     <table class="w-100">
@@ -110,9 +117,9 @@ switch ($examData["question_level"]) {
   <div class="mt-2 d-flex flex-row justify-content-center gap-3">
     <button class="btn btn-primary" id="bt_return">戻る</button>
   </div>
-	<?php */ ?> -->
+	<?php *! ?> --
 
-	<!-- 修正後： -->
+	!-- 修正後： --
 	<?php if(isset($examData["academic"])): ?>
 		<p>setting</p>
 		<div>
@@ -150,19 +157,112 @@ switch ($examData["question_level"]) {
 	<div>
 		<button class="btn btn-primary" onclick="history.back()">戻る</button>
 	</div>
-	<!-- ここまで -->
+	!-- ここまで --
 </div>
 
-<!-- 機能の削除
+!-- 機能の削除
 	作成：朴夏成
 	削除：朴夏成
 	削除日：2027/02/29
 
-削除前： <?php /* ?>
+削除前： <?php !* ?>
 <script>
   document.getElementById("bt_return").addEventListener("click", function() {
     let page = sessionStorage.getItem("listPage");
     window.location.href = "../../list?page=" + page;
   });
 </script>
-ここまで <?php */ ?> -->
+ここまで <?php *! ?> --
+<?php */ ?> -->
+
+<!-- 修正後： -->
+<?php $academicTexts = array("その他", "高等学校", "専門学校", "短期大学", "大学", "大学院"); ?>
+
+<?php echo $this->partial("breadcrumb", ["datas" => $breadcrumbData]); ?>
+
+<h1 class="title">試験詳細</h1>
+
+<div class="emegra card">
+	<div class="card-header">応募者情報</div>
+
+	<div class="card-body">
+		<style type="text/css">
+			dl.emegra.info { grid-template-columns: repeat(2, 80px 1fr); }
+		</style>
+		<dl class="emegra info">
+			<dt>応募者名</dt>
+			<dd><?php echo $examData["name"]; ?></dd>
+
+			<dt>固有URL</dt>
+			<dd>gngtest/user/login/<?php echo $examData["url"]; ?></dd>
+		
+			<dt>ログインID</dt>
+			<dd><?php echo $examData["user_id"]; ?></dd>
+		
+			<dt>パスワード</dt>
+			<dd><?php echo $examData["user_pw"]; ?></dd>
+		</dl>
+	</div>
+</div>
+
+<?php if(isset($examData["academic"])): ?>
+	<div class="emegra card" style="margin-top: 32px;">
+		<div class="card-header">設定</div>
+
+		<div class="card-body">
+			<style type="text/css">
+				dl.emegra.setting { grid-template-columns: repeat(4, 80px 1fr); }
+			</style>
+			<dl class="emegra setting">
+				<dt>最終学歴</dt>
+				<dd><?php echo $academicTexts[$examData["academic"] / 2]; ?></dd>
+				
+				<dt>IT専攻</dt>
+				<dd><?php echo ($examData["academic"] % 2 == 1) ? "O" : "X"; ?></dd>
+
+				<dt>経歴</dt>
+				<dd><?php echo $examData["career"]; ?></dd>
+				
+				<dt>問題数</dt>
+				<dd><?php echo $examData["question_nums"]; ?></dd>
+
+				<dt>資格(IT)</dt>
+				<dd style="grid-column: 2 / 9;"><?php echo ($examData["certificates"] == null) ? "無" : $examData["certificates"]; ?></dd>
+
+				<dt>実施日</dt>
+				<dd style="grid-column: 2 / 5;"><?php echo ($examData["execute_date"] == null) ? "未対応" : date("Y-m-d H:i:s", strtotime($examData["execute_date"])); ?></dd>
+
+				<dt>点数</dt>
+				<dd style="grid-column: 6 / 9;"><?php echo ($examData["execute_date"] == null) ? "未対応" : $examData["question_nums"] . "-" . $examData["get_point"]; ?></dd>
+			</dl>
+
+			<style text="text/css">
+				table.emegra tr { grid-template-columns: 40px 1fr 100px; }
+			</style>
+			<table class="emegra" style="margin-top: 24px;">
+				<thead>
+					<tr>
+						<th>No.</th>
+						<th>問題</th>
+						<th>結果</th>
+					</tr>
+				</thead>
+			
+				<tbody>
+					<?php foreach ($questionDatas as $index => $data): ?>
+						<tr onclick="window.location.href='../../../question/list/detail/<?php echo $data['idx']; ?>';">
+							<td><?= $index + 1; ?></td>
+							<td><?php echo $data["question"]; ?></td>
+							<td><?php echo $corrects[$index]; ?></td>
+						</tr>
+					<?php endforeach; ?>
+				</tbody>
+			</table>
+		</div>
+	</div>
+<?php endif; ?>
+
+<div class="btn-place" style="margin-top: 32px;">
+	<button class="emegra cancel" onclick="history.back();">戻る</button>
+</div>
+<!-- ここまで -->

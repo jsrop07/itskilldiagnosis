@@ -66,10 +66,12 @@ return array(
         'not_found_template'       => 'error/404',
         'exception_template'       => 'error/index',
         'template_map' => array(
+					"admin"									=> __DIR__ . "/../view/layout/admin_layout.phtml",
+					"breadcrumb"						=> __DIR__ . "/../view/layout/breadcrumb.phtml",
+					"pagination"						=> __DIR__ . "/../view/layout/pagination.phtml",
             'layout/layout'           => __DIR__ . '/../view/layout/layout.phtml',
             'layout/mylayout'           => __DIR__ . '/../view/layout/mylayout.phtml',
             "layout/exam_layout" => __DIR__ . "/../view/layout/exam_layout.phtml",
-            'layout/pagination'           => __DIR__ . '/../view/layout/pagination.phtml',
             "layout/none" => __DIR__ . "/../view/layout/none_layout.phtml",
         ),
         'template_path_stack' => array(

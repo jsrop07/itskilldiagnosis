@@ -12,8 +12,7 @@ class UserController extends AbstractActionController
 {
   public function mainAction()
   {
-    $this->layout("layout/none");
-
+		$this->layout("layout/user/login");
     //main==============================================================
     $post = $this->params()->fromPost();
 
@@ -27,7 +26,7 @@ class UserController extends AbstractActionController
 
     //view==============================================================
     $vm = new ViewModel();
-    $vm->setTemplate("/user/main.phtml");
+    $vm->setTemplate("/user/login.phtml");
     return $vm;
   }
 

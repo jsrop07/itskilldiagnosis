@@ -1,3 +1,10 @@
+<!-- 構造の変更
+	作成：朴昰成
+	修正：朴昰成
+	修正日：2024/03/15
+-->
+
+<!-- 修正前： <?php /* ?>
 <!doctype html>
 <html lang="jp">
 
@@ -65,3 +72,20 @@
 </body>
 
 </html>
+<?php */ ?> -->
+
+<!-- 修正後： -->
+<style type="text/css">
+	label { margin-bottom: 8px; }
+</style>
+
+<div class="emegra card">
+	<?php foreach ($message as $string): ?>
+		<label class="text-left"><?php echo $string; ?></label>
+	<?php endforeach; ?>
+</div>
+
+<div class="btn-place" style="margin-bottom: 32px;">
+	<button class="emegra big cancel" style="margin-top: 40px;" onclick="window.location.href='/user/main';">戻る</button>
+</div>
+<!-- ここまで -->

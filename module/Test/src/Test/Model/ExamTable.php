@@ -138,6 +138,13 @@ class ExamTable
 	}
 	/* ここまで */
 
+	/* 機能の追加変更
+		作成：朴昰成
+		修正：朴昰成
+		修正日：2024/03/18
+	*/
+
+	/*　修正前：
   public function updateSubmit($url, $answers, $point)
   {
     $qry = $this->sql->update("exam")->where(["url" => $url])->set(
@@ -149,4 +156,20 @@ class ExamTable
     );
     return $this->sql->prepareStatementForSqlObject($qry)->execute();
   }
+	*/
+
+	/* 修正後： */
+	/** Update exam data */
+  public function updateSubmit($url, $answers, $point)
+  {
+		$datas = array(
+			"execute_date" => date("Y-m-d H:i:s"),
+			"get_point" => $point,
+		);
+		if (!is_null($answers)) { $datas["answer_data"] = $answers; }
+
+		$qry = $this->sql->update("exam")->where(["url" => $url])->set($datas);
+    return $this->sql->prepareStatementForSqlObject($qry)->execute();
+  }
+	/* ここまで */
 }

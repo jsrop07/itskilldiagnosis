@@ -146,6 +146,7 @@ main {
 }
 
 
+
 .essential {
 	display: flex;
 	align-items: center;
@@ -168,13 +169,14 @@ main {
 }
 
 
+
 button.btn-plus, button.btn-minus {
 	height: 38px;
 	width: 38px;
 	border-radius: 5px;
 	background: var(--gradient);
 
-	color: white;
+	color: white; 	 
 }
 button.btn-minus { background: red; }
 button.btn-plus:hover { background: var(--emegra-blue); }

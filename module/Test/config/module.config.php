@@ -67,6 +67,7 @@ return array(
         'exception_template'       => 'error/index',
         'template_map' => array(
 					"admin"									=> __DIR__ . "/../view/layout/admin_layout.phtml",
+					"layout/user"						=> __DIR__ . "/../view/layout/user/layout.phtml",
 					"layout/user/login"			=> __DIR__ . "/../view/layout/user/login.phtml",
 					"breadcrumb"						=> __DIR__ . "/../view/layout/breadcrumb.phtml",
 					"pagination"						=> __DIR__ . "/../view/layout/pagination.phtml",

@@ -623,7 +623,7 @@ class AdminController extends AbstractActionController
 			$datas["typeTitles"] = $typeTitles;
 	
 			$corrects = [];
-			if ($examData["get_point"] == null) {
+			if (is_null($examData["answer_data"])) {
 				for ($i = 0; $i < $examData["question_nums"]; $i++) {
 					$corrects[$i] = "未対応";
 				}

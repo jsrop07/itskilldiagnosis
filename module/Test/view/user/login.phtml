@@ -1,4 +1,10 @@
+<!-- 画面の変更
+	作成：朴昰成
+	修正：朴昰成
+	修正日：2027/03/12
+-->
 
+<!-- 修正前： <?php /* ?>
   <div id="content">
     <div>
       <p>G&G Service 試験受け</p>
@@ -59,3 +65,68 @@
     }
   });
   </script>
+<?php */ ?> -->
+
+<!-- 修正後： -->
+<style type="text/css">
+	span { margin-bottom: 8px; }
+	input { height: 48px; }
+</style>
+
+<div class="emegra card">
+	<div class="card-header">G&G Service 試験受け</div>
+
+	<div class="card-body">
+		<span>ログインID</span>
+		<input class="form-control" id="id" type="text" placeholder="IDを入力ください">
+
+		<span style="margin-top: 24px">パスワード</span>
+		<input class="form-control" id="password" type="password" placeholder="パスワードを入力ください">
+
+		<button class="emegra" style="margin-top: 40px;" onclick="submit();">ログイン</button>
+	</div>
+</div>
+
+<script>
+	const id = document.getElementById("id");
+	const password = document.getElementById("password");
+	const url = window.location.href;
+
+	function submit() {
+		if (id.value == "") {
+			alert("IDを入力ください");
+			id.focus();
+			return false;
+		}
+
+		if (password.value == "") {
+			alert("パスワードを入力ください");
+			password.focus();
+			return false;
+		}
+
+		const postForm = new FormData();
+		postForm.append("id", id.value);
+		postForm.append("password", password.value);
+
+		const xhr = new XMLHttpRequest();
+		xhr.open("POST", url, true);
+		xhr.send(postForm);
+
+		xhr.onload = () => {
+			if (xhr.status == 200) {
+				const result = xhr.responseText;
+				if (result == "wrong id") {
+					alert("有効ではないIDです");
+					id.focus();
+				} else if (result == "wrong password") {
+					alert("パスワードを確認してください");
+					password.focus();
+				} else if (result == "success") {
+					self.location.href = "../exam/" + url.substring(url.indexOf("login/", 0) + 6, url.length);
+				}
+			}
+		}
+	}
+</script>
+<!-- ここまで -->

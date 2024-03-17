@@ -106,7 +106,7 @@ $level[3] = "高級";
 				<td><?php echo date("Y-m-d", strtotime($data["write_date"])); ?></td>
 				<td><?php echo ($data["execute_date"] == null) ? "未対応" : date("Y-m-d", strtotime($data["execute_date"])); ?></td>
 				<td><?php echo ($data["question_nums"] == null) ? "未設定" : $data["question_nums"]; ?></td>
-				<td><?php echo ($data["get_point"] == null) ? "未対応" : $data["get_point"]; ?></td>
+				<td><?php echo is_null($data["get_point"]) ? "未対応" : $data["get_point"]; ?></td>
 				</tr>
 		<?php endforeach; ?>
 	</tbody>

@@ -120,13 +120,13 @@ class AdminController extends AbstractActionController
     $post = $this->params()->fromPost();
 
     if (isset($post["type"])) {
-      $session = new Container("question");
 			/* 機能の追加
 				作成：朴昰成
 				作成日：2024/03/08
 			*/
-			$session->getManager()->getStorage()->clear();
+			$this->ClearSession();
 			/* ここまで */
+      $session = new Container("question");
 
       foreach ($post as $key => $data) {
         $session->offsetSet($key, $data);
@@ -316,8 +316,9 @@ class AdminController extends AbstractActionController
 
 		/* 修正後： */
 		if (isset($post["name"])) {
+			$this->ClearSession();
+			
 			$session = new Container("exam");
-			$session->getManager()->getStorage()->clear();
 		/* ここまで */
 
       foreach ($post as $key => $data) {
@@ -398,12 +399,31 @@ class AdminController extends AbstractActionController
     if (isset($post["url"])) {
       $examTb->createExam($post);
 
+			/* 機能の変更
+				作成：朴昰成
+				修正：朴昰成
+				修正日：2024/03/27
+			*/
+
+			/* 修正前：
       echo "
       <script>
         alert('登録しました。');
         self.location.href='../list?page=1'
       </script>
       ";
+			*/
+
+			/* 修正後： */
+			$examIdx = $examTb->readByUrl($post["url"])["idx"];
+
+      echo "
+      <script>
+        alert('登録しました。');
+        self.location.href='../list/detail/$examIdx'
+      </script>
+      ";
+			/* ここまで */
     }
 
 		/* 機能の変更と改善
@@ -650,6 +670,33 @@ class AdminController extends AbstractActionController
     return $vm;
   }
 
+	/* 機能の追加
+		作成：朴昰成
+		作成日：2024/03/27
+	*/
+
+
+
+	/** Clear session Except user session */
+	function ClearSession() {
+		$session = new Container("user");
+
+		$userSession = array();
+		foreach ($session as $key => $value) {
+			print_r($key . "&" . $value);
+			$userSession[$key] = $value;
+		}
+
+		$session->getManager()->getStorage()->clear();
+		
+		$session = new Container("user");
+		foreach ($userSession as $key => $value) {
+			print_r($key . "&" . $value);
+			$session->offsetSet($key, $value);
+		}
+	}
+
+	/* ここまで */
 	public function estimateAction(){
 
 

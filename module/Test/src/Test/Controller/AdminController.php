@@ -170,6 +170,13 @@ class AdminController extends AbstractActionController
 
     if (isset($post["type"])) {
       $questionTb = $this->getServiceLocator()->get("QuestionPoolTable");
+			/* 機能の変更
+				作成：朴昰成
+				修正：朴昰成
+				修正日：2024/03/27
+			*/
+
+			/* 修正前：
       $questionTb->createQuestion($post);
 
       echo "
@@ -178,6 +185,19 @@ class AdminController extends AbstractActionController
         self.location.href='../list?page=1';
       </script>
       ";
+			*/
+
+			/* 修正後： */
+			$result = $questionTb->createQuestion($post);
+			$questionIdx = $result->getGeneratedValue();
+
+      echo "
+      <script>
+        alert('登録しました。');
+        self.location.href='../list/detail/$questionIdx'
+      </script>
+      ";
+			/* ここまで */
     }
 
 		/* コードデバッグ
@@ -397,8 +417,6 @@ class AdminController extends AbstractActionController
     $examTb = $this->getServiceLocator()->get("ExamTable");
 
     if (isset($post["url"])) {
-      $examTb->createExam($post);
-
 			/* 機能の変更
 				作成：朴昰成
 				修正：朴昰成
@@ -406,6 +424,8 @@ class AdminController extends AbstractActionController
 			*/
 
 			/* 修正前：
+      $examTb->createExam($post);
+
       echo "
       <script>
         alert('登録しました。');
@@ -415,7 +435,8 @@ class AdminController extends AbstractActionController
 			*/
 
 			/* 修正後： */
-			$examIdx = $examTb->readByUrl($post["url"])["idx"];
+			$result = $examTb->createExam($post);
+			$examIdx = $result->getGeneratedValue();
 
       echo "
       <script>

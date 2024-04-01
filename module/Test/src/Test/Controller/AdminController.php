@@ -37,7 +37,7 @@ class AdminController extends AbstractActionController
 	*/
   public function logoutAction() {
 		$session = new Container("user");
-		unset($session["id"]);
+		$session->getManager()->getStorage()->clear();
 		echo "<script>
 			alert('ログアウトしました。');
 			self.location.href='/admin/login';
@@ -438,6 +438,12 @@ class AdminController extends AbstractActionController
 			$result = $examTb->createExam($post);
 			$examIdx = $result->getGeneratedValue();
 
+			$userSession = new Container("user");
+			$userId = $userSession->offsetGet("id");
+			$userName = $userSession->offsetGet("id");
+
+			$this->SendMail($userId, $userName, $post["id"], $post["name"], $post["url"], $post["password"]);
+
       echo "
       <script>
         alert('登録しました。');
@@ -704,7 +710,6 @@ class AdminController extends AbstractActionController
 
 		$userSession = array();
 		foreach ($session as $key => $value) {
-			print_r($key . "&" . $value);
 			$userSession[$key] = $value;
 		}
 
@@ -712,12 +717,98 @@ class AdminController extends AbstractActionController
 		
 		$session = new Container("user");
 		foreach ($userSession as $key => $value) {
-			print_r($key . "&" . $value);
 			$session->offsetSet($key, $value);
 		}
 	}
+	
+	public function getConfig() {
+		if (isset($_SERVER["DOCUMENT_ROOT"]) && $_SERVER["DOCUMENT_ROOT"] != "") {
+			$droot = $_SERVER["DOCUMENT_ROOT"];
+		} else {
+			$droot = "abc";	// 解析できなかった
+		}
 
+		if (is_file($droot . "/../config/autoload/local.php")) {
+			$config = require $droot . "/../config/autoload/local.php";
+		} else {
+			$config = require $droot . "/../config/autoload/global.php";
+		}
+		
+		return $config;
+	}
+
+	/** Send Mail to Exam-Creater and Exam-Receiver */
+	public function SendMail($senderMail, $senderName, $receiverMail, $receiverName, $examUrl, $examPassword) {
+		// メールセンダー初期化
+		$mail = new MailSender();
+		
+		// 基本メール転送に関する設定ロード
+		$param["config"] = $this->getConfig();
+
+		$param["email"] = $receiverMail;
+		$param["name"] = $receiverName;
+		
+		$param["title"] = "{{receiver_name}}様、株式会社ジエンジサービスでございます。";
+		$param["content"] = "以下のパスワードとURLで試験を受けてください。\n\nhttp://questionbank.goms.jp/user/login/{{exam_url}}\nパスワード：{{password}}";
+
+		$param["title"] = str_replace("{{receiver_name}}", $receiverName, $param["title"]);
+		$param["content"] = str_replace("{{exam_url}}", $examUrl, $param["content"]);
+		$param["content"] = str_replace("{{password}}", $examPassword, $param["content"]);
+
+		// 転送
+		$result = $mail->mailsender($param);
+		$result_row = $result["transport"]->getConnection()->getResponse();
+		
+		$results = str_replace("\r", "", str_replace("\n", "", str_replace(" ", "", $result_row[0])));
+		
+		switch(substr(strtolower($results), 0, 5)) {
+			// 250okが出ると転送成功
+			case "250ok":
+				$status = "OK";
+				break;
+			// その以外は全部失敗に処理する
+			default:
+				$status = "FALSE";
+				break;
+		}
+
+		// メールセンダー初期化
+		$mail = new MailSender();
+		
+		// 基本メール転送に関する設定ロード
+		$param["config"] = $this->getConfig();
+
+		$param["email"] = $senderMail;
+		$param["name"] = $senderName;
+		
+		$param["title"] = "{{receiver_name}}様にメールを転送";
+		$param["content"] = "転送した内容：\n\nタイトル：{{receiver_name}}様、株式会社ジエンジサービスでございます。\n内容：\n以下のパスワードとURLで試験を受けてください。\n\nhttp://questionbank.goms.jp/user/login/{{exam_url}}\nパスワード：{{password}}";
+
+		$param["title"] = str_replace("{{receiver_name}}", $receiverName, $param["title"]);
+		$param["content"] = str_replace("{{receiver_name}}", $receiverName, $param["content"]);
+		$param["content"] = str_replace("{{exam_url}}", $examUrl, $param["content"]);
+		$param["content"] = str_replace("{{password}}", $examPassword, $param["content"]);
+
+		// 転送
+		$result = $mail->mailsender($param);
+		$result_row = $result["transport"]->getConnection()->getResponse();
+		
+		$results = str_replace("\r", "", str_replace("\n", "", str_replace(" ", "", $result_row[0])));
+		
+		switch(substr(strtolower($results), 0, 5)) {
+			// 250okが出ると転送成功
+			case "250ok":
+				$status = "OK";
+				break;
+			// その以外は全部失敗に処理する
+			default:
+				$status = "FALSE";
+				break;
+		}
+	}
 	/* ここまで */
+
+	/*
 	public function estimateAction(){
 
 
@@ -777,4 +868,5 @@ class AdminController extends AbstractActionController
 		}
 		return $config;
 }
+*/
 }

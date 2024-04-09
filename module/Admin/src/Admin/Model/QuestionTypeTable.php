@@ -1,6 +1,6 @@
 <?php
 
-namespace Test\Model;
+namespace Admin\Model;
 
 use Zend\Db\Adapter\Adapter;
 use Zend\Db\ResultSet\ResultSet;

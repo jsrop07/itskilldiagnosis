@@ -1,6 +1,6 @@
 <?php
 
-namespace Test\Controller;
+namespace Admin\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\Mvc\Controller\Plugin\Redirect;

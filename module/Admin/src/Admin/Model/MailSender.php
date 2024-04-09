@@ -1,6 +1,6 @@
 <?php
 
-namespace Test\Model;
+namespace Admin\Model;
 
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\Db\Adapter\Adapter;

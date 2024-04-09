@@ -1,0 +1,7 @@
+<ul class="emegra pagination">
+	<?php for ($i = 1; $i <= $totalPage; $i++): ?>
+		<li class="item<?php echo ($currentPage == $i) ? " active" : ""; ?>">
+			<a href="<?php echo $url . $i; ?>"><?= $i ?></a>
+		</li>
+	<?php endfor; ?>
+</ul>

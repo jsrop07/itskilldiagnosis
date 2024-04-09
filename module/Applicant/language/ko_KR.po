@@ -1,0 +1,1902 @@
+#: ../view/error/index.phtml:1
+msgid "An error occurred"
+msgstr "エラーが発生しました"
+
+#: ../view/error/index.phtml:8
+msgid "Additional information"
+msgstr "追加の情報"
+
+#: ../view/error/index.phtml:11
+#: ../view/error/index.phtml:35
+msgid "File"
+msgstr "ファイル"
+
+#: ../view/error/index.phtml:15
+#: ../view/error/index.phtml:39
+msgid "Message"
+msgstr "메세지"
+
+#: ../view/error/index.phtml:19
+#: ../view/error/index.phtml:43
+#: ../view/error/404.phtml:55
+msgid "Stack trace"
+msgstr "スタックトレース"
+
+#: ../view/error/index.phtml:29
+msgid "Previous exceptions"
+msgstr "前の例外"
+
+#: ../view/error/index.phtml:58
+msgid "No Exception available"
+msgstr "例外が利用できません"
+
+#: ../view/error/404.phtml:1
+msgid "A 404 error occurred"
+msgstr "404エラーが発生しました"
+
+#: ../view/error/404.phtml:10
+msgid "The requested controller was unable to dispatch the request."
+msgstr "要求されたコントローラはリクエストをディスパッチできませんでした。"
+
+#: ../view/error/404.phtml:13
+msgid "The requested controller could not be mapped to an existing controller class."
+msgstr "要求されたコントローラは存在するコントローラクラスにマッピングできませんでした。"
+
+#: ../view/error/404.phtml:16
+msgid "The requested controller was not dispatchable."
+msgstr "要求されたコントローラはディスパッチ不可能でした。"
+
+#: ../view/error/404.phtml:19
+msgid "The requested URL could not be matched by routing."
+msgstr "要求されたURLはルーティングにマッチしませんでした。"
+
+#: ../view/error/404.phtml:22
+msgid "We cannot determine at this time why a 404 was generated."
+msgstr "404が生成された理由について現時点で判断できません。"
+
+#: ../view/error/404.phtml:34
+msgid "Controller"
+msgstr "컨트롤러"
+
+#: ../view/error/404.phtml:41
+#, php-format
+msgid "resolves to %s"
+msgstr "%s に解決"
+
+#: ../view/error/404.phtml:51
+msgid "Exception"
+msgstr "예외"
+
+msgid "Create"
+msgstr "만들기"
+
+msgid "Join"
+msgstr "가입"
+
+msgid "Search"
+msgstr "검색"
+
+msgid "Ranking"
+msgstr "랭킹"
+
+msgid "News"
+msgstr "소식"
+
+msgid "Login"
+msgstr "로그인"
+
+msgid "Sign in"
+msgstr "회원가입"
+
+msgid "FannBook"
+msgstr "팬클럽"
+
+msgid "FannClub"
+msgstr "팬클럽"
+
+msgid "All rights reserved."
+msgstr "모든 권리 보유."
+
+
+msgid "Creation Date"
+msgstr "개설일"
+
+msgid "Members"
+msgstr "회원수"
+
+msgid "Register"
+msgstr "가입방법"
+
+msgid "people"
+msgstr "명"
+
+msgid "Join approval process"
+msgstr "가입 승인 처리"
+
+msgid "Approved"
+msgstr "승인제"
+
+msgid "Approval Required"
+msgstr "승인 필요"
+
+msgid "Approval not required"
+msgstr "승인 불필요"
+
+msgid "Leader"
+msgstr "리더"
+
+msgid "Hot Fanclub"
+msgstr "Hot Fannbook"
+
+msgid "FanClub Finder"
+msgstr "팬클럽 파인더"
+
+msgid "Artist name"
+msgstr "아티스트 명"
+
+msgid "Fanclub name"
+msgstr "팬클럽 이름"
+
+msgid "Remember to e-mail."
+msgstr "이메일을 기억합니다."
+
+msgid "Password"
+msgstr "비밀번호"
+
+msgid "E-mail"
+msgstr "이메일"
+
+msgid "Please enter your e-mail."
+msgstr "이메일을 입력해주세요."
+
+msgid "Fanclub news"
+msgstr "팬클럽 뉴스"
+
+msgid "My Fanclub"
+msgstr "나의 팬클럽"
+
+msgid "Received Messages"
+msgstr "받은 메세지"
+
+msgid "Sended Messages"
+msgstr "보낸 메세지"
+
+msgid "Saved Messages"
+msgstr "저장한 메세지"
+
+msgid "Unread Message"
+msgstr "안읽은 메세지"
+
+msgid "Create FannBook"
+msgstr "팬클럽 만들기"
+
+msgid "Fanclub Name"
+msgstr "팬클럽 이름"
+
+msgid "Artist Name"
+msgstr "아티스트 이름"
+
+msgid "Full name"
+msgstr "전체 이름"
+
+msgid "Short name"
+msgstr "짧게"
+
+msgid "Official Fanclub"
+msgstr "공식 팬클럽"
+
+msgid "Related Links"
+msgstr "관련 링크"
+
+
+msgid "fanclub desc"
+msgstr "팬클럽 시스템을 이용해주셔서 감사합니다.<br/>이 시스템을 이용하면 전문적인 팬클럽 기능을 모두 무료로 이용 가능합니다.<br/>팬클럽 회원들은 굳이 신규가입을 하지 않아도, 자신의 SNS계정을 통하여 팬클럽에 가입후 활동이 가능합니다.<br/><br/>아래의 입력필드를 모두 채워주십시오."
+
+msgid "After opening more design settings and menu settings are available in Settings page."
+msgstr "자세한 디자인 설정 및 메뉴 설정은 개설 후 설정 페이지에서 가능합니다."
+
+msgid "Fanclub Search"
+msgstr "팬클럽 검색"
+
+msgid "Notice"
+msgstr "공지사항"
+
+msgid "Schejule"
+msgstr "스케쥴"
+
+msgid "Chat"
+msgstr "채팅"
+
+msgid "Enter Keyword"
+msgstr "키워드 입력"
+
+msgid "Please enter a keyword."
+msgstr "키워드를 입력해주세요."
+
+msgid "Board List"
+msgstr "게시판 리스트"
+
+msgid "To make the fan club activities iFanclub need a free account.<br/>Once you create an account, you can use the Web and free from the app."
+msgstr "iFanclub 에서 팬클럽 활동을 하기 위해선 무료 어카운트가 필요합니다.<br/>한번 어카운트를 생성하면, 웹과 앱에서 자유롭게 사용가능합니다."
+
+msgid "Select Account Type"
+msgstr "가입 방법 선택"
+
+msgid "Sign up for email"
+msgstr "이메일로 가입"
+
+msgid "Sign up for SNS account"
+msgstr "SNS 계정으로 가입"
+
+msgid "E-mail Address"
+msgstr "이메일"
+
+msgid "Please check the junk e-mail settings of the provider and career ※, please allow receive mail from the '@%s'"
+msgstr "이메일 업체의 스팸 메일 설정을 확인한 후 '@%s'를 수신 메일로 등록해주십시오."
+
+msgid "Please enter your e-mail for confirmation once again."
+msgstr "확인을 위해 다시한번 이메일을 입력해주십시오."
+
+msgid "Confirm E-mail"
+msgstr "이메일 확인"
+
+msgid "Confirm Password"
+msgstr "비밀번호 확인"
+
+msgid "Alphanumeric mix, please enter within 6 to 32 characters"
+msgstr "숫자 혼합 6 자 이상 32 자 이내로 입력하십시오"
+
+msgid "Retype password"
+msgstr "비밀번호 재입력"
+
+msgid "We will send this URL for registration by e-mail, personal computer or smart phone, please enter your capable of receiving e-mail address in the tablet."
+msgstr "회원가입용 URL을 메일로 보내드립니다, PC 또는 스마트폰, 태블릿에서 수신가능한 이메일 주소를 입력해 주십시오."
+
+msgid "Terms of Service"
+msgstr "서비스 이용 약관"
+
+msgid "Sign up now sent a link for the E-mail address you entered. \\nOpen the mailbox by clicking on the links, please continue your subscription."
+msgstr "지금 입력하신 메일주소로 본 가입용 링크를 보냈습니다.\\n메일함을 열어 링크를 클릭하여 가입을 계속 진행해주십시오."
+
+msgid "Please check your e-mail."
+msgstr "이메일을 확인해주십시오."
+
+msgid "Please enter your e-mail correctly again."
+msgstr "이메일을 다시한번 정확히 입력해주십시오."
+
+msgid "Please enter the password to 6 characters to 32 characters or less."
+msgstr "비밀번호를 6자 이상 32자 이하로 입력해주십시오."
+
+msgid "Please enter the correct password again."
+msgstr "비밀번호를 다시한번 정확히 입력해주십시오."
+
+msgid "Hello. iFanclub E-mail authentication service."
+msgstr "안녕하세요. iFanclub 전자 메일 인증 서비스입니다."
+
+
+
+
+msgid "Thank you."
+msgstr "감사합니다."
+
+msgid "In order to proceed with the subscription iFanclub have confirmed your registration email."
+msgstr "iFanclub 가입을 진행하기 위해 등록하신 이메일을 확인하였습니다."
+
+msgid "This e-mail address will be the identity of the iFanclub."
+msgstr "이 이메일 주소가 iFanclub의 아이디가 됩니다."
+
+msgid "iFanclub you and verify your email if this summit in order to prevent illegal use and privacy."
+msgstr "iFanclub은 개인정보 보호와 불법 사용을 방지하기 위하여 이메일이 정상인지를 확인하고 있습니다."
+
+msgid "Please click on the link below to proceed to the subscription."
+msgstr "아래의 링크를 클릭하시어 본 가입을 계속 진행하십시오."
+
+msgid "Mail that contains a link to join this service has been sent.<br/>Open the mail Please click on the subscribe link contained in the email to proceed to Sign Up."
+msgstr "본 서비스 가입링크가 들어있는 메일이 전송되었습니다.<br/>메일을 오픈하시고 메일안에 들어있는 가입링크를 클릭하여 회원가입을 진행하십시오."
+
+msgid "Site Shortcuts"
+msgstr "사이트로 바로가기"
+
+msgid "Home"
+msgstr "홈"
+
+msgid "Sign in Fanclub"
+msgstr "멤버 가입"
+
+msgid "Member"
+msgstr "멤버"
+
+msgid "List"
+msgstr "리스트로"
+
+msgid "Opened chat room list"
+msgstr "개설된 채팅방 리스트입니다."
+
+msgid "Send"
+msgstr "보내기"
+
+msgid "Enter to Text"
+msgstr "보낼 메세지를 입력하세요."
+
+msgid "Exit"
+msgstr "나가기"
+
+msgid "Show joiner"
+msgstr "참가자 보기"
+
+msgid "Create Chatroom"
+msgstr "채팅방 만들기"
+
+msgid "Please enter a chat room to open the chat room conditions."
+msgstr "채팅방의 조건을 입력하고 채팅방을 개설해주세요."
+
+msgid "Theme"
+msgstr "주제"
+
+msgid "Please enter a subject"
+msgstr "주제를 입력하세요"
+
+msgid "Required Level"
+msgstr "가능레벨"
+
+msgid "Somebody"
+msgstr "아무나"
+
+msgid "General membership over"
+msgstr "일반회원 이상"
+
+msgid "Supporters Members over"
+msgstr "서포터회원 이상"
+
+msgid "Only staff"
+msgstr "운영진만"
+
+msgid "Create a password"
+msgstr "암호만들기"
+
+msgid "Create a password for the chat room"
+msgstr "채팅방에 암호만들기"
+
+msgid "App Download"
+msgstr "전용 앱 다운로드"
+
+msgid "You can download the fan club-only app. <br/> fan club dedicated app supports all the basic features you need in a chat, check schedules, bulletin boards, etc. Read fan of real-time announcements, a friend and fan of the fan club. <br/>Add to, support real-time streaming functionality in the fan club you can share your live video to each other fanclub members."
+msgstr "팬클럽 전용 앱을 다운로드 받을 수 있습니다.<br/>팬클럽 전용 앱에서는 팬클럽의 실시간 공지사항, 팬클럽 친구와의 채팅, 스케쥴 확인, 게시판 읽기 등 팬클럽에서 필요한 모든 기본 기능을 지원합니다.<br/>추가로, 팬클럽 내에서 실시간 스트리밍 기능을 지원하여 팬클럽 회원들 끼리 라이브 영상을 공유할 수 있습니다."
+
+msgid "Download"
+msgstr "다운로드"
+
+msgid "Join in Membership"
+msgstr "멤버가입"
+
+msgid "Board"
+msgstr "게시판"
+
+msgid "Title"
+msgstr "제목"
+
+msgid "Writer"
+msgstr "작성자"
+
+msgid "Write Date"
+msgstr "작성일"
+
+msgid "See"
+msgstr "조회"
+
+msgid "Vote"
+msgstr "추천"
+
+msgid "Write"
+msgstr "글쓰기"
+
+msgid "Contents"
+msgstr "내용"
+
+msgid "Please enter a title."
+msgstr "제목을 입력해주십시오."
+
+msgid "Please enter your contents."
+msgstr "내용을 입력해주십시오."
+
+msgid "'s search results."
+msgstr "의 검색 결과입니다."
+
+msgid "Search all boards"
+msgstr "모든 게시판 검색 결과"
+
+msgid "Search all photos"
+msgstr "모든 사진 검색 결과"
+
+msgid "All"
+msgstr "전체"
+
+msgid "Photo"
+msgstr "사진"
+
+msgid "Settings"
+msgstr "설정"
+
+msgid "Default"
+msgstr "기본설정"
+
+msgid "Menu"
+msgstr "메뉴설정"
+
+msgid "Design"
+msgstr "디자인"
+
+msgid "Design Settings"
+msgstr "디자인 설정"
+
+msgid "Security"
+msgstr "보안설정"
+
+msgid "Payment"
+msgstr "결제관리"
+
+msgid "Spam"
+msgstr "스팸관리"
+
+msgid "Register Complete"
+msgstr "멤버 가입 완료"
+
+msgid "Activity Level"
+msgstr "활동레벨"
+
+msgid "I would like to work as usual fan."
+msgstr "일반적인 팬으로 활동하고 싶어요."
+
+msgid "I want to participate in the concert and fan meeting."
+msgstr "콘서트나 팬미팅에 참여하고 싶어요."
+
+msgid "I want to be a fan-club staff."
+msgstr "팬클럽 운영진이 되고 싶어요."
+
+msgid "Real name"
+msgstr "본명"
+
+msgid "Please enter your real name."
+msgstr "본명을 입력해주세요."
+
+msgid "Member List"
+msgstr "멤버 리스트"
+
+msgid "Unapproved Member"
+msgstr "미승인회원"
+
+msgid "Regular Member"
+msgstr "정회원"
+
+msgid "Support Member"
+msgstr "서포터회원"
+
+msgid "Special Member"
+msgstr "특별회원"
+
+msgid "Operator"
+msgstr "스태프"
+
+msgid "Staff"
+msgstr "스태프"
+
+msgid "Level Name"
+msgstr "레벨명"
+
+msgid "Sub Administrator"
+msgstr "부운영자"
+
+msgid "Administrator"
+msgstr "운영자"
+
+msgid "Not Connected"
+msgstr "미접속"
+
+msgid "Connected"
+msgstr "접속중"
+
+msgid "Join Date"
+msgstr "가입일"
+
+msgid "Level"
+msgstr "레벨"
+
+msgid "Connect"
+msgstr "접속여부"
+
+msgid "Language"
+msgstr "언어"
+
+msgid "Please Select use language."
+msgstr "사용할 언어를 선택해주세요."
+
+msgid "Please enter your full name of the fan club."
+msgstr "팬클럽 전체 이름을 입력해주세요."
+
+msgid "Target"
+msgstr "대상"
+
+msgid "Target name"
+msgstr "대상의 이름"
+
+msgid "Please enter the exact name of target."
+msgstr "대상의 이름을 정확히 입력해주세요."
+
+msgid "Please enter the name as short as possible in target."
+msgstr "대상의 이름을 가장 짧게 입력해주세요."
+
+msgid "Please enter only the letters and numbers."
+msgstr "영문과 숫자만 입력해주세요."
+
+msgid "(4~20 letters)"
+msgstr "(4〜20글자)"
+
+msgid "Please enter the fan-club title."
+msgstr "팬클럽의 이름을 입력해주세요."
+
+msgid "Are you sure you want to open a fan club?\\n\\nOther settings are available in Settings page, and then proceed fan club opened."
+msgstr "팬클럽을 개설하시겠습니까?\\n\\n다른 설정들은 팬클럽 개설후 설정 페이지에서 진행할 수 있습니다."
+
+msgid "Please select the menu you want to set."
+msgstr "설정하고자 하는 메뉴를 선택해주세요."
+
+msgid "The address is already in use.<br/>Please enter a different address."
+msgstr "이미 사용중인 주소입니다.<br/>다른 주소를 입력해주세요."
+
+msgid "Modify"
+msgstr "수정"
+
+msgid "Do you want to modify?"
+msgstr "수정하시겠습니까?"
+
+msgid "This changes have been saved."
+msgstr "변경사항이 저장되었습니다."
+
+msgid "Total : %s"
+msgstr "전체 %s"
+
+msgid "Banish"
+msgstr "추방"
+
+msgid "Please select a member to be banished."
+msgstr "추방할 회원을 선택해주십시오."
+
+msgid "Are you sure you want to ban any members selected?"
+msgstr "정말로 선택한 회원들을 추방하시겠습니까?"
+
+msgid "It has been processed."
+msgstr "처리되었습니다."
+
+msgid "You do not have permission to access the administration page."
+msgstr "관리페이지에 접근할 수 있는 권한이 없습니다."
+
+msgid "Add or delete a board, and you can change the properties of each of the boards."
+msgstr "게시판을 추가하거나 삭제할 수 있으며 각각의 게시판의 속성을 변경할 수 있습니다."
+
+msgid "Board title"
+msgstr "게시판 이름"
+
+msgid "Read"
+msgstr "읽기"
+
+msgid "Normal Board"
+msgstr "일반 게시판"
+
+msgid "Line Board"
+msgstr "한줄 게시판"
+
+msgid "Hidden Board"
+msgstr "익명 게시판"
+
+msgid "Everybody"
+msgstr "누구나"
+
+msgid "Only Members"
+msgstr "팬클럽 회원만"
+
+msgid "Only Staff"
+msgstr "스태프만"
+
+msgid "Add"
+msgstr "추가"
+
+msgid "Del"
+msgstr "삭제"
+
+msgid "Type"
+msgstr "타입"
+
+msgid "Free board"
+msgstr "자유 게시판"
+
+msgid "Line board"
+msgstr "한줄 게시판"
+
+msgid "Hidden board"
+msgstr "익명 게시판"
+
+msgid "Photo Gallery"
+msgstr "포토 갤러리"
+
+
+msgid "If you do not press the Save button at the bottom of the Add Board it will not be saved."
+msgstr "하단의 저장버튼을 누르지 않으면 추가된 게시판이 저장되지 않습니다."
+
+msgid "Save"
+msgstr "저장"
+
+msgid "If you delete a board, with registered post also cleared.\\n\\nAre you sure you want to proceed?"
+msgstr "게시판을 삭제할 경우, 등록된 게시글도 함께 지워집니다.\\n\\n진행하시겠습니까?"
+
+msgid "Notice Board can not be deleted."
+msgstr "공지사항 게시판은 삭제할 수 없습니다."
+
+msgid "Can not Change"
+msgstr "변경불가"
+
+msgid "Up"
+msgstr "위로"
+
+msgid "Down"
+msgstr "아래로"
+
+msgid "Do you want to save changes?"
+msgstr "변경사항을 저장하시겠습니까?"
+
+msgid "It has been changed."
+msgstr "변경되었습니다."
+
+msgid "Show Menubar"
+msgstr "메뉴바에서 보기"
+
+msgid "Show"
+msgstr "표시"
+
+msgid "Hide"
+msgstr "미표시"
+
+msgid "Cancel"
+msgstr "취소"
+
+msgid "Upload Images"
+msgstr "사진 올리기"
+
+msgid "There is no saved data."
+msgstr "저장된 데이타가 없습니다."
+
+msgid "Delete"
+msgstr "삭제"
+
+msgid "Would you like to finish Writing?"
+msgstr "작성을 완료하시겠습니까?"
+
+msgid "It has been Saved."
+msgstr "저장되었습니다."
+
+msgid "Please enter the details a little longer."
+msgstr "내용을 좀 더 길게 입력해주십시오."
+
+msgid "Please enter the subject."
+msgstr "제목을 입력해주십시오."
+
+msgid "Cancel vote"
+msgstr "추천 취소"
+
+msgid "Are you sure you want to delete?"
+msgstr "정말로 삭제하시겠습니까?"
+
+msgid "It has been deleted."
+msgstr "삭제되었습니다."
+
+msgid "Are you sure you want to cancel?"
+msgstr "취소하시겠습니까?"
+
+msgid "Comment"
+msgstr "코멘트"
+
+msgid "Please enter contents."
+msgstr "내용을 입력해주세요."
+
+msgid "Close"
+msgstr "닫기"
+
+msgid "Aleady saved."
+msgstr "이미 등록되었습니다."
+
+msgid "Not the writer."
+msgstr "작성자가 아닙니다."
+
+msgid "Please upload a photo."
+msgstr "사진을 올려주세요."
+
+msgid "Prev"
+msgstr "이전"
+
+msgid "Next"
+msgstr "다음"
+
+msgid "Only members join the fan club you can create posts."
+msgstr "팬클럽에 가입한 회원만 글작성이 가능합니다."
+
+msgid "The staff can only be written."
+msgstr "운영진만 작성이 가능합니다."
+
+msgid "Only members have joined the Board readable."
+msgstr "가입한 회원만 읽기가 가능한 게시판입니다."
+
+msgid "Only staff can see this."
+msgstr "운영진만 볼 수 있습니다."
+
+msgid "Withdrawal"
+msgstr "회원탈퇴"
+
+msgid "Fixed"
+msgstr "고정"
+
+msgid "You can set the level of fan club members.<br/>Level of (Unapproved Member, Regular Member, Staff, Sub Administrator, Administrator) can not be changed."
+msgstr "팬클럽 회원들의 레벨을 설정할 수 있습니다.<br/>(미승인회원, 정회원, 서브운영자, 운영자)의 레벨은 변경 할 수 없습니다."
+
+msgid "Delete the required level is not possible."
+msgstr "필수레벨은 삭제가 불가능합니다."
+
+msgid "If you do not press the Save button it will not be saved."
+msgstr "저장버튼을 누르지 않으면 저장되지 않습니다."
+
+msgid "Add level"
+msgstr "레벨 추가"
+
+msgid "Please select the level you want to add and fill in the name."
+msgstr "추가할 레벨을 선택하고 이름을 기입해주세요."
+
+msgid "Members of the deleted levels are all reset to level 1.\\nAre you sure you want to proceed anyway?"
+msgstr "삭제한 레벨의 회원들은 모두 레벨1로 리셋됩니다.\\n그래도 진행하시겠습니까?"
+
+msgid "Please enter a level name."
+msgstr "레벨명을 입력해주십시오."
+
+msgid "There is no joined the fanclub."
+msgstr "가입한 팬클럽이 없습니다."
+
+msgid "Default Information"
+msgstr "기본 정보"
+
+msgid "Just join us, you can work directly with its members."
+msgstr "가입신청만 하면 바로 정회원으로 활동할 수 있습니다."
+
+msgid "Join Fan Club requires the approval of the operator. Please check the following items."
+msgstr "팬클럽 운영자의 가입승인이 필요합니다. 아래의 사항들을 확인해주십시오."
+
+msgid "%s Users"
+msgstr "%s 명"
+
+msgid "Fanclub Members"
+msgstr "팬클럽 멤버수"
+
+msgid "Fanclub Created"
+msgstr "팬클럽 개설일"
+
+msgid "Fanclub Administrator"
+msgstr "팬클럽 최고 운영자"
+
+msgid "The information entered in the editor below, join fanclub will be shown at the bottom of the page."
+msgstr "아래의 에디터에 입력한 내용이, 팬클럽 가입 페이지 하단에 표기됩니다."
+
+msgid "Fanclub Activity Name"
+msgstr "팬클럽 활동네임"
+
+msgid "Fanclub used only within a nickname."
+msgstr "팬클럽 안에서 활동할때 표기되는 닉네임입니다."
+
+msgid "Please enter at least 2 letters of a nickname used in the fan club."
+msgstr "팬클럽 안에서 사용할 닉네임을 2글자 이상 입력해주세요."
+
+msgid "Are you sure join the fan club?"
+msgstr "팬클럽 가입을 진행하시겠습니까?"
+
+msgid "Request to Join has been completed.\\n\\nIf approved, we'll send you an e-mail."
+msgstr "팬클럽 멤버 가입 신청이 완료되었습니다.\\n\\n가입승인이 되면 메일을 보내드리겠습니다."
+
+msgid "The Sign up was completed.\\n\\nThe fan club activities immediately available."
+msgstr "가입이 완료되었습니다.\\n\\n바로 팬클럽 활동이 가능합니다."
+
+msgid "Upper"
+msgstr "이상"
+
+msgid "You do not have permission."
+msgstr "권한이 없습니다."
+
+msgid "Cancel registeration"
+msgstr "가입 취소"
+
+msgid "Are you sure you want to cancel your registeration?"
+msgstr "가입 신청을 취소하시겠습니까?"
+
+msgid "The Request to Join has been canceled."
+msgstr "가입신청이 취소되었습니다."
+
+msgid "Fanclub withdraw"
+msgstr "팬클럽 탈퇴"
+
+msgid "Reason for withdraw"
+msgstr "탈퇴 사유"
+
+msgid "Please note the reason for withdraw is helpful to operate."
+msgstr "탈퇴하는 이유를 적어주시면 운영에 도움이 됩니다."
+
+msgid "Withdraw"
+msgstr "탈퇴"
+
+msgid "If you make a withdraw, including the level of posts created so far, points etc. will lose everything authorization."
+msgstr "탈퇴를 하게되면, 지금까지 작성한 게시글을 포함한 레벨, 포인트등 모든 것의 권한을 잃게됩니다."
+
+msgid "Are you sure withdraw the fanclub?"
+msgstr "정말 팬클럽을 탈퇴하시겠습니까?"
+
+msgid "Has been withdraw.\\n\\nThank you for this fanclub."
+msgstr "탈퇴되었습니다.\\n\\n이 팬클럽을 이용해주셔서 감사합니다."
+
+msgid "The error was not caused by withdraw.\\n\\nPlease try again."
+msgstr "에러가 발생하여 탈퇴가 되지 않았습니다.\\n\\n다시 시도해주십시오."
+
+msgid "Top operator will not be able to withdraw."
+msgstr "최고 운영자는 탈퇴할 수 없습니다."
+
+msgid "My Posts"
+msgstr "내가 쓴글"
+
+msgid "Sign in Page HTML"
+msgstr "멤버가입 페이지 HTML"
+
+msgid "Advert Zone"
+msgstr "광고존"
+
+msgid "Chat is available only one."
+msgstr "채팅은 한개만 사용 가능합니다."
+
+msgid "The board can be changed only with the board."
+msgstr "보드는 보드로만 변경 가능합니다."
+
+msgid "Add or change for the menu, you can delete it."
+msgstr "사용할 메뉴를 추가하거나 변경, 삭제할 수 있습니다."
+
+msgid "Menu Name"
+msgstr "메뉴 이름"
+
+msgid "Menubar"
+msgstr "메뉴바"
+
+msgid "Titlebar"
+msgstr "타이틀바"
+
+msgid "Connecting"
+msgstr "접속중"
+
+msgid "There is no chat room is open.<br/>Please create a new chat room."
+msgstr "오픈되어있는 채팅방이 없습니다.<br/>새로운 채팅방을 만들어주세요."
+
+msgid "Subject"
+msgstr "주제"
+
+msgid "Please enter a password"
+msgstr "비밀번호를 입력해주십시오."
+
+msgid "%s users"
+msgstr "%s 명"
+
+msgid "Creater"
+msgstr "개설자"
+
+msgid "Joiner"
+msgstr "참가자"
+
+msgid "entered into the chat room."
+msgstr "님이 채팅방에 입장하셨습니다."
+
+msgid "Does not create the post."
+msgstr "작성하신 포스트가 없습니다."
+
+msgid "Are you sure you want to leave the chat room?"
+msgstr "대화방을 나가시겠습니까?"
+
+msgid "went chat room."
+msgstr "님이 대화방에서 나가셨습니다."
+
+msgid "connection seems broken."
+msgstr "님의 연결이 끊어진 것 같습니다."
+
+msgid "This chat room has been shut down."
+msgstr "이 채팅방은 종료된 방입니다."
+
+msgid "Previous dialog"
+msgstr "이전대화보기"
+
+msgid "This chat room is required password."
+msgstr "비밀번호가 필요한 채팅방입니다."
+
+msgid "Please enter a chat room password."
+msgstr "채팅방 비밀번호를 입력해주십시오."
+
+msgid "Enter"
+msgstr "입장"
+
+msgid "Incorrect password."
+msgstr "비밀번호가 틀립니다."
+
+msgid "Enter the password and you come in the chat rooms.\\n\\nPlease come again."
+msgstr "비밀번호를 입력하고 들어와야 하는 대화방입니다.\\n\\n다시 들어와주세요."
+
+msgid "The free chat room."
+msgstr "자유로운 대화방입니다."
+
+msgid "Not a fan level that can use the chat room."
+msgstr "이 채팅방을 사용할 수 있는 팬클럽 레벨이 아닙니다."
+
+msgid "This level is not visible posts."
+msgstr "내용을 볼 수 있는 레벨이 아닙니다."
+
+msgid "Anonymous"
+msgstr "익명"
+
+msgid "Sunday"
+msgstr "일"
+
+msgid "Munday"
+msgstr "월"
+
+msgid "Tuesday"
+msgstr "화"
+
+msgid "Wednesday"
+msgstr "수"
+
+msgid "Thursday"
+msgstr "목"
+
+msgid "Friday"
+msgstr "금"
+
+msgid "Saturday"
+msgstr "토"
+
+msgid "Schedule registration / modification"
+msgstr "스케줄 등록/수정"
+
+msgid "If you enter a URL in the content attribute is changed to link automatically."
+msgstr "내용에 URL을 입력하면 자동으로 링크로 변합니다."
+
+msgid "Schedule"
+msgstr "스케줄"
+
+msgid "Can not be deleted.\\n\\nPlease try again later."
+msgstr "삭제할 수 없습니다.\\n\\n잠시후 다시 시도해주십시오."
+
+msgid "Approve"
+msgstr "승인"
+
+msgid "Join the %s has been approved."
+msgstr "%s에 가입이 승인되었습니다."
+
+msgid "Congratulations!"
+msgstr "축하합니다!"
+
+msgid "Join the fan club you have been approved to apply for a subscription."
+msgstr "가입을 신청하신 팬클럽에 가입이 승인되었습니다."
+
+msgid "Right now, you can fanclub activities."
+msgstr "지금 바로 팬클럽에서 활동을 할 수 있습니다."
+
+msgid "We hope you enjoy!"
+msgstr "즐거운 시간 되시길 바랍니다!"
+
+msgid "Go Fanclub"
+msgstr "팬클럽 바로가기"
+
+msgid "Are you sure you want to approve members selected?"
+msgstr "선택한 멤버를 가입승인하시겠습니까?"
+
+msgid "Suspended banished from %s."
+msgstr "%s에서 추방당했습니다."
+
+msgid "The bad news."
+msgstr "안좋은 소식입니다."
+
+msgid "You have been banished from %s."
+msgstr "%s에서 추방되었습니다."
+
+msgid "I'm sorry, because bad news."
+msgstr "좋은 소식을 전하지 못하여 죄송합니다."
+
+msgid "Please select a member to be approve."
+msgstr "가입승인할 멤버를 선택해주세요."
+
+msgid "No results were found for your search."
+msgstr "검색결과가 없습니다."
+
+msgid "Operator name"
+msgstr "운영자 이름"
+
+msgid "Representative image"
+msgstr "대표 이미지"
+
+msgid "Go Back"
+msgstr "이전 페이지로"
+
+msgid "Width 160px, height 160px is best."
+msgstr "가로 160px, 세로 160px가 가장 좋습니다."
+
+msgid "You can see at a glance the notices of the active fanclub."
+msgstr "활동중인 팬클럽들의 공지사항을 한눈에 볼 수 있습니다."
+
+msgid "This ranking depends on the activity of the fan club.<br/>Fan Club who are active may be registered in the rankings page at any time."
+msgstr "이 랭킹은 팬클럽의 활동량에 따라 달라집니다.<br/>활발한 활동을 하고있는 팬클럽은 언제든지 랭킹 페이지에서 등록될 수 있습니다."
+
+msgid "There is no notice."
+msgstr "공지사항이 없습니다."
+
+msgid "Last chat room chat history"
+msgstr "지난 채팅방 대화 내역"
+
+msgid "Used password"
+msgstr "암호 사용"
+
+msgid "Free chatroom"
+msgstr "자유로운 채팅방"
+
+msgid "Please enter a chatroom password."
+msgstr "채팅방의 비밀번호를 입력해주십시오."
+
+msgid "My Information Edit"
+msgstr "나의정보 확인 / 수정"
+
+msgid "If you proceed with the Withdraw it can not be recovered again.\\nAre you sure you want to proceed anyway?"
+msgstr "탈퇴를 진행하면 다시는 복구할 수 없습니다.\\n그래도 진행하시겠습니까?"
+
+msgid "The Withdraw will proceed and enter your password."
+msgstr "비밀번호를 입력하시면 탈퇴가 진행됩니다."
+
+msgid "Are you sure you want to proceed with the Withdraw Really?"
+msgstr "정말로 탈퇴를 진행하시겠습니까?"
+
+msgid "Thank you for using.\\nI wish to meet again."
+msgstr "이용해주셔서 감사합니다.\\n다시 만나길 기원합니다."
+
+msgid "Exists working fanclub from you.\\nWithdraw from fanclub, and please proceed."
+msgstr "운영중인 팬클럽이 있습니다.\\n해당 팬클럽에서 탈퇴하고 진행해주십시오."
+
+msgid "None Messages."
+msgstr "메세지가 없습니다."
+
+msgid "Sender"
+msgstr "보낸이"
+
+msgid "Receiver"
+msgstr "받는이"
+
+msgid "Send Date"
+msgstr "보낸시간"
+
+msgid "User Profile"
+msgstr "회원 정보"
+
+msgid "Fanclub"
+msgstr "팬클럽"
+
+msgid "1:1 Chat"
+msgstr "1:1 채팅"
+
+msgid "Send Message"
+msgstr "쪽지 보내기"
+
+msgid "You can not send messages to yourself."
+msgstr "자신에게 메세지를 보낼 수 없습니다."
+
+msgid "It has been sent."
+msgstr "전송되었습니다."
+
+msgid "Please login first."
+msgstr "먼저 로그인을 해주십시오."
+
+msgid "We have %s unread message. Please click here to view the contents."
+msgstr "%s개의 읽지 않은 쪽지가 있습니다. 여기를 클릭하여 내용을 확인해주세요."
+
+msgid "Alert"
+msgstr "알림"
+
+msgid "Reply"
+msgstr "댓글"
+
+msgid "Received Message"
+msgstr "받은 쪽지"
+
+msgid "Invite 1:1 Chat"
+msgstr "1:1 채팅방 초대하기"
+
+msgid "Please enter your invitation message."
+msgstr "초대 메세지를 입력해주세요."
+
+msgid "This popup is blocked."
+msgstr "팝업이 차단되어있습니다."
+
+msgid "This pop-up is blocked could not open a chatroom automatically.<br/>Click the button below to open a entry chatroom."
+msgstr "팝업이 차단되어 자동으로 채팅방을 열 수 없었습니다.<br/>아래의 입장버튼을 클릭하여 채팅방을 오픈하십시오."
+
+msgid "1:1 Chat Invitations"
+msgstr "1:1 채팅 초대장"
+
+msgid "Enter Chat Room"
+msgstr "채팅방 들어가기"
+
+msgid "Readed"
+msgstr "읽음"
+
+msgid "Didn't read"
+msgstr "안읽음"
+
+msgid "Please select the message you want to delete."
+msgstr "삭제할 메세지를 선택해주세요."
+
+msgid "It was deleted."
+msgstr "삭제되었습니다."
+
+msgid "Do not keep the message it will be deleted automatically after 30 days."
+msgstr "보관하지 않은 메세지는 30일이 지나면 자동으로 삭제됩니다."
+
+msgid "Saved messages unless you delete it, it will not be deleted."
+msgstr "저장된 메세지는 직접 삭제하지 않는 한, 삭제되지 않습니다."
+
+msgid "It was saved."
+msgstr "저장되었습니다."
+
+msgid "Selected Layout"
+msgstr "선택된 레이아웃"
+
+msgid "Edit design properties"
+msgstr "디자인 설정 편집"
+
+msgid "Change Layout"
+msgstr "레이아웃 변경"
+
+msgid "Default Layout"
+msgstr "기본 레이아웃"
+
+msgid "Default Setup"
+msgstr "기본 설정"
+
+msgid "You can set the basic design of the fan club.<br/>Background image, the default fonts, the default font size, etc. You can modify a variety of basic features."
+msgstr "팬클럽의 기본적인 디자인 설정을 할 수 있습니다.<br/>배경이미지, 기본글씨체, 기본글씨크기 등 다양한 기본 기능을 수정할 수 있습니다."
+
+msgid "Change Settings"
+msgstr "설정 변경"
+
+msgid "Top part Setup"
+msgstr "상단 부분 설정"
+
+msgid "You can modify the design of the top of the page title and menu boxes."
+msgstr "페이지의 상단 타이틀과 메뉴 박스의 디자인을 수정할 수 있습니다."
+
+msgid "Left Menu Setup"
+msgstr "본문 메뉴 설정"
+
+msgid "The design of the menu, you can set the left or right of the body.<br/>You can change the location and detail design of the menu."
+msgstr "본문 왼쪽 또는 오른쪽의 메뉴의 디자인을 설정할 수 있습니다.<br/>메뉴의 위치 및 세세한 디자인을 변경할 수 있습니다."
+
+msgid "Contents part Setup"
+msgstr "본문 박스 설정"
+
+msgid "You can set the design of the body box.<br/>The title part in the body of the box, you can change the basic color and shape of the piece of content."
+msgstr "본문 박스의 디자인을 설정할 수 있습니다.<br/>본문 박스안의 제목 부분, 내용부분의 기본적인 컬러 및 모양을 변경할 수 있습니다. "
+
+msgid "Footer part Setup"
+msgstr "하단 부분 설정"
+
+msgid "You can modify the text in the box at the bottom of the page.<br/>You can modify the entire contents fit inside the bottom of the box."
+msgstr "페이지의 본문 하단에 위치한 박스를 수정할 수 있습니다.<br/>하단 박스안에 들어갈 내용 전체를 수정할 수 있습니다."
+
+msgid "Default Background"
+msgstr "전체 배경"
+
+msgid "With Color"
+msgstr "색상으로"
+
+msgid "With Image"
+msgstr "이미지로"
+
+msgid "Select Image"
+msgstr "이미지 선택"
+
+msgid "Your browser doesn't have Flash, Silverlight or HTML5 support."
+msgstr "당신의 브라우저가 플래쉬나 실버라이트 또는 HTML5를 지원하지 않아서 이미지 등록을 할 수 없습니다."
+
+msgid "Default Font"
+msgstr "기본 글씨체"
+
+msgid "Press the Save button to save."
+msgstr "저장버튼을 눌러야 저장이 됩니다."
+
+msgid "Top boxes background"
+msgstr "상단 박스 배경"
+
+msgid "Transparent"
+msgstr "투명처리"
+
+msgid "Makes the background transparent."
+msgstr "배경을 투명하게 만듭니다."
+
+msgid "Top boxes margin"
+msgstr "상단 박스 여백"
+
+msgid "Outer margin"
+msgstr "외부여백"
+
+msgid "Inner margin"
+msgstr "내부여백"
+
+msgid "Top margin"
+msgstr "상단여백"
+
+msgid "Height"
+msgstr "높이"
+
+msgid "Background"
+msgstr "배경"
+
+msgid "Font"
+msgstr "문자"
+
+msgid "Topmenu"
+msgstr "탑메뉴"
+
+msgid "Border Line"
+msgstr "테두리"
+
+msgid "To Left"
+msgstr "왼쪽으로"
+
+msgid "To Center"
+msgstr "가운데로"
+
+msgid "To Right"
+msgstr "오른쪽으로"
+
+msgid "Left Menu"
+msgstr "세로메뉴"
+
+msgid "Left Menu Border"
+msgstr "세로메뉴 테두리"
+
+msgid "Part of Title"
+msgstr "타이틀 부분"
+
+msgid "Use"
+msgstr "사용"
+
+msgid "Not Use"
+msgstr "사용 안함"
+
+msgid "Part of Navigator"
+msgstr "네비게이터"
+
+msgid "Font Size"
+msgstr "글씨크기"
+
+msgid "Font Color"
+msgstr "글씨색"
+
+msgid "Border Color"
+msgstr "테두리색"
+
+msgid "Border Height"
+msgstr "테두리두께"
+
+msgid "Border Radius"
+msgstr "라운드처리"
+
+msgid "Background Color"
+msgstr "배경색"
+
+msgid "Part of Body"
+msgstr "본문 부분"
+
+msgid "Link Color"
+msgstr "링크색"
+
+msgid "Inner Box"
+msgstr "내부 박스"
+
+msgid "Default Background Color"
+msgstr "기본 배경색"
+
+msgid "Margin"
+msgstr "여백"
+
+msgid "Inside the Body Box"
+msgstr "본문 박스 안에"
+
+msgid "Under the Body Box"
+msgstr "본문 박스 아래에"
+
+msgid "Not Display"
+msgstr "표시하지 않음"
+
+msgid "Location"
+msgstr "위치"
+
+msgid "Mainpage Setup"
+msgstr "메인페이지 설정"
+
+msgid "You can modify Fanclub Mainpage at here.<br/>You can to change to main page all parts."
+msgstr "팬클럽 메인페이지를 수정할 수 있습니다.<br/>메인페이지의 모든 부분을 변경할 수 있습니다."
+
+msgid "Both"
+msgstr "복합"
+
+msgid "1 Line"
+msgstr "1줄 표기"
+
+msgid "2 Lines"
+msgstr "2줄 표기"
+
+msgid "All Board"
+msgstr "모든 게시판"
+
+msgid "All Photo"
+msgstr "모든 사진들"
+
+msgid "Random"
+msgstr "랜덤"
+
+msgid "Are you sure you want to accept the Terms and Conditions?"
+msgstr "이용약관에 동의하시겠습니까?"
+
+msgid "You did already joined with Facebook."
+msgstr "이미 페이스 북으로 가입하였습니다."
+
+msgid "If you click withdraw button at the bottom of the withdraw is complete."
+msgstr "아래의 탈퇴버튼을 클릭하면 탈퇴가 완료됩니다."
+
+msgid "This ID is not yet signed up.\\nPlease complete the SNS ID register on the next page."
+msgstr "아직 가입되지 않은 아이디입니다.\\n다음 페이지에서 SNS ID등록을 완료해주세요."
+
+msgid "Click on the SNS services in use, you can simply sign up through authentication."
+msgstr "사용하시는 SNS 서비스를 클릭하시면 인증을 통해 간단하게 가입을 할 수 있습니다."
+
+msgid "ID/PW Finder"
+msgstr "ID/PW 찾기"
+
+msgid "Logouting All Services..."
+msgstr "모든 서비스에서 로그아웃중입니다..."
+
+msgid "Find ID / Password"
+msgstr "아이디 / 비밀번호 찾기"
+
+msgid "If you have forgotten your ID or Password, you can simply confirm by e-mail."
+msgstr "아이디나 비밀번호를 잊어버렸을 경우, 간단하게 이메일로 확인할 수 있습니다."
+
+msgid "Please enter a E-mail"
+msgstr "이메일을 입력해주세요."
+
+msgid "Your ID and Password will be sent to sign up to the email you have entered. Please enter your e-mail address that can be received on a PC or a smartphone or tablet."
+msgstr "입력하신 이메일로 가입하신 아이디와 임시비밀번호를 보내드립니다. PC 또는 스마트폰, 태블릿에서 수신가능한 이메일 주소를 입력해 주십시오."
+
+msgid "Hello. This is find E-mail & Password service of iFanclub.jp"
+msgstr "안녕하세요. iFanclub.jp의 계정 및 비밀번호 찾기 서비스입니다."
+
+msgid "Information the registered ID and password."
+msgstr "가입하신 아이디와 비밀번호를 알려드립니다."
+
+msgid "The e-mail address below the login ID."
+msgstr "아래의 이메일 주소가 로그인 아이디입니다."
+
+msgid "Log in using the temporary password below, and Please change your password immediately."
+msgstr "아래의 임시 비밀번호를 이용하여 로그인하시고, 비밀번호를 바로 변경해주십시오."
+
+msgid "If you do not log in even if a temporary password, the old password is retained."
+msgstr "임시 비밀번호를 발급받더라도 로그인 하지 않을 경우, 기존의 비밀번호가 그대로 유지됩니다."
+
+msgid "We sent the login ID and temporary password to with your e-mail in Sign up. <br/> Please try to log in again via the mail."
+msgstr "로그인 아이디와 임시 비밀번호를 가입하신 이메일로 보내드렸습니다.<br/>해당 메일을 통해 로그인을 다시 시도해주세요."
+
+msgid "Please change password now."
+msgstr "지금 비밀번호를 변경해주세요."
+
+msgid "Now is the password for with your login ID is temporary password."
+msgstr "지금 로그인 하신 아이디의 비밀번호는 임시 비밀번호입니다."
+
+msgid "This was applied just once, If you do not change your password, the old password is retained."
+msgstr "단 1회만 적용이 되었으며, 비밀번호를 변경하지 않으실 경우, 기존의 비밀번호가 그대로 유지됩니다."
+
+msgid "Close the alarm, please change your password immediately."
+msgstr "이 알람을 닫고, 바로 비밀번호를 변경하시기 바랍니다."
+
+msgid "Sign in with Twitter"
+msgstr "트위터로 가입하기"
+
+msgid "Sign in with Facebook"
+msgstr "페이스북으로 가입하기"
+
+msgid "Sign in with Instagram"
+msgstr "인스타그램으로 가입하기"
+
+msgid "Sign in with Google"
+msgstr "구글ID로 가입하기"
+
+msgid "Login with Twitter"
+msgstr "트위터로 로그인하기"
+
+msgid "Login with Facebook"
+msgstr "페이스북으로 로그인하기"
+
+msgid "Login with Instagram"
+msgstr "인스타그램으로 로그인하기"
+
+msgid "Login with Google"
+msgstr "구글ID로 로그인하기"
+
+msgid "Get Default Layout"
+msgstr "기본 레이아웃 가져오기"
+
+msgid "My Layout"
+msgstr "나의 레이아웃"
+
+msgid "Change Name"
+msgstr "이름변경"
+
+
+msgid "Select Split"
+msgstr "분할 선택"
+
+msgid "Please drag the items, put it in the preview on the left."
+msgstr "아이템을 드래그하여 왼쪽의 미리보기에 넣어주세요."
+
+msgid "Please drag here."
+msgstr "이곳에 드래그 해주세요."
+
+msgid "Rolling Banner"
+msgstr "롤링 배너"
+
+msgid "Input HTML box"
+msgstr "HTML 입력상자"
+
+msgid "List of Board"
+msgstr "게시물 리스트"
+
+msgid "List of Photo"
+msgstr "사진 리스트"
+
+msgid "Schejuler"
+msgstr "스케쥴보드"
+
+msgid "If you double-click on the insert box, you can modify items in the editor below."
+msgstr "등록한 아이템을 더블클릭하면 아래의 에디터에서 수정할 수 있습니다."
+
+msgid "Edit Notice box"
+msgstr "공지사항 박스 수정"
+
+msgid "Number to display"
+msgstr "표시할 갯수"
+
+msgid "Lines"
+msgstr "줄"
+
+msgid "Modify the Post list box"
+msgstr "게시물 리스트 박스 수정"
+
+msgid "Select a board to display"
+msgstr "표시할 게시판 선택"
+
+msgid "Modify the Photo list box"
+msgstr "사진첩 사진 리스트"
+
+msgid "Select to display photo album"
+msgstr "표시할 사진첩 선택"
+
+msgid "Modify the schedule box"
+msgstr "스케쥴 박스 수정"
+
+msgid "Select to display the scheduler"
+msgstr "표시할 스케쥴러 선택"
+
+msgid "Modify the HTML box"
+msgstr "HTML 입력상자 수정"
+
+msgid "Insert HTML"
+msgstr "HTML 입력"
+
+msgid "Modify the Rolling Banner"
+msgstr "롤링 배너 수정"
+
+msgid "Link"
+msgstr "링크"
+
+msgid "Order"
+msgstr "순서"
+
+msgid "Image"
+msgstr "이미지"
+
+msgid "Move to current window"
+msgstr "현재 창으로 이동"
+
+msgid "Move to a new window"
+msgstr "새로운 창으로 이동"
+
+msgid "Insert Image"
+msgstr "이미지 등록"
+
+msgid "Enter Image URL"
+msgstr "이미지 URL 입력"
+
+msgid "Direct Upload"
+msgstr "직접 업로드"
+
+msgid "Upload Image"
+msgstr "이미지 업로드"
+
+msgid "Registration URL"
+msgstr "URL 등록"
+
+msgid "Change the layout name"
+msgstr "레이아웃의 이름을 변경해주세요"
+
+msgid "Do you really delete this layout?"
+msgstr "정말로 이 레이아웃을 삭제하시겠습니까?"
+
+msgid "Would you like to add your selected layout for my layout?"
+msgstr "선택하신 레이아웃을 나의 레이아웃에 추가하시겠습니까?"
+
+msgid "Choose your layout has been added to my layout.\\n\\nLoad the new page layout to apply."
+msgstr "선택하신 레이아웃이 나의 레이아웃에 추가되었습니다.\\n\\n레이아웃을 적용하기 위하여 새롭게 페이지를 로드합니다."
+
+msgid "Are you sure you want to change the layout you choose?"
+msgstr "선택하신 레이아웃으로 변경하시겠습니까?"
+
+msgid "It has been changed to the chosen layout.\\n\\nLoad the new page layout to apply."
+msgstr "선택하신 레이아웃으로 변경되었습니다.\\n\\n레이아웃을 적용하기 위하여 새롭게 페이지를 로드합니다."
+
+msgid "Are you sure you want to remove from the main page?"
+msgstr "정말로 메인페이지에서 제거하시겠습니까?"
+
+msgid "The message list of Fanclub group.<br/>You can send a group message via the button at the bottom."
+msgstr "팬클럽 단체 메세지 리스트입니다.<br/>하단의 버튼으로 전체 메세지를 보낼 수 있습니다."
+
+msgid "Not sent the message."
+msgstr "보낸 메세지가 없습니다."
+
+msgid "Send message"
+msgstr "메세지 보내기"
+
+msgid "Send message to fanclub member"
+msgstr "팬클럽 멤버에게 메세지 보내기"
+
+msgid "All fanclub member"
+msgstr "팬클럽 전체 멤버"
+
+msgid "Please Enter the messages."
+msgstr "메세지를 입력해주십시오."
+
+msgid "Fan Club Portal services!<br/>The beta testing now!"
+msgstr "팬클럽 포탈 서비스!<br/>오픈베타 서비스 시작!!"
+
+msgid "Developer Button"
+msgstr "개발자용 버튼"
+
+msgid "Wherever possible fan club activities!"
+msgstr "어디서든 가능한 팬클럽 활동!"
+
+msgid "Fan Club activity in real-time to enjoy with PC and Mobile!<br/>Even more efficient fan club life by Fanclub APP"
+msgstr "PC와 휴대폰에서 실시간으로 즐기는 팬클럽 활동!<br/>팬클럽 앱으로 더더욱 효과적인 팬클럽 생활!"
+
+msgid "Realistic fan club activities and operations"
+msgstr "리얼한 팬클럽 활동 및 운영"
+
+
+msgid "Set permissions control from the level of fanclub members, send a message to fan club members in app!<br/>Check the real-time article and photos straight right from the app!"
+msgstr "팬클럽 멤버들의 레벨설정부터 권한 조정, 팬클럽 멤버들에게 앱으로 메세지를 전송!<br/>실시간으로 글과 사진을 바로바로 앱에서 확인!"
+
+msgid "Group Chat are the default!<br/>Perfect to one-to-one chat!"
+msgstr "단체 채팅은 기본!<br/>일대일 채팅까지 완벽!"
+
+msgid "Support for fan app dedicated to including one-on-one chats, group chats with members of the fan club<br/>Ofcorse, Chat is available as in your computer."
+msgstr "팬클럽 멤버들과의 그룹채팅을 포함한 1대1채팅까지 지원하는 팬클럽 전용 앱<br/>컴퓨터에서도 채팅이 가능합니다."
+
+msgid "SNS accounts perfect support!"
+msgstr "SNS 어카운트 완벽한 지원!"
+
+msgid "If you do not have to enter information only recognized Log in with SNS ID available!<br/>From typical fan activities to all parts of the fan opening available!"
+msgstr "개인정보를 입력하지 않아도 SNS ID로 로그인만 하면 이용가능!<br/>일반적인 팬클럽 활동부터 팬클럽 개설에 대한 모든 부분까지 이용가능!"
+
+msgid "Operating free!<br/>Use free, too!"
+msgstr "운영도 무료!<br/>이용도 무료!"
+
+msgid "Typical basic features of the fan club services excluding special feature is 100% Free!<br/>Remove the banner from the fan, or use special features that only paid!"
+msgstr "특수기능을 제외한 팬클럽 서비스의 일반적인 기본 기능은 100% 무료!<br/>팬클럽에서 베너들 제거하거나, 특수한 기능을 이용할때만 유료!"
+
+msgid "Available design into desired shapes!"
+msgstr "원하는 모양으로 디자인 가능!"
+
+msgid "From Fonts Family, to the fan club font size, font color!<br/>All parts can also customize every detail of the fan directly beginners!"
+msgstr "팬클럽의 글자체부터 글자크기, 글자색까지!!<br/>팬클럽의 세세한 모든 부분을 초보자도 직접 커스터마이징 할수 있다!"
+
+msgid "I want to write more.<br/>but, too many."
+msgstr "더 쓰고 싶지만, 너무 많습니다."
+
+msgid "You see you will know to use.<br/>The login box appears below. Get started right away!<br/>The Open Beta testing now!!"
+msgstr "직접 써보시면 알게 됩니다.<br/>아래 로그인 박스가 보입니다. 바로 시작해보세요!<br/>현재 오픈 베타 테스트중입니다!"
+
+msgid "Because the entire chat can be viewed by everyone."
+msgstr "전체 채팅이므로 모든 사람이 볼 수 있습니다."
+
+msgid "iFanclub inform the operator it does not have the absolute password."
+msgstr "iFanclub운영자는 절대 비밀번호를 알려달라고 하지 않습니다."
+
+msgid "Purple"
+msgstr "퍼플"
+
+msgid "Green"
+msgstr "그린"
+
+msgid "White"
+msgstr "화이트"
+
+msgid "Red"
+msgstr "레드"
+
+msgid "Blue"
+msgstr "블루"
+
+msgid "Pink"
+msgstr "핑크"
+
+msgid "Black"
+msgstr "블랙"
+
+msgid "Select Layout"
+msgstr "레이아웃 선택"
+
+msgid "All the data registered on this site being legally protected."
+msgstr "이 사이트에 등록된 모든 자료는, 법적으로 보호를 받고 있습니다."
+
+msgid "Please enter a message more than 1 character."
+msgstr "메세지를 1글자 이상 입력해주십시오."
+
+msgid "Sent message can not cancel.\\n\\nDo send this?"
+msgstr "전체 메세지는 한번 보내면 취소할 수 없습니다.\\n\\n그래도 보내시겠습니까?"
+
+msgid "It has been Sent."
+msgstr "메세지가 전송되었습니다."
+
+msgid "Received Fanclub Message"
+msgstr "팬클럽 전체 메세지"
+
+msgid "Status"
+msgstr "상태"
+
+msgid "Opened"
+msgstr "읽음"
+
+msgid "Use Mobile Push"
+msgstr "앱 알람 사용하기"
+
+msgid "Your choice of alarm devices are turned on."
+msgstr "선택하신 기기의 알람이 켜졌습니다."
+
+msgid "Your choice of alarm devices are turned off."
+msgstr "선택하신 기기의 알람이 꺼졌습니다."
+
+msgid "Registered"
+msgstr "등록일"
+
+msgid "Default Domain"
+msgstr "기본 도메인"
+
+msgid "Owned Domain"
+msgstr "소유한 도메인"
+
+msgid "The built-in iFanclub of domain.<br/>Even using a personal domain available."
+msgstr "아이팬클럽에서 기본제공하는 도메인입니다.<br/>개인용 도메인을 이용하고 있어도 이용이 가능합니다."
+
+msgid "Please enter the domain here and use when you want to buy a domain directly."
+msgstr "직접 구매한 도메인을 사용하고 싶을때 이곳에 도메인을 입력해주십시오."
+
+msgid "Please see with click here for more information."
+msgstr "자세한 내용은 여기를 클릭하여 참고해주십시오."
+
+msgid "In the DNS assigned to the domain IP"
+msgstr "DNS에서 해당 도메인에 지정할 IP"
+
+msgid "option"
+msgstr "선택사항"
+
+msgid "Search your fan club has not yet been created."
+msgstr "검색하신 팬클럽이 아직 만들어지지 않았습니다."
+
+msgid "Create the first fanclub of %s"
+msgstr "%s 팬클럽을 가장 먼저 만들어보세요!!"
+
+msgid "iFanclub can make anyone a fan club for free!"
+msgstr "아이팬클럽은 누구나 무료로 팬클럽을 만들수 있습니다!"
+
+msgid "Start create the %s's fanclub!"
+msgstr "%s 팬클럽 만들기 시작!"
+
+
+msgid "Replies"
+msgstr "댓글들"
+
+msgid "There is no written reply."
+msgstr "등록된 댓글이 없습니다."
+
+msgid "Add Reply"
+msgstr "댓글 등록"
+
+msgid "Reply Insert"
+msgstr "댓글 저장"
+
+msgid "Are you sure you want to delete this reply?"
+msgstr "정말 이 댓글을 삭제하시겠습니까?"
+
+msgid "Please click the Delete button below To be deleted."
+msgstr "삭제하려면 아래의 삭제버튼을 클릭해주세요."
+
+msgid "Please Login first"
+msgstr "먼저 로그인해주세요"
+
+msgid "You didn't woute this comment"
+msgstr "댓글을 삭제할 수 없습니다."
+
+msgid "Comments are other connections."
+msgstr "연결된 댓글들이 있습니다."
+
+msgid "Please Insert Comment"
+msgstr "코멘트를 입력해주세요."
+
+msgid "Inserting..."
+msgstr "등록중..."
+
+msgid "This is Fanclub Mainpage.<br></li>Please setup from Settings > Design Settings > Mainpage Setup."
+msgstr "여기는 팬클럽 메인페이지입니다.<br></li>설정 > 디자인설정 > 메인페이지 설정에서 이 페이지를 변경해주세요."
+
+msgid "All Boards"
+msgstr "모든 게시판"
+
+
+
+#########################
+###　PAGE DESCRIPTION ###
+########################
+
+msgid "iFanclub Main"
+msgstr "아이팬클럽 메인페이지"
+
+msgid "A professional fan club operations support systems. Anyone can operate it opened a fan club for free. You can make everything from the design to the desired domain. Try creating a fan or a fan page activity attracting members."
+msgstr "전문 팬클럽 운영 지원 시스템입니다. 누구나 무료로 팬클럽을 개설해서 운영할 수 있습니다. 디자인부터 도메인까지 모두 원하는대로 만들수 있습니다. 팬클럽 또는 팬페이지를 만들어서 멤버를 모으고 활동해보세요."
+
+msgid "ifanclub,fanclub,fanpage,free fanclub,operate fanclub,iFanclub"
+msgstr "아이팬클럽,fanclub,팬클럽,팬페이지,무료 팬클럽,팬클럽 운영,ifanclub,iFanclub"
+
+msgid "The login page of the iFanclub. Please log in here."
+msgstr "아이팬클럽의 로그인 페이지입니다. 이곳에서 로그인해주세요."
+
+msgid "ifanclub,Login,Login page,Internet Fanclub"
+msgstr "iFanclub,아이팬클럽,로그인,로그인 페이지,인터넷 팬클럽 로그인"
+
+msgid "ifanclub,Create fanclub,Fanclub Create"
+msgstr "아이팬클럽,팬클럽 만들기,팬클럽 작성,팬클럽 추가"
+
+msgid "Try searching you want to join the fan club. The name of the fan club, fan club operators, which targets artists, Try to search with simple words."
+msgstr "가입하고 싶은 팬클럽을 검색해보세요. 팬클럽의 이름, 팬클럽 운영자, 대상이 되는 아티스트 등, 간단한 단어로 검색을 시도해보세요."
+
+msgid "ifanclub,Search Fanclub,Search Artist,Search Fanclub operator,Search"
+msgstr "ifanclub,아이팬클럽,팬클럽 검색,아티스트 검색,팬클럽 운영자 검색,검색"
+
+msgid "Fanclub News"
+msgstr "팬클럽 뉴스"
+
+msgid "You can see at a glance the announcement of the fan club, which is active in ifanclub. Try to see what are the fan club fan club activities."
+msgstr "아이팬클럽에서 활동하고 있는 팬클럽들의 공지사항들을 한눈에 볼 수 있습니다. 어떤 팬클럽이 있는지 보고 팬클럽 활동을 해보세요."
+
+msgid "ifanclub,Fanclub News,News,News in fanclub"
+msgstr "ifanclub,팬클럽 뉴스,아이팬클럽,뉴스,뉴스 인 팬클럽"
+
+msgid "The %s fan club. Check the main page and various news from the fan, try a direct fan club activities."
+msgstr "%s 팬클럽입니다. 팬클럽 메인페이지에서 다양한 소식을 확인하고,직접 팬클럽 활동을 해보세요."
+
+msgid ",fanclub,fanpage,free fanclub,operate fanclub,iFanclub"
+msgstr ",팬클럽,fanclub,ifanclub,팬페이지,fanpage,무료팬클럽,팬클럽운영,iFanclub"
+
+msgid "This is %s Board. Please enjoy in the Forum!"
+msgstr "%s 라는 이름의 게시판입니다. 게시판에서 활동하면서 친구를 만들어보세요!"
+
+msgid "Please post a comment to read post!"
+msgstr "포스트를 읽고 댓글을 달아주세요!"
+
+msgid "This is %s Board. Please enter good contents."
+msgstr "%s 라는 이름의 게시판입니다. 좋은 내용을 작성해주세요!"
+
+msgid "This is %s schejuler. Click on the word you want to see, you can view the schejule."
+msgstr "%s 스케쥴러입니다. 제목을 클릭(탭)하면 자세한 스케쥴을 볼 수 있습니다."
+
+msgid "This is %s chat room. Please click on the chat room and chat with the members."
+msgstr "%s 채팅방입니다. 채팅룸을 클릭(탭)하고 멤버들과 채팅을 하세요."
+
+msgid "Please create a fan club chat rooms. If you enter an item to go to the chat room."
+msgstr "팬클럽 채팅방을 만들어주세요. 항목을 입력하면 채팅방으로 이동합니다."
+
+msgid "The chat rooms. Please enjoy chat with other members."
+msgstr "채팅방입니다. 다른 멤버들과 즐거운 채팅하세요."
+
+msgid "Search result : `%s`"
+msgstr "`%s`에 대한 검색결과입니다."
+
+msgid "Search results will vary depending on the words you entered. Try entering long words as possible, or detailed inputs."
+msgstr "입력하신 단어에 따라 검색한 결과가 달라집니다. 단어를 최대한 길게 입력하거나 자세히 입력해보십시오."
+
+msgid "Until now, this fan club I can see all of the writings."
+msgstr "지금까지 이 팬클럽에 내가 쓴 글들을 모두 볼 수 있습니다."
+
+msgid "You can view the list of members joined the fan club."
+msgstr "팬클럽에 가입한 멤버리스트를 볼 수 있습니다."
+
+msgid "Please download the fanclub dedicating app."
+msgstr "팬클럽 전용 앱을 다운로드 하세요."
+
+msgid "Fanclub Setting pages."
+msgstr "팬클럽 설정 페이지입니다."
+
+msgid "Register SNS Login"
+msgstr "SNS로그인 신청"
+
+msgid "When using the built-in fan that is not a domain, you own the domain, 'SNS login' is not.<br/>Since the private domain must be added to each SNS site, I will apply for a separate application from the kids fan club.<br/>However, in order to prevent the indiscriminate application, the application buttons on the bottom there will only fan club members number more than 100 people.<br/>Sign the then 'SNS login' request, we will add to this 'SNS Login' to that domain."
+msgstr "기본 제공하는 도메인이 아닌, 소유한 도메인으로 팬클럽을 이용할 경우, SNS로그인이 되지 않습니다.<br/>개인 도메인은 각 SNS 사이트에 추가 신청을 해야 하므로 아이팬클럽에서 개별 신청을 해드립니다.<br/>다만, 무분별한 신청을 막기 위해, 팬클럽 멤버수가 100명 이상일 때만 아래에 신청버튼이 생깁니다.<br/>그때 SNS로그인 신청을 하시면 해당 도메인으로 SNS로그인이 되도록 추가해드립니다."
+
+msgid "Not executed"
+msgstr "처리되지 않음"
+
+msgid "Executed"
+msgstr "처리됨"
+
+msgid "It has been Request."
+msgstr "신청되었습니다."
+
+msgid "Join the fan club members who have not yet been 100 people."
+msgstr "팬클럽에 가입한 멤버가 아직 100명이 되지 않았습니다."
+
+msgid "The total number of fan club members"
+msgstr "전체 팬클럽 멤버 수"
+
+msgid "You have already applied.\\nWe will give the information sent by email as soon as the registration is in progress."
+msgstr "이미 신청하셨습니다.\\n등록이 진행되는대로 이메일로 내용을 전송해드릴 예정입니다."
+
+msgid "Executing"
+msgstr "처리중"
+
+msgid "Basic information have been stored, the individual domains is already in use is entered from another fanclub.\\nAfter checking, please re-used."
+msgstr "기본정보들이 저장되었으나, 개인도메인이 이미 다른팬클럽에서 입력되어 사용되고 있습니다.\\n확인후 다시 이용해주세요."
+
+msgid "Normal"
+msgstr "일반"
+
+msgid "Bold"
+msgstr "굵게"
+
+msgid "Left Margin"
+msgstr "왼쪽 여백"
+
+msgid "Right Margin"
+msgstr "오른쪽 여백"
+
+msgid "Sort"
+msgstr "정렬"
+
+msgid "Internet Explorer 8 and FireFox do not fully support image uploads.\\nPlease use a different browser."
+msgstr "익스플로러 8과 파이어폭스는 이미지 업로드를 완벽히 지원하지 않습니다.\\n다른 브라우저를 이용해주시기 바랍니다."
+
+msgid "Only Self"
+msgstr "자기자신만"
+
+msgid "Please enter a date."
+msgstr "발생일을 입력해주십시오."
+
+msgid "Device"
+msgstr "사용한 기기"
+

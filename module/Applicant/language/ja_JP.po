@@ -1,0 +1,1920 @@
+#: ../view/error/index.phtml:1
+msgid "An error occurred"
+msgstr "エラーが発生しました"
+
+#: ../view/error/index.phtml:8
+msgid "Additional information"
+msgstr "追加の情報"
+
+#: ../view/error/index.phtml:11
+#: ../view/error/index.phtml:35
+msgid "File"
+msgstr "ファイル"
+
+#: ../view/error/index.phtml:15
+#: ../view/error/index.phtml:39
+msgid "Message"
+msgstr "メッセージ"
+
+#: ../view/error/index.phtml:19
+#: ../view/error/index.phtml:43
+#: ../view/error/404.phtml:55
+msgid "Stack trace"
+msgstr "スタックトレース"
+
+#: ../view/error/index.phtml:29
+msgid "Previous exceptions"
+msgstr "前の例外"
+
+#: ../view/error/index.phtml:58
+msgid "No Exception available"
+msgstr "例外が利用できません"
+
+#: ../view/error/404.phtml:1
+msgid "A 404 error occurred"
+msgstr "404エラーが発生しました"
+
+#: ../view/error/404.phtml:10
+msgid "The requested controller was unable to dispatch the request."
+msgstr "要求されたコントローラはリクエストをディスパッチできませんでした。"
+
+#: ../view/error/404.phtml:13
+msgid "The requested controller could not be mapped to an existing controller class."
+msgstr "要求されたコントローラは存在するコントローラクラスにマッピングできませんでした。"
+
+#: ../view/error/404.phtml:16
+msgid "The requested controller was not dispatchable."
+msgstr "要求されたコントローラはディスパッチ不可能でした。"
+
+#: ../view/error/404.phtml:19
+msgid "The requested URL could not be matched by routing."
+msgstr "要求されたURLはルーティングにマッチしませんでした。"
+
+#: ../view/error/404.phtml:22
+msgid "We cannot determine at this time why a 404 was generated."
+msgstr "404が生成された理由について現時点で判断できません。"
+
+#: ../view/error/404.phtml:34
+msgid "Controller"
+msgstr "コントローラ"
+
+#: ../view/error/404.phtml:41
+#, php-format
+msgid "resolves to %s"
+msgstr "%s に解決"
+
+#: ../view/error/404.phtml:51
+msgid "Exception"
+msgstr "例外"
+
+msgid "Create"
+msgstr "生成"
+
+msgid "Join"
+msgstr "登録"
+
+msgid "Search"
+msgstr "検索"
+
+msgid "Ranking"
+msgstr "ランキング"
+
+msgid "News"
+msgstr "ニュース"
+
+msgid "Login"
+msgstr "ログイン"
+
+msgid "Logout"
+msgstr "ログアウト"
+
+msgid "Sign in"
+msgstr "受講生登録"
+
+msgid "FannBook"
+msgstr "パンクラブ"
+
+msgid "FannClub"
+msgstr "パンクラブ"
+
+msgid "All rights reserved."
+msgstr "全著作権所有。"
+
+msgid "Creation Date"
+msgstr "開設日"
+
+msgid "Members"
+msgstr "受講生数"
+
+msgid "Register"
+msgstr "受講生登録"
+
+msgid "people"
+msgstr "人"
+
+msgid "Approved"
+msgstr "承認"
+
+
+msgid "Join approval process"
+msgstr "登録の承認処理"
+
+msgid "Approval Required"
+msgstr "承認必要"
+
+msgid "Approval not required"
+msgstr "承認不要"
+
+msgid "Leader"
+msgstr "リーダー"
+
+msgid "Hot Fanclub"
+msgstr "ホットサイト"
+
+msgid "FanClub Finder"
+msgstr "サイト検索ツール"
+
+msgid "Artist name"
+msgstr "アーティスト名"
+
+msgid "Fanclub name"
+msgstr "サイトの名前"
+
+msgid "Remember to e-mail."
+msgstr "メールを覚えています。"
+
+msgid "Password"
+msgstr "パスワード"
+
+msgid "E-mail"
+msgstr "メール"
+
+msgid "Please enter your e-mail."
+msgstr "メールアドレスを入力してください。"
+
+msgid "Fanclub news"
+msgstr "サイトニュース"
+
+msgid "My Fanclub"
+msgstr "私のサイト"
+
+msgid "Received Messages"
+msgstr "受信されたメッセージ"
+
+msgid "Sended Messages"
+msgstr "送信したメッセージ"
+
+msgid "Saved Messages"
+msgstr "保存したメッセージ"
+
+msgid "Unread Message"
+msgstr "未読メッセージ"
+
+msgid "Create FannBook"
+msgstr "サイトを作成"
+
+msgid "Fanclub Name"
+msgstr "サイトの名前"
+
+msgid "Artist Name"
+msgstr "アーティスト名"
+
+msgid "Full name"
+msgstr "完全名"
+
+msgid "Short name"
+msgstr "省略名"
+
+msgid "Official Fanclub"
+msgstr "公式サイト"
+
+msgid "Related Links"
+msgstr "関連リンク"
+
+
+msgid "fanclub desc"
+msgstr "サイトシステムをご利用いただきありがとうございます。<br/>このシステムを利用すれば、プロのサイトの機能をすべて無料でご利用いただけます。<br/>サイト受講生は、あえて新規加入をしなくても、自分のSNSのアカウントを介してサイトに加入した後の活動が可能です。<br/><br/>下の入力フィールドを入力してください。"
+
+msgid "After opening more design settings and menu settings are available in Settings page."
+msgstr "詳細デザイン設定とメニューの設定は、開設後の設定ページで入手できます。"
+
+msgid "Fanclub Search"
+msgstr "サイト検索"
+
+msgid "Notice"
+msgstr "お知らせ"
+
+msgid "Schejule"
+msgstr "スケジュール"
+
+msgid "Chat"
+msgstr "チャット"
+
+msgid "Enter Keyword"
+msgstr "キーワードを入力"
+
+msgid "Please enter a keyword."
+msgstr "キーワードを入力してください。"
+
+msgid "Board List"
+msgstr "ボードリスト"
+
+msgid "To make the fan club activities iFanclub need a free account.<br/>Once you create an account, you can use the Web and free from the app."
+msgstr "iFanclubでサイトの活動をするためには、無料アカウントが必要になります。<br/>一度アカウントを作成すると、ウェブとアプリで自由に使用できます。"
+
+msgid "Select Account Type"
+msgstr "アカウントタイプを選択"
+
+msgid "Sign up for email"
+msgstr "メール登録"
+
+msgid "Sign up for SNS account"
+msgstr "SNSアカウントで登録"
+
+msgid "E-mail Address"
+msgstr "メールアドレス"
+
+msgid "Please check the junk e-mail settings of the provider and career ※, please allow receive mail from the '@%s'"
+msgstr "プロバイダやキャリアの迷惑メール設定をご確認のうえ、「@ifanclub.jp」からのメールを受信許可してください。"
+
+msgid "Please enter your e-mail for confirmation once again."
+msgstr "確認のためにもう一度メールアドレスを入力してください。"
+
+msgid "Confirm E-mail"
+msgstr "メールの確認"
+
+msgid "Confirm Password"
+msgstr "パスワードの確認"
+
+msgid "Alphanumeric mix, please enter within 6 to 32 characters"
+msgstr "英数字混在、6文字以上32文字以内で入力してください"
+
+msgid "Retype password"
+msgstr "パスワードの再入力"
+
+msgid "We will send this URL for registration by e-mail, personal computer or smart phone, please enter your capable of receiving e-mail address in the tablet."
+msgstr "本登録用URLをメールでお送りしますので、パソコンまたはスマートフォン、タブレットで受信可能なメールアドレスをご入力ください。"
+
+msgid "Terms of Service"
+msgstr "サービス利用規約"
+
+msgid "Sign up now sent a link for the E-mail address you entered. \\nOpen the mailbox by clicking on the links, please continue your subscription."
+msgstr "今入力したメールアドレスに、本登録用のリンクを送信しました。\\nメールボックスを開いてリンクをクリックして登録を続行してください。"
+
+msgid "Please check your e-mail."
+msgstr "メールを確認してください。"
+
+msgid "Please enter your e-mail correctly again."
+msgstr "メールをもう一度正確に入力してください。"
+
+msgid "Please enter the password to 6 characters to 32 characters or less."
+msgstr "パスワードを6文字以上32文字以内で入力してください。"
+
+msgid "Please enter the correct password again."
+msgstr "パスワードをもう一度正確に入力してください。"
+
+msgid "Hello. iFanclub E-mail authentication service."
+msgstr "こんにちは。iFanclub メール認証サービスです。"
+
+
+msgid "Thank you."
+msgstr "ありがとうございます。"
+
+msgid "In order to proceed with the subscription iFanclub have confirmed your registration email."
+msgstr "iFanclub登録を進めるために登録したメールを確認しました。"
+
+msgid "This e-mail address will be the identity of the iFanclub."
+msgstr "この電子メールアドレスがiFanclubのお持ちのです。"
+
+msgid "iFanclub you and verify your email if this summit in order to prevent illegal use and privacy."
+msgstr "iFanclubは、個人情報の保護と不正使用を防止するために電子メールが正常かどうかを確認しています。"
+
+msgid "Please click on the link below to proceed to the subscription."
+msgstr "以下のリンクをクリックして、本登録を続行します。"
+
+msgid "Mail that contains a link to join this service has been sent.<br/>Open the mail Please click on the subscribe link contained in the email to proceed to Sign Up."
+msgstr "本サービス加入のリンクが含まれているメールが送信されました。<br/>メールを開いていただき、メールの中に含まれている登録リンクをクリックして、受講生登録を行ってください。"
+
+msgid "Site Shortcuts"
+msgstr "サイトへ"
+
+msgid "Home"
+msgstr "ホーム"
+
+msgid "Sign in Fanclub"
+msgstr "メンバー登録"
+
+msgid "Member"
+msgstr "メンバー"
+
+msgid "List"
+msgstr "リストへ"
+
+msgid "Opened chat room list"
+msgstr "開設されたチャットルームのリストです。"
+
+msgid "Send"
+msgstr "送信"
+
+msgid "Enter to Text"
+msgstr "送信メッセージを入力してください。"
+
+msgid "Exit"
+msgstr "終了"
+
+msgid "Show joiner"
+msgstr "参加者の表示"
+
+msgid "Create Chatroom"
+msgstr "チャットルーム作成"
+
+msgid "Please enter a chat room to open the chat room conditions."
+msgstr "チャットルームの条件を入力してチャットルームを開設してください。"
+
+msgid "Theme"
+msgstr "テーマ"
+
+msgid "Please enter a subject"
+msgstr "トピックを入力してください"
+
+msgid "Required Level"
+msgstr "可能レベル"
+
+msgid "Somebody"
+msgstr "誰でも"
+
+msgid "General membership over"
+msgstr "一般受講生以上"
+
+msgid "Supporters Members over"
+msgstr "サポーター受講生以上"
+
+msgid "Only staff"
+msgstr "運営スタッフのみ"
+
+msgid "Create a password"
+msgstr "パスワード"
+
+msgid "Create a password for the chat room"
+msgstr "チャットルームにパスワードを作成する"
+
+msgid "App Download"
+msgstr "サイトアプリ"
+
+msgid "You can download the fan club-only app. <br/> fan club dedicated app supports all the basic features you need in a chat, check schedules, bulletin boards, etc. Read fan of real-time announcements, a friend and fan of the fan club. <br/>Add to, support real-time streaming functionality in the fan club you can share your live video to each other fanclub members."
+msgstr "サイト専用アプリをダウンロードすることができます。<br/>サイト専用アプリでは、サイトのリアルタイム通知、サイトの友人とのチャット、スケジュールを確認、掲示板を読むなどのサイトに必要なすべての基本的な機能をサポートします。<br/>さらに、サイト内でのリアルタイムストリーミング機能をサポートしてサイト受講生同士のライブ映像を共有することができます。"
+
+msgid "Download"
+msgstr "ダウンロード"
+
+msgid "Join in Membership"
+msgstr "受講生に参加"
+
+msgid "Board"
+msgstr "ボード"
+
+msgid "Title"
+msgstr "タイトル"
+
+msgid "Writer"
+msgstr "投稿者"
+
+msgid "Write Date"
+msgstr "作成日"
+
+msgid "See"
+msgstr "ヒット"
+
+msgid "Vote"
+msgstr "推薦数"
+
+msgid "Write"
+msgstr "書く"
+
+msgid "Contents"
+msgstr "内容"
+
+msgid "Please enter a title."
+msgstr "タイトルを入力してください。"
+
+msgid "Please enter your contents."
+msgstr "内容を入力してください。"
+
+msgid "'s search results."
+msgstr "の検索結果です。"
+
+msgid "Search all boards"
+msgstr "すべてのボードを検索"
+
+msgid "Search all photos"
+msgstr "すべての写真を検索"
+
+msgid "All"
+msgstr "すべて"
+
+msgid "Photo"
+msgstr "写真"
+
+msgid "Settings"
+msgstr "設定"
+
+msgid "Default"
+msgstr "基本設定"
+
+msgid "Menu"
+msgstr "メニューの設定"
+
+msgid "Design"
+msgstr "デザイン"
+
+msgid "Design Settings"
+msgstr "デザインの設定"
+
+msgid "Security"
+msgstr "セキュリティの設定"
+
+msgid "Payment"
+msgstr "決済管理"
+
+msgid "Spam"
+msgstr "スパム管理"
+
+msgid "Register Complete"
+msgstr "入会申し込み"
+
+msgid "Activity Level"
+msgstr "活動レベル"
+
+msgid "I would like to work as usual fan."
+msgstr "一般的なファンで活動したい。"
+
+msgid "I want to participate in the concert and fan meeting."
+msgstr "コンサートやファンミーティングに参加したい。"
+
+msgid "I want to be a fan-club staff."
+msgstr "サイト運営スタッフになりたい。"
+
+msgid "Real name"
+msgstr "本名"
+
+msgid "Please enter your real name."
+msgstr "本名を入力してください。"
+
+msgid "Member List"
+msgstr "メンバーリスト"
+
+msgid "Level Name"
+msgstr "レベル名"
+
+msgid "Unapproved Member"
+msgstr "未承認の受講生"
+
+msgid "Regular Member"
+msgstr "正受講生"
+
+msgid "Support Member"
+msgstr "サポーター受講生"
+
+msgid "Special Member"
+msgstr "特別受講生"
+
+msgid "Operator"
+msgstr "スタッフ"
+
+msgid "Staff"
+msgstr "スタッフ"
+
+msgid "Sub Administrator"
+msgstr "サブオペレータ"
+
+msgid "Administrator"
+msgstr "オペレータ"
+
+
+msgid "Not Connected"
+msgstr "未接続"
+
+msgid "Connected"
+msgstr "接続中"
+
+msgid "Join Date"
+msgstr "登録日"
+
+msgid "Level"
+msgstr "レベル"
+
+msgid "Connect"
+msgstr "接続"
+
+msgid "Language"
+msgstr "言語"
+
+msgid "Please Select use language."
+msgstr "利用言語を選択してください。"
+
+msgid "Please enter your full name of the fan club."
+msgstr "サイトの完全な名前を入力してください。"
+
+msgid "Target"
+msgstr "対象"
+
+msgid "Target name"
+msgstr "対象名前"
+
+msgid "Please enter the exact name of target."
+msgstr "対象の名前を正確に入力してください。"
+
+msgid "Please enter the name as short as possible in target."
+msgstr "対象の名前を極力短く入力してください。"
+
+msgid "Please enter only the letters and numbers."
+msgstr "英字と数字のみを入力してください。"
+
+msgid "(4~20 letters)"
+msgstr "(4〜20文字)"
+
+msgid "Please enter the fan-club title."
+msgstr "サイトのタイトルを入力してください。"
+
+msgid "Are you sure you want to open a fan club?\\n\\nOther settings are available in Settings page, and then proceed fan club opened."
+msgstr "サイトを開設しますか？\\n\\n他の設定は、サイトの開設後、設定ページで進めることができます。"
+
+msgid "Please select the menu you want to set."
+msgstr "設定したいメニューを選択してください。"
+
+msgid "The address is already in use.<br/>Please enter a different address."
+msgstr "既に使用されているアドレスです。<br>他のアドレスを入力してください。"
+
+msgid "Modify"
+msgstr "変更"
+
+msgid "Do you want to modify?"
+msgstr "修正しますか？"
+
+msgid "This changes have been saved."
+msgstr "変更が保存されました。"
+
+msgid "Total : %s"
+msgstr "全体 %s"
+
+msgid "Banish"
+msgstr "追放"
+
+msgid "Please select a member to be banished."
+msgstr "追放するメンバーを選択してください。"
+
+msgid "Are you sure you want to ban any members selected?"
+msgstr "本当に選択されたメンバーを追放しますか？"
+
+msgid "It has been processed."
+msgstr "処理されました。"
+
+msgid "You do not have permission to access the administration page."
+msgstr "管理ページにアクセスする権限がありません。"
+
+msgid "Add or delete a board, and you can change the properties of each of the boards."
+msgstr "ボードを追加したり、削除することができ、それぞれのボードの属性を変更することができます。"
+
+msgid "Board title"
+msgstr "ボードの名前"
+
+msgid "Read"
+msgstr "読む"
+
+msgid "Normal Board"
+msgstr "ノーマルボード"
+
+msgid "Line Board"
+msgstr "一行ボード"
+
+msgid "Hidden Board"
+msgstr "匿名ボード"
+
+msgid "Everybody"
+msgstr "誰でも"
+
+msgid "Only Members"
+msgstr "サイト受講生のみ"
+
+msgid "Only Staff"
+msgstr "スタッフのみ"
+
+msgid "Add"
+msgstr "加え"
+
+msgid "Del"
+msgstr "削除"
+
+msgid "Type"
+msgstr "タイプ"
+
+msgid "Free board"
+msgstr "自由ボード"
+
+msgid "Line board"
+msgstr "一行ボード"
+
+msgid "Hidden board"
+msgstr "匿名ボード"
+
+msgid "Photo Gallery"
+msgstr "フォトギャラリー"
+
+msgid "If you do not press the Save button at the bottom of the Add Board it will not be saved."
+msgstr "下部の[保存]ボタンを押さないと、追加された掲示板が保存されません。"
+
+msgid "Save"
+msgstr "保存"
+
+msgid "If you delete a board, with registered post also cleared.\\n\\nAre you sure you want to proceed?"
+msgstr "ボードを削除した場合、登録されたスレッドも一緒に消去されます。\\n\\n続行しますか？"
+
+msgid "Notice Board can not be deleted."
+msgstr "お知らせボードは削除できません。"
+
+msgid "Can not Change"
+msgstr "変更不可"
+
+msgid "Up"
+msgstr "アップ"
+
+msgid "Down"
+msgstr "ダウン"
+
+msgid "Do you want to save changes?"
+msgstr "変更を保存しますか？"
+
+msgid "It has been changed."
+msgstr "変更されました。"
+
+msgid "Show Menubar"
+msgstr "メニューバーから表示"
+
+msgid "Show"
+msgstr "表示"
+
+msgid "Hide"
+msgstr "未表示"
+
+msgid "Cancel"
+msgstr "キャンセル"
+
+msgid "Upload Images"
+msgstr "写真登録"
+
+msgid "There is no saved data."
+msgstr "保存されたデータがありません。"
+
+msgid "Delete"
+msgstr "削除"
+
+msgid "Would you like to finish Writing?"
+msgstr "作成を完了しますか？"
+
+msgid "It has been Saved."
+msgstr "保存されました。"
+
+msgid "Please enter the details a little longer."
+msgstr "内容をより長く入力してください。"
+
+msgid "Please enter the subject."
+msgstr "タイトルを入力してください。"
+
+msgid "Cancel vote"
+msgstr "推薦キャンセル"
+
+msgid "Are you sure you want to delete?"
+msgstr "本当に削除しますか？"
+
+msgid "It has been deleted."
+msgstr "削除されました。"
+
+msgid "Are you sure you want to cancel?"
+msgstr "キャンセルしますか？"
+
+msgid "Comment"
+msgstr "コメント"
+
+msgid "Please enter contents."
+msgstr "内容を入力してください。"
+
+msgid "Close"
+msgstr "閉める"
+
+msgid "Aleady saved."
+msgstr "既に登録されました。"
+
+msgid "Not the writer."
+msgstr "作成者はありません。"
+
+msgid "Please upload a photo."
+msgstr "写真を登録してください。"
+
+msgid "Prev"
+msgstr "以前"
+
+msgid "Next"
+msgstr "以下"
+
+msgid "Only members join the fan club you can create posts."
+msgstr "サイトに加入した受講生のみ文の作成が可能です。"
+
+msgid "The staff can only be written."
+msgstr "運営スタッフのみ作成が可能です。"
+
+msgid "Only members have joined the Board readable."
+msgstr "登録した受講生のみ読み取りが可能な掲示板です。"
+
+msgid "Only staff can see this."
+msgstr "運営スタッフのみが表示されます。"
+
+msgid "Withdrawal"
+msgstr "受講生脱退"
+
+msgid "Fixed"
+msgstr "固定"
+
+msgid "You can set the level of fan club members.<br/>Level of (Unapproved Member, Regular Member, Staff, Sub Administrator, Administrator) can not be changed."
+msgstr "サイト受講生のレベルを設定することができます。<br/>（未承認のメンバー、受講生、サブオペレータ、オペレータ）のレベルは変更することができません。"
+
+msgid "Delete the required level is not possible."
+msgstr "必須レベルは削除できません。"
+
+msgid "If you do not press the Save button it will not be saved."
+msgstr "[保存]ボタンを押さないと保存されません。"
+
+msgid "Add level"
+msgstr "レベル追加"
+
+msgid "Please select the level you want to add and fill in the name."
+msgstr "追加するレベルを選択し、名前を記入してください。"
+
+msgid "Members of the deleted levels are all reset to level 1.\\nAre you sure you want to proceed anyway?"
+msgstr "削除されたレベルのメンバーは、すべてのレベル1にリセットされます。\\nそれでも続行しますか？"
+
+msgid "Please enter a level name."
+msgstr "レベル名を入力してください。"
+
+msgid "There is no joined the fanclub."
+msgstr "登録したサイトがありません。"
+
+msgid "Default Information"
+msgstr "基本情報"
+
+msgid "Just join us, you can work directly with its members."
+msgstr "加入申請さえすればすぐに受講生として活動することができます。"
+
+msgid "Join Fan Club requires the approval of the operator. Please check the following items."
+msgstr "サイトオペレータの加入承認が必要になります。以下の事項を確認してください。"
+
+msgid "%s Users"
+msgstr "%s 人"
+
+msgid "Fanclub Members"
+msgstr "サイトメンバー数"
+
+msgid "Fanclub Created"
+msgstr "サイト開設日"
+
+msgid "Fanclub Administrator"
+msgstr "サイト最高オペレータ"
+
+msgid "The information entered in the editor below, join fanclub will be shown at the bottom of the page."
+msgstr "下のエディタに入力した内容が、サイト加入のページの一番下に表記されます。"
+
+msgid "Fanclub used only within a nickname."
+msgstr "サイトの中だけで使用されているニックネームです。"
+
+msgid "Please enter at least 2 letters of a nickname used in the fan club."
+msgstr "サイトの中で使用するニックネームを2文字以上入力してください。"
+
+msgid "Are you sure join the fan club?"
+msgstr "サイト加入を続行しますか？"
+
+msgid "Request to Join has been completed.\\n\\nIf approved, we'll send you an e-mail."
+msgstr "加入申請が完了しました。\\n\\n加入承認されたメールをお送りします。"
+
+msgid "The Sign up was completed.\\n\\nThe fan club activities immediately available."
+msgstr "加入が完了しました。\\n\\nすぐにサイト活動ができます。"
+
+msgid "Upper"
+msgstr "以上"
+
+msgid "You do not have permission."
+msgstr "権限がありません。"
+
+msgid "Cancel registeration"
+msgstr "加入解除"
+
+msgid "Are you sure you want to cancel your registeration?"
+msgstr "加入申請をキャンセルしますか？"
+
+msgid "The Request to Join has been canceled."
+msgstr "加入申請がキャンセルされました。"
+
+msgid "Fanclub withdraw"
+msgstr "サイト退会"
+
+msgid "Reason for withdraw"
+msgstr "退会の理由"
+
+msgid "Please note the reason for withdraw is helpful to operate."
+msgstr "退会する理由を記入してください運営に役立ちます。"
+
+msgid "Withdraw"
+msgstr "退会"
+
+msgid "If you make a withdraw, including the level of posts created so far, points etc. will lose everything authorization."
+msgstr "退会をすると、今まで作成したスレッドを含むレベル、ポイントなどすべての事の権限を失うことになります。"
+
+msgid "Are you sure withdraw the fanclub?"
+msgstr "本当にサイトを脱退しますか？"
+
+msgid "Has been withdraw.\\n\\nThank you for this fanclub."
+msgstr "脱退されました。\\n\\nこのサイトをご利用いただきありがとうございます。"
+
+msgid "The error was not caused by withdraw.\\n\\nPlease try again."
+msgstr "エラーが発生して脱退がされていませんでした。\\n\\nもう一度やり直してください。"
+
+msgid "Top operator will not be able to withdraw."
+msgstr "最高オペレータは脱退することができません。"
+
+msgid "My Posts"
+msgstr "私のポスト"
+
+msgid "Sign in Page HTML"
+msgstr "メンバー申請ページ HTML"
+
+msgid "Advert Zone"
+msgstr "広告ゾーン"
+
+msgid "Chat is available only one."
+msgstr "チャットは一つのみ使用可能です。"
+
+msgid "The board can be changed only with the board."
+msgstr "ボードは、ボードのみ変更可能です。"
+
+msgid "Add or change for the menu, you can delete it."
+msgstr "使用するメニューを追加したり、変更、削除することができます。"
+
+msgid "Menu Name"
+msgstr "メニュー名前"
+
+msgid "Menubar"
+msgstr "メニューバー"
+
+msgid "Titlebar"
+msgstr "タイトルバー"
+
+msgid "Connecting"
+msgstr "接続中"
+
+msgid "There is no chat room is open.<br/>Please create a new chat room."
+msgstr "オープンされているチャットルームがありません。<br/>新しいチャットルームを作ってください。"
+
+msgid "Subject"
+msgstr "主題"
+
+msgid "Please enter a password"
+msgstr "パスワードを入力してください。"
+
+msgid "%s users"
+msgstr "%s 人"
+
+msgid "Creater"
+msgstr "開設者"
+
+msgid "Joiner"
+msgstr "参加者"
+
+msgid "entered into the chat room."
+msgstr "さんがチャットルームに入場しました。"
+
+msgid "Does not create the post."
+msgstr "作成されたポストがありません。"
+
+msgid "Are you sure you want to leave the chat room?"
+msgstr "チャットルームを出るのですか？"
+
+msgid "went chat room."
+msgstr "さんがチャットルームで出かけました。"
+
+msgid "connection seems broken."
+msgstr "さんの接続が切断されたようです。"
+
+msgid "This chat room has been shut down."
+msgstr "このチャットルームは終了しました。"
+
+msgid "Previous dialog"
+msgstr "以前の会話を表示"
+
+msgid "This chat room is required password."
+msgstr "パスワードが必要なチャットルームです。"
+
+msgid "Please enter a chat room password."
+msgstr "チャットルームのパスワードを入力してください。"
+
+msgid "Enter"
+msgstr "入る"
+
+msgid "Incorrect password."
+msgstr "パスワードが違います。"
+
+msgid "Enter the password and you come in the chat rooms.\\n\\nPlease come again."
+msgstr "パスワードを入力して入って来ているチャットルームです。\\n\\n再び入ってください。"
+
+msgid "The free chat room."
+msgstr "自由なチャットルームです。"
+
+msgid "Not a fan level that can use the chat room."
+msgstr "このチャットルームを使用することができますサイトレベルではない。"
+
+msgid "This level is not visible posts."
+msgstr "内容を見ることができるレベルではない。"
+
+msgid "Anonymous"
+msgstr "匿名"
+
+msgid "Sunday"
+msgstr "日"
+
+msgid "Munday"
+msgstr "月"
+
+msgid "Tuesday"
+msgstr "火"
+
+msgid "Wednesday"
+msgstr "水"
+
+msgid "Thursday"
+msgstr "木"
+
+msgid "Friday"
+msgstr "金"
+
+msgid "Saturday"
+msgstr "土"
+
+msgid "Schedule registration / modification"
+msgstr "スケジュール登録/修正"
+
+msgid "If you enter a URL in the content attribute is changed to link automatically."
+msgstr "内容にURLを入力すると、自動的にリンクになります。"
+
+msgid "Schedule"
+msgstr "スケジュール"
+
+msgid "Can not be deleted.\\n\\nPlease try again later."
+msgstr "削除することができません。\\n\\nしばらくしてからもう一度お試しください。"
+
+msgid "Approve"
+msgstr "承認"
+
+msgid "Join the %s has been approved."
+msgstr "%sに加入承認がされた。"
+
+msgid "Congratulations!"
+msgstr "おめでとうございます！"
+
+msgid "Join the fan club you have been approved to apply for a subscription."
+msgstr "登録を申請したサイトに加入が承認されました。"
+
+msgid "Right now, you can fanclub activities."
+msgstr "今すぐサイトで活動をすることができます。"
+
+msgid "We hope you enjoy!"
+msgstr "楽しい時間幸いです。"
+
+msgid "Go Fanclub"
+msgstr "サイトショートカット"
+
+msgid "Are you sure you want to approve members selected?"
+msgstr "選択されたメンバーを加入承認しますか？"
+
+msgid "Suspended banished from %s."
+msgstr "%sから追放されました。"
+
+msgid "The bad news."
+msgstr "悪いニュースです。"
+
+msgid "You have been banished from %s."
+msgstr "あなたは%sで追放さされました。"
+
+msgid "I'm sorry, because bad news."
+msgstr "良いニュースを伝えなくて申し訳ありません。"
+
+msgid "Please select a member to be approve."
+msgstr "加入承認するメンバーを選択してください。"
+
+msgid "No results were found for your search."
+msgstr "検索結果がありません。"
+
+msgid "Operator name"
+msgstr "管理者の名"
+
+msgid "Representative image"
+msgstr "代表的なイメージ"
+
+msgid "Go Back"
+msgstr "以前ぺーじへ"
+
+msgid "Width 160px, height 160px is best."
+msgstr "横160px、縦160pxが最もお勧めします。"
+
+msgid "You can see at a glance the notices of the active fanclub."
+msgstr "活動中のサイトのお知らせを一目で見ることができます。"
+
+msgid "This ranking depends on the activity of the fan club.<br/>Fan Club who are active may be registered in the rankings page at any time."
+msgstr "このランキングは、サイトの活動量に応じて異なります。<br/>活発な活動をしているサイトは、いつでもランキングページに登録することができます。"
+
+msgid "There is no notice."
+msgstr "お知らせはありません。"
+
+msgid "Last chat room chat history"
+msgstr "過去のチャットルーム会話履歴"
+
+msgid "Used password"
+msgstr "パスワードを使用"
+
+msgid "Free chatroom"
+msgstr "自由にチャットルーム"
+
+msgid "Please enter a chatroom password."
+msgstr "チャットルームのパスワードを入力してください。"
+
+msgid "My Information Edit"
+msgstr "私の情報を確認 / 修正"
+
+msgid "If you proceed with the Withdraw it can not be recovered again.\\nAre you sure you want to proceed anyway?"
+msgstr "脱退を進行すれば再び回復することはできません。\\nそれでも続行しますか？"
+
+msgid "The Withdraw will proceed and enter your password."
+msgstr "パスワードを入力すると、脱退が行われます。"
+
+msgid "Are you sure you want to proceed with the Withdraw Really?"
+msgstr "本当に脱退を続行しますか？"
+
+msgid "Thank you for using.\\nI wish to meet again."
+msgstr "ご利用いただきありがとうございます。\\n再び会えることを願っています。"
+
+msgid "Exists working fanclub from you.\\nWithdraw from fanclub, and please proceed."
+msgstr "運営中のサイトがあります。\\nそのサイトで脱退して進行してください。"
+
+msgid "None Messages."
+msgstr "メーセージがありません。"
+
+msgid "Sender"
+msgstr "送信者"
+
+msgid "Receiver"
+msgstr "受信者"
+
+msgid "Send Date"
+msgstr "送信時間"
+
+msgid "User Profile"
+msgstr "メンバー情報"
+
+msgid "Fanclub"
+msgstr "サイト"
+
+msgid "1:1 Chat"
+msgstr "1:1 チャット"
+
+msgid "Send Message"
+msgstr "メッセージを送信"
+
+msgid "You can not send messages to yourself."
+msgstr "自分にメッセージを送信することができません。"
+
+msgid "It has been sent."
+msgstr "送信されました。"
+
+msgid "Please login first."
+msgstr "まずログインしてください。"
+
+msgid "We have %s unread message. Please click here to view the contents."
+msgstr "%sつの未読メッセージがあります。 ここをクリックして内容を確認してください。"
+
+msgid "Alert"
+msgstr "お知らせ"
+
+msgid "Reply"
+msgstr "返信"
+
+msgid "Received Message"
+msgstr "受信したメッセージ"
+
+msgid "Invite 1:1 Chat"
+msgstr "1:1 チャットの招待"
+
+msgid "Please enter your invitation message."
+msgstr "招待メッセージを入力してください。"
+
+msgid "This popup is blocked."
+msgstr "ポップアップがブロックになっています。"
+
+msgid "This pop-up is blocked could not open a chatroom automatically.<br/>Click the button below to open a entry chatroom."
+msgstr "ポップアップがブロックされて、自動的にチャットルームを開くことができませんでした。<br/>下の立場ボタンをクリックして、チャットルームをオープンしてください。"
+
+msgid "1:1 Chat Invitations"
+msgstr "1:1 チャットの招待状"
+
+msgid "Enter Chat Room"
+msgstr "チャットルームに入る"
+
+msgid "Readed"
+msgstr "既読"
+
+msgid "Didn't read"
+msgstr "未読"
+
+msgid "Please select the message you want to delete."
+msgstr "削除したいメッセージを選択してください。"
+
+msgid "It was deleted."
+msgstr "削除しました。"
+
+msgid "Do not keep the message it will be deleted automatically after 30 days."
+msgstr "保管していないメッセージは、30日が経過すると自動的に削除されます。"
+
+msgid "Saved messages unless you delete it, it will not be deleted."
+msgstr "保存されたメッセージは、直接削除しない限り、削除されません。"
+
+msgid "It was saved."
+msgstr "保存されました."
+
+msgid "Selected Layout"
+msgstr "選択されてるレイアウト"
+
+msgid "Edit design properties"
+msgstr "デザイン設定の編集"
+
+msgid "Change Layout"
+msgstr "レイアウトの変更"
+
+msgid "Default Layout"
+msgstr "基本レイアウト"
+
+msgid "Default Setup"
+msgstr "基本設定"
+
+msgid "You can set the basic design of the fan club.<br/>Background image, the default fonts, the default font size, etc. You can modify a variety of basic features."
+msgstr "サイトの基本的なデザインの設定をすることができます。<br/>背景画像、基本字体、基本文字サイズなど、さまざまな基本的な機能を変更することができます。"
+
+msgid "Change Settings"
+msgstr "設定の変更"
+
+msgid "Top part Setup"
+msgstr "トップ部分の設定"
+
+msgid "You can modify the design of the top of the page title and menu boxes."
+msgstr "ページの上部タイトルとメニューボックスのデザインを変更することができます。"
+
+msgid "Left Menu Setup"
+msgstr "本文メニューの設定"
+
+msgid "The design of the menu, you can set the left or right of the body.<br/>You can change the location and detail design of the menu."
+msgstr "本文の左または右のメニューのデザインを設定することができます。<br/>メニューの位置と細かいデザインを変更することができます。"
+
+msgid "Contents part Setup"
+msgstr "本文ボックスの設定"
+
+msgid "You can set the design of the body box.<br/>The title part in the body of the box, you can change the basic color and shape of the piece of content."
+msgstr "本文ボックスのデザインを設定することができます。<br/>本文ボックス内のタイトル部分、内容部分の基本的な色と外観を変更することができます。"
+
+msgid "Footer part Setup"
+msgstr "下部の設定"
+
+msgid "You can modify the text in the box at the bottom of the page.<br/>You can modify the entire contents fit inside the bottom of the box."
+msgstr "ページの本文の下にあるボックスにチェックを変更することができます。<br/>下部のボックスの中に入る内容全体を変更することができます。"
+
+msgid "Default Background"
+msgstr "全体の背景"
+
+msgid "With Color"
+msgstr "色で"
+
+msgid "With Image"
+msgstr "イメージで"
+
+msgid "Select Image"
+msgstr "イメージの選択"
+
+msgid "Your browser doesn't have Flash, Silverlight or HTML5 support."
+msgstr "あなたのブラウザがフラッシュやシルバーライトまたはHTML5をサポートしていなくて画像の登録を行うことができません。"
+
+msgid "Default Font"
+msgstr "基本字体"
+
+msgid "Press the Save button to save."
+msgstr "保存ボタンを押す保存されます。"
+
+msgid "Top boxes background"
+msgstr "トップボックスの背景"
+
+msgid "Transparent"
+msgstr "透明処理"
+
+msgid "Makes the background transparent."
+msgstr "背景を透明にします。"
+
+msgid "Top boxes margin"
+msgstr "トップボックスの余白"
+
+msgid "Outer margin"
+msgstr "外部余白"
+
+msgid "Inner margin"
+msgstr "内部余白"
+
+msgid "Top margin"
+msgstr "上部余白"
+
+msgid "Height"
+msgstr "高さ"
+
+msgid "Background"
+msgstr "背景"
+
+msgid "Font"
+msgstr "文字"
+
+msgid "Topmenu"
+msgstr "トップ"
+
+msgid "Border Line"
+msgstr "枠線"
+
+msgid "To Left"
+msgstr "左で"
+
+msgid "To Center"
+msgstr "中央で"
+
+msgid "To Right"
+msgstr "右で"
+
+msgid "Left Menu"
+msgstr "縦メニュー"
+
+msgid "Left Menu Border"
+msgstr "縦メニュー枠"
+
+msgid "Part of Title"
+msgstr "タイトルの部分"
+
+msgid "Use"
+msgstr "使用"
+
+msgid "Not Use"
+msgstr "未使用"
+
+msgid "Part of Navigator"
+msgstr "ナビゲータ"
+
+msgid "Font Size"
+msgstr "文字サイズ"
+
+msgid "Font Color"
+msgstr "文字色"
+
+msgid "Border Color"
+msgstr "테두리색"
+
+msgid "Border Height"
+msgstr "테두리두께"
+
+msgid "Border Radius"
+msgstr "라운드처리"
+
+msgid "Background Color"
+msgstr "背景色"
+
+msgid "Part of Body"
+msgstr "本文部分"
+
+msgid "Link Color"
+msgstr "リンク色"
+
+msgid "Inner Box"
+msgstr "中のボクース"
+
+msgid "Default Background Color"
+msgstr "基本的な背景色"
+
+msgid "Margin"
+msgstr "余白"
+
+msgid "Inside the Body Box"
+msgstr "本文ボックスに"
+
+msgid "Under the Body Box"
+msgstr "本文ボックス下に"
+
+msgid "Not Display"
+msgstr "表示しない"
+
+msgid "Location"
+msgstr "位置"
+
+msgid "Mainpage Setup"
+msgstr "メインページの設定"
+
+msgid "You can modify Fanclub Mainpage at here.<br/>You can to change to main page all parts."
+msgstr "サイトのメインページを変更することができます。<br/>メインページのすべての部分を変更することができます。"
+
+msgid "Both"
+msgstr "複合"
+
+msgid "1 Line"
+msgstr "1行表記"
+
+msgid "2 Lines"
+msgstr "2行表記"
+
+msgid "All Board"
+msgstr "すべてのボード"
+
+msgid "All Photo"
+msgstr "すべての写真"
+
+msgid "Random"
+msgstr "ランダム"
+
+msgid "Are you sure you want to accept the Terms and Conditions?"
+msgstr "利用規約に同意しますか？"
+
+msgid "You did already joined with Facebook."
+msgstr "既にFacebookで登録しました。"
+
+msgid "If you click withdraw button at the bottom of the withdraw is complete."
+msgstr "下の退会ボタンをクリックすると、退会が完了します。"
+
+msgid "This ID is not yet signed up.\\nPlease complete the SNS ID register on the next page."
+msgstr "まだ登録されていないIDです。\\n次のページでSNS ID登録を完了してください。"
+
+msgid "Click on the SNS services in use, you can simply sign up through authentication."
+msgstr "お使いのSNSサービスをクリックすると、認証を使用して簡単に登録することができます。"
+
+msgid "ID/PW Finder"
+msgstr "ID/PW 確認"
+
+msgid "Logouting All Services..."
+msgstr "全てのサービスでログアウト中です。。。"
+
+msgid "Find ID / Password"
+msgstr "ID 確認　/ パスワード 再設定"
+
+msgid "If you have forgotten your ID or Password, you can simply confirm by e-mail."
+msgstr "IDとか、パスワードを忘れてしまった場合、簡単に電子メールで確認することができます。"
+
+msgid "Please enter a E-mail"
+msgstr "メールを入力してください。"
+
+msgid "Your ID and Password will be sent to sign up to the email you have entered. Please enter your e-mail address that can be received on a PC or a smartphone or tablet."
+msgstr "入力したメールに登録したID,パスワードをお送りします。 PCやスマートフォンやタブレットで受信可能なメールアドレスを入力してください。"
+
+msgid "Hello. This is find E-mail & Password service of iFanclub.jp"
+msgstr "こんにちは.　これはiFanclub.jpのアカウントの確認、パスワードの再設定です。"
+
+msgid "Information the registered ID and password."
+msgstr "登録したIDとパスワードをお知らせします。"
+
+msgid "The e-mail address below the login ID."
+msgstr "下記のメールアドレスがログインIDです。"
+
+msgid "Log in using the temporary password below, and Please change your password immediately."
+msgstr "下の一時的なパスワードを使ってログインし、パスワードをすぐに変更してください。"
+
+msgid "If you do not log in even if a temporary password, the old password is retained."
+msgstr "仮パスワードを発行し受けてもログインしていない場合は、従来のパスワードがそのまま維持されます。"
+
+msgid "We sent the login ID and temporary password to with your e-mail in Sign up. <br/> Please try to log in again via the mail."
+msgstr "ログインIDと仮パスワードを登録したEメールでで送信しました。<br/>対応メールを介してログインを再試行してください。"
+
+msgid "Please change password now."
+msgstr "今、パスワードを変更してください。"
+
+msgid "Now is the password for with your login ID is temporary password."
+msgstr "今ログインしたIDのパスワードは、仮パスワードです。"
+
+msgid "This was applied just once, If you do not change your password, the old password is retained."
+msgstr "たった1回だけ適用がされており、パスワードを変更しないなら、既存のパスワードがそのまま維持されます。"
+
+msgid "Close the alarm, please change your password immediately."
+msgstr "このアラームを閉じ、すぐにパスワードを変更してください。"
+
+msgid "Sign in with Twitter"
+msgstr "ツイッターで登録する"
+
+msgid "Sign in with Facebook"
+msgstr "Facebookで登録する"
+
+msgid "Sign in with Instagram"
+msgstr "インスタグラムで登録する"
+
+msgid "Sign in with Google"
+msgstr "グーグルIDで登録する"
+
+msgid "Login with Twitter"
+msgstr "ツイッターでログインする"
+
+msgid "Login with Facebook"
+msgstr "Facebookでログインする"
+
+msgid "Login with Instagram"
+msgstr "インスタグラムでログインする"
+
+msgid "Login with Google"
+msgstr "グーグルIDでログインする"
+
+msgid "Get Default Layout"
+msgstr "デフォルトのレイアウトをインポート"
+
+msgid "My Layout"
+msgstr "私のレイアウト"
+
+msgid "Change Name"
+msgstr "名前の変更"
+
+
+
+
+msgid "Select Split"
+msgstr "分割を選択"
+
+msgid "Please drag the items, put it in the preview on the left."
+msgstr "アイテムをドラッグして左のプレビューに入れてください。"
+
+msgid "Please drag here."
+msgstr "ここにドラッグしてください。"
+
+msgid "Rolling Banner"
+msgstr "ローリングバナー"
+
+msgid "Input HTML box"
+msgstr "HTML入力ボックス"
+
+msgid "List of Board"
+msgstr "ポストリスト"
+
+msgid "List of Photo"
+msgstr "写真リスト"
+
+msgid "Schejuler"
+msgstr "スケジュールボード"
+
+msgid "If you double-click on the insert box, you can modify items in the editor below."
+msgstr "登録したアイテムをダブルクリックすると、下のエディタで変更することができます。"
+
+msgid "Edit Notice box"
+msgstr "お知らせボックスの変更"
+
+msgid "Number to display"
+msgstr "表示する本数"
+
+msgid "Lines"
+msgstr "行"
+
+msgid "Modify the Post list box"
+msgstr "ポストリストボックスの変更"
+
+msgid "Select a board to display"
+msgstr "表示するフォーラムを選択"
+
+msgid "Modify the Photo list box"
+msgstr "アルバム写真リスト"
+
+msgid "Select to display photo album"
+msgstr "表示するアルバムを選択"
+
+msgid "Modify the schedule box"
+msgstr "スケジュールボックスの変更"
+
+msgid "Select to display the scheduler"
+msgstr "表示するスケジューラを選択"
+
+msgid "Modify the HTML box"
+msgstr "HTML入力ボックスの変更"
+
+msgid "Insert HTML"
+msgstr "HTML入力"
+
+msgid "Modify the Rolling Banner"
+msgstr "ローリングバナーの変更"
+
+msgid "Link"
+msgstr "リンク"
+
+msgid "Order"
+msgstr "順番"
+
+msgid "Image"
+msgstr "イメージ"
+
+msgid "Move to current window"
+msgstr "現在のウィンドウに移動"
+
+msgid "Move to a new window"
+msgstr "新しいウィンドウで移動"
+
+msgid "Insert Image"
+msgstr "画像登録"
+
+msgid "Enter Image URL"
+msgstr "画像のURLを入力"
+
+msgid "Direct Upload"
+msgstr "直接アップロード"
+
+msgid "Upload Image"
+msgstr "画像をアップロード"
+
+msgid "Registration URL"
+msgstr "URL登録"
+
+msgid "Change the layout name"
+msgstr "レイアウトの名前を変更してください"
+
+msgid "Do you really delete this layout?"
+msgstr "本当にこのレイアウトを削除しますか？"
+
+msgid "Would you like to add your selected layout for my layout?"
+msgstr "選択したレイアウトを私のレイアウトに追加しますか？"
+
+msgid "Choose your layout has been added to my layout.\\n\\nLoad the new page layout to apply."
+msgstr "選択したレイアウトが私のレイアウトに追加しました。\\ n\\ nレイアウトを適用するために、新たにページをロードします。"
+
+msgid "Are you sure you want to change the layout you choose?"
+msgstr "選択したレイアウトに変更しますか？"
+
+msgid "It has been changed to the chosen layout.\\n\\nLoad the new page layout to apply."
+msgstr "選択したレイアウトに変更しました。\\ n\\ nレイアウトを適用するために、新たにページをロードします。"
+
+msgid "Are you sure you want to remove from the main page?"
+msgstr "本当にメインページから削除しますか？"
+
+msgid "The message list of Fanclub group.<br/>You can send a group message via the button at the bottom."
+msgstr "サイト団体メッセージのリストです。<br/>下部のボタンで全体のメッセージを送信することができます。"
+
+msgid "Not sent the message."
+msgstr "送信メッセージはありません。"
+
+msgid "Send message"
+msgstr "メッセージを送信"
+
+msgid "Send message to fanclub member"
+msgstr "サイトメンバーにメッセージを送信"
+
+msgid "All fanclub member"
+msgstr "サイトの全体のメンーバ"
+
+msgid "Please Enter the messages."
+msgstr "メッセージを入力してください。"
+
+msgid "Fan Club Portal services!<br/>The beta testing now!"
+msgstr "愛サイト！<br/>オープンベータ開始！"
+
+msgid "Developer Button"
+msgstr "デベロッパー用ボタン"
+
+
+
+
+msgid "Wherever possible fan club activities!"
+msgstr "どこでも可能な<br/>サイトの活動！"
+
+msgid "Fan Club activity in real-time to enjoy with PC and Mobile!<br/>Even more efficient fan club life by Fanclub APP"
+msgstr "PCとケータイでリアルタイムで楽しむサイト活動！<br/>サイトのアプリでより一層効果的なサイトの生活！"
+
+msgid "Realistic fan club activities and operations"
+msgstr "リアルな<br/>サイト活動や<br/>運営"
+
+msgid "Set permissions control from the level of fanclub members, send a message to fan club members in app!<br/>Check the real-time article and photos straight right from the app!"
+msgstr "サイトメンバーのレベル設定から権限の調整、<br/>サイトメンバーにアプリにメッセージを送信！ <br/>リアルタイムで文章と写真をその場ですぐアプリでチェック！"
+
+msgid "Group Chat are the default!<br/>Perfect to one-to-one chat!"
+msgstr "団体チャットは基本！<br/>一対一のチャットまで<br/>完璧！"
+
+msgid "Support for fan app dedicated to including one-on-one chats, group chats with members of the fan club<br/>Ofcorse, Chat is available as in your computer."
+msgstr "サイトのメンバーとのグループチャットを含む<br/>1対1のチャットまでサポートしている<br/>サイト専用アプリ もちろん、<br/>コンピュータでもチャットが可能です。"
+
+msgid "SNS accounts perfect support!"
+msgstr "SNSアカウントの<br/>完全なサポート！"
+
+msgid "If you do not have to enter information only recognized Log in with SNS ID available!<br/>From typical fan activities to all parts of the fan opening available!"
+msgstr "認め情報を入力しなくてもSNS IDでログインするだけで利用可能！ <br/>一般的なサイトの活動から<br/>サイト開設のすべての部分まで利用可能！"
+
+msgid "Operating free!<br/>Use free, too!"
+msgstr "運営も無料！<br/>利用も無料！"
+
+msgid "Typical basic features of the fan club services excluding special feature is 100% Free!<br/>Remove the banner from the fan, or use special features that only paid!"
+msgstr "特別な機能を除いたサイトのサービスの<br/>一般的な基本的な機能は、100％無料！ <br/>サイトからバナーの削除、<br/>または、特殊な機能を利用する場合にのみ、有料！"
+
+msgid "Available design into desired shapes!"
+msgstr "好みの形に<br/>デザイン可能！"
+
+msgid "From Fonts Family, to the fan club font size, font color!<br/>All parts can also customize every detail of the fan directly beginners!"
+msgstr "サイトの字体から文字サイズ、文字色まで！ <br/>サイトの細かいすべての部分を、<br/>初心者でも直接カスタマイズすることができる！"
+
+msgid "I want to write more.<br/>but, too many."
+msgstr "書ききれないほど多いです"
+
+msgid "You see you will know to use.<br/>The login box appears below. Get started right away!<br/>The Open Beta testing now!!"
+msgstr "使って見れば分かると思います。 <br/>下記のログインボックスが表示されます。<br/>すぐに始めましょう！ 現在オープンβテスト中です！"
+
+msgid "Because the entire chat can be viewed by everyone."
+msgstr "全体チャットなので、すべての人が見ることができます。"
+
+msgid "iFanclub inform the operator it does not have the absolute password."
+msgstr "iFanclubオペレータは絶対パスワードを知らせてくれていません。"
+
+msgid "Purple"
+msgstr "パープル"
+
+msgid "Green"
+msgstr "グリーン"
+
+msgid "White"
+msgstr "ホワイト"
+
+msgid "Red"
+msgstr "レッド"
+
+msgid "Blue"
+msgstr "ブルー"
+
+msgid "Pink"
+msgstr "ピンク"
+
+msgid "Black"
+msgstr "ブラック"
+
+msgid "Select Layout"
+msgstr "レイアウト選択"
+
+msgid "All the data registered on this site being legally protected."
+msgstr "このサイトに登録されたすべてのデータは、法的に保護されています。"
+
+msgid "Please enter a message more than 1 character."
+msgstr "メッセージを１文字以上入力してください。"
+
+msgid "Sent message can not cancel.\\n\\nDo send this?"
+msgstr "全体メッセージは、一度送信キャンセルすることはできません。\\n\\nそれでも送信しますか？"
+
+msgid "It has been Sent."
+msgstr "メッセージが送信しました。"
+
+msgid "Received Fanclub Message"
+msgstr "サイトの全体メッセージ"
+
+msgid "Status"
+msgstr "ステータス"
+
+msgid "Opened"
+msgstr "見ました。"
+
+msgid "Use Mobile Push"
+msgstr "アプリのアラーム仕様"
+
+msgid "Your choice of alarm devices are turned on."
+msgstr "選択した機器のアラームがオンになっています。"
+
+msgid "Your choice of alarm devices are turned off."
+msgstr "選択した機器のアラームがオフになりました。"
+
+msgid "Registered"
+msgstr "登録日"
+
+msgid "Default Domain"
+msgstr "デフォルトのドメイン"
+
+msgid "Owned Domain"
+msgstr "所有しているドメイン"
+
+msgid "The built-in iFanclub of domain.<br/>Even using a personal domain available."
+msgstr "iFanclubに組み込まれているドメインです。<br/>パーソナルドメインを利用していても利用が可能です。"
+
+msgid "Please enter the domain here and use when you want to buy a domain directly."
+msgstr "直接に購入したドメインを使用したい時、ここにドメインを入力してください。"
+
+msgid "Please see with click here for more information."
+msgstr "詳細については、こちらをクリックしてご覧ください。"
+
+msgid "In the DNS assigned to the domain IP"
+msgstr "DNSでそのドメインに割り当てるIP"
+
+msgid "option"
+msgstr "オプション"
+
+msgid "Search your fan club has not yet been created."
+msgstr "検索したサイトがまだ作成されていません。"
+
+msgid "Create the first fanclub of %s"
+msgstr "%sのサイトを一番最初に作成してください！"
+
+msgid "iFanclub can make anyone a fan club for free!"
+msgstr "iFanclubは誰でも無料でサイトを作ることができます！"
+
+msgid "Start create the %s's fanclub!"
+msgstr "%sのサイトを作る開始！"
+
+
+msgid "Replies"
+msgstr "コメント"
+
+msgid "There is no written reply."
+msgstr "登録されたコメントはありません。"
+
+msgid "Add Reply"
+msgstr "コメント登録"
+
+msgid "Reply Insert"
+msgstr "コメント保存"
+
+msgid "Are you sure you want to delete this reply?"
+msgstr "本当にこのコメントを削除しますか？"
+
+msgid "Please click the Delete button below To be deleted."
+msgstr "削除するには、下記の[削除]ボタンをクリックしてください。"
+
+msgid "Please Login first"
+msgstr "まずログインしてください"
+
+msgid "You didn't woute this comment"
+msgstr "コメントを削除することができません。"
+
+msgid "Comments are other connections."
+msgstr "接続されたコメントがあります。"
+
+msgid "Please Insert Comment"
+msgstr "コメントを入力してください。"
+
+msgid "Inserting..."
+msgstr "登録中..."
+
+msgid "This is Fanclub Mainpage.<br></li>Please setup from Settings > Design Settings > Mainpage Setup."
+msgstr "ここはサイトのメインページです。<br></li>設定 > デザイン設定 > メインページ設定でこのページを変更してください。"
+
+msgid "All Boards"
+msgstr "全てのボード"
+
+
+
+
+#########################
+###　PAGE DESCRIPTION ###
+########################
+
+msgid "iFanclub Main"
+msgstr "愛サイトメインページ"
+
+msgid "A professional fan club operations support systems. Anyone can operate it opened a fan club for free. You can make everything from the design to the desired domain. Try creating a fan or a fan page activity attracting members."
+msgstr "専門サイト運営支援システムです。誰でも無料でサイトを開設して運営することができます。デザインからドメインまですべて必要に応じて作ることができます。サイトやファンページを作ってメンバーを集めて活動しましょう。"
+
+msgid "ifanclub,fanclub,fanpage,free fanclub,operate fanclub,iFanclub"
+msgstr "愛サイト,fanclub,サイト,ファンページ,無料のサイト,サイト運営,ifanclub,iFanclub"
+
+msgid "The login page of the iFanclub. Please log in here."
+msgstr "愛サイトのログインページです。ログインはこちらから。"
+
+msgid "ifanclub,Login,Login page,Internet Fanclub"
+msgstr "iFanclub,愛サイト,ログイン,ログインページ,インターネットサイトログイン"
+
+msgid "ifanclub,Create fanclub,Fanclub Create"
+msgstr "愛サイト,サイトを作る,サイトの作成,サイト追加"
+
+msgid "Try searching you want to join the fan club. The name of the fan club, fan club operators, which targets artists, Try to search with simple words."
+msgstr "登録したいサイトを検索しましょう。サイトの名前,サイト運営者,対象となるアーティストなど,簡単な単語で検索を試みてみてください。"
+
+msgid "ifanclub,Search Fanclub,Search Artist,Search Fanclub operator,Search"
+msgstr "ifanclub,愛サイト,サイト検索,アーティスト検索,サイト運営者検索,検索"
+
+msgid "Fanclub News"
+msgstr "サイトのニュース"
+
+msgid "You can see at a glance the announcement of the fan club, which is active in ifanclub. Try to see what are the fan club fan club activities."
+msgstr "愛サイトで活動しているサイトのお知らせを一目で見ることができます。 いくつかのサイトがあることを見て,サイトの活動をみてください。"
+
+msgid "ifanclub,Fanclub News,News,News in fanclub"
+msgstr "ifanclub,サイトニュース,愛サイト,ニュース,ニュースのサイト"
+
+msgid "The %s fan club. Check the main page and various news from the fan, try a direct fan club activities."
+msgstr "%sのサイトです。サイトのメインページで、様々なニュースを確認して、直接サイトの活動をみてください。"
+
+msgid ",fanclub,fanpage,free fanclub,operate fanclub,iFanclub"
+msgstr ",サイト,fanclub,ifanclub,ファンページ,fanpage,無料サイト,サイト運営,iFanclub"
+
+msgid "This is %s Board. Please enjoy in the Forum!"
+msgstr "%sという名前の掲示板です。掲示板で活動しながら友達を作ってみてください！"
+
+msgid "Please post a comment to read post!"
+msgstr "ポストを読んでコメントをつけてください！"
+
+msgid "This is %s Board. Please enter good contents."
+msgstr "%sという名前の掲示板です。よい内容を作成してください！"
+
+msgid "This is %s schejuler. Click on the word you want to see, you can view the schejule."
+msgstr "%sスケジューラです。タイトルをクリック（タップ）する詳細スケジュールを見ることができます。"
+
+msgid "This is %s chat room. Please click on the chat room and chat with the members."
+msgstr "%sチャットルームです。チャットルームをクリック（タップ）してメンバーとチャットをしてください。"
+
+msgid "Please create a fan club chat rooms. If you enter an item to go to the chat room."
+msgstr "サイトチャットルームを作ってください。項目を入力すると、チャットルームに移動します。"
+
+msgid "The chat rooms. Please enjoy chat with other members."
+msgstr "チャットルームです。他のメンバーたちと楽しいチャットしよう。"
+
+msgid "Search result : `%s`"
+msgstr "`%s`の検索結果です。"
+
+msgid "Search results will vary depending on the words you entered. Try entering long words as possible, or detailed inputs."
+msgstr "入力した単語に基づいて検索した結果が異なります。単語を最大限に長く入力するか、詳細を入力してください。"
+
+msgid "Until now, this fan club I can see all of the writings."
+msgstr "今まで、このサイトに私が書いた文章をすべて見ることができます。"
+
+msgid "You can view the list of members joined the fan club."
+msgstr "サイトに加入したメンバーリストを見ることができます。"
+
+msgid "Please download the fanclub dedicating app."
+msgstr "サイト専用アプリをダウンロードしてください。"
+
+msgid "Fanclub Setting pages."
+msgstr "サイトの設定ページです。"
+
+msgid "Register SNS Login"
+msgstr "SNSログイン申し込み"
+
+msgid "When using the built-in fan that is not a domain, you own the domain, 'SNS login' is not.<br/>Since the private domain must be added to each SNS site, I will apply for a separate application from the kids fan club.<br/>However, in order to prevent the indiscriminate application, the application buttons on the bottom there will only fan club members number more than 100 people.<br/>Sign the then 'SNS login' request, we will add to this 'SNS Login' to that domain."
+msgstr "組み込まれているドメインではなく、所有しているドメインにサイトを利用する場合、「SNSのログイン」がされていません。<br/>個人ドメインは、各SNSサイトに追加申請をする必要がありますので、子供のサイトでは、個々の申請をいたします。<br/>ただし、無分別な適用を防ぐために、サイトメンバー数が100人以上の場合にのみ、下に申し込みボタンが生じます。<br/>その後、「SNSのログイン」の申請をすれば、そのドメインに「SNSのログイン」になるように追加いたします。"
+
+msgid "Not executed"
+msgstr "処理されていない。"
+
+msgid "Executed"
+msgstr "処理済み。"
+
+msgid "It has been Request."
+msgstr "申請されました。"
+
+msgid "Join the fan club members who have not yet been 100 people."
+msgstr "サイトに加入したメンバーがまだ100人いません。"
+
+msgid "The total number of fan club members"
+msgstr "全サイトメンバー数"
+
+msgid "You have already applied.\\nWe will give the information sent by email as soon as the registration is in progress."
+msgstr "既に申請されました。\\n登録が進行次第、メールで内容を転送差し上げる予定です。"
+
+msgid "Executing"
+msgstr "処理中"
+
+msgid "Basic information have been stored, the individual domains is already in use is entered from another fanclub.\\nAfter checking, please re-used."
+msgstr "基本情報が格納されたが、個人のドメインがすでに他のサイトで入力されてい使われています。\\n確認後、再度ご利用ください。"
+
+msgid "Normal"
+msgstr "ノーマル"
+
+msgid "Bold"
+msgstr "太字"
+
+msgid "Left Margin"
+msgstr "左マージン"
+
+msgid "Right Margin"
+msgstr "右マージン"
+
+msgid "Sort"
+msgstr "ソート"
+
+msgid "Internet Explorer 8 and FireFox do not fully support image uploads.\\nPlease use a different browser."
+msgstr "Internet Explorer 8とFirefoxは画像のアップロードを完全にサポートしていません。\\n他のブラウザを利用してください。"
+
+msgid "Only Self"
+msgstr "自分のみ"
+
+msgid "Please enter a date."
+msgstr "日付を入力してください。"
+
+msgid "Device"
+msgstr "デバイス"
+
+msgid "Please enter OS."
+msgstr "OSを入力してください。"
+
+msgid "App Version"
+msgstr "アプリバージョン"
+
+msgid "Please select a Device."
+msgstr "デバイスを選択してください。"
+
+msgid "Please enter a app version."
+msgstr "デバイスを選択してください。"
+
+msgid "Please select a question type."
+msgstr "問い合わせ区分を選択してください。"
+

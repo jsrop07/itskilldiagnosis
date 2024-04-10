@@ -1,0 +1,74 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Roboto:wght@400;700&display=swap');
+
+*{
+    font-family: "Roboto", "Noto Sans JP", sans-serif !important;
+}
+:root {
+	--gradient: linear-gradient(111deg, #87D782 0%, #22BC8E 100%);
+	--background: #F0F8F1;
+	--line: #CED4DA;
+	--emegra-green: #27A374;
+	--font: #6C757D;
+}
+
+body {
+	min-height: 100vh;
+    
+	background: var(--background);
+}
+header {
+    z-index: 10;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #CED4DA;
+    background: linear-gradient(111deg, #87D782 0%, #22BC8E 100%);
+    position: fixed; /* 요소를 고정시킴 */
+    top: 0; /* 화면의 상단에 고정 */
+    width: 100%; /* 화면 전체 너비를 차지하도록 함 */
+    color:white;
+}
+.left-column, .middle-column, .right-column {
+    display: flex;
+    width:15%; 
+    padding: 10px; 
+    justify-content: center;
+    /* align-items: center; */
+}
+.middle-column {
+    width: 50%; 
+    font-size: 30px;
+    /* justify-content: left; */
+}
+
+footer{
+    width: 100%;
+    margin-bottom: 32px;
+    position: fixed;
+    bottom: 0;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 400;
+    color: white;
+}
+
+main{
+    margin-top:50px;
+    padding:40px 300px;
+}
+.diagnosis {
+    min-height: 100vh;
+}
+.diagnosis_head{
+    text-align:center;
+    padding:20px;
+}
+.diagnosis_main{
+    padding:0px 100px;
+    /* margin-left:100px; */
+}
+span {
+    padding-top:20px;
+    text-align: right;
+}

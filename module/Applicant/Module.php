@@ -8,12 +8,12 @@
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
-namespace Test;
+namespace Applicant;
 
-use Test\Model\AdminInfoTable;
-use Test\Model\QuestionTypeTable;
-use Test\Model\QuestionPoolTable;
-use Test\Model\ExamTable;
+use Applicant\Model\AdminInfoTable;
+use Applicant\Model\QuestionTypeTable;
+use Applicant\Model\QuestionPoolTable;
+use Applicant\Model\ExamTable;
 use Zend\Mvc\ModuleRouteListener;
 use Zend\Mvc\MvcEvent;
 use Zend\Session\Container;

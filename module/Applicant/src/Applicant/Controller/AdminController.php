@@ -1,6 +1,6 @@
 <?php
 
-namespace Test\Controller;
+namespace Applicant\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\Mvc\Controller\Plugin\Redirect;
@@ -8,7 +8,7 @@ use Zend\View\Model\ViewModel;
 use Zend\View\Model\JsonModel;
 use Zend\Session\Container;
 
-use Test\Model\MailSender;
+use Applicant\Model\MailSender;
 
 class AdminController extends AbstractActionController
 {

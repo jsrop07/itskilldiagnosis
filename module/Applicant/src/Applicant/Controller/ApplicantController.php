@@ -1,6 +1,6 @@
 <?php
 
-namespace Test\Controller;
+namespace Applicant\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\Mvc\Controller\Plugin\Redirect;
@@ -8,8 +8,13 @@ use Zend\View\Model\ViewModel;
 use Zend\View\Model\JsonModel;
 use Zend\Session\Container;
 
-class UserController extends AbstractActionController
+class ApplicantController extends AbstractActionController
 {
+  public function applicantAction()
+  {
+	$this->layout("layout/user/applicant");
+  }
+
   public function mainAction()
   {
 		/* 機能の変更

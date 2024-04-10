@@ -10,24 +10,13 @@
 return array(
     'router' => array(
         'routes' => array(
-            'admin' => array(
+            "applicant" => array(
                 'type' => 'Zend\Mvc\Router\Http\Segment',
                 'options' => array(
-                    'route'    => "/admin[/:action][/:cat][/:status][/:index]",
+                    'route'    => "/applicant[/:action][/:url]",
                     'constraints' => array(),
                     'defaults' => array(
-                        "controller" => "Admin",
-                        'action'     => 'index',
-                    ),
-                ),
-            ),
-            "user" => array(
-                'type' => 'Zend\Mvc\Router\Http\Segment',
-                'options' => array(
-                    'route'    => "/user[/:action][/:url]",
-                    'constraints' => array(),
-                    'defaults' => array(
-                        "controller" => "User",
+                        "controller" => "Applicant",
                         'action'     => 'index',
                     ),
                 ),
@@ -55,8 +44,8 @@ return array(
     ),
     'controllers' => array(
         'invokables' => array(
-            "Admin" => "Test\Controller\AdminController",
-            "User" => "Test\Controller\UserController",
+            // "Admin" => "Applicant\Controller\AdminController",
+            "Applicant" => "Applicant\Controller\ApplicantController",
         ),
     ),
     'view_manager' => array(

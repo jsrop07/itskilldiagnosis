@@ -8,32 +8,54 @@
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 return array(
-    'router' => array(
-        'routes' => array(
-            'admin' => array(
-                'type' => 'Zend\Mvc\Router\Http\Segment',
-                'options' => array(
-                    'route'    => "/admin[/:action][/:cat][/:status][/:index]",
-                    'constraints' => array(),
-                    'defaults' => array(
-                        "controller" => "Admin",
-                        'action'     => 'index',
-                    ),
-                ),
-            ),
-            "user" => array(
-                'type' => 'Zend\Mvc\Router\Http\Segment',
-                'options' => array(
-                    'route'    => "/user[/:action][/:url]",
-                    'constraints' => array(),
-                    'defaults' => array(
-                        "controller" => "User",
-                        'action'     => 'index',
-                    ),
-                ),
-            ),
-        ),
-    ),
+	"router" => array(
+		"routes" => array(
+			"main" => array(
+				"type" => "Zend\Mvc\Router\Http\Segment",
+				"options" => array(
+					"route" => "/admin",
+					"constraints" => array(),
+					"defaults" => array(
+						"controller"	=> "Account",
+						"action"			=> "index",
+					),
+				),
+			),
+			"login" => array(
+				"type" => "Zend\Mvc\Router\Http\Segment",
+				"options" => array(
+					"route" => "/admin/login",
+					"constraints" => array(),
+					"defaults" => array(
+						"controller"	=> "Account",
+						"action"			=> "main",
+					),
+				),
+			),
+			"account" => array(
+				"type" => "Zend\Mvc\Router\Http\Segment",
+				"options" => array(
+					"route" => "/admin/account[/:action]",
+					"constraints" => array(),
+					"defaults" => array(
+						"controller"	=> "Account",
+						"action"			=> "index",
+					),
+				),
+			),
+			"question" => array(
+				"type" => "Zend\Mvc\Router\Http\Segment",
+				"options" => array(
+					"route" => "/admin/question[/:action][/:index]",
+					"constraints" => array(),
+					"defaults" => array(
+						"controller"	=> "Question",
+						"action"			=> "index",
+					),
+				),
+			),
+		),
+	),
     'service_manager' => array(
         'abstract_factories' => array(
             'Zend\Cache\Service\StorageCacheAbstractServiceFactory',
@@ -53,12 +75,12 @@ return array(
             ),
         ),
     ),
-    'controllers' => array(
-        'invokables' => array(
-            "Admin" => "Test\Controller\AdminController",
-            "User" => "Test\Controller\UserController",
-        ),
-    ),
+	"controllers" => array(
+		"invokables" => array(
+			"Account"	=> "Admin\Controller\AccountController",
+			"Question"		=> "Admin\Controller\QuestionController",
+		),
+	),
     'view_manager' => array(
         'display_not_found_reason' => true,
         'display_exceptions'       => true,
@@ -66,6 +88,8 @@ return array(
         'not_found_template'       => 'error/404',
         'exception_template'       => 'error/index',
         'template_map' => array(
+					"layout/list"						=> __DIR__ . "/../view/layout/layout_list.phtml",
+
 					"admin"									=> __DIR__ . "/../view/layout/admin_layout.phtml",
 					"layout/user"						=> __DIR__ . "/../view/layout/user/layout.phtml",
 					"layout/user/login"			=> __DIR__ . "/../view/layout/user/login.phtml",

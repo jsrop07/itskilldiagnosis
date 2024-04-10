@@ -12,6 +12,8 @@ use Admin\Model\MailSender;
 
 class AdminController extends AbstractActionController
 {
+	public function indexAction() { print_r("index"); exit; }
+	
   public function loginAction()
   {
     $this->layout("layout/none");

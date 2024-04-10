@@ -28,10 +28,9 @@ p { margin: 0; }
 body {
 	display: grid;
 	grid-template-columns: 250px 1fr;
-	grid-template-rows: 70px 60px 1fr;
+	grid-template-rows: 70px 1fr;
 	grid-template-areas: 
 	"header header"
-	"navbar navbar"
 	"sidebar main";
 	background: var(--background);
 }
@@ -44,6 +43,13 @@ header {
 	background: var(--title-gradient);
 }
 
+header > .title {
+	margin: 0;
+	display: flex;
+	align-items: center;
+	color: white;
+}
+
 .logo {
 	height: 100%;
 	display: flex;
@@ -52,13 +58,14 @@ header {
 .logo-title {
 	margin-left: 24px;
 
-	font-size: 14px;
+	font-size: 20px;
 	font-weight: 500;
 	color: white;
 }
 
 .status {
 	height: 100%;
+	margin-top: 1px;
 	display: flex;
 	align-items: center;
 
@@ -74,42 +81,10 @@ header {
 
 
 
-nav {
-	grid-area: navbar;
-
-	border-bottom: 1px solid var(--line);
-	display: grid;
-	grid-template-columns: repeat(2, 1fr);
-	background: white;
-}
-
-button.btn-main {
-	height: 100%;
-	width: calc(100% - 16px);
-	margin: 0 8px;
-	padding: 3px 0;
-	background: transparent;
-
-	font-size: 14px;
-	font-weight: 700;
-	color: var(--font);
-
-	cursor: pointer;
-}
-button.btn-main:hover { color: black; }
-button.btn-main.active {
-	padding-bottom: 0;
-	border-bottom: 3px solid var(--emegra-blue);
-	
-	color: black;
-}
-
-
-
 aside {
 	grid-area: sidebar;
 
-	min-height: calc(100vh - 130px);
+	min-height: calc(100vh - 70px);
 	border-right: 1px solid var(--line);
 	display: flex;
 	flex-direction: column;

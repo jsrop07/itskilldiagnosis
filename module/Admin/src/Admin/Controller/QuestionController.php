@@ -12,6 +12,11 @@ class QuestionController extends AbstractActionController
 	public function listAction() {
 		$this->layout("layout/list");
 
+		$paginationData["totalPage"] = 10;
+		$paginationData["currentPage"] = 3;
+		$paginationData["url"] = "/admin/question/list/";
+		$datas["paginationData"] = $paginationData;
+
 		$datas["breadcrumbData"] = ["ITスキル診断問項管理"];
 
 		return $this->SetViewModel($datas, "/question/question_list.phtml");

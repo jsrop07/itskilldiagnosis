@@ -20,6 +20,7 @@ p { margin: 0; }
 	--background: #F2FAF9;
 	--line: #CED4DA;
 	--emegra-blue: #44B0DA;
+	--emegra-skyblue: #30C8D6;
 	--font: #6C757D;
 }
 
@@ -146,7 +147,6 @@ main {
 }
 
 
-
 button.btn-plus, button.btn-minus {
 	height: 38px;
 	width: 38px;
@@ -176,6 +176,15 @@ button.emegra:hover { background: var(--emegra-blue); }
 button.emegra.cancel { background: #C1C5C9; }
 button.emegra.cancel:hover { background: #A4A8AD; }
 
+button.emegra.search {
+	height: 50px;
+	width: 120px;
+	background: var(--emegra-skyblue);
+
+	font-size: 20px;
+	font-weight: 700;
+}
+button.emegra.search:hover { background: var(--emegra-blue); }
 
 
 ul.emegra.breadcrumb {
@@ -327,7 +336,7 @@ table.emegra tr {
 	column-gap: 8px;
 }
 table.emegra > tbody > tr { border-top: 1px solid var(--line); }
-table.emegra > tbody > tr:hover { background: var(--line) }
+table.emegra > tbody > tr > td:hover { background: var(--line) }
 table.emegra thead th {
 	padding-top: 16px;
 	padding-bottom: 8px;
@@ -344,4 +353,24 @@ table.emegra tbody td {
 	color: #343A40;
 
 	cursor: pointer;
+}
+
+
+
+.count {
+	width: 240px;
+	display: flex;
+	border-bottom: 1px solid black;
+	align-items: end;
+
+	font-size: 13px;
+}
+.count > .num {
+	width: 150px;
+	margin-right: 10px;
+	display: flex;
+	justify-content: end;
+
+	line-height: 40px;
+	font-size: 40px;
 }

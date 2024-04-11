@@ -11,32 +11,16 @@ class QuestionController extends AbstractActionController
 	
 	public function listAction() {
 		$this->layout("layout/list");
-		print_r("Question List");
-		$vm = new ViewModel();
-		return $vm;
+
+		$datas["breadcrumbData"] = ["ITスキル診断問項管理"];
+
+		return $this->SetViewModel($datas, "/question/question_list.phtml");
 	}
 
-	/** ログインを処理
-	 * @return string die("fail" or "success")
-	 */
-	public function loginAction() {
-		$post = $this->params()->fromPost();
-	
-		if (isset($post["id"])) {
-			$adminTb = $this->getServiceLocator()->get("AdminTable");
-
-			$result = $adminTb->readById($post["id"]);
-			// ログインを失敗した時
-			if (empty($result) || $result["password"] != $post["password"]) {
-				die("fail");
-			}
-			
-			// ユーザ情報をセッションに保存
-			$session = new Container("user");
-			foreach ($result as $key => $data) {
-				$session->offsetSet($key, $data);
-			}
-			die("success");
-		}
+	/** Make ViewModel with datas and template */
+	function SetViewModel($datas, $template) {
+		$vm = new ViewModel($datas);
+		$vm->setTemplate($template);
+		return $vm;
 	}
 }

@@ -77,8 +77,8 @@ return array(
     ),
 	"controllers" => array(
 		"invokables" => array(
-			"Account"	=> "Admin\Controller\AccountController",
-			"Question"		=> "Admin\Controller\QuestionController",
+			"Account"		=> "Admin\Controller\AccountController",
+			"Question"	=> "Admin\Controller\QuestionController",
 		),
 	),
     'view_manager' => array(
@@ -89,11 +89,11 @@ return array(
         'exception_template'       => 'error/index',
         'template_map' => array(
 					"layout/list"						=> __DIR__ . "/../view/layout/layout_list.phtml",
+					"breadcrumb"						=> __DIR__ . "/../view/layout/breadcrumb.phtml",
 
 					"admin"									=> __DIR__ . "/../view/layout/admin_layout.phtml",
 					"layout/user"						=> __DIR__ . "/../view/layout/user/layout.phtml",
 					"layout/user/login"			=> __DIR__ . "/../view/layout/user/login.phtml",
-					"breadcrumb"						=> __DIR__ . "/../view/layout/breadcrumb.phtml",
 					"pagination"						=> __DIR__ . "/../view/layout/pagination.phtml",
             'layout/layout'           => __DIR__ . '/../view/layout/layout.phtml',
             'layout/mylayout'           => __DIR__ . '/../view/layout/mylayout.phtml',

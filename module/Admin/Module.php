@@ -12,12 +12,12 @@ namespace Admin;
 
 use Admin\Model\AdminInfoTable;
 use Admin\Model\AdminTable;
+use Admin\Model\QuestionTable;
 use Admin\Model\QuestionTypeTable;
 use Admin\Model\QuestionPoolTable;
 use Admin\Model\ExamTable;
 use Zend\Mvc\ModuleRouteListener;
 use Zend\Mvc\MvcEvent;
-use Zend\Session\Container;
 
 //use Common\Model\CommonTable;
 
@@ -54,6 +54,11 @@ class Module
 				"AdminTable" => function ($sm) {
 					$dbAdapter = $sm->get("Zend\Db\Adapter\Adapter");
 					$table = new AdminTable($dbAdapter);
+					return $table;
+				},
+				"QuestionTable" => function ($sm) {
+					$dbAdapter = $sm->get("Zend\Db\Adapter\Adapter");
+					$table = new QuestionTable($dbAdapter);
 					return $table;
 				},
                 'CommonTable' =>  function ($sm) {

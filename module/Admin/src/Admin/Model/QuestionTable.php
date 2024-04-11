@@ -6,7 +6,6 @@ use Zend\Db\Adapter\Adapter;
 use Zend\Db\Sql\Sql;
 use Zend\Db\Sql\Where;
 use Zend\Db\Sql\Predicate\Expression;
-use Zend\Db\Sql\Predicate\PredicateSet;
 
 class QuestionTable {
 	public function __construct()
@@ -33,7 +32,7 @@ class QuestionTable {
 		$where->notEqualTo("date_regist", null)
 			->or->equalTo("admin_regist", $code);
 
-		$qry = $this->sql->select("question_pool")->where($where)
+		$qry = $this->sql->select("question")->where($where)
 			->order("date_regist DESC")->limit($num)->offset($index);
 		return $this->sql->prepareStatementForSqlObject($qry)->execute();
 	}

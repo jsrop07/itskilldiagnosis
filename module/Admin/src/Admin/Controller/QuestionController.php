@@ -12,6 +12,11 @@ class QuestionController extends AbstractActionController
 	public function listAction() {
 		$this->layout("layout/list");
 
+		$session = new Container("user");
+
+		$questionTable = $this->getServiceLocator()->get("QuestionTable");
+		$datas["questionData"] = iterator_to_array($questionTable->ReadByAdminCode_Num_Page($session->offsetGet("code"), 2, 1));
+		
 		$paginationData["totalPage"] = 10;
 		$paginationData["currentPage"] = 3;
 		$paginationData["url"] = "/admin/question/list/";

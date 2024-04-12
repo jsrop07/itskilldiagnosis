@@ -1,0 +1,95 @@
+<?php $numTexts = array("①", "②", "③", "④", "⑤"); ?>
+
+<?php echo $this->partial("breadcrumb", ["datas" => $breadcrumbData]); ?>
+
+<h1 class="title">問題詳細</h1>
+
+<div class="emegra card">
+	<div class="card-header">設定</div>
+
+	<div class="card-body">
+		<style type="text/css">
+			dl.emegra.setting { grid-template-columns: repeat(2, 90px 1fr); }
+		</style>
+		<dl class="emegra setting">
+			<dt>分類</dt>
+			<dd><?php echo $questionData["class_l"] . " / " . $questionData["class_s"]; ?></dd>
+		
+			<dt>レベル</dt>
+			<dd><?php echo $questionData["level"]; ?></dd>
+	
+			<dt>登録日</dt>
+			<dd><?php echo date("y.m.d", strtotime($questionData["date_create"])); ?></dd>
+
+			<dt>問題タイプ</dt>
+			<dd><?php echo $questionData["type"]; ?></dd>
+		
+			<dt>タイトル</dt>
+			<dd style="grid-column: 2 / 5;"><?php echo $questionData["title"]; ?></dd>
+		</dl>
+	</div>
+</div>
+
+<div class="emegra card" style="margin-top: 32px;">
+	<div class="card-header">問題</div>
+
+	<div class="card-body">
+		<style type="text/css">
+			dl.emegra.question { grid-template-columns: 90px 1fr; }
+		</style>
+		<dl class="emegra question">
+			<dt>問題</dt>
+			<dd><?php echo $questionData["question"]; ?></dd>
+
+			<dt>答え</dt>
+			<dd class="expand">
+				<?php foreach (explode(",", $questionData["answers"]) as $index => $answer): ?>
+					<?= $numTexts[$index]; ?>
+					<?php echo $answer; ?> </br>
+				<?php endforeach; ?>
+			</dd>
+
+			<dt>正解番号</dt>
+			<dd><?php echo $questionData["correct"]; ?></dd>
+
+			<dt>点数</dt>
+			<dd><?php echo $questionData["point"]; ?></dd>
+		</dl>
+	</div>
+</div>
+
+<div class="emegra card" style="margin-top: 32px;">
+	<div class="card-header">情報</div>
+
+	<div class="card-body">
+		<style type="text/css">
+			dl.emegra.info { grid-template-columns: repeat(2, 90px 1fr); }
+		</style>
+		<dl class="emegra info">
+			<dt>作成者</dt>
+			<dd><?php echo $questionData["admin_create"]; ?></dd>
+
+			<dt>作成日</dt>
+			<dd><?php echo date("y.m.d", strtotime($questionData["date_create"])); ?></dd>
+
+			<dt>承認者</dt>
+			<dd><?php echo $questionData["admin_regist"]; ?></dd>
+
+			<dt>承認日</dt>
+			<dd><?php echo isset($questionData["date_regist"]) ? date("y.m.d", strtotime($questionData["date_regist"])) : "未承認"; ?></dd>
+			
+			<dt>備考</dt>
+			<dd class="expand" style="grid-column: 2 / 5;">
+				メモとか </br>
+				上に書けない </br>
+				情報を </br>
+				書きます。 </br>
+				こおおおおおおおおおおおおおおおおんなふううううううううううううにですねええええええええ。
+			</dd>
+		</dl>
+	</div>
+</div>
+
+<div class="btn-place" style="margin-top: 32px;">
+	<button class="emegra cancel" onclick="history.back();">戻る</button>
+</div>

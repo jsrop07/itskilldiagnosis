@@ -51,4 +51,9 @@ class QuestionTable {
 		$qry = $this->sql->select("question")->where($where)->order("date_regist DESC");
 		return $this->sql->prepareStatementForSqlObject($qry)->execute();
 	}
+
+	public function ReadByIndex($index) {
+		$qry = $this->sql->select("question")->where(["idx" => $index]);
+		return $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
+	}
 }

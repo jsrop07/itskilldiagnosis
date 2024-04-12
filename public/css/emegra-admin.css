@@ -175,6 +175,8 @@ button.emegra {
 button.emegra:hover { background: var(--emegra-blue); }
 button.emegra.cancel { background: #C1C5C9; }
 button.emegra.cancel:hover { background: #A4A8AD; }
+button.emegra.delete { background: red; }
+button.emegra.delete:hover { background: red; }
 
 button.emegra.search {
 	height: 50px;
@@ -318,6 +320,9 @@ dl.emegra dt, dl.emegra dd {
 	font-weight: 700;
 }
 dl.emegra dd { font-weight: 400; }
+dl.emegra dd.expand {
+	height: auto;
+}
 dl.emegra input { height: 38px; }
 
 

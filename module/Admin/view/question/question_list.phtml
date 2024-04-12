@@ -89,7 +89,7 @@
 				<th style="grid-area: point">点数</th>
 				<th style="grid-area: confirm">承認日</th>
 				<th style="grid-area: update">更新日</th>
-				<th style="grid-area: select">□</th>
+				<th style="grid-area: select"><input type="checkbox"></th>
 				<th style="grid-area: class_l">大分類</th>
 				<th style="grid-area: class_s">小分類</th>
 			</tr>
@@ -107,7 +107,7 @@
 					<td><?php echo $data["point"]; ?></td>
 					<td><?php echo (isset($data["date_regist"])) ? date("y.m.d", strtotime($data["date_regist"])) : "未承認"; ?></td>
 					<td><?php echo date("y.m.d", strtotime($data["date_update"])); ?></td>
-					<td>□</td>
+					<td><input type="checkbox"></td>
 				</tr>
 			<?php endforeach; ?>
 			<tr>
@@ -121,7 +121,7 @@
 				<td>1</td>
 				<td>24.3.1</td>
 				<td>23.4.1</td>
-				<td>□</td>
+				<td><input type="checkbox"></td>
 			</tr>
 		</tbody>
 	</table>
@@ -132,7 +132,7 @@
 	</div>
 
 	<div class="button-place" style="margin-top: 10px;">
-		<button class="emegra" style="margin-right: 8px;">削除</button>
+		<button class="emegra delete" style="margin-right: 8px;">削除</button>
 		<button class="emegra" style="margin-right: 8px;">承認</button>
 		<button class="emegra" style="margin-right: 8px;">CSV登録</button>
 		<button class="emegra">新規登録</button>

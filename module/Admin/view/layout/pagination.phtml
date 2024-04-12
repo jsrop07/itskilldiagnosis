@@ -1,7 +1,26 @@
+<?php
+	$url = $_SERVER["REQUEST_URI"];
+	$url = $url . "?";
+	$query = explode("?", $url)[1];
+	
+	if (!empty($query)) {
+		$queryDatas = explode("&", $query);
+
+		$newQueryDatas = array();
+		foreach ($queryDatas as $data) {
+			if (explode("=", $data)[0] != "page") {
+				array_push($newQueryDatas, $data);
+			}
+		}
+		$newQuery = implode("&", $newQueryDatas);
+		$url = explode("?", $_SERVER["REQUEST_URI"])[0] . "?" . $newQuery . "&";
+	}
+?>
+
 <ul class="emegra pagination">
 	<?php for ($i = 1; $i <= $totalPage; $i++): ?>
 		<li class="item<?php echo ($currentPage == $i) ? " active" : ""; ?>">
-			<a href="<?php echo $url . $i; ?>"><?= $i ?></a>
+			<a href="<?php echo $url . "page=" . $i; ?>"><?= $i ?></a>
 		</li>
 	<?php endfor; ?>
 </ul>

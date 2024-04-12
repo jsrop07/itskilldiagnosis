@@ -46,7 +46,7 @@ return array(
 			"question" => array(
 				"type" => "Zend\Mvc\Router\Http\Segment",
 				"options" => array(
-					"route" => "/admin/question[/:action][/:index]",
+					"route" => "/admin/question[/:action][/:idx]",
 					"constraints" => array(),
 					"defaults" => array(
 						"controller"	=> "Question",

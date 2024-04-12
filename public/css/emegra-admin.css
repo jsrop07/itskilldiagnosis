@@ -374,3 +374,16 @@ table.emegra tbody td {
 	line-height: 40px;
 	font-size: 40px;
 }
+
+.table-empty {
+	width: 100%;
+	border: 1px solid var(--line);
+	border-radius: 6px;
+	padding: 16px;
+	background: white;
+	
+	text-align: center;
+	font-size: 14px;
+	font-weight: 400;
+	color: #343A40;
+}

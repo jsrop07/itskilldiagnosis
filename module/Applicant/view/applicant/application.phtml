@@ -1,65 +1,102 @@
 <div class="container-fluid">
 <div class="diagnosis card">
     <div class="diagnosis_head">
-    こんにちは。GNGサービスITスキル診断サイトです。<br/>
-	下段に本人が該当する部分を作成してください。<br/>
+    <!-- こんにちは。GNGサービスITスキル診断サイトです。<br/>
+	下段に本人が該当する部分を作成してください。<br/> -->
     </div>
 
     <div class="diagnosis_main">
-        <span for="email">メール ※</span>
-		<input id="mail" type="email" placeholder="Emailを入力ください。">
+        <span for="email">メール </span>
+		<input class="form-control" id="mail" type="email" placeholder="Emailを入力ください。" style="width:70%">
         <br>
         
-		<span>お名前（漢字）※</span>
-		<input class="mail" id="name" type="text" placeholder="漢字を記入してください。">
+		<span>お名前（漢字）</span>
+		<input class="form-control" id="name" type="text" placeholder="漢字を記入してください。"style="width:40%">
 
         <br>
 
-        <span>お名前（カナ）※</span>
-		<input class="mail" id="name" type="text" placeholder="漢字を記入してください。">
+        <span>お名前（カナ）</span>
+		<input class="form-control" id="name" type="text" placeholder="カナを記入してください。"style="width:40%">
         <br>
 
-        <span>性別</span>
-		<input class="mail" id="name" type="text" placeholder="漢字を記入してください。">
+        <span class="no_after_style">性別</span>
+        <select class="form-select" name="type" style="width:20%">
+            <option value="" selected="" disabled="" hidden="">男</option>
+            <option value="develop_java">男</option>
+            <option value="develop_java">女</option>
+        </select>
         <br>  
         
-        <span>応募区分※</span>
-		<input class="mail" id="name" type="text" placeholder="漢字を記入してください。">
+        <span >応募区分</span>
+        <select class="form-select" name="type" style="width:40%">
+            <option value="" selected="" disabled="" hidden="">新卒</option>
+            <option value="develop_java">新卒</option>
+            <option value="develop_java">中卒（経歴職）</option>
+        </select>
         <br>  
 
-        <span>学歴※</span>
-		<input class="mail" id="name" type="text" placeholder="漢字を記入してください。">
+        <span>学歴</span>
+		<select class="form-select" name="type" style="width:40%">
+            <option value="" selected="" disabled="" hidden="">高卒</option>
+            <option value="develop_java">高卒</option>
+            <option value="develop_java">専門卒</option>
+            <option value="develop_java">大卒</option>
+            <option value="develop_java">大学院卒</option>
+            <option value="develop_java">その他</option>
+        </select>
         <br>  
 
-        <span>専攻</span>
-		<input class="mail" id="name" type="text" placeholder="漢字を記入してください。">
+        <span class="no_after_style">専攻</span>
+		<input class="form-control" id="mail" type="email" placeholder="専攻を入力ください。" style="width:70%">
         <br>
 
-        <span>ITスキル有無※</span>
-		<input class="mail" id="name" type="text" placeholder="漢字を記入してください。">
+        <span>ITスキル有無</span>
+		<select class="form-select" name="type" style="width:20%">
+            <option value="" selected="" disabled="" hidden="">有</option>
+            <option value="develop_java">有</option>
+            <option value="develop_java">無</option>
+        </select>
         <br>
 
-        <span>問題種別※</span>
-		<input class="mail" id="name" type="text" placeholder="漢字を記入してください。">
+        <span class="no_after_style">問題種別</span>
+		<select class="form-select" name="type" style="width:40%">
+            <option value="" selected="" disabled="" hidden="">JAVA</option>
+            <option value="develop_java">JAVA</option>
+            <option value="develop_java">C</option>
+            <option value="develop_java">FLUTTER</option>
+            <option value="develop_java">DB</option>
+            <option value="develop_java">その他</option>
+        </select>
         <br>
 
-        <span>経験分野※</span>
-		<input class="mail" id="name" type="text" placeholder="漢字を記入してください。">
+        <span>経験分野</span>
+		<select class="form-select" name="type" style="width:40%">
+            <option value="" selected="" disabled="" hidden="">開発</option>
+            <option value="develop_java">開発</option>
+            <option value="develop_java">インフラ</option>
+            <option value="develop_java">維持・保守</option>
+            <option value="develop_java">運用</option>
+            <option value="develop_java">DBA</option>
+            <option value="develop_java">ゲーム</option>
+            <option value="develop_java">その他</option>
+        </select>
         <br>
 
-        <span>IT経験年数※</span>
-		<input class="mail" id="name" type="text" placeholder="漢字を記入してください。">
+        <span>IT経験年数</span>
+		<input class="form-control" id="name" type="number" style="width:20%">
         <br>
 
-        <span>資格</span>
-		<input class="mail" id="name" type="text" placeholder="漢字を記入してください。">
+        <span class="no_after_style">資格</span>
+		<input class="form-control" id="name" type="text" placeholder="資格を記入してください。"style="width:90%">
         <br>
 
-        <span>その他</span>
-		<input class="mail" id="name" type="text" placeholder="漢字を記入してください。">
+        <span class="no_after_style">その他</span>
+		<textarea class="form-control"id="name" type="textarea" placeholder="その他を記入してください。"style="width:90%"></textarea>
         <br>
-        
     </div>
-	<br/>
+    <div class="button_box">
+        <button class="applicant_cancel" onclick="window.location.href='../applicant/application';">キャンセル</button>
+        <button class="applicant_button">申込</button>
+    </div>
 </div>
 </div>

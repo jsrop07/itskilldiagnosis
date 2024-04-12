@@ -28,7 +28,7 @@
 <header>
 	<div class="left-column">GOMS</div>
 	<div class="middle-column">ITスキル診断申込画面</div>
-	<div class="right-column">2024年04月10日（月）</div>
+	<div id="date-container" class="right-column"></div>
 </header>
 <body>
 	
@@ -36,6 +36,35 @@
 		<?php echo $this->content; ?>
 </main>
 
-<!-- <footer class="descript"><a>GOMS Order・Received・Service.</a> Copyright G&GService. All Right Reserved.</footer> -->
+<footer class="descript"><a>GOMS Order・Received・Service.</a> Copyright G&GService. All Right Reserved.</footer>
 </body>
 </html>
+
+<script>
+function getDayOfWeek(day) {
+    const weekdays = ['日', '月', '火', '水', '木', '金', '土'];
+    return weekdays[day];
+}
+
+function getCurrentDate() {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = today.getMonth() + 1;
+    const date = today.getDate();
+    const day = getDayOfWeek(today.getDay());
+
+    return year + '年 ' + addZero(month) + '月 ' + addZero(date) + '日（' + day + '）';
+}
+
+function addZero(num) {
+    return (num < 10 ? '0' : '') + num;
+}
+
+function displayCurrentDate() {
+    const dateContainer = document.getElementById('date-container');
+    dateContainer.textContent = getCurrentDate();
+}
+
+window.onload = displayCurrentDate;
+
+</script>

@@ -60,6 +60,24 @@ class QuestionController extends AbstractActionController
 		return $this->SetViewModel($datas, "/question/question_list.phtml");
 	}
 	
+	public function registAction() {
+		$datas["breadcrumbData"] = ["ITスキル診断問項管理", "問題登録"];
+
+		$datas["title"] = "問題登録";
+
+		$classLargeTable = $this->getServiceLocator()->get("ClassLargeTable");
+		$datas["classLargeDatas"] = iterator_to_array($classLargeTable->ReadAll());
+
+		$classSmallTable = $this->getServiceLocator()->get("ClassSmallTable");
+		$datas["classSmallDatas"] = iterator_to_array($classSmallTable->ReadAll());
+
+		$adminTb = $this->getServiceLocator()->get("AdminTable");
+		$datas["adminDatas"] = iterator_to_array($adminTb->ReadAll());
+
+		$this->layout("layout/list");
+		return $this->SetViewModel($datas, "/question/question_input.phtml");
+	}
+	
 	public function detailAction() {
 		$route = $this->params()->fromRoute();
 		$index = $route["idx"];
@@ -67,7 +85,7 @@ class QuestionController extends AbstractActionController
 		$questionTable = $this->getServiceLocator()->get("QuestionTable");
 		$datas["questionData"] = iterator_to_array($questionTable->ReadByIndex($index));
 
-		$datas["breadcrumbData"] = ["ITスキル診断問項管理", "詳細"];
+		$datas["breadcrumbData"] = ["ITスキル診断問項管理", "問題詳細"];
 
 		$this->layout("layout/list");
 		return $this->SetViewModel($datas, "/question/question_detail.phtml");

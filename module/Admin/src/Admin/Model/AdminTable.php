@@ -24,6 +24,12 @@ class AdminTable
     $this->sql = new Sql($this->adapter);
   }
 
+	public function ReadAll()
+	{
+		$qry = $this->sql->select("admin")->where(["date_end" => null]);
+		return $this->sql->prepareStatementForSqlObject($qry)->execute();
+	}
+
 	/** Read Table data By Id
 	 * @param mixed $id input id
 	 * @return mixed Record Array

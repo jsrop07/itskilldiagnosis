@@ -28,8 +28,7 @@ class QuestionTable {
 	public function ReadByAdminCode($code)
 	{
 		$where = new Where();
-		$where->isNotNull("date_regist")
-			->or->equalTo("admin_regist", $code);
+		$where->isNotNull("date_regist")->or->equalTo("admin_regist", $code);
 
 		$qry = $this->sql->select("question")->where($where)->order("date_regist DESC");
 		return $this->sql->prepareStatementForSqlObject($qry)->execute();

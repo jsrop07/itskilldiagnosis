@@ -65,17 +65,67 @@ class QuestionController extends AbstractActionController
 
 		$datas["title"] = "問題登録";
 
-		$classLargeTable = $this->getServiceLocator()->get("ClassLargeTable");
-		$datas["classLargeDatas"] = iterator_to_array($classLargeTable->ReadAll());
+		$optionTb = $this->getServiceLocator()->get("OptionTable");
+		$optionDatas = iterator_to_array($optionTb->ReadAll());
 
-		$classSmallTable = $this->getServiceLocator()->get("ClassSmallTable");
-		$datas["classSmallDatas"] = iterator_to_array($classSmallTable->ReadAll());
+		foreach ($optionDatas as $data) {
+			if ($data["type"] != "status") {
+				$index = $data["type"] . "Datas";
+				$datas[$index] = array();
+				$textDatas = explode(",", $data["texts"]);
+
+				foreach ($textDatas as $text) {
+					array_push($datas[$index], $text);
+				}
+			}
+		}
 
 		$adminTb = $this->getServiceLocator()->get("AdminTable");
 		$datas["adminDatas"] = iterator_to_array($adminTb->ReadAll());
 
+		$datas["approvalDatas"] = iterator_to_array($adminTb->ReadApprovers());
+
 		$this->layout("layout/list");
 		return $this->SetViewModel($datas, "/question/question_input.phtml");
+	}
+
+	public function confirmAction() {
+		$post = $this->params()->fromPost();
+
+		$answers = array();
+		foreach ($post as $key => $value) {
+			if (strpos($key, "answer") !== false) {
+				array_push($answers, $value);
+				unset($post[$key]);
+			}
+		}
+		$post["answers"] = $answers;
+
+		$datas["inputDatas"] = $post;
+		$datas["printDatas"] = $post;
+
+		$datas["inputDatas"]["answers"] = implode(",", $answers);
+
+		$adminTb = $this->getServiceLocator()->get("AdminTable");
+		$datas["printDatas"]["admin_create"] = $adminTb->ReadByCode($post["admin_create"])["name"];
+		$datas["printDatas"]["admin_regist"] = $adminTb->ReadByCode($post["admin_regist"])["name"];
+
+		$optionTb = $this->getServiceLocator()->get("OptionTable");
+		$optionDatas = iterator_to_array($optionTb->ReadAll());
+
+		foreach ($optionDatas as $data) {
+			if ($data["type"] == "status") { continue; }
+			
+			$key = $data["type"];
+			$textDatas = explode(",", $data["texts"]);
+			
+			$datas["printDatas"][$key] = $textDatas[$post[$key]];
+		}
+		$datas["title"] = "登録確認";
+		$datas["breadcrumbData"] = ["ITスキル診断問項管理", "問題登録", "登録確認"];
+
+		$this->layout("layout/list");
+		return $this->SetViewModel($datas, "/question/question_confirm.phtml");
 	}
 	
 	public function detailAction() {
@@ -96,5 +146,15 @@ class QuestionController extends AbstractActionController
 		$vm = new ViewModel($datas);
 		$vm->setTemplate($template);
 		return $vm;
+	}
+
+	public function createAction() {
+		$post = $this->params()->fromPost();
+		$post["status"] = 1;
+
+		$questionTb = $this->getServiceLocator()->get("QuestionTable");
+		$questionTb->CreateQuestion($post);
+
+		die("success");
 	}
 }

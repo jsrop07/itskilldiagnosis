@@ -5,7 +5,7 @@ namespace Admin\Model;
 use Zend\Db\Adapter\Adapter;
 use Zend\Db\Sql\Sql;
 
-class ClassSmallTable
+class OptionTable
 {
 	public function __construct()
 	{
@@ -25,7 +25,7 @@ class ClassSmallTable
 
 	public function ReadAll()
 	{
-		$qry = $this->sql->select("class_small");
+		$qry = $this->sql->select("option");
 		return $this->sql->prepareStatementForSqlObject($qry)->execute();
 	}
 }

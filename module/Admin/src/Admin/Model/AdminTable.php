@@ -40,6 +40,23 @@ class AdminTable
 		return $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
 	}
 
+	/** Read Table data By Id
+	 * @param mixed $id input id
+	 * @return mixed Record Array
+	 */
+	public function ReadByCode($code)
+	{
+		$qry = $this->sql->select("admin")->where(["date_end" => null, "code" => $code]);
+		return $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
+	}
+
+	/** Read Approvers */
+	public function ReadApprovers()
+	{
+		$qry = $this->sql->select("admin")->where(["date_end" => null, "level > 0"]);
+		return $this->sql->prepareStatementForSqlObject($qry)->execute();
+	}
+
 	/** Update date_login data To Current time By Code */
 	public function UpdateDateLogin($code)
 	{

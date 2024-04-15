@@ -15,8 +15,7 @@ use Admin\Model\AdminTable;
 use Admin\Model\QuestionTable;
 use Admin\Model\QuestionTypeTable;
 use Admin\Model\QuestionPoolTable;
-use Admin\Model\ClassLargeTable;
-use Admin\Model\ClassSmallTable;
+use Admin\Model\OptionTable;
 use Admin\Model\ExamTable;
 use Zend\Mvc\ModuleRouteListener;
 use Zend\Mvc\MvcEvent;
@@ -63,14 +62,9 @@ class Module
 					$table = new QuestionTable($dbAdapter);
 					return $table;
 				},
-				"ClassLargeTable" => function ($sm) {
+				"OptionTable" => function ($sm) {
 					$dbAdapter = $sm->get("Zend\Db\Adapter\Adapter");
-					$table = new ClassLargeTable($dbAdapter);
-					return $table;
-				},
-				"ClassSmallTable" => function ($sm) {
-					$dbAdapter = $sm->get("Zend\Db\Adapter\Adapter");
-					$table = new ClassSmallTable($dbAdapter);
+					$table = new OptionTable($dbAdapter);
 					return $table;
 				},
                 'CommonTable' =>  function ($sm) {

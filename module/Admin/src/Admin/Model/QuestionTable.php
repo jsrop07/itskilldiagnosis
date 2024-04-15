@@ -25,6 +25,14 @@ class QuestionTable {
 		$this->sql = new Sql($this->adapter);
 	}
 
+	public function CreateQuestion($datas)
+	{
+		$datas["date_update"] = date("Y-m-d H:i:s");
+
+		$qry = $this->sql->insert("question")->values($datas);
+		return $this->sql->prepareStatementForSqlObject($qry)->execute();
+	}
+
 	public function ReadByAdminCode($code)
 	{
 		$where = new Where();

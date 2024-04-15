@@ -341,7 +341,7 @@ table.emegra tr {
 	column-gap: 8px;
 }
 table.emegra > tbody > tr { border-top: 1px solid var(--line); }
-table.emegra > tbody > tr > td:hover { background: var(--line) }
+/* table.emegra > tbody > tr > td:hover { background: var(--line); } */
 table.emegra thead th {
 	padding-top: 16px;
 	padding-bottom: 8px;
@@ -356,8 +356,6 @@ table.emegra tbody td {
 	font-size: 14px;
 	font-weight: 400;
 	color: #343A40;
-
-	cursor: pointer;
 }
 
 

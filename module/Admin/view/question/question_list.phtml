@@ -96,13 +96,13 @@
 		</thead>
 		<tbody>
 			<?php foreach($questionDatas as $data): ?>
-				<tr onclick="self.location.href='./detail/<?php echo $data['idx']; ?>';">
+				<tr>
 					<td><?php echo $data["num"]; ?></td>
 					<td><?php echo $data["status"]; ?></td>
-					<td><?php echo $data["class_l"]; ?></td>
-					<td><?php echo $data["class_s"]; ?></td>
+					<td><?php echo $data["class1st"]; ?></td>
+					<td><?php echo $data["class2nd"]; ?></td>
 					<td><?php echo $data["level"]; ?></td>
-					<td><?php echo $data["title"]; ?></td>
+					<td><a onclick="self.location.href='./detail/<?php echo $data['idx']; ?>';" style="cursor: pointer;"><?php echo $data["title"]; ?></a></td>
 					<td><?php echo $data["type"]; ?></td>
 					<td><?php echo $data["point"]; ?></td>
 					<td><?php echo (isset($data["date_regist"])) ? date("y.m.d", strtotime($data["date_regist"])) : "未承認"; ?></td>

@@ -1,102 +1,137 @@
-<div class="container-fluid">
-<div class="diagnosis card">
-    <div class="diagnosis_head">
-    <!-- こんにちは。GNGサービスITスキル診断サイトです。<br/>
-	下段に本人が該当する部分を作成してください。<br/> -->
-    </div>
 
-    <div class="diagnosis_main">
-        <span for="email">メール </span>
-		<input class="form-control" id="mail" type="email" placeholder="Emailを入力ください。" style="width:70%">
-        <br>
-        
-		<span>お名前（漢字）</span>
-		<input class="form-control" id="name" type="text" placeholder="漢字を記入してください。"style="width:40%">
+<div class="container-fluid" style="min-width:850px;">
+    <div class="diagnosis card">
+        <div class="diagnosis_head">
+            <h5 style="font-weight: bold;">
+            こんにちは！
+            <br>    
+            GNGサービスITスキル診断サイトです。<br/>
+            下段に本人が該当する部分を作成してください。<br/>
+            </h5>
+        </div>
 
-        <br>
+        <div class="diagnosis_main">
+            <span for="email">メール </span>
+            <input class="form-control" name="email" type="email" placeholder="Emailを入力ください。" style="width:80%">
+            <br>
+            
+            <span>お名前（漢字）</span>
+            <input class="form-control" name="name" type="text" placeholder="漢字を記入してください。"style="width:40%">
 
-        <span>お名前（カナ）</span>
-		<input class="form-control" id="name" type="text" placeholder="カナを記入してください。"style="width:40%">
-        <br>
+            <br>
 
-        <span class="no_after_style">性別</span>
-        <select class="form-select" name="type" style="width:20%">
-            <option value="" selected="" disabled="" hidden="">男</option>
-            <option value="develop_java">男</option>
-            <option value="develop_java">女</option>
-        </select>
-        <br>  
-        
-        <span >応募区分</span>
-        <select class="form-select" name="type" style="width:40%">
-            <option value="" selected="" disabled="" hidden="">新卒</option>
-            <option value="develop_java">新卒</option>
-            <option value="develop_java">中卒（経歴職）</option>
-        </select>
-        <br>  
+            <span>お名前（カナ）</span>
+            <input class="form-control" name="kana" type="text" placeholder="カナを記入してください。"style="width:40%">
+            <br>
 
-        <span>学歴</span>
-		<select class="form-select" name="type" style="width:40%">
-            <option value="" selected="" disabled="" hidden="">高卒</option>
-            <option value="develop_java">高卒</option>
-            <option value="develop_java">専門卒</option>
-            <option value="develop_java">大卒</option>
-            <option value="develop_java">大学院卒</option>
-            <option value="develop_java">その他</option>
-        </select>
-        <br>  
+            <span class="no_after_style">性別</span>
+            <select class="form-select" name="gender" style="width:20%">
+                <option value="0" selected="" disabled="" hidden="">男</option>
+                <option value="0">男</option>
+                <option value="1">女</option>
+            </select>
+            <br>  
+            
+            <span >応募区分</span>
+            <select class="form-select" name="application_category" style="width:40%">
+                <option value="0" selected="" disabled="" hidden="">新卒</option>
+                <option value="0">新卒</option>
+                <option value="1">中卒（経歴職）</option>
+            </select>
+            <br>  
 
-        <span class="no_after_style">専攻</span>
-		<input class="form-control" id="mail" type="email" placeholder="専攻を入力ください。" style="width:70%">
-        <br>
+            <span>学歴</span>
+            <select class="form-select" name="education" style="width:40%" id="educationSelect">
+                <option value="highschool" selected="" disabled="" hidden="">高卒</option>
+                <option value="highschool">高卒</option>
+                <option value="vocational">専門卒</option>
+                <option value="university">大卒</option>
+                <option value="graduate">大学院卒</option>
+                <option value="other">その他</option>
+            </select>
+            <div id="otherEducationInput" style="display: none;">
+                <input class="form-control" type="text" placeholder="その他の場合の、記入" id="otherEducation" name="otherEducation">
+            </div>
+            <br>  
 
-        <span>ITスキル有無</span>
-		<select class="form-select" name="type" style="width:20%">
-            <option value="" selected="" disabled="" hidden="">有</option>
-            <option value="develop_java">有</option>
-            <option value="develop_java">無</option>
-        </select>
-        <br>
+            <span class="no_after_style">専攻</span>
+            <input class="form-control" name="major" type="text" placeholder="専攻を入力ください。" style="width:80%">
+            <br>
 
-        <span class="no_after_style">問題種別</span>
-		<select class="form-select" name="type" style="width:40%">
-            <option value="" selected="" disabled="" hidden="">JAVA</option>
-            <option value="develop_java">JAVA</option>
-            <option value="develop_java">C</option>
-            <option value="develop_java">FLUTTER</option>
-            <option value="develop_java">DB</option>
-            <option value="develop_java">その他</option>
-        </select>
-        <br>
+            <span>ITスキル有無</span>
+            <select class="form-select" name="skill" style="width:20%">
+                <option value="0" selected="" disabled="" hidden="">有</option>
+                <option value="0">有</option>
+                <option value="1">無</option>
+            </select>
+            <br>
 
-        <span>経験分野</span>
-		<select class="form-select" name="type" style="width:40%">
-            <option value="" selected="" disabled="" hidden="">開発</option>
-            <option value="develop_java">開発</option>
-            <option value="develop_java">インフラ</option>
-            <option value="develop_java">維持・保守</option>
-            <option value="develop_java">運用</option>
-            <option value="develop_java">DBA</option>
-            <option value="develop_java">ゲーム</option>
-            <option value="develop_java">その他</option>
-        </select>
-        <br>
+            <span class="no_after_style">問題種別</span>
+            <select class="form-select" name="question_type" style="width:40%">
+                <option value="java" selected="" disabled="" hidden="">JAVA</option>
+                <option value="java">JAVA</option>
+                <option value="c">C</option>
+                <option value="flutter">FLUTTER</option>
+                <option value="db">DB</option>
+                <option value="other">その他</option>
+            </select>
+            <br>
 
-        <span>IT経験年数</span>
-		<input class="form-control" id="name" type="number" style="width:20%">
-        <br>
+            <span>経験分野</span>
+            <select class="form-select" name="develop" style="width:40%" id="developSelect">
+                <option value="development" selected="" disabled="" hidden="">開発</option>
+                <option value="development">開発</option>
+                <option value="infra">インフラ</option>
+                <option value="maintenence">維持・保守</option>
+                <option value="operation">運用</option>
+                <option value="dba">DBA</option>
+                <option value="game">ゲーム</option>
+                <option value="other">その他</option>
+            </select>
+            <div id="otherDevelopInput" style="display: none;">
+                <input class="form-control" type="text" placeholder="その他の場合の、記入" id="otherDevelop" name="otherDevelop">
+            </div>
+            <br>
 
-        <span class="no_after_style">資格</span>
-		<input class="form-control" id="name" type="text" placeholder="資格を記入してください。"style="width:90%">
-        <br>
+            <span>IT経験年数</span>
+            <input class="form-control" id="career" name="career" type="number" placeholder="経歴を記入してください。" style="font-size:15px; width:40%">
+            <br>
 
-        <span class="no_after_style">その他</span>
-		<textarea class="form-control"id="name" type="textarea" placeholder="その他を記入してください。"style="width:90%"></textarea>
-        <br>
-    </div>
-    <div class="button_box">
-        <button class="applicant_cancel" onclick="window.location.href='../applicant/application';">キャンセル</button>
-        <button class="applicant_button">申込</button>
+            <span class="no_after_style">資格</span>
+            <input class="form-control" name="certificates" type="text" placeholder="資格を記入してください。"style="width:80%">
+            <br>
+
+            <span class="no_after_style">その他</span>
+            <textarea class="form-control" name="other" type="textarea" maxlength=500 placeholder="その他を記入してください。"style="width:80%"></textarea>
+            <br>
+        </div>
+        <div class="button_box">
+            <button class="applicant_cancel" onclick="window.location.href='../applicant/application';">キャンセル</button>
+            <button class="applicant_button">申込</button>
+        </div>
     </div>
 </div>
-</div>
+
+<script>
+        document.getElementById("educationSelect").addEventListener("change", function() {
+            var selectedValue = this.value;
+            var otherEducationInput = document.getElementById("otherEducationInput");
+            if (selectedValue == "other") {
+                otherEducationInput.style.display = "block";
+            } else {
+                otherEducationInput.style.display = "none";
+            }
+        });
+</script>
+
+<script>
+        document.getElementById("developSelect").addEventListener("change", function() {
+            var selectedValue = this.value;
+            var otherDevelopInput = document.getElementById("otherDevelopInput");
+            if (selectedValue == "other") {
+                otherDevelopInput.style.display = "block";
+            } else {
+                otherDevelopInput.style.display = "none";
+            }
+        });
+</script>

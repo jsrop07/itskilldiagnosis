@@ -24,9 +24,9 @@ header {
     justify-content: space-between;
     border-bottom: 1px solid #CED4DA;
     background: linear-gradient(111deg, #87D782 0%, #22BC8E 100%);
-    position: fixed; /* 요소를 고정시킴 */
-    top: 0; /* 화면의 상단에 고정 */
-    width: 100%; /* 화면 전체 너비를 차지하도록 함 */
+    position: fixed;
+    top: 0; 
+    width: 100%;
     color:white;
 }
 .left-column, .middle-column, .right-column {
@@ -34,29 +34,30 @@ header {
     width:15%; 
     padding: 10px; 
     justify-content: center;
-    /* align-items: center; */
+    min-width:200px;
 }
 .middle-column {
     width: 50%; 
     font-size: 30px;
-    /* justify-content: left; */
+    min-width:350px;
 }
 
 footer{
     width: 100%;
     margin-bottom: 20px;
-    bottom: 0;
     text-align: center;
     font-size: 12px;
     font-weight: 400;
     color: grey;
+    /* position: fixed; */
+
 }
 
 main{
     margin-top:50px;
     padding:20px 300px;
-    min-width: 1000px; /* 고정 너비 설정 */
-    min-height: 1000px; /* 고정 높이 설정 */
+    min-width: 1000px; 
+    min-height: 1000px; 
 }
 .diagnosis {
     min-height: 100vh;
@@ -64,11 +65,13 @@ main{
 .diagnosis_head{
     text-align:center;
     padding:20px;
+    border-bottom: 1px solid #CED4DA;
 }
 .diagnosis_main {
     display: grid;
-    grid-template-columns: 40% 60%; /* 두 개의 열을 생성합니다. */
+    grid-template-columns: 40% 60%;
     grid-template-rows: auto;
+    margin-top:20px;
 }
 
 .diagnosis_main span {
@@ -85,7 +88,7 @@ main{
     height: 20px;
     width: 40px;
     margin-left: 5px; 
-    display: inline-block; /* 줄 바꿈 방지 */
+    display: inline-block; 
     font-size: 13px;
     font-weight: 700;
     color: white;
@@ -101,6 +104,14 @@ main{
 
 .diagnosis_main input {
     grid-column: 2 / 3; 
+
+}
+
+
+.diagnosis_main #otherEducationInput,.diagnosis_main #otherDevelopInput {
+    grid-column: 2 / 3; 
+    margin-top:10px;
+    width: 80%;
 }
 
 .applicant_cancel {

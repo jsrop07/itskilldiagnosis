@@ -1,0 +1,120 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Roboto:wght@400;700&display=swap');
+
+* {
+	margin: 0;
+	padding: 0;
+	border: 0;	
+	font-family: "Roboto", "Noto Sans JP", sans-serif !important;
+}
+span { margin-bottom: 8px; }
+input { height: 48px; }
+
+body {
+	min-height: 100vh;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+.vector {
+	z-index: -2;
+
+	width: 100%;
+	height: 100%;
+	position: fixed;
+	background: url("/img/emegra_vector.svg");
+	background-size: 110% 133%;
+	background-position: left 369px top 68px;
+	background-repeat: no-repeat;
+}
+.gngLogo_back {
+	z-index: -1;
+
+	width: 100%;
+	height: 100%;
+	position: fixed;
+	background: url("/img/G&G Service.svg");
+	background-size: 90% 90%;
+	background-position: center;
+	background-repeat: no-repeat;
+}
+
+.logo {
+	top: 0;
+	left: 0;
+	display: flex;
+
+	height: 64px;
+	margin-top: 24px;
+	margin-left: 30px;
+	position: fixed;
+	align-items: center;
+}
+.logo-title {
+	margin-top: 9px;
+	margin-left: 16px;
+
+	font-size: 15px;
+	text-decoration: none;
+}
+body.login .logo-title { color: white; }
+
+.descript {
+	width: 100%;
+	margin-bottom: 32px;
+	position: fixed;
+	bottom: 0;
+	text-align: center;
+
+	font-size: 12px;
+	font-weight: 400;
+	color: white;
+}
+.descript a { text-decoration: underline !important; }
+
+
+
+.emegra.card {
+	width: 544px;
+	border: 0;
+	border-radius: 10px;
+	padding: 64px;
+	padding-top: 40px;
+	background: white;
+}
+.emegra.card .card-header {
+	border: 0;
+	padding: 8px;
+	display: block;
+	background: transparent;
+
+	line-height: normal;
+	text-align: center;
+	font-size: 35px;
+	font-weight: 700;
+}
+.emegra.card .card-body {
+	width: 100%;
+	margin-top: 16px;
+	padding: 12px 8px;
+	display: flex;
+	flex-direction: column;
+
+	font-size: 14px;
+	font-weight: 700;
+}
+
+.btn-place {
+	display: flex;
+	justify-content: center;
+	gap: 8px;
+}
+button.emegra {
+	height: 60px;
+	width: 100%;
+	border-radius: 6px;
+	background: var(--gradient);
+
+	font-size: 14px;
+	font-weight: 700;
+	color: white;
+}

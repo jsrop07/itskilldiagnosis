@@ -11,6 +11,7 @@
 namespace Admin;
 
 use Admin\Model\AdminInfoTable;
+use Admin\Model\AdminTable;
 use Admin\Model\QuestionTypeTable;
 use Admin\Model\QuestionPoolTable;
 use Admin\Model\ExamTable;
@@ -46,11 +47,15 @@ class Module
             ),
         );
     }
-
-    public function getServiceConfig()
-    {
-        return array(
-            'factories' => array(
+	
+	public function getServiceConfig() {
+		return array(
+			"factories" => array(
+				"AdminTable" => function ($sm) {
+					$dbAdapter = $sm->get("Zend\Db\Adapter\Adapter");
+					$table = new AdminTable($dbAdapter);
+					return $table;
+				},
                 'CommonTable' =>  function ($sm) {
                     $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
                     //$table = new CommonTable($dbAdapter);
@@ -76,7 +81,7 @@ class Module
                     $table = new ExamTable($dbAdapter);
                     return $table;
                 },
-            ),
-        );
-    }
+			),
+		);
+	}
 }

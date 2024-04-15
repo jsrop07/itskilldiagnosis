@@ -14,6 +14,7 @@ use Applicant\Model\AdminInfoTable;
 use Applicant\Model\QuestionTypeTable;
 use Applicant\Model\QuestionPoolTable;
 use Applicant\Model\ExamTable;
+use Applicant\Model\ApplicationTable;
 use Zend\Mvc\ModuleRouteListener;
 use Zend\Mvc\MvcEvent;
 use Zend\Session\Container;
@@ -76,6 +77,11 @@ class Module
                     $table = new ExamTable($dbAdapter);
                     return $table;
                 },
+                "ApplicationTable" => function ($sm){
+                    $dbAdapter = $sm->get("Zend\Db\Adapter\Adapter");
+                    $table = new ApplicationTable($dbAdapter);
+                    return $table;
+                }
             ),
         );
     }

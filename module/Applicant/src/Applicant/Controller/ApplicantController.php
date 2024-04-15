@@ -13,8 +13,64 @@ class ApplicantController extends AbstractActionController
   public function applicationAction()
   {
 	$this->layout("layout/applicant/application_layout");
-	return $this->SetViewModel([] , "/applicant/application.phtml");
-}
+	$config=$this->getServiceLocator()->get('config');
+	//モデル連動
+	$tbl=$this->getServiceLocator()->get('ApplicationTable');
+	$questionType=$tbl->getQuestionType();
+	$develop=$tbl->getDevelop();
+	$p = $this->params()->fromPost();
+	$mode =(isset($p['mode'])    &&   $p['mode'] !='')? $p['mode']:'';
+
+	// print_r($p);
+	$viewModel = new ViewModel(['questionType' => $questionType,'develop' => $develop,'p' => $p]);
+	$viewModel->setTemplate("/applicant/application.phtml");
+
+	if ($mode == 'btn_submit') {
+		print_r($mode);
+		// exit;
+		$email = $this->params()->fromPost('email');
+		$name = $this->params()->fromPost('name');
+		$kana = $this->params()->fromPost('kana');
+		$gender = $this->params()->fromPost('gender');
+		$application_category = $this->params()->fromPost('application_category');
+		$education = $this->params()->fromPost('education');
+		$major = $this->params()->fromPost('major');
+		$skill = $this->params()->fromPost('skill');
+		$question_type = $this->params()->fromPost('question_type');
+		$develop = $this->params()->fromPost('develop');
+		$career = $this->params()->fromPost('career');
+		$certificates = $this->params()->fromPost('certificates');
+		$other = $this->params()->fromPost('other');
+		$arr = [
+			'email' => $email,
+			'name' => $name,
+			'kana' => $kana,
+			'gender' => $gender,
+			'application_category' => $application_category,
+			'education' => $education,
+			'major' => $major,
+			'skill' => $skill,
+			'question_type' => $question_type,
+			'develop' => $develop,
+			'career' => $career,
+			'certificates' => $certificates,
+			'other' => $other,
+		];
+	   $tbl->insertApplication($arr);
+
+	   echo "
+	   <script>
+	   alert('登録が完了しました。')
+	   self.location.href='/applicant/application'
+  	   </script>
+	   ";
+
+		exit;
+	}
+
+	return $viewModel;
+	
+  }
 
   public function mainAction()
   {

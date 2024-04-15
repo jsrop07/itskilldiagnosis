@@ -1,6 +1,6 @@
 <?php
 
-namespace Test\Model;
+namespace Applicant\Model;
 
 use Zend\Db\Adapter\Adapter;
 use Zend\Db\ResultSet\ResultSet;
@@ -77,7 +77,7 @@ class ExamTable
 
   public function readByUrl($url)
   {
-    $qry = $this->sql->select("exam")->where(["url" => $url]);
+    $qry = $this->sql->select("applicant")->where(["url" => $url]);
     return $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
   }
 

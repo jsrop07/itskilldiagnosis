@@ -10,10 +10,11 @@ use Zend\Session\Container;
 
 class ApplicantController extends AbstractActionController
 {
-  public function applicantAction()
+  public function applicationAction()
   {
-	$this->layout("layout/user/applicant");
-  }
+	$this->layout("layout/applicant/application_layout");
+	return $this->SetViewModel([] , "/applicant/application.phtml");
+}
 
   public function mainAction()
   {
@@ -55,7 +56,7 @@ class ApplicantController extends AbstractActionController
 		*/
 		
 		/* 修正後： */
-		return $this->SetViewModel([] , "/user/main.phtml");
+		return $this->SetViewModel([] , "/applicant/main.phtml");
 		/* ここまで */
   }
 
@@ -72,7 +73,7 @@ class ApplicantController extends AbstractActionController
 		*/
 
 		/* 修正後： */
-		$this->layout("layout/user/login");
+		$this->layout("layout/applicant/login");
 		/* ここまで */
 
     //main==============================================================

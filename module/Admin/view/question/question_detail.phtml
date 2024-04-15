@@ -1,4 +1,11 @@
-<?php $numTexts = array("①", "②", "③", "④", "⑤"); ?>
+<?php
+	$numTexts = array("①", "②", "③", "④", "⑤");
+
+	if (!isset($_SESSION)) { session_start(); }
+	
+	$isRegister = false;
+	if ($_SESSION["user"]["code"] == $questionData["admin_regist"] && $questionData["date_regist"] == null) { $isRegister = true; }
+?>
 
 <?php echo $this->partial("breadcrumb", ["datas" => $breadcrumbData]); ?>
 
@@ -92,4 +99,32 @@
 
 <div class="btn-place" style="margin-top: 32px;">
 	<button class="emegra cancel" onclick="history.back();">戻る</button>
+	<?php if ($isRegister): ?>
+		<button class="emegra" onclick="Approve();">承認</button>
+	<?php endif; ?>
 </div>
+
+<script type="text/javascript">
+	<?php if ($isRegister): ?>
+		function Approve() {
+			const postForm = new FormData();
+			postForm.append("idxs", <?php echo $questionData["idx"]; ?>);
+
+			const xhr = new XMLHttpRequest();
+			xhr.open("POST", "../approve", true);
+			xhr.send(postForm);
+				
+			xhr.onload = () => {
+				if (xhr.status == 200) {
+					const result = xhr.responseText;
+					if (result == "success") {
+						alert("承認しました。");
+						self.location.href = "../list";
+					}
+					else { alert("Error"); }
+					console.log(result);
+				}
+			}
+		}
+		<?php endif; ?>
+</script>

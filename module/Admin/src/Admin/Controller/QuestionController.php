@@ -68,6 +68,15 @@ class QuestionController extends AbstractActionController
 		$optionTb = $this->getServiceLocator()->get("OptionTable");
 		$optionDatas = iterator_to_array($optionTb->ReadAll());
 
+		$session = new Container("user");
+		$userCode = $session->offsetGet("code");
+
+		$questionTb = $this->getServiceLocator()->get("QuestionTable");
+		$questionData = $questionTb->ReadSaveByAdminCode($userCode);
+		if (!empty($questionData)) {
+			$datas["questionData"] = $questionData;
+		}
+
 		foreach ($optionDatas as $data) {
 			if ($data["type"] != "status") {
 				$index = $data["type"] . "Datas";
@@ -153,8 +162,37 @@ class QuestionController extends AbstractActionController
 		$post["status"] = 1;
 
 		$questionTb = $this->getServiceLocator()->get("QuestionTable");
+		if (isset($post["idx"])) {
+			$questionTb->UpdateQuestion($post);
+			die("success");
+		}
 		$questionTb->CreateQuestion($post);
 
+		die("success");
+	}
+
+	public function saveAction() {
+		$post = $this->params()->fromPost();
+		$post["status"] = 0;
+
+		$questionTb = $this->getServiceLocator()->get("QuestionTable");
+		if (isset($post["idx"])) {
+			$questionTb->UpdateQuestion($post);
+			die("success");
+		}
+
+		$questionTb->CreateQuestion($post);
+		die("success");
+	}
+
+	public function approveAction() {
+		$post = $this->params()->fromPost();
+		$idxDatas = explode(",", $post["idxs"]);
+
+		$questionTb = $this->getServiceLocator()->get("QuestionTable");
+		foreach ($idxDatas as $idx) {
+			$questionTb->UpdateToRegistByIdx($idx);
+		}
 		die("success");
 	}
 }

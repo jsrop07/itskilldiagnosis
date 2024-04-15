@@ -36,6 +36,7 @@ class AccountController extends AbstractActionController
 			$session->offsetSet("code", $result["code"]);
 			$session->offsetSet("name", $result["name"]);
 			$session->offsetSet("date_login", $result["date_login"]);
+			$session->offsetSet("level", $result["level"]);
 
 			$adminTb->UpdateDateLogin($result["code"]);
 			die("success");

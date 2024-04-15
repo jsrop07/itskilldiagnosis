@@ -5,7 +5,6 @@ namespace Admin\Model;
 use Zend\Db\Adapter\Adapter;
 use Zend\Db\Sql\Sql;
 use Zend\Db\Sql\Where;
-use Zend\Db\Sql\Predicate\IsNotNull;
 
 class QuestionTable {
 	public function __construct()
@@ -42,6 +41,12 @@ class QuestionTable {
 		return $this->sql->prepareStatementForSqlObject($qry)->execute();
 	}
 
+	public function ReadSaveByAdminCode($code)
+	{
+		$qry = $this->sql->select("question")->where(["status" => 0, "admin_create" => $code]);
+		return $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
+	}
+
 	public function ReadByAdminCode_RegisterCode($code_user, $code_register)
 	{
 		$where = new Where();
@@ -62,5 +67,20 @@ class QuestionTable {
 	public function ReadByIndex($index) {
 		$qry = $this->sql->select("question")->where(["idx" => $index]);
 		return $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
+	}
+
+	public function UpdateQuestion($datas) {
+		$idx = $datas["idx"];
+		unset($datas["idx"]);
+
+		$qry = $this->sql->update("question")->where(["idx" => $idx])->set($datas);
+		$this->sql->prepareStatementForSqlObject($qry)->execute();
+	}
+
+	public function UpdateToRegistByIdx($idx) {
+		
+		$qry = $this->sql->update("question")->where(["idx" => $idx])
+			->set(["status" => 2, "date_regist" => date("Y-m-d H:i:s")]);
+		$this->sql->prepareStatementForSqlObject($qry)->execute();
 	}
 }

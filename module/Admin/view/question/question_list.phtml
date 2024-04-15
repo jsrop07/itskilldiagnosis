@@ -1,3 +1,5 @@
+<?php if (!isset($_SESSION)) { session_start(); } ?>
+
 <?php echo $this->partial("breadcrumb", ["datas" => $breadcrumbData]); ?>
 
 <style type="text/css">
@@ -107,7 +109,7 @@
 					<td><?php echo $data["point"]; ?></td>
 					<td><?php echo (isset($data["date_regist"])) ? date("y.m.d", strtotime($data["date_regist"])) : "未承認"; ?></td>
 					<td><?php echo date("y.m.d", strtotime($data["date_update"])); ?></td>
-					<td><input type="checkbox"></td>
+					<td><input name="idxCheck" type="checkbox" value="<?php echo $data["idx"]; ?>"></td>
 				</tr>
 			<?php endforeach; ?>
 			<tr>
@@ -133,7 +135,9 @@
 
 	<div class="button-place" style="margin-top: 10px;">
 		<button class="emegra delete" style="margin-right: 8px;">削除</button>
-		<button class="emegra" style="margin-right: 8px;">承認</button>
+		<?php if ($_SESSION["user"]["level"] > 0): ?>
+			<button class="emegra" style="margin-right: 8px;" onclick="Regist();">承認</button>
+		<?php endif; ?>
 		<button class="emegra" style="margin-right: 8px;">CSV登録</button>
 		<button class="emegra" onclick="self.window.location='./regist'">新規登録</button>
 	</div>
@@ -145,5 +149,35 @@
 	function SearchRegister() {
 		let register = input_register.value;
 		self.window.location = window.location.pathname + "?register=" + register;
+	}
+
+	function Regist() {
+		let idxs = document.getElementsByName("idxCheck");
+		let idxDatas = "";
+
+		idxs.forEach(element => { 
+			if (element.checked) {
+				idxDatas += element.value + ",";
+			}
+		});
+
+		const postForm = new FormData();
+		postForm.append("idxs", idxDatas.slice(0, -1));
+
+		const xhr = new XMLHttpRequest();
+		xhr.open("POST", "approve", true);
+		xhr.send(postForm);
+		
+		xhr.onload = () => {
+			if (xhr.status == 200) {
+				const result = xhr.responseText;
+				if (result == "success") {
+					alert("承認しました。");
+					self.location.href = "list";
+				}
+				else { alert("Error"); }
+				console.log(result);
+			}
+		}
 	}
 </script>

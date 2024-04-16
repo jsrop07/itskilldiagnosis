@@ -1,0 +1,209 @@
+<?php if (!isset($_SESSION)) { session_start(); } ?>
+
+<?php echo $this->partial("breadcrumb", ["datas" => $breadcrumbData]); ?>
+
+<style type="text/css">
+	.header {
+		height: 110px;
+		display: flex;
+		justify-content: space-between;
+	}
+
+	.info-num {
+		height: 100%;
+		display: flex;
+		justify-content: end;
+	}
+
+	.search-place {
+		margin-top: 20px;
+		display: flex;
+		align-items: end;
+		justify-content: space-between;
+	}
+	input.search {
+		width: 150px;
+	}
+	button.emegra.search.confirm {
+		height: 30px;
+		width: 100px;
+		
+		font-size: 15px;
+		font-weight: 400;
+	}
+
+	table.emegra tr { grid-template-columns: 50px 100px repeat(2, 60px) 60px 1fr 70px 50px repeat(2, 60px) 30px; }
+	table.emegra tr.index {
+		padding-top: 8px;
+		padding-bottom: 4px;
+		grid-template-columns: 50px 100px repeat(2, 60px) 60px 1fr 70px 50px repeat(2, 60px) 30px;
+		grid-template-areas:
+		"no status  class   class  level title type point confirm update select"
+		"no status class_l class_s level title type point confirm update select";
+	}
+	table.emegra tr.index > th {
+		padding: 4px 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.button-place {
+		display: flex;
+		justify-content: end;
+	}
+</style>
+<content class="header">
+	<div class="title">ITスキル診断問項管理</div>
+	<div class="info-num">
+		<div class="count">問項総計<div class="num">1,345</div>問項</div>
+	</div>
+</content>
+
+<content class="main">
+	<?php if (empty($questionDatas)): ?>
+		<div class="table-empty" style="margin-top: 86px;">
+			データがありません。
+		</div>
+	<?php else: ?>
+	<table class="emegra" style="margin-top: 78px;">
+		<thead>
+			<tr class="index">
+				<th style="grid-area: no">no</th>
+				<th style="grid-area: status">ステータス</th>
+				<th style="grid-area: class">問項種別</th>
+				<th style="grid-area: level">レベル</th>
+				<th style="grid-area: title">タイトル</th>
+				<th style="grid-area: type">タイプ</th>
+				<th style="grid-area: point">点数</th>
+				<th style="grid-area: confirm">承認日</th>
+				<th style="grid-area: update">更新日</th>
+				<th style="grid-area: select"><input id="checkAll" type="checkbox" onclick="Checking(this);"></th>
+				<th style="grid-area: class_l">大分類</th>
+				<th style="grid-area: class_s">小分類</th>
+			</tr>
+		</thead>
+		<tbody>
+			<style type="text/css">
+				table.emegra > tbody > tr:hover { background: none; }
+				table.emegra tbody td { cursor: default; }
+				input { cursor: pointer; }
+			</style>
+			<?php foreach($questionDatas as $data): ?>
+				<tr>
+					<td><?php echo $data["num"]; ?></td>
+					<td><?php echo $data["status"]; ?></td>
+					<td><?php echo $data["class1st"]; ?></td>
+					<td><?php echo $data["class2nd"]; ?></td>
+					<td><?php echo $data["level"]; ?></td>
+					<td><?php echo $data["title"]; ?></td>
+					<td><?php echo $data["type"]; ?></td>
+					<td><?php echo $data["point"]; ?></td>
+					<td><?php echo (isset($data["date_regist"])) ? date("y.m.d", strtotime($data["date_regist"])) : "未承認"; ?></td>
+					<td><?php echo date("y.m.d", strtotime($data["date_update"])); ?></td>
+					<td><input name="checkIdx" type="checkbox" value="<?php echo $data["idx"]; ?>" onclick="Checking(this);"></td>
+				</tr>
+			<?php endforeach; ?>
+		</tbody>
+	</table>
+	<?php endif; ?>
+
+	<div style="margin-top: 8px;">
+		<?php echo $this->partial("pagination", $paginationData); ?>
+	</div>
+
+	<div class="button-place" style="margin-top: 10px;">
+		<?php if ($delete): ?>
+			<button class="emegra delete" style="margin-right: 8px;" onclick="Delete();">削除</button>
+			<button class="emegra cancel" style="margin-right: 128px;" onclick="self.window.location='../list'">戻る</button>
+		<?php else: ?>
+			<button class="emegra" style="margin-right: 8px;" onclick="Regist();">承認</button>
+			<button class="emegra cancel" style="margin-right: 256px;" onclick="self.window.location='../list'">戻る</button>
+		<?php endif; ?>
+	</div>
+</content>
+
+<script type="text/javascript">
+	const input_register = document.getElementById("input_register");
+	const check_all = document.getElementById("checkAll");
+	const check_idxs = document.getElementsByName("checkIdx");
+
+	function Checking(element) {
+		if (element == check_all) {
+			if (element.checked) {
+				check_idxs.forEach(e => { e.checked = true; })
+			}
+			else {
+				check_idxs.forEach(e => { e.checked = false; })
+			}
+		}
+
+		if (element != check_all) {
+			check_all.checked = false;
+
+			check_idxs.forEach(e => {
+				if (e.checked) { check_all.checked = true; return true; }
+			});
+		}
+	}
+
+	<?php if ($delete): ?>
+		function Delete() {
+			let idxDatas = "";
+
+			check_idxs.forEach(element => {
+				if (element.checked) {
+					idxDatas += element.value + ",";
+				}
+			});
+
+			const postForm = new FormData();
+			postForm.append("idxs", idxDatas.slice(0, -1));
+
+			const xhr = new XMLHttpRequest();
+			xhr.open("POST", "../delete", true);
+			xhr.send(postForm);
+			
+			xhr.onload = () => {
+				if (xhr.status == 200) {
+					const result = xhr.responseText;
+					if (result == "success") {
+						alert("削除しました。");
+						self.location.href = "delete";
+					}
+					else { alert("Error"); }
+					console.log(result);
+				}
+			}
+		}
+	<?php else: ?>
+		function Regist() {
+			let idxDatas = "";
+
+			check_idxs.forEach(element => { 
+				if (element.checked) {
+					idxDatas += element.value + ",";
+				}
+			});
+
+			const postForm = new FormData();
+			postForm.append("idxs", idxDatas.slice(0, -1));
+
+			const xhr = new XMLHttpRequest();
+			xhr.open("POST", "../approve", true);
+			xhr.send(postForm);
+			
+			xhr.onload = () => {
+				if (xhr.status == 200) {
+					const result = xhr.responseText;
+					if (result == "success") {
+						alert("承認しました。");
+						self.location.href = "regist";
+					}
+					else { alert("Error"); }
+					console.log(result);
+				}
+			}
+		}
+	<?php endif; ?>
+</script>

@@ -2,9 +2,19 @@
 	$numTexts = array("①", "②", "③", "④", "⑤");
 
 	if (!isset($_SESSION)) { session_start(); }
+
+	$userCode = $_SESSION["user"]["code"] ;
 	
 	$isRegister = false;
-	if ($_SESSION["user"]["code"] == $questionData["admin_regist"] && $questionData["date_regist"] == null) { $isRegister = true; }
+	if ($_SESSION["user"]["level"] >= 2) { $isRegister = true; }
+	if ($userCode == $questionData["admin_regist"] && $questionData["date_regist"] == null) {
+		$isRegister = true;
+	}
+
+	$isDeleter = false;
+	if ($_SESSION["user"]["level"] >= 3 || ($questionData["admin_create"] == $userCode || $questionData["admin_regist"] == $userCode)) {
+		$isDeleter = true;
+	}
 ?>
 
 <?php echo $this->partial("breadcrumb", ["datas" => $breadcrumbData]); ?>
@@ -87,11 +97,7 @@
 			
 			<dt>備考</dt>
 			<dd class="expand" style="grid-column: 2 / 5;">
-				メモとか </br>
-				上に書けない </br>
-				情報を </br>
-				書きます。 </br>
-				こおおおおおおおおおおおおおおおおんなふううううううううううううにですねええええええええ。
+				<?php echo $questionData["note"]; ?>
 			</dd>
 		</dl>
 	</div>
@@ -100,13 +106,17 @@
 <div class="btn-place" style="margin-top: 32px;">
 	<button class="emegra cancel" onclick="history.back();">戻る</button>
 	<?php if ($isRegister): ?>
-		<button class="emegra" onclick="Approve();">承認</button>
+		<button class="emegra" onclick="Regist();">承認</button>
+	<?php endif; ?>
+	<?php if ($isDeleter): ?>
+		<button class="emegra delete" onclick="Delete();">削除</button>
+		<button class="emegra" onclick="self.location.href='../edit/<?php echo $questionData['idx']; ?>';">修正</button>
 	<?php endif; ?>
 </div>
 
 <script type="text/javascript">
 	<?php if ($isRegister): ?>
-		function Approve() {
+		function Regist() {
 			const postForm = new FormData();
 			postForm.append("idxs", <?php echo $questionData["idx"]; ?>);
 
@@ -126,5 +136,28 @@
 				}
 			}
 		}
-		<?php endif; ?>
+	<?php endif; ?>
+	
+	<?php if ($isDeleter): ?>
+		function Delete() {
+			const postForm = new FormData();
+			postForm.append("idxs", <?php echo $questionData["idx"]; ?>);
+
+			const xhr = new XMLHttpRequest();
+			xhr.open("POST", "../delete", true);
+			xhr.send(postForm);
+				
+			xhr.onload = () => {
+				if (xhr.status == 200) {
+					const result = xhr.responseText;
+					if (result == "success") {
+						alert("削除しました。");
+						self.location.href = "../list";
+					}
+					else { alert("Error"); }
+					console.log(result);
+				}
+			}
+		}
+	<?php endif; ?>
 </script>

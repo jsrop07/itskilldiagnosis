@@ -32,6 +32,11 @@ class QuestionTable {
 		return $this->sql->prepareStatementForSqlObject($qry)->execute();
 	}
 
+	public function ReadQuestion() {
+		$qry = $this->sql->select("question")->order("date_regist DESC");
+		return $this->sql->prepareStatementForSqlObject($qry)->execute();
+	}
+
 	public function ReadByAdminCode($code)
 	{
 		$where = new Where();
@@ -64,23 +69,57 @@ class QuestionTable {
 		return $this->sql->prepareStatementForSqlObject($qry)->execute();
 	}
 
-	public function ReadByIndex($index) {
-		$qry = $this->sql->select("question")->where(["idx" => $index]);
+	public function ReadByIndex($idx) {
+		$qry = $this->sql->select("question")->where(["idx" => $idx]);
 		return $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
+	}
+
+	public function ReadNotRegist() {
+		$qry = $this->sql->select("question")->where(["status" => 0]);
+		return $this->sql->prepareStatementForSqlObject($qry)->execute();
+	}
+
+	public function ReadNotRegistByRegister($code) {
+		$qry = $this->sql->select("question")->where(["status" => 0, "admin_regist" => $code]);
+		return $this->sql->prepareStatementForSqlObject($qry)->execute();
+	}
+
+	public function ReadByCreater_Register($code) {
+		$where = new Where();
+		$where->equalTo("admin_create", $code)->or->equalTo("admin_regist", $code);
+
+		$qry = $this->sql->select("question")->where($where);
+		return $this->sql->prepareStatementForSqlObject($qry)->execute();
 	}
 
 	public function UpdateQuestion($datas) {
 		$idx = $datas["idx"];
 		unset($datas["idx"]);
 
+		$datas["date_update"] = date("Y-m-d H:i:s");
+
 		$qry = $this->sql->update("question")->where(["idx" => $idx])->set($datas);
 		$this->sql->prepareStatementForSqlObject($qry)->execute();
 	}
 
 	public function UpdateToRegistByIdx($idx) {
+		$date = date("Y-m-d H:i:s");
 		
 		$qry = $this->sql->update("question")->where(["idx" => $idx])
-			->set(["status" => 2, "date_regist" => date("Y-m-d H:i:s")]);
+			->set(["status" => 2, "date_regist" => $date, "date_update" => $date]);
+		$this->sql->prepareStatementForSqlObject($qry)->execute();
+	}
+
+	public function UpdateToRegistByMaster_Idx($code, $idx) {
+		$date = date("Y-m-d H:i:s");
+		
+		$qry = $this->sql->update("question")->where(["idx" => $idx])
+			->set(["status" => 2, "admin_regist" => $code, "date_regist" => $date, "date_update" => $date]);
+		$this->sql->prepareStatementForSqlObject($qry)->execute();
+	}
+
+	public function DeleteQuestionByIdx($idx) {
+		$qry = $this->sql->delete("question")->where(["idx" => $idx]);
 		$this->sql->prepareStatementForSqlObject($qry)->execute();
 	}
 }

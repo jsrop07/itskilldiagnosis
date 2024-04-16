@@ -11,7 +11,7 @@
 <h1 class="title"><?php echo $title; ?></h1>
 
 <form id="form" method="post" action="./confirm">
-	<?php if ($isSaveData): ?>
+	<?php if ($isSaveData || $mode == "edit"): ?>
 		<input name="idx" value="<?php echo $questionData["idx"]; ?>" type="hidden"/>
 	<?php endif; ?>
 
@@ -157,8 +157,12 @@
 </form>
 
 <div class="btn-place" style="margin-top: 32px;">
-	<button class="emegra" onclick="Regist();">登録</button>
-	<button class="emegra" onclick="Save();">臨時保存</button>
+	<?php if ($mode == "edit"): ?>
+		<button class="emegra" onclick="Update();">修正</button>
+	<?php else: ?>
+		<button class="emegra" onclick="Regist();">登録</button>
+		<button class="emegra" onclick="Save();">臨時保存</button>
+	<?php endif; ?>
 	<button class="emegra cancel" onclick="history.back();">戻る</button>
 </div>
 
@@ -206,56 +210,99 @@
 		}
 	}
 
-	function Regist() {
-		dateCreate.disabled = false;
-		dateCreate.type = "text";
-		dateCreate.value = datetime;
-		
-		form.submit();
-	}
+	<?php if (!($mode == "edit")): ?>
+		function Regist() {
+			dateCreate.disabled = false;
+			dateCreate.type = "text";
+			dateCreate.value = datetime;
+			
+			form.submit();
+		}
+	<?php endif; ?>
 
-	function Save() {
-		const postForm = new FormData();
+		function Save() {
+			const postForm = new FormData();
 
-		const xhr = new XMLHttpRequest();
-		xhr.open("POST", "save", true);
-		
-		postForm.append("class1st", form.class1st.value);
-		postForm.append("class2nd", form.class2nd.value);
-		postForm.append("level", form.level.value);
-		postForm.append("type", form.type.value);
-		postForm.append("title", form.title.value);
-		postForm.append("question", form.question.value);
-		
-		let answerList = document.querySelectorAll("input[name*='answer']");
-		let answers = "";
-		answerList.forEach(element => { answers += element.value + ","; });
-		postForm.append("answers", answers.slice(0, -1));
+			const xhr = new XMLHttpRequest();
+			xhr.open("POST", "save", true);
+			
+			postForm.append("class1st", form.class1st.value);
+			postForm.append("class2nd", form.class2nd.value);
+			postForm.append("level", form.level.value);
+			postForm.append("type", form.type.value);
+			postForm.append("title", form.title.value);
+			postForm.append("question", form.question.value);
+			
+			let answerList = document.querySelectorAll("input[name*='answer']");
+			let answers = "";
+			answerList.forEach(element => { answers += element.value + ","; });
+			postForm.append("answers", answers.slice(0, -1));
 
-		postForm.append("level", form.level.value);
-		postForm.append("correct", form.correct.value);
-		postForm.append("point", form.point.value);
-		postForm.append("admin_create", form.admin_create.value);
-		postForm.append("date_create", datetime);
-		postForm.append("admin_regist", form.admin_regist.value);
-		postForm.append("note", form.note.value);
+			postForm.append("level", form.level.value);
+			postForm.append("correct", form.correct.value);
+			postForm.append("point", form.point.value);
+			postForm.append("admin_create", form.admin_create.value);
+			postForm.append("date_create", datetime);
+			postForm.append("admin_regist", form.admin_regist.value);
+			postForm.append("note", form.note.value);
 
-		<?php if ($isSaveData): ?>
-			postForm.append("idx", <?php echo $questionData["idx"]; ?>);
-		<?php endif; ?>
-		xhr.send(postForm);
-		
-		xhr.onload = () => {
-			if (xhr.status == 200) {
-				const result = xhr.responseText;
-				if (result == "success") {
-					alert("臨時保存しました。");
-					self.location.href = "list";
+			<?php if ($isSaveData): ?>
+				postForm.append("idx", <?php echo $questionData["idx"]; ?>);
+			<?php endif; ?>
+			xhr.send(postForm);
+			
+			xhr.onload = () => {
+				if (xhr.status == 200) {
+					const result = xhr.responseText;
+					if (result == "success") {
+						alert("臨時保存しました。");
+						self.location.href = "detail/<?php echo $questionData["idx"]; ?>";
+					}
+					else { alert("Error"); }
 				}
-				else { alert("Error"); }
-
-				console.log(result);
 			}
 		}
+
+function Update() {
+	const postForm = new FormData();
+
+	const xhr = new XMLHttpRequest();
+	xhr.open("POST", "../save", true);
+	
+	postForm.append("class1st", form.class1st.value);
+	postForm.append("class2nd", form.class2nd.value);
+	postForm.append("level", form.level.value);
+	postForm.append("type", form.type.value);
+	postForm.append("title", form.title.value);
+	postForm.append("question", form.question.value);
+	
+	let answerList = document.querySelectorAll("input[name*='answer']");
+	let answers = "";
+	answerList.forEach(element => { answers += element.value + ","; });
+	postForm.append("answers", answers.slice(0, -1));
+
+	postForm.append("level", form.level.value);
+	postForm.append("correct", form.correct.value);
+	postForm.append("point", form.point.value);
+	postForm.append("admin_create", form.admin_create.value);
+	postForm.append("date_create", datetime);
+	postForm.append("admin_regist", form.admin_regist.value);
+	postForm.append("note", form.note.value);
+
+	<?php if ($isSaveData): ?>
+		postForm.append("idx", <?php echo $questionData["idx"]; ?>);
+	<?php endif; ?>
+	xhr.send(postForm);
+	
+	xhr.onload = () => {
+		if (xhr.status == 200) {
+			const result = xhr.responseText;
+			if (result == "success") {
+				alert("修正しました。");
+				self.location.href = "../detail/<?php echo $questionData["idx"]; ?>";
+			}
+			else { alert("Error"); }
+		}
 	}
+}
 </script>

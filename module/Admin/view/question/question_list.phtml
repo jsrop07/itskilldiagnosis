@@ -16,10 +16,10 @@
 	}
 
 	.search-place {
+		width: 100%;
 		margin-top: 20px;
 		display: flex;
-		align-items: end;
-		justify-content: space-between;
+		align-items: center;
 	}
 	input.search {
 		width: 150px;
@@ -32,14 +32,14 @@
 		font-weight: 400;
 	}
 
-	table.emegra tr { grid-template-columns: 50px 100px repeat(2, 60px) 60px 1fr 70px 50px repeat(2, 60px) 30px; }
+	table.emegra tr { grid-template-columns: 50px 100px repeat(2, 60px) 60px 1fr 70px 50px repeat(2, 60px); }
 	table.emegra tr.index {
 		padding-top: 8px;
 		padding-bottom: 4px;
-		grid-template-columns: 50px 100px repeat(2, 60px) 60px 1fr 70px 50px repeat(2, 60px) 30px;
+		grid-template-columns: 50px 100px repeat(2, 60px) 60px 1fr 70px 50px repeat(2, 60px);
 		grid-template-areas:
-		"no status  class   class  level title type point confirm update select"
-		"no status class_l class_s level title type point confirm update select";
+		"no status  class   class  level title type point confirm update"
+		"no status class_l class_s level title type point confirm update";
 	}
 	table.emegra tr.index > th {
 		padding: 4px 0;
@@ -62,15 +62,20 @@
 
 <content class="main">
 	<div class="search-place">
-		<div style="display: flex; align-items: center;">
-			承認者
-			<input class="form-control form-control-sm search" style="margin-left: 10px;" id="input_register" value="<?php echo (isset($inputDatas["register"])) ? $inputDatas["register"] : ""; ?>"/>
-			<button class="emegra search confirm" style="margin-left: 10px;" onclick="SearchRegister()">検索</button>
-		</div>
+		<select class="form-select form-select-sm" style="width: 150px; margin-right: 10px;">
+			<option value="status">ステータス</option>
+			<option value="class1st">大分類</option>
+			<option value="class2nd">小分類</option>
+			<option value="level">レベル</option>
+			<option value="title">タイトル</option>
+			<option value="type">タイプ</option>
+			<option value="point">点数</option>
+		</select>
+		<input class="form-control form-control-sm search" style="margin-right: 10px;"/>
+		承認者
+		<input class="form-control form-control-sm search" style="margin-left: 10px;" id="input_register" value="<?php echo (isset($inputDatas["register"])) ? $inputDatas["register"] : ""; ?>"/>
 
-		<div>
-			<button class="emegra search">検索</button>
-		</div>
+		<button class="emegra search confirm" style="margin-left: 10px;" onclick="SearchRegister()">検索</button>
 	</div>
 
 	<?php if (empty($questionDatas)): ?>
@@ -91,25 +96,23 @@
 				<th style="grid-area: point">点数</th>
 				<th style="grid-area: confirm">承認日</th>
 				<th style="grid-area: update">更新日</th>
-				<th style="grid-area: select"><input type="checkbox"></th>
 				<th style="grid-area: class_l">大分類</th>
 				<th style="grid-area: class_s">小分類</th>
 			</tr>
 		</thead>
 		<tbody>
 			<?php foreach($questionDatas as $data): ?>
-				<tr>
+				<tr onclick="self.location.href='./detail/<?php echo $data['idx']; ?>';">
 					<td><?php echo $data["num"]; ?></td>
-					<td><?php echo $data["status"]; ?></td>
-					<td><?php echo $data["class1st"]; ?></td>
-					<td><?php echo $data["class2nd"]; ?></td>
-					<td><?php echo $data["level"]; ?></td>
-					<td><a onclick="self.location.href='./detail/<?php echo $data['idx']; ?>';" style="cursor: pointer;"><?php echo $data["title"]; ?></a></td>
-					<td><?php echo $data["type"]; ?></td>
+					<td><?php echo $statusDatas[$data["status"]]; ?></td>
+					<td><?php echo $class1stDatas[$data["class1st"]]; ?></td>
+					<td><?php echo $class2ndDatas[$data["class2nd"]]; ?></td>
+					<td><?php echo $levelDatas[$data["level"]]; ?></td>
+					<td><?php echo $data["title"]; ?></td>
+					<td><?php echo $typeDatas[$data["type"]]; ?></td>
 					<td><?php echo $data["point"]; ?></td>
 					<td><?php echo (isset($data["date_regist"])) ? date("y.m.d", strtotime($data["date_regist"])) : "未承認"; ?></td>
 					<td><?php echo date("y.m.d", strtotime($data["date_update"])); ?></td>
-					<td><input name="idxCheck" type="checkbox" value="<?php echo $data["idx"]; ?>"></td>
 				</tr>
 			<?php endforeach; ?>
 			<tr>
@@ -123,7 +126,6 @@
 				<td>1</td>
 				<td>24.3.1</td>
 				<td>23.4.1</td>
-				<td><input type="checkbox"></td>
 			</tr>
 		</tbody>
 	</table>
@@ -134,13 +136,13 @@
 	</div>
 
 	<div class="button-place" style="margin-top: 10px;">
-		<button class="emegra delete" style="margin-right: 8px;">削除</button>
 		<?php if ($_SESSION["user"]["level"] > 0): ?>
-			<button class="emegra" style="margin-right: 8px;" onclick="Regist();">承認</button>
+			<button class="emegra" style="margin-right: 8px;" onclick="self.window.location='./manage/regist'">一括承認</button>
 		<?php endif; ?>
+		<button class="emegra delete" style="margin-right: 8px;" onclick="self.window.location='./manage/delete'">一括削除</button>
 		<button class="emegra" style="margin-right: 8px;">CSV登録</button>
 		<button class="emegra" onclick="self.window.location='./regist'">新規登録</button>
-	</div>
+	</div>	
 </content>
 
 <script type="text/javascript">
@@ -149,35 +151,5 @@
 	function SearchRegister() {
 		let register = input_register.value;
 		self.window.location = window.location.pathname + "?register=" + register;
-	}
-
-	function Regist() {
-		let idxs = document.getElementsByName("idxCheck");
-		let idxDatas = "";
-
-		idxs.forEach(element => { 
-			if (element.checked) {
-				idxDatas += element.value + ",";
-			}
-		});
-
-		const postForm = new FormData();
-		postForm.append("idxs", idxDatas.slice(0, -1));
-
-		const xhr = new XMLHttpRequest();
-		xhr.open("POST", "approve", true);
-		xhr.send(postForm);
-		
-		xhr.onload = () => {
-			if (xhr.status == 200) {
-				const result = xhr.responseText;
-				if (result == "success") {
-					alert("承認しました。");
-					self.location.href = "list";
-				}
-				else { alert("Error"); }
-				console.log(result);
-			}
-		}
 	}
 </script>

@@ -26,7 +26,6 @@ class ApplicantController extends AbstractActionController
 	$viewModel->setTemplate("/applicant/application.phtml");
 
 	if ($mode == 'btn_submit') {
-		print_r($mode);
 		// exit;
 		$email = $this->params()->fromPost('email');
 		$name = $this->params()->fromPost('name');

@@ -37,6 +37,59 @@ class QuestionTable {
 		return $this->sql->prepareStatementForSqlObject($qry)->execute();
 	}
 
+	public function ReadAllList() {
+		$qry = $this->sql->select("question")->where(["status != 0"]);
+		return $this->sql->prepareStatementForSqlObject($qry)->execute();
+	}
+
+	public function ReadListByCode($code) {
+		$where = new Where();
+		$where
+			->equalTo("status", 3);
+			$where->or->nest()
+				->notEqualTo("status", 0)
+				->and->nest()
+					->equalTo("admin_create", $code)
+					->or->equalTo("admin_regist", $code)
+				->unnest()
+			->unnest();
+			
+
+		$qry = $this->sql->select("question")->where($where);
+		return $this->sql->prepareStatementForSqlObject($qry)->execute();
+	}
+
+	public function ReadListByOption($optionDatas) {
+		$where = new Where();
+		$where->notEqualTo("status", 0);
+		foreach ($optionDatas as $key => $value) {
+			$where->and->equalTo($key, $value);
+		}
+		
+		$qry = $this->sql->select("question")->where($where);
+		return $this->sql->prepareStatementForSqlObject($qry)->execute();
+	}
+
+	public function ReadListByCode_Option($code, $optionDatas) {
+		$where = new Where();
+		$where
+			->nest()->equalTo("status", 3)
+				->or->nest()
+					->notEqualTo("status", 0)
+					->and->nest()
+						->equalTo("admin_create", $code)
+						->or->equalTo("admin_regist", $code)
+					->unnest()
+				->unnest()
+			->unnest();
+		foreach ($optionDatas as $key => $value) {
+			$where->and->equalTo($key, $value);
+		}
+		
+		$qry = $this->sql->select("question")->where($where);
+		return $this->sql->prepareStatementForSqlObject($qry)->execute();
+	}
+
 	public function ReadByAdminCode($code)
 	{
 		$where = new Where();

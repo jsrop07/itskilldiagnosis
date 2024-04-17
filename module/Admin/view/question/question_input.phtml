@@ -11,7 +11,7 @@
 <h1 class="title"><?php echo $title; ?></h1>
 
 <form id="form" method="post" action="./confirm">
-	<?php if ($isSaveData || $mode == "edit"): ?>
+	<?php if ($isSaveData || (isset($mode) && ($mode == "edit"))): ?>
 		<input name="idx" value="<?php echo $questionData["idx"]; ?>" type="hidden"/>
 	<?php endif; ?>
 
@@ -157,7 +157,7 @@
 </form>
 
 <div class="btn-place" style="margin-top: 32px;">
-	<?php if ($mode == "edit"): ?>
+	<?php if ((isset($mode) && ($mode == "edit"))): ?>
 		<button class="emegra" onclick="Update();">修正</button>
 	<?php else: ?>
 		<button class="emegra" onclick="Regist();">登録</button>
@@ -210,7 +210,7 @@
 		}
 	}
 
-	<?php if (!($mode == "edit")): ?>
+	<?php if (!(isset($mode) && ($mode == "edit"))): ?>
 		function Regist() {
 			dateCreate.disabled = false;
 			dateCreate.type = "text";
@@ -256,7 +256,7 @@
 					const result = xhr.responseText;
 					if (result == "success") {
 						alert("臨時保存しました。");
-						self.location.href = "detail/<?php echo $questionData["idx"]; ?>";
+						self.location.href = "detail/<?php echo isset($questionData["idx"]) ? $questionData["idx"] : ""; ?>";
 					}
 					else { alert("Error"); }
 				}
@@ -299,7 +299,7 @@ function Update() {
 			const result = xhr.responseText;
 			if (result == "success") {
 				alert("修正しました。");
-				self.location.href = "../detail/<?php echo $questionData["idx"]; ?>";
+				self.location.href = "../detail/<?php echo isset($questionData["idx"]) ? $questionData["idx"] : ""; ?>";
 			}
 			else { alert("Error"); }
 		}

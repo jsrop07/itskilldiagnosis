@@ -10,51 +10,69 @@ class QuestionController extends AbstractActionController
 	public function indexAction() { print_r("Question Index"); exit; }
 	
 	public function listAction() {
-		$printDataNum = 10;
 		$query = $this->params()->fromQuery();
 		$page = 1;
-		if (isset($query["page"])) { $page = $query["page"]; }
+		if (isset($query["page"])) {
+			$page = $query["page"];
+			unset($query["page"]);
+		}
 
-		$inputDatas = array();
+		$printDataNum = 10;
 
-		$datas = $this->GetOptionDatas([], []);
+		$datas = array();
+		$datas = $this->GetOptionDatas($datas, []);
 
 		$session = new Container("user");
-		$userCode = $session->offsetGet("code");
+		$userCode = $session["code"];
+		$userLevel = $session["level"];
 
-		$questionTable = $this->getServiceLocator()->get("QuestionTable");
+		$questionTb = $this->getServiceLocator()->get("QuestionTable");
 		$totalQuestionDatas = array();
-		if (isset($query["register"])) {
-			$inputDatas["register"] = $query["register"];
-			$registerCode = $query["register"];
-			$totalQuestionDatas = iterator_to_array($questionTable->ReadByAdminCode_RegisterCode($userCode, $registerCode));
+		if (!empty($query)) {
+			foreach ($query as $key => $value) {
+				$datas["inputDatas"][$key] = $value;
+			}
+
+			if (is_numeric(substr($query["register"], 0, 2)) && is_numeric(substr($query["register"], 2, 7))) {
+				$query["admin_regist"] = $query["register"];
+			}
+			else {
+				$adminTb = $this->getServiceLocator()->get("AdminTable");
+				$query["admin_regist"] = $adminTb->ReadByName($query["register"])["code"];
+			}
+
+			unset($query["register"]);
+
+			if ($userLevel >= 2) { $totalQuestionDatas = iterator_to_array($questionTb->ReadListByOption($query)); }
+			else { $totalQuestionDatas = iterator_to_array($questionTb->ReadListByCode_Option($userCode, $query)); }
 		}
 		else {
-			$totalQuestionDatas = iterator_to_array($questionTable->ReadByAdminCode($userCode));
+			if ($userLevel >= 2) { $totalQuestionDatas = iterator_to_array($questionTb->ReadAllList()); }
+			else { $totalQuestionDatas = iterator_to_array($questionTb->ReadListByCode($userCode)); }
 		}
 
-		$datas["questionDatas"] = array();
+
 		if (!empty($totalQuestionDatas)) {
-			$questionDatas = array();
+			$PrintQuestionDatas = array();
 			$startIdx = ($page - 1) * $printDataNum;
 			$endIdx = ($page * $printDataNum);
 			for ($i = 0; $startIdx + $i < $endIdx; $i++) {
 				if (!isset($totalQuestionDatas[$startIdx + $i])) break;
 
-				$questionDatas[$i] = $totalQuestionDatas[$startIdx + $i];
-				$questionDatas[$i]["num"] = count($totalQuestionDatas) - ($startIdx + $i);
+				$PrintQuestionDatas[$i] = $totalQuestionDatas[$startIdx + $i];
+				$PrintQuestionDatas[$i]["num"] = count($totalQuestionDatas) - ($startIdx + $i);
 			}
-			$datas["questionDatas"] = $questionDatas;
+			$datas["questionDatas"] = $PrintQuestionDatas;
 		}
 		
-		$paginationData["totalPage"] = count($totalQuestionDatas) / $printDataNum;
+		$totalPage = ceil(count($totalQuestionDatas) / $printDataNum);
+		if ($totalPage < 2) { $totalPage = 0; }
+		$paginationData["totalPage"] = $totalPage;
 		$paginationData["currentPage"] = $page;
 		$paginationData["url"] = "/admin/question/list/";
 		$datas["paginationData"] = $paginationData;
 
 		$datas["breadcrumbData"] = ["ITスキル診断問項管理"];
-
-		$datas["inputDatas"] = $inputDatas;
 
 		$this->layout("layout/list");
 		return $this->SetViewModel($datas, "/question/question_list.phtml");
@@ -230,6 +248,11 @@ class QuestionController extends AbstractActionController
 		return $this->SetViewModel($datas, "/question/question_input.phtml");
 	}
 
+	public function csvAction() {
+		$this->layout("layout/list");
+		return $this->SetViewModel([], "/question/question_csv.phtml");
+	}
+
 	/** Make ViewModel with datas and template */
 	function SetViewModel($datas, $template) {
 		$vm = new ViewModel($datas);
@@ -241,13 +264,18 @@ class QuestionController extends AbstractActionController
 		$optionTb = $this->getServiceLocator()->get("OptionTable");
 		$optionDatas = $optionTb->ReadAll();
 
+		$datas["optionDatas"] = array();
 		foreach ($optionDatas as $data) {
 			if (in_array($data["type"], $exceptArr)) { continue; }
+
+			array_push($datas["optionDatas"], $data["type"]);
 			
 			$index = $data["type"] . "Datas";
 			$textDatas = explode(",", $data["texts"]);
-			$datas[$index] = $textDatas;			
+			$datas[$index] = $textDatas;
 		}
+
+		unset($datas["statusDatas"][0]);
 
 		return $datas;
 	}
@@ -324,5 +352,58 @@ class QuestionController extends AbstractActionController
 			$questionTb->DeleteQuestionByIdx($idx);
 		}
 		die("success");
+	}
+
+	public function savecsvAction() {
+		$post = $this->params()->fromPost();
+		$csvStrings = explode("\n", $post["csv"]);
+
+		$csvStrings[0] = str_replace("\r", "", $csvStrings[0]);
+		$csvKeys = explode(",", $csvStrings[0]);
+		unset($csvStrings[0]);
+
+		$csvDatas = array();
+
+		$questionTb = $this->getServiceLocator()->get("QuestionTable");
+		
+		foreach ($csvStrings as $i => $string) {
+			$string = str_replace("\r", "", $string);
+			$keyIndex = 0;
+			while ($string != "") {
+			$value = "";
+
+				if ($string[0] == "\"") {
+					$index = strpos($string, "\",");
+					$value = substr($string, 1, $index - 1);
+					$string = substr($string, $index + 2, strlen($string) - $index);
+				}
+				else {
+					$index = strpos($string, ",");
+					$value = substr($string, 0, $index);
+					$string = substr($string, $index + 1, strlen($string) - $index);
+				}
+
+				$csvDatas[$i - 1][$csvKeys[$keyIndex]] = $value;
+				$keyIndex++;
+			}
+
+			if (!array_key_exists("admin_create", $csvDatas[$i - 1])) {
+				$session = new Container("user");
+				$csvDatas[$i - 1]["admin_create"] = $session("code");
+			}
+
+			if (!array_key_exists("date_create", $csvDatas[$i - 1])) {
+				$csvDatas[$i - 1]["date_create"] = date("Y-m-d H:i:s");
+			}
+
+			if (!array_key_exists("status", $csvDatas[$i - 1])) {
+				$csvDatas[$i - 1]["status"] = 0;
+			}
+
+
+			$questionTb->CreateQuestion($csvDatas[$i -1]);
+		}
+
+		die(print_r($csvDatas[0]));
 	}
 }

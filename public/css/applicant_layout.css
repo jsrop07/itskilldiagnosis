@@ -34,33 +34,36 @@ header {
     width:15%; 
     padding: 10px; 
     justify-content: center;
-    min-width:200px;
+    /* min-width:200px; */
+}
+.left-column{
+    min-width:120px;
 }
 .middle-column {
     width: 50%; 
     font-size: 30px;
-    min-width:350px;
+    min-width:260px;
 }
+.right-column {
+    min-width:120px;
 
+}
 footer{
-    width: 100%;
-    margin-bottom: 20px;
+    min-width: 850px;
+    margin-top: 20px;
     text-align: center;
     font-size: 12px;
     font-weight: 400;
     color: grey;
-    /* position: fixed; */
 
 }
 
 main{
     margin-top:50px;
-    padding:20px 300px;
-    min-width: 1000px; 
-    min-height: 1000px; 
 }
 .diagnosis {
     min-height: 100vh;
+    min-width:850px;
 }
 .diagnosis_head{
     text-align:center;

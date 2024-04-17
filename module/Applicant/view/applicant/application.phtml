@@ -241,9 +241,16 @@
             event.preventDefault();
 			return false;
 		}
-  
+        
+        var submitConfirm=confirm("登録しますか？");
+        if (!submitConfirm){
+            event.preventDefault();
+            return false;
+        }
 	}
+
 </script>
+
 <script>
     window.addEventListener('resize', function() {
     var scrollPosition = (document.body.scrollWidth - window.innerWidth) / 2;

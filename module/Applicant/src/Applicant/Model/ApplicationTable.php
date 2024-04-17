@@ -75,7 +75,7 @@ class ApplicationTable
             'career'=>$dataArray['career'],
             'certificates'=>$dataArray['certificates'],
             'other'=>$dataArray['other'],
-            'write_Date' => new Expression('NOW()')  // write_Date 필드를 그대로 사용
+            'write_date' => date("Y-m-d H:i:s")
         ]);
         $sqlString = $qry->getSqlStringForSqlObject($insert);
         $result = $this->adapter->query($sqlString, Adapter::QUERY_MODE_EXECUTE);

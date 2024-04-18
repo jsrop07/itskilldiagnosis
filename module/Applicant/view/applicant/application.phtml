@@ -1,14 +1,11 @@
 
-<div class="container-fluid" style="padding:20px 300px;;">
+<div class="container-fluid">
     <div class="diagnosis card">
         <div class="diagnosis_head">
             <br>
-            <h5 style="font-weight: bold;">
-            株式会社ジエンジサービスの
-            ITスキル診断申込フォームです。
-            <br>    <br>
-            項目に沿って必要事項を入力してください。
-            </h5>
+            <h3 style="font-weight: bold;">
+            ITスキル診断申込
+            </h3>
         </div>
         <form id="form" name="input_form" enctype="multipart/form-data" action="/applicant/application" method="post">
             <div class="diagnosis_main">
@@ -18,7 +15,7 @@
                     <br>
                     
                     <span>お名前（漢字）</span>
-                    <input class="form-control" name="name" type="text" placeholder="漢字を記入してください。"style="width:40%">
+                    <input class="form-control" id="userInput" name="name" type="text" placeholder="漢字を記入してください。"style="width:40%">
 
                     <br>
 
@@ -27,24 +24,24 @@
                     <br>
 
                     <span class="no_after_style">性別</span>
-                    <select class="form-select" name="gender" style="width:20%">
-                        <option value="" selected disabled hidden>選択。</option>
+                    <select class="" name="gender" style="width:20%" >
+                        <option value="" selected disabled hidden>選択</option>
                         <option value="0">男</option>
                         <option value="1">女</option>
                     </select>
                     <br>  
                     
                     <span >応募区分</span>
-                    <select class="form-select" name="application_category" style="width:40%">
-                        <option value="" selected disabled hidden>選択してください。</option>
+                    <select class="" name="application_category" style="width:40%" >
+                        <option value="" selected disabled hidden hidden>選択してください。</option>
                         <option value="0">新卒</option>
-                        <option value="1">中卒（経歴職）</option>
+                        <option value="1">中途（経歴職）</option>
                     </select>
                     <br>  
 
                     <span>学歴</span>
-                    <select class="form-select" name="education" style="width:40%" id="educationSelect">
-                        <option value="" selected disabled hidden>選択してください。</option>
+                    <select class="" name="education" style="width:40%" id="educationSelect" >
+                        <option value=""selected disabled hidden>選択してください。</option>
                         <option value="高卒">高卒</option>
                         <option value="専門卒">専門卒</option>
                         <option value="大卒">大卒</option>
@@ -61,15 +58,16 @@
                     <br>
 
                     <span>ITスキル有無</span>
-                    <select class="form-select" name="skill" style="width:20%">
-                        <option value="" selected disabled hidden>選択。</option>
+                    <select class="" name="skill" style="width:20%" >
+                        <option value="" selected disabled hidden>選択</option>
                         <option value="0">有</option>
                         <option value="1">無</option>
                     </select>
                     <br>
 
                     <span class="no_after_style">問題種別</span>
-                    <select class="form-select" name="question_type" style="width:40%">
+                    <select class="" name="question_type" style="width:40%" id="typeSelect">
+                    <option value="" selected  >選択してください。</option>
                     <?php foreach ($this->questionType as $row): ?>
                         <?php $texts = explode(',', $row['texts']); ?>
                         <?php foreach ($texts as $text): ?>
@@ -81,11 +79,11 @@
                     <br>
 
                     <span>経験分野</span>
-                    <select class="form-select" name="develop" style="width:40%" id="developSelect">
+                    <select class="" name="develop" style="width:40%" id="developSelect" >
+                    <option value="" selected  >選択してください。</option>
                         <?php foreach ($this->develop as $row): ?>
                             <?php $texts = explode(',', $row['texts']); ?>
                             <?php foreach ($texts as $text): ?>
-                                <option value="" selected disabled hidden>選択してください。</option>
                                 <option value="<?php echo $text; ?>"><?php echo $text; ?></option>
                             <?php endforeach; ?>
                         <?php endforeach; ?>
@@ -99,7 +97,7 @@
                     <input class="form-control" id="career" name="career" type="text" placeholder="経歴を記入してください。" style="font-size:15px; width:40%">
                     <br>
 
-                    <span class="no_after_style">資格</span>
+                    <span class="no_after_style">IT関連資格</span>
                     <input class="form-control" name="certificates" type="text" placeholder="資格を記入してください。"style="width:80%">
                     <br>
 
@@ -120,6 +118,38 @@
 </html>
 </div>
 
+<script>
+var skillSelect = document.querySelector('select[name="skill"]');
+var questionTypeSelect = document.getElementById('typeSelect');
+var developSelect = document.getElementById('developSelect');
+var otherDevelopInput = document.getElementById('otherDevelopInput');
+var careerInput = document.getElementById('career');
+var certificatesInput = document.querySelector('input[name="certificates"]');
+var otherTextarea = document.querySelector('textarea[name="other"]');
+var otherquestiontype = document.getElementById('typeSelect');
+
+skillSelect.addEventListener('change', function() {
+    var selectedValue = this.value;
+
+    if (selectedValue === '1') {
+        developSelect.disabled = true;
+        otherDevelopInput.querySelector('input').disabled = true;
+        careerInput.disabled = true;
+        certificatesInput.disabled = true;
+        otherTextarea.disabled = true;
+        questionTypeSelect.disabled=true;
+    } else {
+        questionTypeSelect.disabled=false;        
+        developSelect.disabled = false;
+        otherDevelopInput.querySelector('input').disabled = false;
+        careerInput.disabled = false;
+        certificatesInput.disabled = false;
+        otherTextarea.disabled = false;
+    }
+    
+});
+
+</script>
 <script>
     document.getElementById('educationSelect').addEventListener('change', function(event) {
     var selectedOption = event.target.value;
@@ -161,88 +191,100 @@
 });
 </script>
 
+<script>
+function checkKanji(input) {
+    var japaneseChineseRegex = /^[\u4E00-\u9FFF]+$/; 
+    return japaneseChineseRegex.test(input);
+}
+
+function checkKana(input) {
+    var katakanaRegex = /^[\u30A0-\u30FFー]+$/; 
+    return katakanaRegex.test(input);
+}
+
+</script>
+
 <script type="text/javascript">
 
 	function applicationConfirm() {
 		if (form.email.value == "") {
-			alert("メールを作成してください");
+			alert("メールアドレスを入力してください。");
 			form.email.focus();
             event.preventDefault();
 			return false;
 		}
 
-        if (form.name.value == "") {
-			alert("漢字を作成してください");
-			form.name.focus();
-            event.preventDefault();
-			return false;
-		}
+        if (form.name.value == "" || !checkKanji(form.name.value)) {
+            alert("漢字を入力してください。");
+            form.name.focus();
+            event.preventDefault(); 
+            return false;
+        }
 
-        if (form.kana.value == "") {
-			alert("カナを作成してください");
+        if (form.kana.value == "" || !checkKana(form.kana.value)) {
+			alert("カナを入力してください。");
 			form.kana.focus();
             event.preventDefault();
 			return false;
 		}
     
         if (form.application_category.value == "") {
-			alert("応募区分を選択してください");
+			alert("応募区分を入力してください。");
 			form.application_category.focus();
             event.preventDefault();
 			return false;
 		}
         if (form.educationSelect.value == "") {
-			alert("学歴を選択してください");
+			alert("学歴入力してください。");
 			form.educationSelect.focus();
             event.preventDefault();
 			return false;
 		}
 
         if (form.educationSelect.value == "その他" && form.otherEducation.value=="") {
-			alert("その他の場合の、記入してください");
+			alert("その他の場合の、記入してください。");
 			form.educationSelect.focus();
             event.preventDefault();
 			return false;
 		}
 
-        if (form.major.value == "") {
-			alert("専攻を作成してください");
-			form.major.focus();
-            event.preventDefault();
-			return false;
-		}
-        if (form.skill.value == "") {
-			alert("問題種別を選択してください");
-			form.skill.focus();
-            event.preventDefault();
-			return false;
-		}
+        // if (form.major.value == "") {
+		// 	alert("専攻を作成してください");
+		// 	form.major.focus();
+        //     event.preventDefault();
+		// 	return false;
+		// }
+        // if (form.skill.value == "") {
+		// 	alert("問題種別を入力してください。");
+		// 	form.skill.focus();
+        //     event.preventDefault();
+		// 	return false;
+		// }
 
-        if (form.developSelect.value == "") {
-			alert("経験分野を選択してください");
-			form.developSelect.focus();
-            console.log("sdasd");
-            event.preventDefault();
-			return false;
-		}
+     
+        if (!developSelect.disabled && form.developSelect.value === "") {
+            alert("経験分野を入力してくださいsd。");
+            form.developSelect.focus();
+            event.preventDefault(); 
+            return false;
+        }
+
 
         if (form.developSelect.value == "その他" && form.otherDevelop.value=="") {
 			alert("その他の場合の、記入してください");
 			form.developSelect.focus();
-            console.log("ddd");
-
             event.preventDefault();
 			return false;
 		}
 
-        if (isNaN(form.career.value) || form.career.value==="") {
-			alert("IT経験年数を作成してください");
-			form.career.focus();
-            event.preventDefault();
-			return false;
-		}
+        if (!careerInput.disabled && (isNaN(form.career.value) || form.career.value === "")) {
+        alert("IT経験年数を入力してください。");
+        form.career.focus();
+        event.preventDefault(); 
+        return false;
+    }
         
-        var submitConfirm=confirm("登録しますか？");
+        var submitConfirm=confirm("申し込みますか？");
         if (!submitConfirm){
             event.preventDefault();
             return false;
@@ -252,9 +294,19 @@
 </script>
 
 <script>
-    window.addEventListener('resize', function() {
-    var scrollPosition = (document.body.scrollWidth - window.innerWidth) / 2;
-    window.scrollTo(scrollPosition, 0);
-    });
+var selectElements = document.querySelectorAll('[name="gender"],[name="application_category"],[name="education"],[name="skill"],[name="question_type"],[name="develop"]');
 
+selectElements.forEach(function(selectElement) {
+    selectElement.addEventListener('change', function() {
+        var selectedValue = selectElement.value;
+        
+        if (selectedValue != "") {
+            selectElement.style.color = 'black';
+        } else {
+            selectElement.style.color = 'gray';
+            // selectElement.style.fontStyle = 'italic'; 
+        }
+    });
+});
 </script>
+

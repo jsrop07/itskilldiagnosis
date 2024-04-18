@@ -60,27 +60,36 @@ class ApplicationTable
 
     public function insertApplication($dataArray){
         $qry = new Sql($this->adapter);
-        $insert = $qry->insert('applicant');
-        $insert->values([
+
+        $applicantInsert = $qry->insert('applicant');
+        $applicantInsert->values([
             'email'=>$dataArray['email'],
             'name'=>$dataArray['name'],
             'kana'=>$dataArray['kana'],
             'gender'=>$dataArray['gender'],
-            'application_category'=>$dataArray['application_category'],
-            'education'=>$dataArray['education'],
-            'major'=>$dataArray['major'],
-            'skill'=>$dataArray['skill'],
-            'question_type'=>$dataArray['question_type'],
-            'develop'=>$dataArray['develop'],
             'career'=>$dataArray['career'],
             'certificates'=>$dataArray['certificates'],
             'other'=>$dataArray['other'],
             'write_date' => date("Y-m-d H:i:s")
         ]);
-        $sqlString = $qry->getSqlStringForSqlObject($insert);
-        $result = $this->adapter->query($sqlString, Adapter::QUERY_MODE_EXECUTE);
+        $applicantSqlString = $qry->getSqlStringForSqlObject($applicantInsert);
+        $applicantResult = $this->adapter->query($applicantSqlString, Adapter::QUERY_MODE_EXECUTE);
 
-        return $result;    
+        $recordInsert=$qry->insert('record');
+        $recordInsert->values([
+            'write_date' => date("Y-m-d H:i:s"),
+            'application_category'=>$dataArray['application_category'],
+            'education'=>$dataArray['education'],
+            'major'=>$dataArray['major'],
+            'skill'=>$dataArray['skill'],
+            'develop'=>$dataArray['develop'],
+            'question_type'=>$dataArray['question_type'],
+        ]);
+        $recordSqlString = $qry->getSqlStringForSqlObject($recordInsert);
+        $recordResult = $this->adapter->query($recordSqlString, Adapter::QUERY_MODE_EXECUTE);
+
+
+        return [$applicantResult, $recordResult];   
     }
 
 

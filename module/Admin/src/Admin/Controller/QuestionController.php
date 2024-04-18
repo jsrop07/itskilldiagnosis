@@ -47,6 +47,7 @@ class QuestionController extends AbstractActionController
 			else { $totalQuestionDatas = iterator_to_array($questionTb->ReadListByCode_Option($userCode, $query)); }
 		}
 		else {
+			print_r($userLevel); exit;
 			if ($userLevel >= 2) { $totalQuestionDatas = iterator_to_array($questionTb->ReadAllList()); }
 			else { $totalQuestionDatas = iterator_to_array($questionTb->ReadListByCode($userCode)); }
 		}
@@ -194,7 +195,7 @@ class QuestionController extends AbstractActionController
 
 		if ($delete) {
 			if ($userLevel >= 2) { $totalQuestionDatas = iterator_to_array($questionTable->ReadQuestion()); }
-			$totalQuestionDatas = iterator_to_array($questionTable->ReadByCreater_Register($userCode));
+			else { $totalQuestionDatas = iterator_to_array($questionTable->ReadByCreater_Register($userCode)); }
 		}
 		else {
 			if ($userLevel >= 2) { $totalQuestionDatas = iterator_to_array($questionTable->ReadNotRegist()); }

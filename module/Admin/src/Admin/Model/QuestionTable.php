@@ -60,13 +60,20 @@ class QuestionTable {
 	}
 
 	public function ReadListByOption($optionDatas) {
+		$order = "date_regist DESC";
+		if (isset($optionDatas["align"])) {
+			$order = [str_replace("_", " ", $optionDatas["align"]), "date_regist DESC"];
+			unset($optionDatas["align"]);
+		}
+		print_r($optionDatas);
+		// exit;
 		$where = new Where();
 		$where->notEqualTo("status", 0);
 		foreach ($optionDatas as $key => $value) {
 			$where->and->equalTo($key, $value);
 		}
 		
-		$qry = $this->sql->select("question")->where($where);
+		$qry = $this->sql->select("question")->where($where)->order($order);
 		return $this->sql->prepareStatementForSqlObject($qry)->execute();
 	}
 
@@ -128,12 +135,12 @@ class QuestionTable {
 	}
 
 	public function ReadNotRegist() {
-		$qry = $this->sql->select("question")->where(["status" => 0]);
+		$qry = $this->sql->select("question")->where(["status != 3"]);
 		return $this->sql->prepareStatementForSqlObject($qry)->execute();
 	}
 
 	public function ReadNotRegistByRegister($code) {
-		$qry = $this->sql->select("question")->where(["status" => 0, "admin_regist" => $code]);
+		$qry = $this->sql->select("question")->where(["status != 3", "admin_regist" => $code]);
 		return $this->sql->prepareStatementForSqlObject($qry)->execute();
 	}
 

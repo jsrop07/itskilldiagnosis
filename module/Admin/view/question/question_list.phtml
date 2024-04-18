@@ -1,4 +1,14 @@
-<?php if (!isset($_SESSION)) { session_start(); } ?>
+<?php
+	if (!isset($_SESSION)) { session_start(); }
+	$alignDeco = "";
+	if (isset($inputDatas["align"])) { 
+		if (strpos($inputDatas["align"], "_DESC")) {
+			$alignDeco = "▼";
+			$inputDatas["align"] = str_replace("_DESC", "", $inputDatas["align"]);
+		}
+		else $alignDeco = "▲";
+	}
+?>
 
 <?php echo $this->partial("breadcrumb", ["datas" => $breadcrumbData]); ?>
 
@@ -18,8 +28,11 @@
 	.search-place {
 		width: 100%;
 		margin-top: 20px;
-		display: flex;
-		align-items: center;
+		display: grid;
+		grid-template-columns: 50px 150px 150px 65px 1fr 65px 150px;
+		column-gap: 10px;
+
+		text-align: center;
 	}
 	input.search {
 		width: 150px;
@@ -32,14 +45,14 @@
 		font-weight: 400;
 	}
 
-	table.emegra tr { grid-template-columns: 50px 100px repeat(2, 60px) 60px 1fr 70px 50px repeat(2, 60px); }
+	table.emegra tr { grid-template-columns: 50px 100px repeat(2, 60px) 60px 1fr 70px 50px repeat(2, 60px) 30px; }
 	table.emegra tr.index {
 		padding-top: 8px;
 		padding-bottom: 4px;
-		grid-template-columns: 50px 100px repeat(2, 60px) 60px 1fr 70px 50px repeat(2, 60px);
+		grid-template-columns: 50px 100px repeat(2, 60px) 60px 1fr 70px 50px repeat(2, 60px) 30px;
 		grid-template-areas:
-		"no status  class   class  level title type point confirm update"
-		"no status class_l class_s level title type point confirm update";
+		"no status  class   class  level title type point confirm update select"
+		"no status class_l class_s level title type point confirm update select";
 	}
 	table.emegra tr.index > th {
 		padding: 4px 0;
@@ -47,6 +60,13 @@
 		align-items: center;
 		justify-content: center;
 	}
+
+	.list-title {
+		text-align: left;
+		
+		cursor: pointer;
+	}
+	.list-title:hover { text-decoration: underline; }
 
 	.button-place {
 		display: flex;
@@ -62,28 +82,19 @@
 
 <content class="main">
 	<div class="search-place">
-		<select class="form-select form-select-sm" style="width: 150px; margin-right: 10px;" onchange="ChangeSearch(this.value)">
+		<div style="display: flex; align-items: center;">承認者</div>
+		<input class="form-control form-control-sm search" id="input_register" value="<?php echo (isset($inputDatas["register"])) ? $inputDatas["register"] : ""; ?>"/>
+		<button class="emegra search confirm" onclick="SearchRegister()">検索</button>	
+
+		<div style="display: flex; align-items: center;">タイトル</div>
+		<input class="form-control form-control-sm"/>
+		<div style="display: flex; align-items: center;">並び替え</div>
+		<select class="form-select form-select-sm" onchange="ChangeSearch(this.value)">
 			<option value="status">ステータス</option>
 			<option value="class1st">大分類</option>
 			<option value="class2nd">小分類</option>
 			<option value="level">レベル</option>
-			<option value="title">タイトル</option>
-			<option value="type">タイプ</option>
-			<option value="point">点数</option>
 		</select>
-		<div id="div_search" style="margin-right: 10px;">
-			<select class="form-select form-select-sm" id="search-status" style="width: 150px;">
-				<option value="">未設定</option>
-				<?php foreach ($statusDatas as $i => $data): ?>
-					<option value=<?= $i; ?>><?php echo $data; ?></option>
-				<?php endforeach; ?>
-			</select>
-		</div style="margin-right: 10px;">
-		
-		承認者
-		<input class="form-control form-control-sm search" style="margin-left: 10px;" id="input_register" value="<?php echo (isset($inputDatas["register"])) ? $inputDatas["register"] : ""; ?>"/>
-
-		<button class="emegra search confirm" style="margin-left: 10px;" onclick="SearchRegister()">検索</button>
 	</div>
 
 	<?php if (empty($questionDatas)): ?>
@@ -102,25 +113,27 @@
 				<th style="grid-area: title">タイトル</th>
 				<th style="grid-area: type">タイプ</th>
 				<th style="grid-area: point">点数</th>
-				<th style="grid-area: confirm">承認日</th>
-				<th style="grid-area: update">更新日</th>
+				<th style="grid-area: confirm">作成日</th>
+				<th style="grid-area: update">承認日</th>
+				<th style="grid-area: select"><input id="checkAll" type="checkbox" onclick="Checking(this);" style="cursor: pointer;"></th>
 				<th style="grid-area: class_l">大分類</th>
 				<th style="grid-area: class_s">小分類</th>
 			</tr>
 		</thead>
 		<tbody>
 			<?php foreach($questionDatas as $data): ?>
-				<tr onclick="self.location.href='./detail/<?php echo $data['idx']; ?>';">
+				<tr>
 					<td><?php echo $data["num"]; ?></td>
 					<td><?php echo $statusDatas[$data["status"]]; ?></td>
 					<td><?php echo $class1stDatas[$data["class1st"]]; ?></td>
 					<td><?php echo $class2ndDatas[$data["class2nd"]]; ?></td>
 					<td><?php echo $levelDatas[$data["level"]]; ?></td>
-					<td><?php echo $data["title"]; ?></td>
+					<td class="list-title" onclick="self.location.href='./detail/<?php echo $data['idx']; ?>';"><?php echo $data["title"]; ?></td>
 					<td><?php echo $typeDatas[$data["type"]]; ?></td>
 					<td><?php echo $data["point"]; ?></td>
 					<td><?php echo (isset($data["date_regist"])) ? date("y.m.d", strtotime($data["date_regist"])) : "未承認"; ?></td>
-					<td><?php echo date("y.m.d", strtotime($data["date_update"])); ?></td>
+					<td><?php echo date("y.m.d", strtotime($data["date_regist"])); ?></td>
+					<td><input name="checkIdx" type="checkbox" value="<?php echo $data["idx"]; ?>" onclick="Checking(this);" style="cursor: pointer;"></td>
 				</tr>
 			<?php endforeach; ?>
 		</tbody>
@@ -133,9 +146,9 @@
 
 	<div class="button-place" style="margin-top: 10px;">
 		<?php if ($_SESSION["user"]["level"] > 0): ?>
-			<button class="emegra" style="margin-right: 8px;" onclick="self.window.location='./manage/regist'">一括承認</button>
+			<button class="emegra" style="margin-right: 8px;">承認</button>
 		<?php endif; ?>
-		<button class="emegra delete" style="margin-right: 8px;" onclick="self.window.location='./manage/delete'">一括削除</button>
+		<button class="emegra delete" style="margin-right: 8px">削除</button>
 		<button class="emegra" style="margin-right: 8px;" onclick="self.window.location='./csv'">CSV登録</button>
 		<button class="emegra" onclick="self.window.location='./regist'">新規登録</button>
 	</div>	
@@ -145,6 +158,27 @@
 	const input_register = document.getElementById("input_register");
 	const div_search = document.getElementById("div_search");
 	let searchData = "status";
+	const check_all = document.getElementById("checkAll");
+	const check_idxs = document.getElementsByName("checkIdx");
+
+	function Checking(element) {
+		if (element == check_all) {
+			if (element.checked) {
+				check_idxs.forEach(e => { e.checked = true; })
+			}
+			else {
+				check_idxs.forEach(e => { e.checked = false; })
+			}
+		}
+
+		if (element != check_all) {
+			check_all.checked = false;
+
+			check_idxs.forEach(e => {
+				if (e.checked) { check_all.checked = true; return true; }
+			});
+		}
+	}
 
 	function SearchRegister() {
 		let urlText = "?";
@@ -223,5 +257,34 @@
 		
 		div_search.children[0].remove();
 		div_search.appendChild(searchElement);
+	}
+
+	function Align(element) {
+		<?php
+			$url = $_SERVER["REQUEST_URI"];
+			$url = $url . "?";
+			$query = explode("?", $url)[1];
+	
+			if (!empty($query)) {
+				$queryDatas = explode("&", $query);
+
+				$newQueryDatas = array();
+				foreach ($queryDatas as $data) {
+					if (explode("=", $data)[0] != "align") {
+						array_push($newQueryDatas, $data);
+					}
+				}
+				$newQuery = implode("&", $newQueryDatas);
+				$url = explode("?", $_SERVER["REQUEST_URI"])[0] . "?" . $newQuery . "&";
+			}
+		?>
+
+		let alignValue = element.id;
+		if (element.innerText.includes("▲")) {
+			alignValue += "_DESC";
+		}
+		
+		if (element.innerText.includes("▼")) { self.location.href = "<?php echo substr($url, 0, -1); ?>"; }
+		else { self.location.href = "<?php echo $url; ?>" + "align=" + alignValue; }
 	}
 </script>

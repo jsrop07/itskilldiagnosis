@@ -1,9 +1,11 @@
 <?php
 	if (!isset($_SESSION)) { session_start(); }
-	$numTexts = array("①", "②", "③", "④", "⑤");
 
 	$isSaveData = false;
 	if (isset($questionData)) { $isSaveData = true; }
+
+	$numTexts = array("①", "②", "③", "④", "⑤");
+	$answerCount = 3;
 ?>
 
 <?php echo $this->partial("breadcrumb", ["datas" => $breadcrumbData]); ?>
@@ -20,46 +22,50 @@
 
 		<div class="card-body">
 			<style type="text/css">
-				dl.emegra.setting { grid-template-columns: 90px 1fr; }
+				dl.emegra.setting { grid-template-columns: 140px 1fr; }
 			</style>
 			<dl class="emegra setting">
-				<dt>大分類</dt>
+				<dt class="essential">大分類</dt>
 				<dd>
 					<select class="form-select" name="class1st" style="width: 150px;">
+						<option value="" hidden>選択</option>
 						<?php foreach($class1stDatas as $idx => $data): ?>
 							<option value="<?php echo $idx; ?>"<?php echo ($isSaveData && $questionData["class1st"] == $idx) ? " selected" : ""; ?>><?php echo $data; ?></option>
 						<?php endforeach; ?>
 					</select>
 				</dd>
 
-				<dt>小分類</dt>
+				<dt class="essential">小分類</dt>
 				<dd>
 					<select class="form-select" name="class2nd" style="width: 150px;">
+						<option value="" hidden>選択</option>
 						<?php foreach($class2ndDatas as $idx => $data): ?>
 							<option value="<?php echo $idx; ?>"<?php echo ($isSaveData && $questionData["class2nd"] == $idx) ? " selected" : ""; ?>><?php echo $data; ?></option>
 						<?php endforeach; ?>
 					</select>
 				</dd>
 		
-				<dt>レベル</dt>
+				<dt class="essential">レベル</dt>
 				<dd>
 					<select class="form-select" name="level" style="width: 100px;">
+						<option value="" hidden>選択</option>
 						<?php foreach($levelDatas as $idx => $data): ?>
 							<option value="<?php echo $idx; ?>"<?php echo ($isSaveData && $questionData["level"] == $idx) ? " selected" : ""; ?>><?php echo $data; ?></option>
 						<?php endforeach; ?>
 					</select>
 				</dd>
 
-				<dt>問題タイプ</dt>
+				<dt class="essential">問題タイプ</dt>
 				<dd>
 					<select class="form-select" name="type" id="type" onchange="ChangeType(this.value)" style="width: 150px;">
+						<option value="" hidden>選択</option>
 						<?php foreach($typeDatas as $idx => $data): ?>
 							<option value="<?php echo $idx; ?>"<?php echo ($isSaveData && $questionData["type"] == $idx) ? " selected" : ""; ?>><?php echo $data; ?></option>
 						<?php endforeach; ?>
 					</select>
 				</dd>
 		
-				<dt>タイトル</dt>
+				<dt class="essential">タイトル</dt>
 				<dd><input class="form-control" name="title" type="text" value="<?php echo ($isSaveData) ? $questionData["title"] : ""; ?>"/></dd>
 			</dl>
 		</div>
@@ -70,30 +76,31 @@
 
 		<div class="card-body">
 			<style type="text/css">
-				dl.emegra.question { grid-template-columns: 90px 1fr; }
+				dl.emegra.question { grid-template-columns: 140px 1fr; }
 			</style>
 			<dl class="emegra question">
-				<dt>問題</dt>
+				<dt class="essential">問題</dt>
 				<dd><input class="form-control" name="question" type="text" value="<?php echo ($isSaveData) ? $questionData["question"] : ""; ?>"/></dd>
 
-				<dt>答え</dt>
-				<div id="answers" name="answers" style="display: grid; grid-template-columns: 15px 1fr; grid-gap: 24px 8px;">
+				<dt class="essential">答え</dt>
+				<div id="answers" name="answers" style="display: grid; grid-template-columns: 140px 1fr; grid-gap: 24px 8px;">
 					<?php if ($isSaveData): ?>
 						<?php foreach(explode(",", $questionData["answers"]) as $index => $answer): ?>
-							<dt><?= $numTexts[$index]; ?></dt>
+							<dt class="essential"><?= $numTexts[$index]; ?></dt>
 							<dd><input class="form-control" name="answer<?= $index + 1; ?>" type="text" value="<?php echo $answer; ?>"/></dd>
 						<?php endforeach; ?>
 					<?php else: ?>
 						<?php for($i = 0; $i < 3; $i++): ?>
-							<dt><?= $numTexts[$i]; ?></dt>
-							<dd><input class="form-control" name="answer<?= $i + 1; ?>" type="text"/></dd>
+							<dt class="essential"><?= $numTexts[$i]; ?></dt>
+							<dd><input class="form-control" name="answer<?= $i; ?>" type="text"/></dd>
 						<?php endfor; ?>
 					<?php endif; ?>
 				</div>
 
-				<dt>正解番号</dt>
+				<dt class="essential">正解番号</dt>
 				<dd>
 					<select class="form-select" name="correct" id="correct" style="width: 70px;">
+						<option value="" hidden>選択</option>
 						<?php if ($isSaveData): ?>
 							<?php for ($i = 1; $i <= $questionData["type"] + 3; $i++): ?>
 								<option value="<?= $i; ?>"<?php echo ($isSaveData && $questionData["point"] == $i) ? " selected" : ""; ?>><?= $numTexts[$i - 1]; ?></option>
@@ -106,9 +113,10 @@
 					</select>
 				</dd>
 
-				<dt>点数</dt>
+				<dt class="essential">点数</dt>
 				<dd>
 					<select class="form-select" name="point" style="width: 70px;">
+						<option value="" hidden>選択</option>
 						<?php for($i = 1; $i <= 5; $i++): ?>
 							<option value="<?= $i; ?>"<?php echo ($isSaveData && $questionData["point"] == $i) ? " selected" : ""; ?>><?= $i; ?></option>
 						<?php endfor; ?>
@@ -123,29 +131,21 @@
 
 		<div class="card-body">
 			<style type="text/css">
-				dl.emegra.info { grid-template-columns: 90px 1fr; }
+				dl.emegra.info { grid-template-columns: 140px 1fr; }
 			</style>
 			<dl class="emegra info">
-				<dt>作成者</dt>
+				<dt class="essential">作成者</dt>
 				<dd>
-					<select class="form-select" name="admin_create" style="width: 150px;">
+					<select class="form-select" name="admin_regist" style="width: 150px;">
+						<option value="" hidden>選択</option>
 						<?php foreach($adminDatas as $data): ?>
 							<option value="<?php echo $data["code"]; ?>"<?php echo $data["code"] == $_SESSION["user"]["code"] ? " selected" : ""; ?>><?php echo $data["name"]; ?></option>
 						<?php endforeach; ?>
 					</select>
 				</dd>
 
-				<dt>作成日</dt>
-				<dd><input class="form-control" name="date_create" id="date_create" type="date" style="width: 150px;" disabled value="<?php echo ($isSaveData) ? date("Y-m-d", strtotime($questionData["date_create"])) : date("Y-m-d"); ?>"></dd>
-
-				<dt>承認者</dt>
-				<dd>
-					<select class="form-select" name="admin_regist" style="width: 150px;">
-						<?php foreach($approvalDatas as $data): ?>
-							<option value="<?php echo $data["code"]; ?>"<?php echo ($isSaveData && $questionData["admin_regist"] == $data["code"]) ? " selected" : ""; ?>><?php echo $data["name"]; ?></option>
-						<?php endforeach; ?>
-					</select>
-				</dd>
+				<dt class="essential">作成日</dt>
+				<dd><input class="form-control" name="date_regist" id="date_regist" type="date" style="width: 150px;" disabled value="<?php echo ($isSaveData) ? date("Y-m-d", strtotime($questionData["date_regist"])) : date("Y-m-d"); ?>"></dd>
 			
 				<dt>備考</dt>
 				<dd class="expand">
@@ -157,13 +157,12 @@
 </form>
 
 <div class="btn-place" style="margin-top: 32px;">
+	<button class="emegra cancel" onclick="history.back();">戻る</button>
 	<?php if ((isset($mode) && ($mode == "edit"))): ?>
 		<button class="emegra" onclick="Update();">修正</button>
 	<?php else: ?>
 		<button class="emegra" onclick="Regist();">登録</button>
-		<button class="emegra" onclick="Save();">臨時保存</button>
 	<?php endif; ?>
-	<button class="emegra cancel" onclick="history.back();">戻る</button>
 </div>
 
 <script type="text/javascript">
@@ -172,10 +171,11 @@
 	const type = document.getElementById("type");
 	const answers = document.getElementById("answers");
 	const correct = document.getElementById("correct");
-	const dateCreate = document.getElementById("date_create");
+	const dateRegist = document.getElementById("date_regist");
 
 	const form = document.getElementById("form");
 
+	let answerCount = <?= $answerCount; ?>;
 	let datetime = "";
 
 	window.onload = function() {
@@ -184,6 +184,8 @@
 	}
 
 	function ChangeType(value) {
+		answerCount = Number(value) + 3;
+
 		answerChildren = Array.from(answers.children);
 		answerChildren.forEach(element => { element.remove(); });
 		
@@ -212,56 +214,65 @@
 
 	<?php if (!(isset($mode) && ($mode == "edit"))): ?>
 		function Regist() {
-			dateCreate.disabled = false;
-			dateCreate.type = "text";
-			dateCreate.value = datetime;
+			if (form.class1st.value == "") {
+				RequestSelect(form.class1st, "大分類");
+				return false;
+			}
+
+			if (form.class2nd.value == "") {
+				RequestSelect(form.class2nd, "小分類");
+				return false;
+			}
+
+			if (form.level.value == "") {
+				RequestSelect(form.level, "レベル");
+				return false;
+			}
+
+			if (form.type.value == "") {
+				RequestSelect(form.type, "問題タイプ");
+				return false;
+			}
+
+			if (form.title.value.trim() == "") {
+				alert("タイトルを入力してください");
+				setTimeout("form.title.focus()", 100);
+				return false;
+			}
+
+			if (form.question.value.trim() == "") {
+				alert("問題を入力してください");
+				setTimeout("form.question.focus()", 100);
+				return false;
+			}
+			
+			for (let i = 0; i < answerCount; i++) {
+				var element = document.getElementsByName("answer" + i)[0];
+
+				if (element.value.trim() == "") {
+					alert("答え" + (Number(i) + 1) + "を入力してください");
+					setTimeout("form.answer" + i + ".focus()", 100);
+					return false;
+				}
+			}
+
+			if (form.correct.value == "") {
+				RequestSelect(form.correct, "正解番号");
+				return false;
+			}
+
+			if (form.point.value == "") {
+				RequestSelect(form.point, "点数");
+				return false;
+			}
+
+			dateRegist.disabled = false;
+			dateRegist.type = "text";
+			dateRegist.value = datetime;
 			
 			form.submit();
 		}
 	<?php endif; ?>
-
-		function Save() {
-			const postForm = new FormData();
-
-			const xhr = new XMLHttpRequest();
-			xhr.open("POST", "save", true);
-			
-			postForm.append("class1st", form.class1st.value);
-			postForm.append("class2nd", form.class2nd.value);
-			postForm.append("level", form.level.value);
-			postForm.append("type", form.type.value);
-			postForm.append("title", form.title.value);
-			postForm.append("question", form.question.value);
-			
-			let answerList = document.querySelectorAll("input[name*='answer']");
-			let answers = "";
-			answerList.forEach(element => { answers += element.value + ","; });
-			postForm.append("answers", answers.slice(0, -1));
-
-			postForm.append("level", form.level.value);
-			postForm.append("correct", form.correct.value);
-			postForm.append("point", form.point.value);
-			postForm.append("admin_create", form.admin_create.value);
-			postForm.append("date_create", datetime);
-			postForm.append("admin_regist", form.admin_regist.value);
-			postForm.append("note", form.note.value);
-
-			<?php if ($isSaveData): ?>
-				postForm.append("idx", <?php echo $questionData["idx"]; ?>);
-			<?php endif; ?>
-			xhr.send(postForm);
-			
-			xhr.onload = () => {
-				if (xhr.status == 200) {
-					const result = xhr.responseText;
-					if (result == "success") {
-						alert("臨時保存しました。");
-						self.location.href = "detail/<?php echo isset($questionData["idx"]) ? $questionData["idx"] : ""; ?>";
-					}
-					else { alert("Error"); }
-				}
-			}
-		}
 
 function Update() {
 	const postForm = new FormData();
@@ -284,8 +295,8 @@ function Update() {
 	postForm.append("level", form.level.value);
 	postForm.append("correct", form.correct.value);
 	postForm.append("point", form.point.value);
-	postForm.append("admin_create", form.admin_create.value);
-	postForm.append("date_create", datetime);
+	postForm.append("admin_regist", form.admin_regist.value);
+	postForm.append("date_regist", dateRegist);
 	postForm.append("admin_regist", form.admin_regist.value);
 	postForm.append("note", form.note.value);
 
@@ -305,4 +316,9 @@ function Update() {
 		}
 	}
 }
+
+	function RequestSelect(element, text) {
+		alert(text + "を選択してください");
+		element.focus();
+	}
 </script>

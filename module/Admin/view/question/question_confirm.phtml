@@ -1,4 +1,7 @@
 <?php
+	$register = $printDatas["register"];
+	unset($printDatas["register"]);
+
 	$numTexts = array("①", "②", "③", "④", "⑤");
 ?>
 
@@ -16,16 +19,16 @@
 			</style>
 			<dl class="emegra setting">
 				<dt>大分類</dt>
-				<dd><?php echo $printDatas["class1st"]; ?></dd>
+				<dd><?php echo $class1stDatas[$printDatas["class1st"]]; ?></dd>
 
 				<dt>小分類</dt>
-				<dd><?php echo $printDatas["class2nd"]; ?></dd>
+				<dd><?php echo $class2ndDatas[$printDatas["class2nd"]]; ?></dd>
 		
 				<dt>レベル</dt>
-				<dd><?php echo $printDatas["level"]; ?></dd>
+				<dd><?php echo $levelDatas[$printDatas["level"]]; ?></dd>
 
 				<dt>問題タイプ</dt>
-				<dd><?php echo $printDatas["type"]; ?></dd>
+				<dd><?php echo $typeDatas[$printDatas["type"]]; ?></dd>
 		
 				<dt>タイトル</dt>
 				<dd><?php echo $printDatas["title"]; ?></dd>
@@ -70,13 +73,10 @@
 			</style>
 			<dl class="emegra info">
 				<dt>作成者</dt>
-				<dd><?php echo $printDatas["admin_create"]; ?></dd>
+				<dd><?php echo $register; ?></dd>
 
 				<dt>作成日</dt>
-				<dd><?php echo date("y/m/d", strtotime($printDatas["date_create"])); ?></dd>
-
-				<dt>承認者</dt>
-				<dd><?php echo $printDatas["admin_regist"]; ?></dd>
+				<dd><?php echo date("y/m/d", strtotime($printDatas["date_regist"])); ?></dd>
 			
 				<dt>備考</dt>
 				<dd><?php echo $printDatas["note"]; ?></dd>

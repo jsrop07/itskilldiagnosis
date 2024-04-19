@@ -124,12 +124,12 @@
 			<?php foreach($questionDatas as $data): ?>
 				<tr>
 					<td><?php echo $data["num"]; ?></td>
-					<td><?php echo $statusDatas[$data["status"]]; ?></td>
-					<td><?php echo $class1stDatas[$data["class1st"]]; ?></td>
-					<td><?php echo $class2ndDatas[$data["class2nd"]]; ?></td>
-					<td><?php echo $levelDatas[$data["level"]]; ?></td>
+					<td><?php echo $optionDatas[$data["status"]]; ?></td>
+					<td><?php echo $optionDatas[$data["class1st"]]; ?></td>
+					<td><?php echo $optionDatas[$data["class2nd"]]; ?></td>
+					<td><?php echo $optionDatas[$data["level"]]; ?></td>
 					<td class="list-title" onclick="self.location.href='./detail/<?php echo $data['idx']; ?>';"><?php echo $data["title"]; ?></td>
-					<td><?php echo $typeDatas[$data["type"]]; ?></td>
+					<td><?php echo $optionDatas[$data["type"]]; ?></td>
 					<td><?php echo $data["point"]; ?></td>
 					<td><?php echo (isset($data["date_regist"])) ? date("y.m.d", strtotime($data["date_regist"])) : "未承認"; ?></td>
 					<td><?php echo date("y.m.d", strtotime($data["date_regist"])); ?></td>

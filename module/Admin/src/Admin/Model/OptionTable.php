@@ -28,4 +28,9 @@ class OptionTable
 		$qry = $this->sql->select("option");
 		return $this->sql->prepareStatementForSqlObject($qry)->execute();
 	}
+
+	public function ReadValid() {
+		$qry = $this->sql->select("option")->where(["del_flag" => "N"])->order("text");
+		return $this->sql->prepareStatementForSqlObject($qry)->execute();
+	}
 }

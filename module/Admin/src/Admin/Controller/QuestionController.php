@@ -19,8 +19,6 @@ class QuestionController extends AbstractActionController
 
 		$printDataNum = 10;
 
-		$datas = array();
-		$datas = $this->GetOptionDatas($datas, []);
 
 		$session = new Container("user");
 		$userCode = $session["code"];
@@ -47,7 +45,6 @@ class QuestionController extends AbstractActionController
 			else { $totalQuestionDatas = iterator_to_array($questionTb->ReadListByCode_Option($userCode, $query)); }
 		}
 		else {
-			print_r($userLevel); exit;
 			if ($userLevel >= 2) { $totalQuestionDatas = iterator_to_array($questionTb->ReadAllList()); }
 			else { $totalQuestionDatas = iterator_to_array($questionTb->ReadListByCode($userCode)); }
 		}
@@ -57,13 +54,22 @@ class QuestionController extends AbstractActionController
 			$PrintQuestionDatas = array();
 			$startIdx = ($page - 1) * $printDataNum;
 			$endIdx = ($page * $printDataNum);
+			
 			for ($i = 0; $startIdx + $i < $endIdx; $i++) {
 				if (!isset($totalQuestionDatas[$startIdx + $i])) break;
 
 				$PrintQuestionDatas[$i] = $totalQuestionDatas[$startIdx + $i];
 				$PrintQuestionDatas[$i]["num"] = count($totalQuestionDatas) - ($startIdx + $i);
 			}
+			
 			$datas["questionDatas"] = $PrintQuestionDatas;
+			
+			$optionTb = $this->getServiceLocator()->get("OptionTable");
+			$optionDatas = iterator_to_array($optionTb->ReadAll());
+
+			foreach ($optionDatas as $data) {
+				$datas["optionDatas"][$data["idx"]] = $data["text"];
+			}
 		}
 		
 		$totalPage = ceil(count($totalQuestionDatas) / $printDataNum);
@@ -87,15 +93,6 @@ class QuestionController extends AbstractActionController
 		$optionTb = $this->getServiceLocator()->get("OptionTable");
 		$optionDatas = iterator_to_array($optionTb->ReadAll());
 
-		$session = new Container("user");
-		$userCode = $session->offsetGet("code");
-
-		$questionTb = $this->getServiceLocator()->get("QuestionTable");
-		$questionData = $questionTb->ReadSaveByAdminCode($userCode);
-		if (!empty($questionData)) {
-			$datas["questionData"] = $questionData;
-		}
-
 		foreach ($optionDatas as $data) {
 			if ($data["type"] != "status") {
 				$index = $data["type"] . "Datas";
@@ -110,8 +107,6 @@ class QuestionController extends AbstractActionController
 
 		$adminTb = $this->getServiceLocator()->get("AdminTable");
 		$datas["adminDatas"] = iterator_to_array($adminTb->ReadAll());
-
-		$datas["approvalDatas"] = iterator_to_array($adminTb->ReadApprovers());
 
 		$this->layout("layout/list");
 		return $this->SetViewModel($datas, "/question/question_input.phtml");
@@ -129,27 +124,16 @@ class QuestionController extends AbstractActionController
 		}
 		$post["answers"] = $answers;
 
+		$datas = $this->GetOptionDatas([], ["status"]);
+
 		$datas["inputDatas"] = $post;
 		$datas["printDatas"] = $post;
 
 		$datas["inputDatas"]["answers"] = implode(",", $answers);
 
 		$adminTb = $this->getServiceLocator()->get("AdminTable");
-		$datas["printDatas"]["admin_create"] = $adminTb->ReadByCode($post["admin_create"])["name"];
-		$datas["printDatas"]["admin_regist"] = $adminTb->ReadByCode($post["admin_regist"])["name"];
-		
+		$datas["printDatas"]["register"] = $adminTb->ReadByCode($post["admin_regist"])["name"];
 
-		$optionTb = $this->getServiceLocator()->get("OptionTable");
-		$optionDatas = iterator_to_array($optionTb->ReadAll());
-
-		foreach ($optionDatas as $data) {
-			if ($data["type"] == "status") { continue; }
-			
-			$key = $data["type"];
-			$textDatas = explode(",", $data["texts"]);
-			
-			$datas["printDatas"][$key] = $textDatas[$post[$key]];
-		}
 		$datas["title"] = "登録確認";
 		$datas["breadcrumbData"] = ["ITスキル診断問項管理", "問題登録", "登録確認"];
 
@@ -160,6 +144,8 @@ class QuestionController extends AbstractActionController
 	public function detailAction() {
 		$route = $this->params()->fromRoute();
 		$index = $route["index"];
+
+		$datas = $this->GetOptionDatas([], ["status"]);
 		
 		$questionTable = $this->getServiceLocator()->get("QuestionTable");
 		$datas["questionData"] = iterator_to_array($questionTable->ReadByIndex($index));
@@ -263,20 +249,14 @@ class QuestionController extends AbstractActionController
 
 	function GetOptionDatas($datas, $exceptArr) {
 		$optionTb = $this->getServiceLocator()->get("OptionTable");
-		$optionDatas = $optionTb->ReadAll();
+		$optionDatas = $optionTb->ReadValid();
 
 		$datas["optionDatas"] = array();
 		foreach ($optionDatas as $data) {
 			if (in_array($data["type"], $exceptArr)) { continue; }
 
-			array_push($datas["optionDatas"], $data["type"]);
-			
-			$index = $data["type"] . "Datas";
-			$textDatas = explode(",", $data["texts"]);
-			$datas[$index] = $textDatas;
+			array_push($datas["optionDatas"][$data["type"]], $data["text"]);
 		}
-
-		unset($datas["statusDatas"][0]);
 
 		return $datas;
 	}

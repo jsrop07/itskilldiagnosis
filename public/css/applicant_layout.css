@@ -1,7 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Roboto:wght@400;700&display=swap');
-
 *{
-    font-family: "Roboto", "Noto Sans JP", sans-serif !important;
+    font-family: "Roboto", "Noto Sans JP", sans-serif !important;    
 }
 :root {
 	--gradient: linear-gradient(111deg, #87D782 0%, #22BC8E 100%);
@@ -13,7 +11,6 @@
 
 body {
 	min-height: 100vh;
-    
 	background: var(--background);
 }
 header {
@@ -24,10 +21,10 @@ header {
     justify-content: space-between;
     border-bottom: 1px solid #CED4DA;
     background: linear-gradient(111deg, #87D782 0%, #22BC8E 100%);
-    position: fixed;
-    top: 0; 
+    position: relative;
     width: 100%;
     color:white;
+    min-width: 700px;
 }
 .left-column, .middle-column, .right-column {
     display: flex;
@@ -49,7 +46,7 @@ header {
 
 }
 footer{
-    min-width: 850px;
+    /* min-width: 850px; */
     margin-top: 20px;
     text-align: center;
     font-size: 12px;
@@ -57,24 +54,28 @@ footer{
     color: grey;
 
 }
-
+.container-fluid{
+    max-width:1000px;
+    min-width:600px;
+}
 main{
-    margin-top:50px;
+    margin-top:-45px;
+    padding: 24px 64px;
 }
 .diagnosis {
     min-height: 100vh;
-    min-width:850px;
+    /* min-width:850px; */
 }
 .diagnosis_head{
     text-align:center;
-    padding:20px;
-    border-bottom: 1px solid #CED4DA;
+    padding:30px;
+    /* border-bottom: 1px solid #CED4DA; */
 }
 .diagnosis_main {
     display: grid;
     grid-template-columns: 40% 60%;
     grid-template-rows: auto;
-    margin-top:20px;
+    gap:20px;
 }
 
 .diagnosis_main span {
@@ -124,7 +125,6 @@ main{
     border-radius: 4px;
     color: white;
     border:0;
-
 }
 
 .applicant_button{
@@ -144,3 +144,32 @@ main{
     justify-content: center;
     display: flex;
 }
+select{
+    color: gray;
+    width: 20%;
+    border: 1px solid #ced4da;
+    border-radius: 5px; /* border를 둥글게 만듭니다 */
+    padding: 5px 10px; /* 내부 여백 조절 */
+    font-size: 16px;
+    background-color: white;
+    cursor: pointer; 
+        /* font-style: italic;  */
+
+  }
+
+  select option[value]:not([value=""]) {
+    color: black;
+    font-style: normal; 
+  }
+  ::placeholder {
+    /* font-style: italic;  */
+    color: gray;
+}
+
+/* select:disabled,
+input:disabled,
+textarea:disabled {
+    background-color: gray; 
+    cursor: not-allowed; 
+}
+ */

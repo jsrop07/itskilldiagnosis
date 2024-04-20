@@ -59,7 +59,7 @@ class ApplicantController extends AbstractActionController
 
 	   echo "
 	   <script>
-	   alert('登録が完了しました。')
+	   alert('登録が完了します。')
 	   self.location.href='/applicant/application'
   	   </script>
 	   ";

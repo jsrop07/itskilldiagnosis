@@ -28,12 +28,33 @@
 
 <body>
 <header>
-	<div class="left-column"><img src="/img/hd_logo.png" alt="logo" height=56px" width="auto"></div>
-	<div class="middle-column">ITスキル診断申込</div>
-	<div id="date-container" class="right-column"></div>
+	<div class="left-column"><img src="/img/hd_logo.png" alt="logo" height="56px" width="auto"></div>
+	<div class="middle-column" style="font-size:bold">株式会社ジエンジサービス</div>
+	<div class="right-column" id="date-container"></div>
 </header>	
 <main>
 		<?php echo $this->content; ?>
+		<button type="button" class="btn btn-primary" id="loadPage" data-bs-toggle="modal" data-bs-target="#exampleModal" style="display:none">
+</button>
+
+<div class="modal fade" id="exampleModal" style="backdrop-filter: blur(5px);" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header" style=" display:inline" >
+        <h3 class="modal-title" id="exampleModalLabel"style="text-align: center;">案内</h3>
+      </div>
+      <div class="modal-body">
+	  <h5 style="font-size:18px;text-align:center; padding:15px;">
+            株式会社ジエンジサービスの
+            ITスキル診断申込です。
+            <br>    <br>
+            項目に沿って必要事項を入力してください。
+            </h5>
+      </div>
+    </div>
+  </div>
+</div>
+
 </main>
 
 
@@ -63,5 +84,13 @@ function displayCurrentDate() {
 }
 
 window.onload = displayCurrentDate;
+
+	function onLoadEvent() {
+		loadPage.click();
+	}
+	window.onload = function() {
+    onLoadEvent();
+    displayCurrentDate();
+};
 
 </script>

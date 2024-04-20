@@ -37,9 +37,9 @@ class ApplicationTable
     public function getQuestionType(){
         $qry = $this->sql->select("option");
         $qry->columns([
-            'type','texts'
+            'type','text'
         ]);
-        $qry->where(['type' => 'class2nd']); // WHERE 절 추가
+        $qry->where(['type' => 'class2nd']);
         $statement = $this->sql->prepareStatementForSqlObject($qry);
         $result = $statement->execute();
 
@@ -49,9 +49,9 @@ class ApplicationTable
     public function getDevelop(){
         $qry = $this->sql->select("option");
         $qry->columns([
-            'type','texts'
+            'type','text'
         ]);
-        $qry->where(['type' => 'class1st']); // WHERE 절 추가
+        $qry->where(['type' => 'class1st']);
         $statement = $this->sql->prepareStatementForSqlObject($qry);
         $result = $statement->execute();
 
@@ -60,28 +60,66 @@ class ApplicationTable
 
     public function insertApplication($dataArray){
         $qry = new Sql($this->adapter);
-        $insert = $qry->insert('applicant');
-        $insert->values([
-            'email'=>$dataArray['email'],
-            'name'=>$dataArray['name'],
-            'kana'=>$dataArray['kana'],
-            'gender'=>$dataArray['gender'],
-            'application_category'=>$dataArray['application_category'],
-            'education'=>$dataArray['education'],
-            'major'=>$dataArray['major'],
-            'skill'=>$dataArray['skill'],
-            'question_type'=>$dataArray['question_type'],
-            'develop'=>$dataArray['develop'],
-            'career'=>$dataArray['career'],
-            'certificates'=>$dataArray['certificates'],
-            'other'=>$dataArray['other'],
-            'write_date' => date("Y-m-d H:i:s")
+    
+        $existingRecord = $this->getApplicantByEmail($dataArray['email']);
+        
+        if ($existingRecord) {
+            $applicantUpdate = $qry->update('applicant');
+            $applicantUpdate->set([
+                'name' => $dataArray['name'],
+                'kana' => $dataArray['kana'],
+                'gender' => $dataArray['gender'],
+                'career' => $dataArray['career'],
+                'certificates' => $dataArray['certificates'],
+                'other' => $dataArray['other'],
+                'write_date' => date("Y-m-d H:i:s")
+            ]);
+            $applicantUpdate->where(['email' => $dataArray['email']]);
+            $applicantSqlString = $qry->getSqlStringForSqlObject($applicantUpdate);
+            $this->adapter->query($applicantSqlString, Adapter::QUERY_MODE_EXECUTE);
+            
+            
+            $idx = $existingRecord['idx'];
+        } else {
+            $applicantInsert = $qry->insert('applicant');
+            $applicantInsert->values([
+                'email' => $dataArray['email'],
+                'name' => $dataArray['name'],
+                'kana' => $dataArray['kana'],
+                'gender' => $dataArray['gender'],
+                'career' => $dataArray['career'],
+                'certificates' => $dataArray['certificates'],
+                'other' => $dataArray['other'],
+                'write_date' => date("Y-m-d H:i:s")
+            ]);
+            $applicantSqlString = $qry->getSqlStringForSqlObject($applicantInsert);
+            $this->adapter->query($applicantSqlString, Adapter::QUERY_MODE_EXECUTE);
+            
+            $idx = $this->adapter->getDriver()->getLastGeneratedValue();
+        }
+        
+        $recordInsert = $qry->insert('record');
+        $recordInsert->values([
+            'write_date' => date("Y-m-d H:i:s"),
+            'application_category' => $dataArray['application_category'],
+            'education' => $dataArray['education'],
+            'major' => $dataArray['major'],
+            'skill' => $dataArray['skill'],
+            'develop' => $dataArray['develop'],
+            'question_type' => $dataArray['question_type'],
+            'applicant_idx' => $idx // 
         ]);
-        $sqlString = $qry->getSqlStringForSqlObject($insert);
-        $result = $this->adapter->query($sqlString, Adapter::QUERY_MODE_EXECUTE);
-
-        return $result;    
+        $recordSqlString = $qry->getSqlStringForSqlObject($recordInsert);
+        $recordResult = $this->adapter->query($recordSqlString, Adapter::QUERY_MODE_EXECUTE);
     }
-
+    
+    public function getApplicantByEmail($email) {
+        $qry = new Sql($this->adapter);
+        $select = $qry->select('applicant');
+        $select->where(['email' => $email]);
+        $selectSqlString = $qry->getSqlStringForSqlObject($select);
+        $result = $this->adapter->query($selectSqlString, Adapter::QUERY_MODE_EXECUTE);
+        return $result->current();
+    }
 
 }

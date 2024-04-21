@@ -55,7 +55,7 @@ class ApplicantController extends AbstractActionController
 			'certificates' => $certificates,
 			'other' => $other,
 		];
-	   $tbl->insertApplication($arr);
+	   $tbl->insertAndUpdateApplication($arr);
 
 	   echo "
 	   <script>

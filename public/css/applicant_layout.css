@@ -144,26 +144,30 @@ main{
     justify-content: center;
     display: flex;
 }
+
 select{
     color: gray;
     width: 20%;
     border: 1px solid #ced4da;
-    border-radius: 5px; /* border를 둥글게 만듭니다 */
-    padding: 5px 10px; /* 내부 여백 조절 */
+    border-radius: 5px; 
+    padding: 5px 10px; 
     font-size: 16px;
     background-color: white;
     cursor: pointer; 
         /* font-style: italic;  */
-
   }
 
   select option[value]:not([value=""]) {
     color: black;
     font-style: normal; 
   }
+
+  .form-control{
+    color: gray;
+  }
   ::placeholder {
     /* font-style: italic;  */
-    color: gray;
+    color: gray !important;
 }
 
 /* select:disabled,

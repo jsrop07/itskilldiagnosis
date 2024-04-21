@@ -58,7 +58,17 @@ class ApplicationTable
         return $result;
     }
 
-    public function insertApplication($dataArray){
+    public function getApplicantByEmail($email) {
+        $qry = new Sql($this->adapter);
+        $select = $qry->select('applicant');
+        $select->where(['email' => $email]);
+        $selectSqlString = $qry->getSqlStringForSqlObject($select);
+        $result = $this->adapter->query($selectSqlString, Adapter::QUERY_MODE_EXECUTE);
+
+        return $result->current();
+    }
+
+    public function insertAndUpdateApplication($dataArray){
         $qry = new Sql($this->adapter);
     
         $existingRecord = $this->getApplicantByEmail($dataArray['email']);
@@ -78,8 +88,7 @@ class ApplicationTable
             $applicantSqlString = $qry->getSqlStringForSqlObject($applicantUpdate);
             $this->adapter->query($applicantSqlString, Adapter::QUERY_MODE_EXECUTE);
             
-            
-            $idx = $existingRecord['idx'];
+            $applicant_idx = $existingRecord['idx'];
         } else {
             $applicantInsert = $qry->insert('applicant');
             $applicantInsert->values([
@@ -95,7 +104,7 @@ class ApplicationTable
             $applicantSqlString = $qry->getSqlStringForSqlObject($applicantInsert);
             $this->adapter->query($applicantSqlString, Adapter::QUERY_MODE_EXECUTE);
             
-            $idx = $this->adapter->getDriver()->getLastGeneratedValue();
+            $applicant_idx = $this->adapter->getDriver()->getLastGeneratedValue();
         }
         
         $recordInsert = $qry->insert('record');
@@ -107,19 +116,10 @@ class ApplicationTable
             'skill' => $dataArray['skill'],
             'develop' => $dataArray['develop'],
             'question_type' => $dataArray['question_type'],
-            'applicant_idx' => $idx // 
+            'applicant_idx' => $applicant_idx 
         ]);
         $recordSqlString = $qry->getSqlStringForSqlObject($recordInsert);
         $recordResult = $this->adapter->query($recordSqlString, Adapter::QUERY_MODE_EXECUTE);
-    }
-    
-    public function getApplicantByEmail($email) {
-        $qry = new Sql($this->adapter);
-        $select = $qry->select('applicant');
-        $select->where(['email' => $email]);
-        $selectSqlString = $qry->getSqlStringForSqlObject($select);
-        $result = $this->adapter->query($selectSqlString, Adapter::QUERY_MODE_EXECUTE);
-        return $result->current();
     }
 
 }

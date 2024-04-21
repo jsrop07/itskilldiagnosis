@@ -5,6 +5,8 @@ namespace Admin\Model;
 use Zend\Db\Adapter\Adapter;
 use Zend\Db\Sql\Sql;
 use Zend\Db\Sql\Where;
+use Zend\Paginator\Adapter\DbSelect;
+use Zend\Paginator\Paginator;
 
 class QuestionTable {
 	public function __construct()
@@ -26,8 +28,6 @@ class QuestionTable {
 
 	public function CreateQuestion($datas)
 	{
-		$datas["date_update"] = date("Y-m-d H:i:s");
-
 		$qry = $this->sql->insert("question")->values($datas);
 		return $this->sql->prepareStatementForSqlObject($qry)->execute();
 	}
@@ -38,7 +38,20 @@ class QuestionTable {
 	}
 
 	public function ReadAllList() {
-		$qry = $this->sql->select("question")->where(["status != 0"]);
+		$qry = $this->sql->select("question")->where(["date_delete" => null])->order("date_regist desc");
+		return $this->sql->prepareStatementForSqlObject($qry)->execute();
+	}
+
+	public function ReadListByRegist($code) {
+		$where = new Where();
+		$where
+			->isNull("date_delete")
+			->and->nest()
+				->isNotNull("date_approve")
+				->or->equalTo("admin_regist", $code)
+			->unnest();
+		
+		$qry = $this->sql->select("question")->where($where)->order("date_regist desc");
 		return $this->sql->prepareStatementForSqlObject($qry)->execute();
 	}
 
@@ -57,6 +70,11 @@ class QuestionTable {
 
 		$qry = $this->sql->select("question")->where($where);
 		return $this->sql->prepareStatementForSqlObject($qry)->execute();
+	}
+
+	public function ReadByIdx($idx) {
+		$qry = $this->sql->select("question")->where(["idx" => $idx]);
+		return $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
 	}
 
 	public function ReadListByOption($optionDatas) {
@@ -162,11 +180,11 @@ class QuestionTable {
 		$this->sql->prepareStatementForSqlObject($qry)->execute();
 	}
 
-	public function UpdateToRegistByIdx($idx) {
+	public function UpdateToRegistByIdx($idx, $code) {
 		$date = date("Y-m-d H:i:s");
 		
 		$qry = $this->sql->update("question")->where(["idx" => $idx])
-			->set(["status" => 2, "date_regist" => $date, "date_update" => $date]);
+			->set(["admin_approve" => $code, "status" => 21, "date_approve" => $date]);
 		$this->sql->prepareStatementForSqlObject($qry)->execute();
 	}
 
@@ -181,5 +199,13 @@ class QuestionTable {
 	public function DeleteQuestionByIdx($idx) {
 		$qry = $this->sql->delete("question")->where(["idx" => $idx]);
 		$this->sql->prepareStatementForSqlObject($qry)->execute();
+	}
+
+	public function getNoticeList($params) {
+		$qry=$this->sql->select("question")->order("date_regist desc");
+
+		$paginatorAdapter = new DbSelect($qry ,$this->adapter);
+		$return = new Paginator($paginatorAdapter);
+		return $return;
 	}
 }

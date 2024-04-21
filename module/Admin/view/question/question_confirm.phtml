@@ -19,16 +19,16 @@
 			</style>
 			<dl class="emegra setting">
 				<dt>大分類</dt>
-				<dd><?php echo $class1stDatas[$printDatas["class1st"]]; ?></dd>
+				<dd><?php echo $optionDatas[$printDatas["class1st"]]; ?></dd>
 
 				<dt>小分類</dt>
-				<dd><?php echo $class2ndDatas[$printDatas["class2nd"]]; ?></dd>
+				<dd><?php echo $optionDatas[$printDatas["class2nd"]]; ?></dd>
 		
 				<dt>レベル</dt>
-				<dd><?php echo $levelDatas[$printDatas["level"]]; ?></dd>
+				<dd><?php echo $optionDatas[$printDatas["level"]]; ?></dd>
 
 				<dt>問題タイプ</dt>
-				<dd><?php echo $typeDatas[$printDatas["type"]]; ?></dd>
+				<dd><?php echo $optionDatas[$printDatas["type"]]; ?></dd>
 		
 				<dt>タイトル</dt>
 				<dd><?php echo $printDatas["title"]; ?></dd>
@@ -56,7 +56,7 @@
 				</div>
 
 				<dt>正解番号</dt>
-				<dd><?php echo $numTexts[$printDatas["correct"]]; ?></dd>
+				<dd><?php echo $numTexts[$printDatas["correct"] - 1]; ?></dd>
 
 				<dt>点数</dt>
 				<dd><?php echo $printDatas["point"]; ?></dd>
@@ -112,6 +112,7 @@
 				}
 				else {
 					alert("Error");
+					console.log(result);
 				}
 			}
 		}

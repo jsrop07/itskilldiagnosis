@@ -1,11 +1,11 @@
 <?php
 	if (!isset($_SESSION)) { session_start(); }
 
-	$isSaveData = false;
-	if (isset($questionData)) { $isSaveData = true; }
-
 	$numTexts = array("①", "②", "③", "④", "⑤");
-	$answerCount = 3;
+
+	function InitStyle() {
+		return " font-style: italic; color: grey;";
+	}
 ?>
 
 <?php echo $this->partial("breadcrumb", ["datas" => $breadcrumbData]); ?>
@@ -13,9 +13,10 @@
 <h1 class="title"><?php echo $title; ?></h1>
 
 <form id="form" method="post" action="./confirm">
-	<?php if ($isSaveData || (isset($mode) && ($mode == "edit"))): ?>
-		<input name="idx" value="<?php echo $questionData["idx"]; ?>" type="hidden"/>
-	<?php endif; ?>
+	<style type="text/css">
+		option { color: black; }
+		input::placeholder { font-style: italic; }
+	</style>
 
 	<div class="emegra card">
 		<div class="card-header">設定</div>
@@ -27,46 +28,54 @@
 			<dl class="emegra setting">
 				<dt class="essential">大分類</dt>
 				<dd>
-					<select class="form-select" name="class1st" style="width: 150px;">
+					<select class="form-select" name="class1st" onchange="ChangeInputStyle(this)" style="width: 150px;<?php echo InitStyle(); ?>">
 						<option value="" hidden>選択</option>
-						<?php foreach($class1stDatas as $idx => $data): ?>
-							<option value="<?php echo $idx; ?>"<?php echo ($isSaveData && $questionData["class1st"] == $idx) ? " selected" : ""; ?>><?php echo $data; ?></option>
+						<?php foreach($optionDatas["class1st"] as $data): ?>
+							<option value="<?php echo $data["idx"]; ?>">
+								<?php echo $data["text"]; ?>
+							</option>
 						<?php endforeach; ?>
 					</select>
 				</dd>
 
 				<dt class="essential">小分類</dt>
 				<dd>
-					<select class="form-select" name="class2nd" style="width: 150px;">
+					<select class="form-select" name="class2nd" onchange="ChangeInputStyle(this)" style="width: 150px;<?php echo InitStyle(); ?>">
 						<option value="" hidden>選択</option>
-						<?php foreach($class2ndDatas as $idx => $data): ?>
-							<option value="<?php echo $idx; ?>"<?php echo ($isSaveData && $questionData["class2nd"] == $idx) ? " selected" : ""; ?>><?php echo $data; ?></option>
+						<?php foreach($optionDatas["class2nd"] as $idx => $data): ?>
+							<option value="<?php echo $data["idx"]; ?>">
+								<?php echo $data["text"]; ?>
+							</option>
 						<?php endforeach; ?>
 					</select>
 				</dd>
 		
 				<dt class="essential">レベル</dt>
 				<dd>
-					<select class="form-select" name="level" style="width: 100px;">
+					<select class="form-select" name="level" onchange="ChangeInputStyle(this)" style="width: 100px;<?php echo InitStyle(); ?>">
 						<option value="" hidden>選択</option>
-						<?php foreach($levelDatas as $idx => $data): ?>
-							<option value="<?php echo $idx; ?>"<?php echo ($isSaveData && $questionData["level"] == $idx) ? " selected" : ""; ?>><?php echo $data; ?></option>
+						<?php foreach($optionDatas["level"] as $data): ?>
+							<option value="<?php echo $data["idx"]; ?>">
+								<?php echo $data["text"]; ?>
+							</option>
 						<?php endforeach; ?>
 					</select>
 				</dd>
 
 				<dt class="essential">問題タイプ</dt>
 				<dd>
-					<select class="form-select" name="type" id="type" onchange="ChangeType(this.value)" style="width: 150px;">
+					<select class="form-select" name="type" id="type" onchange="ChangeType(this)" style="width: 150px;<?php echo InitStyle(); ?>">
 						<option value="" hidden>選択</option>
-						<?php foreach($typeDatas as $idx => $data): ?>
-							<option value="<?php echo $idx; ?>"<?php echo ($isSaveData && $questionData["type"] == $idx) ? " selected" : ""; ?>><?php echo $data; ?></option>
+						<?php foreach($optionDatas["type"] as $data): ?>
+							<option value="<?php echo $data["idx"]; ?>">
+								<?php echo $data["text"]; ?>
+							</option>
 						<?php endforeach; ?>
 					</select>
 				</dd>
 		
 				<dt class="essential">タイトル</dt>
-				<dd><input class="form-control" name="title" type="text" value="<?php echo ($isSaveData) ? $questionData["title"] : ""; ?>"/></dd>
+				<dd><input class="form-control" name="title" type="text" placeholder="タイトルを入力してください"/></dd>
 			</dl>
 		</div>
 	</div>
@@ -80,30 +89,20 @@
 			</style>
 			<dl class="emegra question">
 				<dt class="essential">問題</dt>
-				<dd><input class="form-control" name="question" type="text" value="<?php echo ($isSaveData) ? $questionData["question"] : ""; ?>"/></dd>
+				<dd><input class="form-control" name="question" type="text" placeholder="問題を入力してください" /></dd>
 
 				<dt class="essential">答え</dt>
 				<div id="answers" name="answers" style="display: grid; grid-template-columns: 140px 1fr; grid-gap: 24px 8px;">
-					<?php if ($isSaveData): ?>
-						<?php foreach(explode(",", $questionData["answers"]) as $index => $answer): ?>
-							<dt class="essential"><?= $numTexts[$index]; ?></dt>
-							<dd><input class="form-control" name="answer<?= $index + 1; ?>" type="text" value="<?php echo $answer; ?>"/></dd>
-						<?php endforeach; ?>
-					<?php else: ?>
-						<?php for($i = 0; $i < 3; $i++): ?>
-							<dt class="essential"><?= $numTexts[$i]; ?></dt>
-							<dd><input class="form-control" name="answer<?= $i; ?>" type="text"/></dd>
-						<?php endfor; ?>
-					<?php endif; ?>
+						<dd style="grid-column: 1 / 3;">タイプを選択してください。</dd>
 				</div>
 
 				<dt class="essential">正解番号</dt>
 				<dd>
-					<select class="form-select" name="correct" id="correct" style="width: 70px;">
+					<select class="form-select" name="correct" id="correct" onchange="ChangeInputStyle(this)" style="width: 100px;<?php echo InitStyle(); ?>">
 						<option value="" hidden>選択</option>
 						<?php if ($isSaveData): ?>
 							<?php for ($i = 1; $i <= $questionData["type"] + 3; $i++): ?>
-								<option value="<?= $i; ?>"<?php echo ($isSaveData && $questionData["point"] == $i) ? " selected" : ""; ?>><?= $numTexts[$i - 1]; ?></option>
+								<option value="<?= $i; ?>"><?= $numTexts[$i - 1]; ?></option>
 							<?php endfor; ?>
 						<?php else: ?>
 							<?php for ($i = 1; $i <= 3; $i++): ?>
@@ -115,10 +114,10 @@
 
 				<dt class="essential">点数</dt>
 				<dd>
-					<select class="form-select" name="point" style="width: 70px;">
+					<select class="form-select" name="point" onchange="ChangeInputStyle(this)" style="width: 100px;<?php echo InitStyle(); ?>">
 						<option value="" hidden>選択</option>
 						<?php for($i = 1; $i <= 5; $i++): ?>
-							<option value="<?= $i; ?>"<?php echo ($isSaveData && $questionData["point"] == $i) ? " selected" : ""; ?>><?= $i; ?></option>
+							<option value="<?= $i; ?>"><?= $i; ?></option>
 						<?php endfor; ?>
 					</select>
 				</dd>
@@ -145,11 +144,11 @@
 				</dd>
 
 				<dt class="essential">作成日</dt>
-				<dd><input class="form-control" name="date_regist" id="date_regist" type="date" style="width: 150px;" disabled value="<?php echo ($isSaveData) ? date("Y-m-d", strtotime($questionData["date_regist"])) : date("Y-m-d"); ?>"></dd>
+				<dd><input class="form-control" name="date_regist" id="date_regist" type="date" style="width: 150px;" disabled value="<?php echo /*($isSaveData) ? date("Y-m-d", strtotime($questionData["date_regist"])) : */date("Y-m-d"); ?>"></dd>
 			
 				<dt>備考</dt>
 				<dd class="expand">
-					<textarea class="form-control" name="note" rows="5"><?php echo ($isSaveData) ? $questionData["note"] : ""; ?></textarea>
+					<textarea class="form-control" name="note" rows="5"></textarea>
 				</dd>
 			</dl>
 		</div>
@@ -175,16 +174,34 @@
 
 	const form = document.getElementById("form");
 
-	let answerCount = <?= $answerCount; ?>;
+	let answerCount = 0;
 	let datetime = "";
 
 	window.onload = function() {
 		const now = new Date();
-		datetime = now.toISOString().replace("T", " ").substring(0,19);
+		datetime = now.toISOString().replace("T", " ").substring(0, 19);
 	}
 
-	function ChangeType(value) {
-		answerCount = Number(value) + 3;
+	function ChangeInputStyle(element) {
+		element.style.fontStyle = "normal";
+		element.style.color = "black";
+	}
+
+	function ChangeType(element) {
+		if (answerCount == 0) { ChangeInputStyle(element); }
+
+		text = element[element.selectedIndex].innerText.trim();
+		switch(text) {
+			case "3項選択":
+				answerCount = 3;
+				break;
+			case "4項選択":
+				answerCount = 4;
+				break;
+			case "5項選択":
+				answerCount = 5;
+				break;
+		}
 
 		answerChildren = Array.from(answers.children);
 		answerChildren.forEach(element => { element.remove(); });
@@ -192,21 +209,31 @@
 		correctChildren = Array.from(correct.children);
 		correctChildren.forEach(element => { element.remove(); });
 		
-		for (let i = 0; i < Number(value) + 3; i++) {
+		
+		correct.style.fontStyle = "italic";
+		correct.style.color = "grey";
+
+		var option = document.createElement("option");
+		option.value = "";
+		option.innerText = "選択";
+		option.hidden = true;
+		correct.appendChild(option);
+		for (let i = 0; i < answerCount; i++) {
 			let dt = document.createElement("dt");
+			dt.classList.add("essential");
 			dt.innerText = numTexts[i];
 			answers.appendChild(dt);
 
 			let dd = document.createElement("dd");
 			let input = document.createElement("input");
 			input.classList.add("form-control");
-			input.name = "answer" + i;
+			input.name = "answer" + Number(i + 1);
 			input.type = "text";
 			dd.appendChild(input);
 			answers.appendChild(dd);
 
-			let option = document.createElement("option");
-			option.value = i;
+			var option = document.createElement("option");
+			option.value = Number(i) + 1;
 			option.innerText = numTexts[i];
 			correct.appendChild(option);
 		}
@@ -246,7 +273,7 @@
 				return false;
 			}
 			
-			for (let i = 0; i < answerCount; i++) {
+			for (let i = 1; i <= answerCount; i++) {
 				var element = document.getElementsByName("answer" + i)[0];
 
 				if (element.value.trim() == "") {
@@ -300,9 +327,6 @@ function Update() {
 	postForm.append("admin_regist", form.admin_regist.value);
 	postForm.append("note", form.note.value);
 
-	<?php if ($isSaveData): ?>
-		postForm.append("idx", <?php echo $questionData["idx"]; ?>);
-	<?php endif; ?>
 	xhr.send(postForm);
 	
 	xhr.onload = () => {

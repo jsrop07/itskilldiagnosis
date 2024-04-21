@@ -1,12 +1,12 @@
 <?php
 	if (!isset($_SESSION)) { session_start(); }
-	$alignDeco = "";
-	if (isset($inputDatas["align"])) { 
-		if (strpos($inputDatas["align"], "_DESC")) {
-			$alignDeco = "▼";
-			$inputDatas["align"] = str_replace("_DESC", "", $inputDatas["align"]);
-		}
-		else $alignDeco = "▲";
+
+	$isApprover = false;
+	if ($_SESSION["user"]["level"] >= 1) { $isApprover = true; }
+
+	function ChkDeleter($data, $optionDatas) {
+		if ($optionDatas[$data["status"]] == "新規") { return true; }
+		return false;
 	}
 ?>
 
@@ -29,7 +29,7 @@
 		width: 100%;
 		margin-top: 20px;
 		display: grid;
-		grid-template-columns: 50px 150px 150px 65px 1fr 65px 150px;
+		grid-template-columns: 50px 150px 150px 1fr 65px 150px 150px 65px 150px;
 		column-gap: 10px;
 
 		text-align: center;
@@ -84,10 +84,13 @@
 	<div class="search-place">
 		<div style="display: flex; align-items: center;">承認者</div>
 		<input class="form-control form-control-sm search" id="input_register" value="<?php echo (isset($inputDatas["register"])) ? $inputDatas["register"] : ""; ?>"/>
-		<button class="emegra search confirm" onclick="SearchRegister()">検索</button>	
+		<button class="emegra search confirm" onclick="SearchRegister()">検索</button>
+
+		<div></div>
 
 		<div style="display: flex; align-items: center;">タイトル</div>
 		<input class="form-control form-control-sm"/>
+		<button class="emegra search confirm" onclick="SearchRegister()">検索</button>
 		<div style="display: flex; align-items: center;">並び替え</div>
 		<select class="form-select form-select-sm" onchange="ChangeSearch(this.value)">
 			<option value="status">ステータス</option>
@@ -133,7 +136,7 @@
 					<td><?php echo $data["point"]; ?></td>
 					<td><?php echo (isset($data["date_regist"])) ? date("y.m.d", strtotime($data["date_regist"])) : "未承認"; ?></td>
 					<td><?php echo date("y.m.d", strtotime($data["date_regist"])); ?></td>
-					<td><input name="checkIdx" type="checkbox" value="<?php echo $data["idx"]; ?>" onclick="Checking(this);" style="cursor: pointer;"></td>
+					<td><input name="checkIdx" type="checkbox" value="<?php echo $data["idx"]; ?>" onclick="Checking(this);" style="cursor: pointer;"<?php echo ($isApprover || ChkDeleter($data, $optionDatas)) ? "" : " disabled"; ?>></td>
 				</tr>
 			<?php endforeach; ?>
 		</tbody>
@@ -141,14 +144,14 @@
 	<?php endif; ?>
 
 	<div style="margin-top: 8px;">
-		<?php echo $this->partial("pagination", $paginationData); ?>
+		<?php echo $this->pagination; ?>
 	</div>
 
 	<div class="button-place" style="margin-top: 10px;">
-		<?php if ($_SESSION["user"]["level"] > 0): ?>
-			<button class="emegra" style="margin-right: 8px;">承認</button>
+		<?php if ($_SESSION["user"]["level"] >= 1): ?>
+			<button class="emegra" style="margin-right: 8px;" onclick="Regist()">承認</button>
 		<?php endif; ?>
-		<button class="emegra delete" style="margin-right: 8px">削除</button>
+		<button class="emegra delete" style="margin-right: 8px" onclick="Delete()">削除</button>
 		<button class="emegra" style="margin-right: 8px;" onclick="self.window.location='./csv'">CSV登録</button>
 		<button class="emegra" onclick="self.window.location='./regist'">新規登録</button>
 	</div>	
@@ -157,17 +160,20 @@
 <script type="text/javascript">
 	const input_register = document.getElementById("input_register");
 	const div_search = document.getElementById("div_search");
-	let searchData = "status";
 	const check_all = document.getElementById("checkAll");
 	const check_idxs = document.getElementsByName("checkIdx");
+
+	let searchData = "status";
 
 	function Checking(element) {
 		if (element == check_all) {
 			if (element.checked) {
-				check_idxs.forEach(e => { e.checked = true; })
+				check_idxs.forEach(e => {
+					if (!e.disabled) { e.checked = true; }
+				});
 			}
 			else {
-				check_idxs.forEach(e => { e.checked = false; })
+				check_idxs.forEach(e => { e.checked = false; });
 			}
 		}
 
@@ -194,97 +200,85 @@
 		self.window.location = window.location.pathname + urlText;
 	}
 
-	function ChangeSearch(value) {
-		searchData = value;
+	function Regist() {
+		let idxDatas = "";
 
-		let searchElement;
-		switch(value) {
-			case "point":
-				searchElement = document.createElement("select");
-				searchElement.classList.add("form-select");
-				searchElement.classList.add("form-select-sm");
-				searchElement.style.width = "150px";
-				searchElement.name = "search";
-				searchElement.id = "search-point";
+		check_idxs.forEach(e => {
+			if (e.checked) {
+				idxDatas += e.value + ",";
+			}
+		});
 
-				var option = document.createElement("option");
-				option.value = "";
-				option.innerText = "未設定";
-				searchElement.appendChild(option);
+		let chk = true;
+		const postForm = new FormData();
+		postForm.append("idxs", idxDatas.slice(0, -1));
 
-				for (let i = 0; i < 5; i++) {
-					var option = document.createElement("option");
-					option.value = i;
-					option.innerText = i + 1;
-					searchElement.appendChild(option);
-
+		const xhr = new XMLHttpRequest();
+		xhr.open("POST", "./chkapprove", true);
+		xhr.send(postForm);
+		xhr.onload = () => {
+			if (xhr.status == 200) {
+				const result = xhr.responseText;
+				if (result == "fail") {
+					chk = false;
+		console.log(chk);
 				}
-				break;
-
-			case "title":
-				searchElement = document.createElement("input");
-				searchElement.classList.add("form-control");
-				searchElement.classList.add("form-control-sm");
-				searchElement.style.width = "150px";
-				searchElement.name = "search";
-				searchElement.id = "search-title";
-				break;
-			<?php foreach ($optionDatas as $option): ?>
-				case "<?php echo $option; ?>":
-					searchElement = document.createElement("select");
-					searchElement.classList.add("form-select");
-					searchElement.classList.add("form-select-sm");
-					searchElement.style.width = "150px";
-					searchElement.name = "search";
-					searchElement.id = "search-<?php echo $option; ?>";
-
-					var option = document.createElement("option");
-					option.value = "";
-					option.innerText = "未設定";
-					searchElement.appendChild(option);
-
-					<?php foreach (${$option . "Datas"} as $i => $data): ?>
-						var option = document.createElement("option");
-						option.value = <?= $i; ?>;
-						option.innerText = "<?php echo $data; ?>";
-						searchElement.appendChild(option);
-
-					<?php endforeach; ?>
-					break;
-
-			<?php endforeach; ?>
+			}
 		}
-		
-		div_search.children[0].remove();
-		div_search.appendChild(searchElement);
+
+		console.log(chk);
+		if (chk == false) {
+			alert("承認できたデータがあります。");
+			return false;
+		}
+
+		// xhr.open("POST", "./approve", true);
+		// xhr.send(postForm);
+		// xhr.onload = () => {
+		// 	if (xhr.status == 200) {
+		// 		const result = xhr.responseText;
+		// 		if (result == "success") {
+		// 			alert("承認しました。");
+		// 			location.reload(true);
+		// 		}
+		// 		else {
+		// 			alert("Error");
+		// 			console.log($result);
+		// 		}
+		// 	}
+		// }
 	}
 
-	function Align(element) {
-		<?php
-			$url = $_SERVER["REQUEST_URI"];
-			$url = $url . "?";
-			$query = explode("?", $url)[1];
-	
-			if (!empty($query)) {
-				$queryDatas = explode("&", $query);
+	function Delete() {
+		let idxDatas = "";
 
-				$newQueryDatas = array();
-				foreach ($queryDatas as $data) {
-					if (explode("=", $data)[0] != "align") {
-						array_push($newQueryDatas, $data);
-					}
-				}
-				$newQuery = implode("&", $newQueryDatas);
-				$url = explode("?", $_SERVER["REQUEST_URI"])[0] . "?" . $newQuery . "&";
+		check_idxs.forEach(e => {
+			if (e.checked) {
+				idxDatas += e.value + ",";
 			}
-		?>
+		});
 
-		let alignValue = element.id;
-		if (element.innerText.includes("▲")) {
-			alignValue += "_DESC";
+		idxDatas.slice(0, -1);
+
+		const postForm = new FormData();
+		postForm.append("idxs", idxDatas.slice(0, -1));
+
+		const xhr = new XMLHttpRequest();
+		xhr.open("POST", "./delete", true);
+		xhr.send(postForm);
+
+		xhr.onload = () => {
+			if (xhr.status == 200) {
+				const result = xhr.responseText;
+				if (result == "success") {
+					alert("削除しました。");
+					location.reload(true);
+				}
+				else {
+					alert("Error");
+					console.log($result);
+				}
+			}
 		}
-		
-		if (element.innerText.includes("▼")) { self.location.href = "<?php echo substr($url, 0, -1); ?>"; }
-		else { self.location.href = "<?php echo $url; ?>" + "align=" + alignValue; }
 	}
 </script>

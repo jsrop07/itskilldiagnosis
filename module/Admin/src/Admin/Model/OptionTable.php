@@ -33,4 +33,9 @@ class OptionTable
 		$qry = $this->sql->select("option")->where(["del_flag" => "N"])->order("text");
 		return $this->sql->prepareStatementForSqlObject($qry)->execute();
 	}
+
+	public function ReadByText($text) {
+		$qry = $this->sql->select("option")->where(["text" => $text]);
+		return $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
+	}
 }

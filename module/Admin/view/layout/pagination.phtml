@@ -1,49 +1,41 @@
-<?php
-	$url = $_SERVER["REQUEST_URI"];
-	$url = $url . "?";
-	$query = explode("?", $url)[1];
-	
-	if (!empty($query)) {
-		$queryDatas = explode("&", $query);
-
-		$newQueryDatas = array();
-		foreach ($queryDatas as $data) {
-			if (explode("=", $data)[0] != "page") {
-				array_push($newQueryDatas, $data);
-			}
-		}
-		$newQuery = implode("&", $newQueryDatas);
-		$url = explode("?", $_SERVER["REQUEST_URI"])[0] . "?" . $newQuery . "&";
-	}
-
-	$paging = false;
-	if ($totalPage > 1) {
-		$paging = true;
-
-		$previousPage = $currentPage - 1;
-		if ($previousPage < 1) { $previousPage = 1; }
-
-		$nextPage = $currentPage + 1;
-		if ($nextPage > $totalPage) { $nextPage = $totalPage; }
-	}
-?>
-
-<ul class="emegra pagination">
-	<?php if ($paging): ?>
-		<li class="item">
-			<a href="<?php echo $url . "page=" . $previousPage; ?>"><</a>
-		</li>
-	<?php endif; ?>
-
-	<?php for ($i = 1; $i <= $totalPage; $i++): ?>
-		<li class="item<?php echo ($currentPage == $i) ? " active" : ""; ?>">
-			<a href="<?php echo $url . "page=" . $i; ?>"><?= $i ?></a>
-		</li>
-	<?php endfor; ?>
-
-	<?php if ($paging): ?>
-		<li class="item">
-			<a href="<?php echo $url . "page=" . $nextPage; ?>">></a>
-		</li>
-	<?php endif; ?>
-</ul>
+<?php if ($this->pageCount): ?>
+<nav aria-label="Page navigation">
+	<ul class="pagination justify-content-center">
+		<?php if (isset($this->previous)): ?>
+			<li class="page-item">
+				<a class="page-link" href="<?php echo $this->url;?><?php echo ($this->url=='')?"?":"&"?>page=1">最前へ</a>
+			</li>
+			<li class="page-item">
+				<a class="page-link" href="<?php echo $this->url;?><?php echo ($this->url=='')?"?":"&"?>page=<?php echo $this->previous;?>">前へ</a>
+			</li>
+		<?php else: ?>
+			<li class="page-item disabled">
+				<a class="page-link" href="#">&laquo;</a>
+			</li>
+		<?php endif; ?>
+		<?php foreach ($this->pagesInRange as $page): ?>
+			<?php if ($page != $this->current): ?>
+				<li class="page-item">
+					<a class="page-link" href="<?php echo $this->url;?><?php echo ($this->url=='')?"?":"&"?>page=<?php echo $page;?>"><?php echo $page;?></a>
+				</li>
+			<?php else: ?>
+				<li class="page-item active">
+					<a class="page-link" href="#"><?php echo $page; ?></a>
+				</li>
+			<?php endif; ?>
+		<?php endforeach; ?>
+		<?php if (isset($this->next)): ?>
+			<li class="page-item">
+				<a class="page-link" href="<?php echo $this->url; ?><?php echo ($this->url=='')?"?":"&"?>page=<?php echo $this->next;?>">次へ</a>
+			</li>
+			<li class="page-item">
+				<a class="page-link" href="<?php echo $this->url; ?><?php echo ($this->url=='')?"?":"&"?>page=<?php echo $this->next;?>">最後へ</a>
+			</li>
+		<?php else: ?>
+			<li class="page-item disabled">
+				<a class="page-link" href="#">&raquo;</a>
+			</li>
+		<?php endif; ?>
+	</ul>
+</nav>
+<?php endif; ?>

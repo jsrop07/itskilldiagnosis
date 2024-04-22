@@ -48,6 +48,9 @@ class QuestionController extends AbstractActionController
 			if ($userLevel >= 1) { $totalQuestionDatas = iterator_to_array($questionTb->ReadAllList()); }
 			else { $totalQuestionDatas = iterator_to_array($questionTb->ReadListByRegist($userCode)); }
 		}
+		
+		$totalData = count($totalQuestionDatas);
+		$datas["totalData"] = $totalData;
 
 
 		if (!empty($totalQuestionDatas)) {
@@ -64,8 +67,7 @@ class QuestionController extends AbstractActionController
 			
 			$datas["questionDatas"] = $PrintQuestionDatas;
 		}
-		
-		$totalPage = ceil(count($totalQuestionDatas) / $printDataNum);
+		$totalPage = ceil($totalData / $printDataNum);
 		if ($totalPage < 2) { $totalPage = 0; }
 		$paginationData["totalPage"] = $totalPage;
 		$paginationData["currentPage"] = $page;
@@ -92,25 +94,7 @@ class QuestionController extends AbstractActionController
 		$adminTb = $this->getServiceLocator()->get("AdminTable");
 		$datas["adminDatas"] = iterator_to_array($adminTb->ReadAll());
 
-		$optionTb = $this->getServiceLocator()->get("OptionTable");
-		$optionDatas = iterator_to_array($optionTb->ReadValid());
-
-		$datas["optionDatas"] = array();
-		$other = array();
-		foreach ($optionDatas as $data) {
-			if ($data["type"] == "status") { continue; }
-			if ($data["text"] == "その他") {
-				$other = $data;
-				continue;
-			}
-
-			if (!isset($datas["optionDatas"][$data["type"]])) {
-				$datas["optionDatas"][$data["type"]] = array();
-			}
-			array_push($datas["optionDatas"][$data["type"]], $data);
-		}
-		
-		array_push($datas["optionDatas"]["class1st"], $other);
+		$datas = $this->GetOptionDatasForInput($datas);
 
 		$this->layout("layout/list");
 		return $this->SetViewModel($datas, "/question/question_input.phtml");
@@ -174,21 +158,20 @@ class QuestionController extends AbstractActionController
 	}
 
 	public function editAction() {
-		$route = $this->params()->fromRoute();
-		$idx = $route["index"];
+		$datas["breadcrumbData"] = ["ITスキル診断問項管理", "問題詳細", "問題修正"];
+		$datas["title"] = "問題修正";
 
-		$datas = $this->GetOptionDatas([], ["status"]);
+		$idx =$this->params()->fromRoute("index");
+		print_r($idx);
 
 		$questionTb = $this->getServiceLocator()->get("QuestionTable");
 		$datas["questionData"] = $questionTb->ReadByIndex($idx);
-		$datas["mode"] = "edit";
 
 		$adminTb = $this->getServiceLocator()->get("AdminTable");
 		$datas["adminDatas"] = iterator_to_array($adminTb->ReadAll());
 		$datas["approvalDatas"] = iterator_to_array($adminTb->ReadApprovers());
 
-		$datas["breadcrumbData"] = ["ITスキル診断問項管理", "問題詳細", "問題修正"];
-		$datas["title"] = "問題修正";
+		$datas = $this->GetOptionDatasForInput($datas);
 		$this->layout("layout/list");
 		return $this->SetViewModel($datas, "/question/question_input.phtml");
 	}
@@ -216,6 +199,35 @@ class QuestionController extends AbstractActionController
 		return $datas;
 	}
 
+	function GetOptionDatasForInput($datas) {
+		$optionTb = $this->getServiceLocator()->get("OptionTable");
+		$optionDatas = iterator_to_array($optionTb->ReadValid());
+
+		$datas["optionDatas"] = array();
+		$other = array();
+		foreach ($optionDatas as $data) {
+			if ($data["type"] == "status") { continue; }
+			if ($data["type"] == "level") { continue; }
+			if ($data["text"] == "その他") {
+				$other = $data;
+				continue;
+			}
+
+			if (!isset($datas["optionDatas"][$data["type"]])) {
+				$datas["optionDatas"][$data["type"]] = array();
+			}
+			array_push($datas["optionDatas"][$data["type"]], $data);
+		}
+		
+		array_push($datas["optionDatas"]["class1st"], $other);
+		$datas["optionDatas"]["level"] = array();
+		array_push($datas["optionDatas"]["level"], $optionTb->ReadByText("初級"));
+		array_push($datas["optionDatas"]["level"], $optionTb->ReadByText("中級"));
+		array_push($datas["optionDatas"]["level"], $optionTb->ReadByText("高級"));
+
+		return $datas;
+	}
+
 	public function createAction() {
 		$post = $this->params()->fromPost();
 
@@ -224,23 +236,11 @@ class QuestionController extends AbstractActionController
 
 		$questionTb = $this->getServiceLocator()->get("QuestionTable");
 		if (isset($post["idx"])) {
-			$questionTb->UpdateQuestion($post);
+			$questionTb->UpdateQuestiont($post);
 			die("success");
 		}
 		$questionTb->CreateQuestion($post);
 
-		die("success");
-	}
-
-	public function chkapproveAction() {
-		$post = $this->params()->fromPost();
-		$idxDatas = explode(",", $post["idxs"]);
-
-		$questionTb = $this->getServiceLocator()->get("QuestionTable");
-		foreach ($idxDatas as $idx) {
-			$result = $questionTb->ReadByIdx($idx);
-			if ($result["date_approve"] != null) { die("fail"); }
-		}
 		die("success");
 	}
 
@@ -252,6 +252,11 @@ class QuestionController extends AbstractActionController
 
 		$questionTb = $this->getServiceLocator()->get("QuestionTable");
 		foreach ($idxDatas as $idx) {
+			$result = $questionTb->ReadByIdx($idx);
+			if ($result["date_approve"] != null) { die("fail"); }
+		}
+
+		foreach ($idxDatas as $idx) {
 			$questionTb->UpdateToRegistByIdx($idx, $session["code"]);
 		}
 		die("success");
@@ -259,15 +264,18 @@ class QuestionController extends AbstractActionController
 
 	public function updateAction() {
 		$post = $this->params()->fromPost();
-		$post["status"] = 0;
+
+		$whereData = ["idx" => $post["idx"]];
+		unset($post["idx"]);
+
+		$optionTb = $this->getServiceLocator()->get("OptionTable");
+		$post["status"] = $optionTb->ReadByText("承認依頼")["idx"];
+
+		$post["admin_approve"] = null;
+		$post["date_approve"] = null;
 
 		$questionTb = $this->getServiceLocator()->get("QuestionTable");
-		if (isset($post["idx"])) {
-			$questionTb->UpdateQuestion($post);
-			die("success");
-		}
-
-		$questionTb->CreateQuestion($post);
+		$questionTb->UpdateQuestion($whereData, $post);
 		die("success");
 	}
 
@@ -275,10 +283,17 @@ class QuestionController extends AbstractActionController
 		$post = $this->params()->fromPost();
 		$idxDatas = explode(",", $post["idxs"]);
 
+		$session = new Container("user");
+
+
+		$optionTb = $this->getServiceLocator()->get("OptionTable");
+		$status = $optionTb->ReadByText("削除")["idx"];
 		$questionTb = $this->getServiceLocator()->get("QuestionTable");
 
 		foreach ($idxDatas as $idx) {
-			$questionTb->DeleteQuestionByIdx($idx);
+			$whereData = ["idx" => $idx];
+			$setData = ["status" => $status, "admin_delete" => $session["code"], "date_delete" => date("Y-m-d H:i:s")];
+			$questionTb->UpdateQuestion($whereData, $setData);
 		}
 		die("success");
 	}
@@ -335,4 +350,66 @@ class QuestionController extends AbstractActionController
 
 		die(print_r($csvDatas[0]));
 	}
+
+	/*
+	public function estimateAction(){
+
+
+		// 메일 센더 초기화
+	$mail = new MailSender();
+
+	$this->layout("layout/none");
+	// 기본 메일 전송 관련 설정 로드
+			$param['config']=$this->getConfig();
+
+			// 메일 제목 지정 (일반적으로 DB에 메일폼 테이블을 만들어서 그것을 가져와서 아래의 title contents에 넣지만, 이건 샘플이므로 간단히.)
+			// 사람마다 변환해야 할 부분은 {{이렇게}} 메일폼에 넣어놓는다.
+			$param['title']="{{user_name}}様、株式会社ジエンジサービスでございます。";
+			$param['content']="送信する内容\n\n以下のURLから情報を登録してください。\n\n{{URL}}";
+
+			// 사람이름이나, URL등 고유하게 변경해야 하는 것은 이렇게 처리한다.
+			// 메일 제목과 내용 부분 모두 변환처리.
+			$param['title']=str_replace("{{user_name}}","testTitle",$param['title']);
+
+			// $param['content']=str_replace("{{user_name}}","変換する試験受け者名",$param['content']);
+			$param['content']=str_replace("{{URL}}","個人の試験URL",$param['content']);
+
+
+			// 수신자 이메일과 이름 설정
+			$param['email']='spredempt@gmail.com';
+			$param['name']="temp";
+
+			// 전송
+			$result = $mail->mailsender($param);
+			$result_row = $result['transport']->getConnection()->getResponse();
+
+			$results = str_replace("\r","",str_replace("\n","",str_replace(" ","",$result_row[0])));
+			switch(substr(strtolower($results),0,5)){
+				// 250ok 가 나오면 전송 의뢰 성공이다.
+					case "250ok":
+						$status = 'OK';
+							break;
+					// 그외의 것은 모두 실패로 처리한다.
+					default:
+						$status = 'FALSE';
+							break;
+			}
+
+
+			return $vm;
+	}
+	public function getConfig(){
+		if(isset($_SERVER['DOCUMENT_ROOT']) && $_SERVER['DOCUMENT_ROOT']!=''){
+				$droot = $_SERVER['DOCUMENT_ROOT'];
+		}else{
+				$droot = "abc";
+		}
+		if(is_file($droot.'/../config/autoload/local.php')){
+				$config = require $droot.'/../config/autoload/local.php';
+		}else{
+				$config = require $droot.'/../config/autoload/global.php';
+		}
+		return $config;
+}
+*/
 }

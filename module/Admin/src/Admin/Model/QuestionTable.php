@@ -38,7 +38,7 @@ class QuestionTable {
 	}
 
 	public function ReadAllList() {
-		$qry = $this->sql->select("question")->where(["date_delete" => null])->order("date_regist desc");
+		$qry = $this->sql->select("question")->where(["date_delete" => null])->order("date_approve desc");
 		return $this->sql->prepareStatementForSqlObject($qry)->execute();
 	}
 
@@ -51,7 +51,7 @@ class QuestionTable {
 				->or->equalTo("admin_regist", $code)
 			->unnest();
 		
-		$qry = $this->sql->select("question")->where($where)->order("date_regist desc");
+		$qry = $this->sql->select("question")->where($where)->order("date_approve desc");
 		return $this->sql->prepareStatementForSqlObject($qry)->execute();
 	}
 
@@ -78,9 +78,9 @@ class QuestionTable {
 	}
 
 	public function ReadListByOption($optionDatas) {
-		$order = "date_regist DESC";
+		$order = "date_approve DESC";
 		if (isset($optionDatas["align"])) {
-			$order = [str_replace("_", " ", $optionDatas["align"]), "date_regist DESC"];
+			$order = [str_replace("_", " ", $optionDatas["align"]), "date_approve DESC"];
 			unset($optionDatas["align"]);
 		}
 		print_r($optionDatas);
@@ -170,7 +170,12 @@ class QuestionTable {
 		return $this->sql->prepareStatementForSqlObject($qry)->execute();
 	}
 
-	public function UpdateQuestion($datas) {
+	public function UpdateQuestion($whereData, $setData) {
+		$qry = $this->sql->update("question")->where($whereData)->set($setData);
+		return $this->sql->prepareStatementForSqlObject($qry)->execute();
+	}
+
+	public function UpdateQuestiont($datas) {
 		$idx = $datas["idx"];
 		unset($datas["idx"]);
 
@@ -202,7 +207,7 @@ class QuestionTable {
 	}
 
 	public function getNoticeList($params) {
-		$qry=$this->sql->select("question")->order("date_regist desc");
+		$qry = $this->sql->select("question")->where(["date_delete" => null])->order("date_regist desc");
 
 		$paginatorAdapter = new DbSelect($qry ,$this->adapter);
 		$return = new Paginator($paginatorAdapter);

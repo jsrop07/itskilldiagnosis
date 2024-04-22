@@ -13,7 +13,7 @@ namespace Applicant;
 use Applicant\Model\AdminInfoTable;
 use Applicant\Model\QuestionTypeTable;
 use Applicant\Model\QuestionPoolTable;
-use Applicant\Model\ExamTable;
+use Applicant\Model\ApplicantLoginTable;
 use Applicant\Model\ApplicationTable;
 use Zend\Mvc\ModuleRouteListener;
 use Zend\Mvc\MvcEvent;
@@ -72,9 +72,9 @@ class Module
                     $table = new QuestionPoolTable($dbAdapter);
                     return $table;
                 },
-                "ExamTable" => function ($sm) {
+                "ApplicantLoginTable" => function ($sm) {
                     $dbAdapter = $sm->get("Zend\Db\Adapter\Adapter");
-                    $table = new ExamTable($dbAdapter);
+                    $table = new ApplicantLoginTable($dbAdapter);
                     return $table;
                 },
                 "ApplicationTable" => function ($sm){

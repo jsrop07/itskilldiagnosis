@@ -239,6 +239,8 @@ function checkKana(input) {
         if (form.name.value == "" || !checkKanji(form.name.value)) {
             alert("漢字を入力してください。");
             setTimeout("form.name.focus()",100);
+            event.preventDefault();
+
             return false;
         }
 

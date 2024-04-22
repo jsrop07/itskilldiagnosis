@@ -162,9 +162,6 @@ select{
     font-style: normal; 
   }
 
-  .form-control{
-    color: gray;
-  }
   ::placeholder {
     /* font-style: italic;  */
     color: gray !important;

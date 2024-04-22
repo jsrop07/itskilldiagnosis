@@ -74,14 +74,14 @@
 </style>
 
 <div class="emegra card">
-	<div class="card-header">G&G Service 試験受け</div>
+	<div class="card-header">G&G Service</div>
 
 	<div class="card-body">
 		<span>ログインID</span>
-		<input class="form-control" id="id" type="text" placeholder="IDを入力ください（自分のメール）">
+		<input class="form-control" name='id' id="id" type="text" placeholder="IDを入力ください（自分のメール）">
 
 		<span style="margin-top: 24px">パスワード</span>
-		<input class="form-control" id="password" type="password" placeholder="パスワードを入力ください">
+		<input class="form-control" name='password' id="password" type="password" placeholder="パスワードを入力ください">
 
 		<button class="emegra" style="margin-top: 40px;" onclick="submit();">ログイン</button>
 	</div>
@@ -123,7 +123,8 @@
 					alert("パスワードを確認してください");
 					password.focus();
 				} else if (result == "success") {
-					self.location.href = "../exam/" + url.substring(url.indexOf("login/", 0) + 6, url.length);
+          alert(result)
+          self.location.href = "../exam/" + id.value;
 				}
 			}
 		}

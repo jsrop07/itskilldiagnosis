@@ -44,7 +44,7 @@
         <h3 class="modal-title" id="exampleModalLabel"style="text-align: center;">案内</h3>
       </div>
       <div class="modal-body">
-	  <h5 style="font-size:18px;text-align:center; padding:15px;">
+	  <h5 style="font-size:18px;text-align:center; padding:13px;">
             株式会社ジエンジサービスの
             ITスキル診断申込です。
             <br>    <br>
@@ -85,12 +85,13 @@ function displayCurrentDate() {
 
 window.onload = displayCurrentDate;
 
-	function onLoadEvent() {
-		loadPage.click();
-	}
-	window.onload = function() {
-    onLoadEvent();
-    displayCurrentDate();
+function onLoadEvent() {
+	loadPage.click();
+}
+
+window.onload = function() {
+	onLoadEvent();
+	displayCurrentDate();
 };
 
 </script>

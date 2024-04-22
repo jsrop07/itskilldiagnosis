@@ -104,6 +104,7 @@
 </html>
 </div>
 
+<!-- ITスキル有無選択時に画面変化 -->
 <script>
 var skillSelect = document.querySelector('select[name="skill"]');
 
@@ -173,8 +174,7 @@ skillSelect.addEventListener('change', function() {
 });
 </script>
 
-
-
+<!-- educationとdevelopのその他項目画面変化 -->
 <script>
     document.getElementById('educationSelect').addEventListener('change', function(event) {
     var selectedOption = event.target.value;
@@ -194,9 +194,6 @@ skillSelect.addEventListener('change', function() {
     }
 });
 
-</script>
-
-<script>
     document.getElementById('developSelect').addEventListener('change', function(event) {
     var selectedOption = event.target.value;
     var otherDevelopInput = document.getElementById('otherDevelopInput');
@@ -216,6 +213,7 @@ skillSelect.addEventListener('change', function() {
 });
 </script>
 
+<!-- 漢字カナ入力時有効性検査 -->
 <script>
 function checkKanji(input) {
     var japaneseChineseRegex = /^[\u4E00-\u9FFF]+$/; 
@@ -226,11 +224,10 @@ function checkKana(input) {
     var katakanaRegex = /^[\u30A0-\u30FFー]+$/; 
     return katakanaRegex.test(input);
 }
-
 </script>
 
+<!-- 必須項目有効性検査 -->
 <script type="text/javascript">
-
 	function applicationConfirm() {
 		if (form.email.value == "") {
 			alert("メールアドレスを入力してください。");
@@ -242,6 +239,8 @@ function checkKana(input) {
         if (form.name.value == "" || !checkKanji(form.name.value)) {
             alert("漢字を入力してください。");
             setTimeout("form.name.focus()",100);
+            event.preventDefault();
+
             return false;
         }
 
@@ -312,6 +311,7 @@ function checkKana(input) {
 
 </script>
 
+<!-- selectbox 選択時の　色 -->
 <script>
 var selectElements = document.querySelectorAll('[name="gender"],[name="application_category"],[name="education"],[name="skill"],[name="question_type"],[name="develop"]');
 

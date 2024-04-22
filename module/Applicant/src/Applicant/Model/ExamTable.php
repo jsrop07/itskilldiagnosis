@@ -15,7 +15,7 @@ use Zend\Paginator\Adapter\DbSelect;
 use Zend\Paginator\Paginator;
 use Zend\Session\Container;
 
-class ExamTable
+class ApplicantLoginTable
 {
   public function __construct()
   {
@@ -100,12 +100,12 @@ class ExamTable
     return $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
   }
 
-  public function login($url, $id, $password)
+  public function login($id, $password)
   {
-    $qry = $this->sql->select("exam")->where(
+    $qry = $this->sql->select("applicant")->where(
       array(
-        "url" => $url,
-        "user_id" => $id,
+        "id" => $id,
+        "password" => $password,
       )
     );
 
@@ -114,7 +114,7 @@ class ExamTable
       return "wrong id";
     }
 
-    if ($result["user_pw"] == $password) {
+    if ($result["password"] == $password) {
       return "success";
     }
     return "wrong password";

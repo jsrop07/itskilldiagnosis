@@ -83,8 +83,7 @@ class QuestionTable {
 			$order = [str_replace("_", " ", $optionDatas["align"]), "date_approve DESC"];
 			unset($optionDatas["align"]);
 		}
-		print_r($optionDatas);
-		// exit;
+
 		$where = new Where();
 		$where->notEqualTo("status", 0);
 		foreach ($optionDatas as $key => $value) {
@@ -204,6 +203,47 @@ class QuestionTable {
 	public function DeleteQuestionByIdx($idx) {
 		$qry = $this->sql->delete("question")->where(["idx" => $idx]);
 		$this->sql->prepareStatementForSqlObject($qry)->execute();
+	}
+
+	public function GetAllList() {
+		$qry = $this->sql->select("question")->where(["date_delete" => null])->order("date_regist desc");
+
+		$paginatorAdapter = new DbSelect($qry, $this->adapter);
+		return new Paginator($paginatorAdapter);
+	}
+
+	public function GetListByRegist($code) {
+		$where = new Where();
+		$where
+			->isNull("date_delete")
+			->and->nest()
+				->isNotNull("date_approve")
+				->or->equalTo("admin_regist", $code)
+			->unnest();
+
+		$qry = $this->sql->select("question")->where($where)->order("date_approve desc");
+
+		$paginatorAdapter = new DbSelect($qry, $this->adapter);
+		return new Paginator($paginatorAdapter);
+	}
+
+	public function GetListByOption($optionDatas) {
+		$order = "date_approve DESC";
+		if (isset($optionDatas["align"])) {
+			$order = [str_replace("_", " ", $optionDatas["align"]), "date_approve DESC"];
+			unset($optionDatas["align"]);
+		}
+
+		$where = new Where();
+		$where->notEqualTo("status", 0);
+		foreach ($optionDatas as $key => $value) {
+			$where->and->equalTo($key, $value);
+		}
+
+		$qry = $this->sql->select("question")->where($where)->order($order);
+
+		$paginatorAdapter = new DbSelect($qry, $this->adapter);
+		return new Paginator($paginatorAdapter);
 	}
 
 	public function getNoticeList($params) {

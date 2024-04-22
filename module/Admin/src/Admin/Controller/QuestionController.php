@@ -32,21 +32,30 @@ class QuestionController extends AbstractActionController
 			}
 
 			if (is_numeric(substr($query["register"], 0, 2)) && is_numeric(substr($query["register"], 2, 7))) {
-				$query["admin_regist"] = $query["register"];
+				$query["admin_approve"] = $query["register"];
 			}
 			else {
 				$adminTb = $this->getServiceLocator()->get("AdminTable");
-				$query["admin_regist"] = $adminTb->ReadByName($query["register"])["code"];
+				$query["admin_approve"] = $adminTb->ReadByName($query["register"])["code"];
 			}
 
 			unset($query["register"]);
 
-			if ($userLevel >= 1) { $totalQuestionDatas = iterator_to_array($questionTb->ReadListByOption($query)); }
+			if ($userLevel >= 1) {
+				$totalQuestionDatas = iterator_to_array($questionTb->ReadListByOption($query));
+				$paginationData = $questionTb->GetListByOption($query);
+			}
 			else { $totalQuestionDatas = iterator_to_array($questionTb->ReadListByCode_Option($userCode, $query)); }
 		}
 		else {
-			if ($userLevel >= 1) { $totalQuestionDatas = iterator_to_array($questionTb->ReadAllList()); }
-			else { $totalQuestionDatas = iterator_to_array($questionTb->ReadListByRegist($userCode)); }
+			if ($userLevel >= 1) {
+				$totalQuestionDatas = iterator_to_array($questionTb->ReadAllList());
+				$paginationData = $questionTb->GetAllList();
+			}
+			else {
+				$totalQuestionDatas = iterator_to_array($questionTb->ReadListByRegist($userCode));
+				$paginationData = $questionTb->GetAllList($userCode);
+			}
 		}
 		
 		$totalData = count($totalQuestionDatas);
@@ -69,21 +78,14 @@ class QuestionController extends AbstractActionController
 		}
 		$totalPage = ceil($totalData / $printDataNum);
 		if ($totalPage < 2) { $totalPage = 0; }
-		$paginationData["totalPage"] = $totalPage;
-		$paginationData["currentPage"] = $page;
-		$paginationData["url"] = "/admin/question/list/";
-		$datas["paginationData"] = $paginationData;
-		
-		$pagenum=(int) $this->params()->fromQuery("page", 1);
-		$pagecount=10;
 
 		$datas = $this->GetOptionDatas($datas);
 
 		$this->layout("layout/list");
 		$vm = $this->SetViewModel($datas, "/question/question_list.phtml");
-		$vm->noticelist=$questionTb->getNoticeList($query);
-		$vm->noticelist->setCurrentPageNumber($pagenum);
-		$vm->noticelist->setItemCountPerPage($pagecount);
+		$vm->noticelist = $paginationData;
+		$vm->noticelist->setCurrentPageNumber($page);
+		$vm->noticelist->setItemCountPerPage($printDataNum);
 		return $vm;
 	}
 	

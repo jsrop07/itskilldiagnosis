@@ -54,6 +54,17 @@ return array(
 					),
 				),
 			),
+			"diagnosis" => array(
+				"type" => "Zend\Mvc\Router\Http\Segment",
+				"options" => array(
+					"route" => "/admin/diagnosis[/:action][/:index]",
+					"constraints" => array(),
+					"defaults" => array(
+						"controller"	=> "Diagnosis",
+						"action"			=> "index",
+					),
+				),
+			),
 		),
 	),
     'service_manager' => array(
@@ -79,6 +90,7 @@ return array(
 		"invokables" => array(
 			"Account"		=> "Admin\Controller\AccountController",
 			"Question"	=> "Admin\Controller\QuestionController",
+			"Diagnosis"	=> "Admin\Controller\DiagnosisController",
 		),
 	),
     'view_manager' => array(
@@ -88,7 +100,7 @@ return array(
         'not_found_template'       => 'error/404',
         'exception_template'       => 'error/index',
         'template_map' => array(
-					"layout/list"						=> __DIR__ . "/../view/layout/layout_list.phtml",
+					"layout/default"						=> __DIR__ . "/../view/layout/layout_default.phtml",
 					"breadcrumb"						=> __DIR__ . "/../view/layout/breadcrumb.phtml",
 
 					"admin"									=> __DIR__ . "/../view/layout/admin_layout.phtml",

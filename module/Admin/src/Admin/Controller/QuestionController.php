@@ -185,6 +185,7 @@ class QuestionController extends AbstractActionController
 
 	/** Make ViewModel with datas and template */
 	function SetViewModel($datas, $template) {
+		$this->layout("layout/default");
 		$vm = new ViewModel($datas);
 		$vm->setTemplate($template);
 		return $vm;

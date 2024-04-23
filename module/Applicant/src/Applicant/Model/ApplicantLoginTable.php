@@ -50,6 +50,7 @@ class ApplicantLoginTable
 
     if ($result["password"] == $password) {
       return "success";
+      exit;
     }
     return "wrong password";
   }

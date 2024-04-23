@@ -34,10 +34,30 @@
 </header>	
 <main>
 		<?php echo $this->content; ?>
-		<button type="button" class="btn btn-primary" id="loadPage" data-bs-toggle="modal" data-bs-target="#exampleModal" style="display:none">
+		<button type="button" class="btn btn-primary" id="loadPage" data-bs-toggle="modal" data-bs-target="#staticBackdrop" style="display:none">
 </button>
 
-<div class="modal fade" id="exampleModal" style="backdrop-filter: blur(5px);" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal modal-sheet py-5" style="backdrop-filter: blur(5px); " tabindex="-1" role="dialog" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog" style="margin-top:150px;" role="document">
+    <div class="modal-content rounded-4" style="padding:0px 15px;">
+      <div class="modal-header border-bottom-0" style="padding: 20px 50px;">
+	  <h3 class="modal-title fs-5" id="exampleModalLabel">案内</h3>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body fs-5">
+	  <p style="text-align:center; font-size: 1.25rem;line-height: 1.6;color: #333;margin: 0;">
+			株式会社ジエンジサービス<br>　のITスキル診断申込書です。 <br><br>
+			項目に沿って必要事項を入力してください。
+	  </p>
+      </div>
+      <div class="modal-footer flex-column border-top-0">
+        <!-- <button type="button" class="btn btn-lg  w-100 mx-0" data-bs-dismiss="modal" style="background: linear-gradient(111deg, #87D782 0%, #22BC8E 100%); color:white;">確認</button> -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- <div class="modal fade" id=""  tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header" style=" display:inline" >
@@ -53,7 +73,7 @@
       </div>
     </div>
   </div>
-</div>
+</div> -->
 
 </main>
 

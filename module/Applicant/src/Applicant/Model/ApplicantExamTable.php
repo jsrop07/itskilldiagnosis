@@ -15,7 +15,7 @@ use Zend\Paginator\Adapter\DbSelect;
 use Zend\Paginator\Paginator;
 use Zend\Session\Container;
 
-class ApplicantLoginTable
+class ApplicantExamTable
 {
   public function __construct()
   {
@@ -75,9 +75,9 @@ class ApplicantLoginTable
     return $this->sql->prepareStatementForSqlObject($qry)->execute();
   }
 
-  public function readByUrl($url)
+  public function readByUrl($id)
   {
-    $qry = $this->sql->select("applicant")->where(["url" => $url]);
+    $qry = $this->sql->select("applicant")->where(["id" => $id]);
     return $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
   }
 

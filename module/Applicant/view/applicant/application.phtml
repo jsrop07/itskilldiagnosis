@@ -47,7 +47,14 @@
                     </div>
 
                     <span class="no_after_style">専攻</span>
-                    <input class="form-control" name="major" type="text" placeholder="専攻を入力ください。" style="width:80%" maxlength='20'>
+                    <select class="" name="major" style="width:40%" id="majorSelect" >
+                        <option value=""selected disabled hidden>選択してください。</option>
+                        <option value="IT・ソフトウェア専攻">IT・ソフトウェア専攻</option>
+                        <option value="IT・ソフトウェア以外">IT・ソフトウェア以外</option>
+                    </select>
+                    <div id="otherMajorInput" style=" margin-top:-15px;">
+                        <input class="form-control" type="text" placeholder="その他の場合の、記入" id="otherMajor" name="major" maxlength='20'>
+                    </div>
 
                     <span>ITスキル有無</span>
                     <select class="" name="skill" style="width:20%" >
@@ -55,18 +62,6 @@
                         <option value="0">有</option>
                         <option value="1">無</option>
                     </select>
-
-                    <span class="no_after_style" id="spanTypeSelect">問題種別</span>
-                    <select class="" name="question_type" style="width:40%" id="typeSelect">
-                    <option value="" selected  >選択してください。</option>
-                    <?php foreach ($this->questionType as $row): ?>
-                        <?php $texts = explode(',', $row['text']); ?>
-                        <?php foreach ($texts as $text): ?>
-                            <option value="<?php echo $text; ?>"><?php echo $text; ?></option>
-                        <?php endforeach; ?>
-                    <?php endforeach; ?>
-                    </select>
-
 
                     <span id="spanDevelopSelect">経験分野</span>
                     <select class="" name="develop" style="width:40%" id="developSelect" >
@@ -84,6 +79,17 @@
 
                     <span id='spanCareer'>IT経験年数</span>
                     <input class="form-control" id="career" name="career" type="text" placeholder="経歴を記入してください。" style="font-size:15px; width:40%" maxlength='2'>
+
+                    <span  id="spanTypeSelect">問題種別</span>
+                    <select class="" name="question_type" style="width:40%" id="typeSelect">
+                    <option value="" selected  >選択してください。</option>
+                    <?php foreach ($this->questionType as $row): ?>
+                        <?php $texts = explode(',', $row['text']); ?>
+                        <?php foreach ($texts as $text): ?>
+                            <option value="<?php echo $text; ?>"><?php echo $text; ?></option>
+                        <?php endforeach; ?>
+                    <?php endforeach; ?>
+                    </select>
 
                     <span class="no_after_style" id='spanCertificates'>IT関連資格</span>
                     <input class="form-control" name="certificates" type="text" placeholder="資格を記入してください。"style="width:80%" maxlength='50'>
@@ -144,7 +150,7 @@ skillSelect.addEventListener('change', function() {
         ApplicantCertificatesInput.style.display='none';
 
 
-
+        questionTypeSelect.disabled=true;
         developSelect.disabled = true;
         otherDevelopInput.querySelector('input').disabled = true;
         careerInput.disabled = true;
@@ -164,7 +170,7 @@ skillSelect.addEventListener('change', function() {
         ApplicantCertificatesInput.style.display='block';
 
 
-        // questionTypeSelect.disabled=false;
+        questionTypeSelect.disabled=false;
         developSelect.disabled = false;
         otherDevelopInput.querySelector('input').disabled = false;
         careerInput.disabled = false;
@@ -209,6 +215,24 @@ skillSelect.addEventListener('change', function() {
         otherDevelop.removeAttribute('disabled');
     } else {
         otherDevelop.setAttribute('disabled', 'disabled');
+    }
+});
+
+document.getElementById('majorSelect').addEventListener('change', function(event) {
+    var selectedOption = event.target.value;
+    var otherMajorInput = document.getElementById('otherMajorInput');
+
+    if (selectedOption === "IT・ソフトウェア以外") {
+        otherMajorInput.style.display = 'block';
+    } else {
+        otherMajorInput.style.display = 'none';
+    }
+
+    var otherMajor = document.getElementById('otherMajor');
+    if (selectedOption === "IT・ソフトウェア以外") {
+        otherMajor.removeAttribute('disabled');
+    } else {
+        otherMajor.setAttribute('disabled', 'disabled');
     }
 });
 </script>
@@ -273,7 +297,7 @@ function checkKana(input) {
 
 
         if (form.skill.value == "") {
-			alert("問題種別を入力してください。");
+			alert("ITスキル有無を入力してください。");
             setTimeout("form.skill.focus()",100);
             event.preventDefault();
 			return false;
@@ -296,11 +320,18 @@ function checkKana(input) {
 		}
 
         if (!careerInput.disabled && (isNaN(form.career.value) || form.career.value === "")) {
-        alert("IT経験年数を入力してください。");
-        setTimeout("form.careerInput.focus()",100);
-        event.preventDefault(); 
-        return false;
-    }
+            alert("IT経験年数を入力してください。");
+            setTimeout("form.careerInput.focus()",100);
+            event.preventDefault(); 
+            return false;
+        }
+
+        if (!typeSelect.disabled && form.typeSelect.value == "") {
+			alert("問題種別を入力してください。");
+            setTimeout("form.typeSelect.focus()",100);
+            event.preventDefault();
+			return false;
+		}
         
         var submitConfirm=confirm("申し込みますか？");
         if (!submitConfirm){
@@ -313,7 +344,7 @@ function checkKana(input) {
 
 <!-- selectbox 選択時の　色 -->
 <script>
-var selectElements = document.querySelectorAll('[name="gender"],[name="application_category"],[name="education"],[name="skill"],[name="question_type"],[name="develop"]');
+var selectElements = document.querySelectorAll('[name="gender"],[name="application_category"],[name="education"],[name="skill"],[name="question_type"],[name="develop"],[name="major"]');
 
 selectElements.forEach(function(selectElement) {
     selectElement.addEventListener('change', function() {

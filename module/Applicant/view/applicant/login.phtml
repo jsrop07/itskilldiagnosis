@@ -78,7 +78,7 @@
 
 	<div class="card-body">
 		<span>ログインID</span>
-		<input class="form-control" name='id' id="id" type="text" placeholder="IDを入力ください（自分のメール）">
+		<input class="form-control" name='id' id="id" type="text" placeholder="IDを入力ください">
 
 		<span style="margin-top: 24px">パスワード</span>
 		<input class="form-control" name='password' id="password" type="password" placeholder="パスワードを入力ください">
@@ -123,11 +123,9 @@
 					alert("パスワードを確認してください");
 					password.focus();
 				} else if (result == "success") {
-          alert(result)
-          self.location.href = "../exam/" + id.value;
+          self.location.href = "../applicant/exam";
 				}
 			}
 		}
 	}
 </script>
-<!-- ここまで -->

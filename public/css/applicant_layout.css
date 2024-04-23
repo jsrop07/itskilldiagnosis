@@ -112,7 +112,7 @@ main{
 }
 
 
-.diagnosis_main #otherEducationInput,.diagnosis_main #otherDevelopInput {
+.diagnosis_main #otherEducationInput,.diagnosis_main #otherDevelopInput,.diagnosis_main #otherMajorInput {
     grid-column: 2 / 3; 
     margin-top:10px;
     width: 80%;

@@ -15,6 +15,7 @@ use Applicant\Model\QuestionTypeTable;
 use Applicant\Model\QuestionPoolTable;
 use Applicant\Model\ApplicantLoginTable;
 use Applicant\Model\ApplicationTable;
+use Applicant\Model\ApplicantExamTable;
 use Zend\Mvc\ModuleRouteListener;
 use Zend\Mvc\MvcEvent;
 use Zend\Session\Container;
@@ -81,7 +82,12 @@ class Module
                     $dbAdapter = $sm->get("Zend\Db\Adapter\Adapter");
                     $table = new ApplicationTable($dbAdapter);
                     return $table;
-                }
+                },
+                "ApplicantExamTable" => function ($sm) {
+                    $dbAdapter = $sm->get("Zend\Db\Adapter\Adapter");
+                    $table = new ApplicantExamTable($dbAdapter);
+                    return $table;
+                },
             ),
         );
     }

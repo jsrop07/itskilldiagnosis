@@ -59,9 +59,9 @@ class ApplicantController extends AbstractActionController
 
 	   echo "
 	   <script>
-	   alert('登録が完了します。')
-	   self.location.href='https://www.gngs.co.jp/'
-  	   </script>
+	   alert('申込が完了します。')
+	   self.location.href='/applicant/application';
+	   </script>
 	   ";
 
 		exit;
@@ -80,9 +80,9 @@ class ApplicantController extends AbstractActionController
 			$loginTbl = $this->getServiceLocator()->get("ApplicantLoginTable");
 			$result = $loginTbl->login($post["id"], $post["password"]);
 			if ($result == "success") {
-				$session = new Container("user");
+				$session = new Container("applicant");
 				$session["id"] = $post["id"];
-
+				$session["token"] = 1;
 			}
 			die($result);
     }
@@ -96,25 +96,46 @@ class ApplicantController extends AbstractActionController
 
   public function examAction()
   {
-		$url = $this->params()->fromRoute()["url"];
-
+		// $url = $this->params()->fromRoute()["url"];
+		// print_r($url);
+		// exit;
 		$session = new Container("applicant");
-		if (!isset($session) || $session["url"] != $url) { $this->RedirectToLogin($url); }
+		if (isset($session->id)) {
+			// $this->RedirectToLogin($url); 
+			$id = $session->id;
+			unset($session->id);			
+			exit;
+		}
+		else{
+			print_r("dd");
+			exit;
+			// $this->RedirectToLogin($url); 
 
-		$this->layout("layout/user");
+		}
+		// if (!isset($session) || $session["url"] != $url) { 
+		// 	// $this->RedirectToLogin($url); 
+		// 	print_r($session["url"]);
+		// 			print_r($url);
+
+		// 	exit;
+
+		// }
+
+		// $this->layout("layout/user");
 
 		$post = $this->params()->fromPost();
 
-		$examTb = $this->getServiceLocator()->get("ExamTable");
+
+		$examTb = $this->getServiceLocator()->get("ApplicantExamTable");
 		$examData = $examTb->readByUrl($url);
 
 
 
-		if ($examData["get_point"] != "") {		// 試験をすでに受けた場合
-			$message[0] = "該当試験は受け済みの試験になります。";
-			$message[1] = "ご協力ありがとうございました。";
-			return $this->SetViewModel(["message" => $message], "user/alert.phtml");
-		}
+		// if ($examData["get_point"] != "") {		// 試験をすでに受けた場合
+		// 	$message[0] = "該当試験は受け済みの試験になります。";
+		// 	$message[1] = "ご協力ありがとうございました。";
+		// 	return $this->SetViewModel(["message" => $message], "user/alert.phtml");
+		// }
 
 
 
@@ -203,23 +224,23 @@ class ApplicantController extends AbstractActionController
 	*/
 
 
-	/** Redirect to Main page (user/main.phtml) */
-	function RedirectToMain() {
-		echo "
-		<script>
-			alert('URLを確認してください');
-			self.location.href='/user/main';
-		</script>
-		";
-		exit;
-	}
+	// /** Redirect to Main page (user/main.phtml) */
+	// function RedirectToMain() {
+	// 	echo "
+	// 	<script>
+	// 		alert('URLを確認してください');
+	// 		self.location.href='/user/main';
+	// 	</script>
+	// 	";
+	// 	exit;
+	// }
 
 	/** Redirect to Login page (user/login.phtml) */
 	function RedirectToLogin($url) {
 		echo "
 		<script>
-			alert('ログインしてください');
-			self.location.href='/user/login/$url';
+			alert('ログインしてくだasdさい');
+			self.location.href='/applicant/login';
 		</script>
 		";
 		exit;

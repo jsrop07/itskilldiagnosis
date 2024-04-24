@@ -2,28 +2,6 @@
 	if (!isset($_SESSION)) { session_start(); }
 
 	$isSetData = false;
-	$answerNum = "";
-	if (isset($questionData)) {
-		$isSetData = true;
-
-		$type = "";
-		foreach ($optionDatas["type"] as $data) {
-			if (in_array($questionData["type"], $data)) { $type = $data["text"]; break; }
-		}
-		switch($type) {
-			case "3項選択":
-				$answerNum = 3;
-				break;
-			case "4項選択":
-				$answerNum = 4;
-				break;
-			case "5項選択":
-				$answerNum = 5;
-				break;
-		}
-	}
-
-	$numTexts = array("①", "②", "③", "④", "⑤");
 
 	function InitStyle() {
 		return " font-style: italic; color: grey;";
@@ -52,9 +30,7 @@
 			</style>
 			<dl class="emegra setting">
 				<dt>ID</dt>
-				<dd>
-					<input class="form-control form-control-sm" style="width: 70px;" disabled value="B-50-T2"/>
-				</dd>
+				<dd><input class="form-control form-control-sm" style="width: 70px;" disabled value="B-50-T2"/></dd>
 
 				<dt class="essential">大分類</dt>
 				<dd>

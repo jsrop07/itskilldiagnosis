@@ -40,7 +40,10 @@ class DiagnosisController extends AbstractActionController
 	}
 
 	public function detailAction() {
-		return $this->SetViewModel([], "/diagnosis/diagnosis_detail.phtml");
+		$datas["breadcrumbData"] = ["ITスキル診断書管理", "診断書詳細"];
+		$datas["title"] = "診断書詳細";
+
+		return $this->SetViewModel($datas, "/diagnosis/diagnosis_detail.phtml");
 	}
 
 	/** Set Layout & Make ViewModel with datas and template 

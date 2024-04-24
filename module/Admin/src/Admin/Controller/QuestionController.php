@@ -31,21 +31,24 @@ class QuestionController extends AbstractActionController
 				$datas["inputDatas"][$key] = $value;
 			}
 
-			if (is_numeric(substr($query["register"], 0, 2)) && is_numeric(substr($query["register"], 2, 7))) {
-				$query["admin_approve"] = $query["register"];
+			if (isset($query["register"])) {
+				if (is_numeric(substr($query["register"], 0, 2)) && is_numeric(substr($query["register"], 2, 7))) {
+					$query["admin_approve"] = $query["register"];
+				}
+				else {
+					$adminTb = $this->getServiceLocator()->get("AdminTable");
+					$query["admin_approve"] = $adminTb->ReadByName($query["register"])["code"];
+				}
+				unset($query["register"]);
 			}
-			else {
-				$adminTb = $this->getServiceLocator()->get("AdminTable");
-				$query["admin_approve"] = $adminTb->ReadByName($query["register"])["code"];
-			}
-
-			unset($query["register"]);
 
 			if ($userLevel >= 1) {
 				$totalQuestionDatas = iterator_to_array($questionTb->ReadListByOption($query));
 				$paginationData = $questionTb->GetListByOption($query);
 			}
-			else { $totalQuestionDatas = iterator_to_array($questionTb->ReadListByCode_Option($userCode, $query)); }
+			else {
+				$totalQuestionDatas = iterator_to_array($questionTb->ReadListByCode_Option($userCode, $query));
+			}
 		}
 		else {
 			if ($userLevel >= 1) {

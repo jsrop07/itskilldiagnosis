@@ -8,6 +8,10 @@
 		if ($optionDatas[$data["status"]] == "新規") { return true; }
 		return false;
 	}
+	
+	$url = $_SERVER["REQUEST_URI"];
+	$url = $url . "?";
+	$query = explode("?", $url)[1];
 ?>
 
 <?php echo $this->partial("breadcrumb", ["datas" => $breadcrumbData]); ?>
@@ -29,13 +33,10 @@
 		width: 100%;
 		margin-top: 20px;
 		display: grid;
-		grid-template-columns: 50px 150px 150px 1fr 65px 150px 150px 65px 150px;
+		grid-template-columns: 50px 150px 150px 1fr 65px 150px 150px 65px 200px;
 		column-gap: 10px;
 
 		text-align: center;
-	}
-	input.search {
-		width: 150px;
 	}
 	button.emegra.search.confirm {
 		height: 30px;
@@ -83,20 +84,24 @@
 <content class="main">
 	<div class="search-place">
 		<div style="display: flex; align-items: center;">承認者</div>
-		<input class="form-control form-control-sm search" id="input_register" value="<?php echo (isset($inputDatas["register"])) ? $inputDatas["register"] : ""; ?>"/>
+		<input class="form-control form-control-sm" id="input_register" value="<?php echo (isset($inputDatas["register"])) ? $inputDatas["register"] : ""; ?>"/>
 		<button class="emegra search confirm" onclick="SearchRegister()">検索</button>
 
 		<div></div>
 
 		<div style="display: flex; align-items: center;">タイトル</div>
-		<input class="form-control form-control-sm"/>
-		<button class="emegra search confirm" onclick="SearchRegister()">検索</button>
+		<input class="form-control form-control-sm" id="input_title" value="<?php echo (isset($inputDatas["title"])) ? $inputDatas["title"] : ""; ?>"/>
+		<button class="emegra search confirm" onclick="SearchTitle()">検索</button>
 		<div style="display: flex; align-items: center;">並び替え</div>
 		<select class="form-select form-select-sm" onchange="ChangeSearch(this.value)">
-			<option value="status">ステータス</option>
-			<option value="class1st">大分類</option>
-			<option value="class2nd">小分類</option>
-			<option value="level">レベル</option>
+			<option value="status"<?php echo (isset($inputDatas["align"]) && $inputDatas["align"] == "status") ? " selected" : ""; ?>>ステータス（昇順）</option>
+			<option value="status DESC"<?php echo (isset($inputDatas["align"]) && $inputDatas["align"] == "status DESC") ? " selected" : ""; ?>>ステータス（降順）</option>
+			<option value="class1st"<?php echo (isset($inputDatas["align"]) && $inputDatas["align"] == "class1st") ? " selected" : ""; ?>>大分類（昇順）</option>
+			<option value="class1st DESC"<?php echo (isset($inputDatas["align"]) && $inputDatas["align"] == "class1st DESC") ? " selected" : ""; ?>>大分類（降順）</option>
+			<option value="class2nd"<?php echo (isset($inputDatas["align"]) && $inputDatas["align"] == "class2nd") ? " selected" : ""; ?>>小分類（昇順）</option>
+			<option value="class2nd DESC"<?php echo (isset($inputDatas["align"]) && $inputDatas["align"] == "class2nd DESC") ? " selected" : ""; ?>>小分類（降順）</option>
+			<option value="level"<?php echo (isset($inputDatas["align"]) && $inputDatas["align"] == "level") ? " selected" : ""; ?>>レベル（昇順）</option>
+			<option value="level DESC"<?php echo (isset($inputDatas["align"]) && $inputDatas["align"] == "level DESC") ? " selected" : ""; ?>>レベル（降順）</option>
 		</select>
 	</div>
 
@@ -160,6 +165,7 @@
 
 <script type="text/javascript">
 	const input_register = document.getElementById("input_register");
+	const input_title = document.getElementById("input_title");
 	const div_search = document.getElementById("div_search");
 	const check_all = document.getElementById("checkAll");
 	const check_idxs = document.getElementsByName("checkIdx");
@@ -188,17 +194,86 @@
 	}
 
 	function SearchRegister() {
-		let urlText = "?";
+		<?php
+			if (!empty($query)) {
+				$queryDatas = explode("&", $query);
+				
+				$newQueryDatas = array();
+				foreach ($queryDatas as $data) {
+					$key = explode("=", $data)[0];
+					if ($key != "page" && $key != "register") {
+						array_push($newQueryDatas, $data);
+					}
+				}
 
+				$newQuery = implode("&", $newQueryDatas);
+				$url = explode("?", $_SERVER["REQUEST_URI"])[0] . "?" . $newQuery;
+				if (!empty($newQuery)) { $url .= "&"; }
+			}
+		?>
+
+		let url = "<?= $url; ?>";
+		
 		let register = input_register.value;
-		if (register.trim() != "") { urlText += "register=" + register + "&"; }
+		if (register.trim() != "") { url += "register=" + register; }
+		else { url = url.slice(0, -1); }
 
-		// let option = document.getElementById("search-" + searchData);
-		// option = option.options[option.selectedIndex].value;
-		// if (option != "") { urlText += searchData + "=" + option + "&"; }
+		self.window.location = url;
+	}
 
-		urlText = urlText.slice(0, -1);
-		self.window.location = window.location.pathname + urlText;
+	function SearchTitle() {
+		<?php
+			if (!empty($query)) {
+				$queryDatas = explode("&", $query);
+				
+				$newQueryDatas = array();
+				foreach ($queryDatas as $data) {
+					$key = explode("=", $data)[0];
+					if ($key != "page" && $key != "title") {
+						array_push($newQueryDatas, $data);
+					}
+				}
+
+				$newQuery = implode("&", $newQueryDatas);
+				$url = explode("?", $_SERVER["REQUEST_URI"])[0] . "?" . $newQuery;
+				if (!empty($newQuery)) { $url .= "&"; }
+			}
+		?>
+
+		let url = "<?= $url; ?>";
+		
+		let title = input_title.value;
+		if (title.trim() != "") { url += "title=" + title; }
+		else { url = url.slice(0, -1); }
+
+		self.window.location = url;
+	}
+
+	function ChangeSearch(value) {
+		<?php
+			if (!empty($query)) {
+				$queryDatas = explode("&", $query);
+				
+				$newQueryDatas = array();
+				foreach ($queryDatas as $data) {
+					$key = explode("=", $data)[0];
+					if ($key != "align") {
+						array_push($newQueryDatas, $data);
+					}
+				}
+
+				$newQuery = implode("&", $newQueryDatas);
+				$url = explode("?", $_SERVER["REQUEST_URI"])[0] . "?" . $newQuery;
+				if (!empty($newQuery)) { $url .= "&"; }
+			}
+		?>
+
+		let url = "<?= $url; ?>";
+		
+		let align = value;
+		url += "align=" + align;
+
+		self.window.location = url;
 	}
 
 	function Regist() {

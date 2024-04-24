@@ -85,9 +85,10 @@ class QuestionTable {
 		}
 
 		$where = new Where();
-		$where->notEqualTo("status", 0);
-		foreach ($optionDatas as $key => $value) {
-			$where->and->equalTo($key, $value);
+		$where->isNull("date_delete");
+		
+		if (isset($optionDatas["title"])) {
+			$where->and->like("title", "%" . $optionDatas["title"] . "%");
 		}
 		
 		$qry = $this->sql->select("question")->where($where)->order($order);
@@ -235,7 +236,7 @@ class QuestionTable {
 		}
 
 		$where = new Where();
-		$where->notEqualTo("status", 0);
+		$where->isNull("date_delete");
 		foreach ($optionDatas as $key => $value) {
 			$where->and->equalTo($key, $value);
 		}

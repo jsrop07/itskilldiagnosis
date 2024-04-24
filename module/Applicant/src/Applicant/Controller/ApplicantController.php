@@ -59,8 +59,7 @@ class ApplicantController extends AbstractActionController
 
 	   echo "
 	   <script>
-	   alert('申込が完了します。')
-	   self.location.href='/applicant/application';
+	   self.location.href='/applicant/applicationclear';
 	   </script>
 	   ";
 
@@ -75,35 +74,54 @@ class ApplicantController extends AbstractActionController
   {
 	$this->layout("layout/applicant/login_layout");
 	//モデル連動
-    $post = $this->params()->fromPost();
-    if (isset($post["id"])) {
+    $p = $this->params()->fromPost();
+    if (isset($p["id"])) {
 			$loginTbl = $this->getServiceLocator()->get("ApplicantLoginTable");
-			$result = $loginTbl->login($post["id"], $post["password"]);
+			$result = $loginTbl->login($p["id"], $p["password"]);
 			if ($result == "success") {
 				$session = new Container("applicant");
-				$session["id"] = $post["id"];
+				$session["id"] = $p["id"];
 				$session["token"] = 1;
 			}
 			die($result);
     }
+	
+	$session = new Container("applicant");
+	if(isset($session['id']) && $session['id'] != '') {
+		return $this->redirect()->toUrl("../applicant/exam");
+	}
 
     $vm = new ViewModel();
     $vm->setTemplate("/applicant/login.phtml");
     return $vm;
   }
 
-
-
   public function examAction()
   {
+	 // Set layout
+	  $this->layout("layout/applicant/exam_layout");
+	  $p = $this->params()->fromPost();
+	  $mode =(isset($p['mode'])    &&   $p['mode'] !='')? $p['mode']:'';
+
+
 	  $session = new Container("applicant");
 	  if (isset($session->id)) {
 		  $id = $session->id;
-	  } else {
-		  print_r("dd");
-		  exit;
+		} else {
+		$this->RedirectToLogin();		  
 	  }
-  
+
+	  if($mode=='cancel'){
+		if (isset($session->id)) {
+            $id = $session->id;
+            unset($id);
+            session_unset(); 
+			$this->RedirectToLogin();	
+        }
+	  }
+	  if($mode=='submit'){
+			$this->examclearAction();	
+	  }
 	  // Get exam name
 	  $examTb = $this->getServiceLocator()->get("ApplicantExamTable");
 	  $examData = $examTb->readByUrl($id);
@@ -111,43 +129,34 @@ class ApplicantController extends AbstractActionController
 	  
 	  //TIMELIMIT TEST
 	  $idx = $examData["idx"];
-
-  
-	  // Set layout
-	  $this->layout("layout/applicant/exam_layout");
   
 	  // Set variables to be passed to the layout
 	  $viewModel = new ViewModel(["name" => $name, "idx" => $idx]);
   
 	  // Set view template
 	  $viewModel->setTemplate("applicant/exam.phtml");
-  
+
 	  return $viewModel;
   }
   
+  function applicationclearAction() {
+	$this->layout("/applicant/applicationclear");
+	// $this->layout("layout/applicant/application_layout");
+	// $vm = new ViewModel();
+    // $vm->setTemplate("/applicant/applicationclear.phtml");
+    // return $vm;
+}
 
-	/* 問題がいない場合の機能追加
-		作成：朴昰成
-		作成日：2024/03/04
-	*/
+function examclearAction() {
+	$this->layout("/applicant/examclear");
+
+}
 
 
-	// /** Redirect to Main page (user/main.phtml) */
-	// function RedirectToMain() {
-	// 	echo "
-	// 	<script>
-	// 		alert('URLを確認してください');
-	// 		self.location.href='/user/main';
-	// 	</script>
-	// 	";
-	// 	exit;
-	// }
-
-	/** Redirect to Login page (user/login.phtml) */
-	function RedirectToLogin($url) {
+	function RedirectToLogin() {
 		echo "
 		<script>
-			alert('ログインしてくだasdさい');
+			alert('ログインしてください');
 			self.location.href='/applicant/login';
 		</script>
 		";

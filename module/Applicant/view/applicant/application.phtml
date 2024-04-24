@@ -42,7 +42,7 @@
                         <option value="大学院卒">大学院卒</option>
                         <option value="その他">その他</option>
                     </select>
-                    <div id="otherEducationInput" style=" margin-top:-15px;">
+                    <div id="otherEducationInput" style=" margin-top:-15px; display:none;">
                         <input class="form-control" type="text" placeholder="その他の場合の、記入" id="otherEducation" name="education" maxlength='20'>
                     </div>
 
@@ -52,7 +52,7 @@
                         <option value="IT・ソフトウェア専攻">IT・ソフトウェア専攻</option>
                         <option value="IT・ソフトウェア以外">IT・ソフトウェア以外</option>
                     </select>
-                    <div id="otherMajorInput" style=" margin-top:-15px;">
+                    <div id="otherMajorInput" style=" margin-top:-15px; display:none;">
                         <input class="form-control" type="text" placeholder="その他の場合の、記入" id="otherMajor" name="major" maxlength='20'>
                     </div>
 
@@ -73,7 +73,7 @@
                             <?php endforeach; ?>
                         <?php endforeach; ?>
                     </select>
-                    <div id="otherDevelopInput" style="margin-top:-15px;">
+                    <div id="otherDevelopInput" style="margin-top:-15px; display:none;">
                         <input class="form-control" type="text" placeholder="その他の場合の、記入" id="otherDevelop" name="develop" maxlength='20'>
                     </div>
 
@@ -162,6 +162,7 @@ skillSelect.addEventListener('change', function() {
         ApplicantDevelopSelect.style.display='block';
         ApplicantDevelopSpanSelect.style.display='block';
         otherDevelopInput.style.display='block';
+        otherDevelopInput.style.display='none';
 
         careerInput.style.display='block';
         ApplicantCareerInput.style.display='block';

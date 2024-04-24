@@ -1,0 +1,67 @@
+<html lang="jp">
+	<head>
+		<meta charset="utf-8">	
+		<meta name="viewport" content="height=device-height">
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+		<link href="/css/applicant_layout.css" rel="stylesheet" type="text/css">
+	</head>
+
+<body>
+<header>
+	<div class="left-column"><img src="/img/hd_logo.png" alt="logo" height="56px" width="auto"></div>
+	<div class="middle-column" style="font-size:bold">株式会社ジエンジサービス</div>
+	<div class="right-column" id="date-container"></div>
+</header>	
+<main>
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-body" style="padding:130px; font-size:20px;">
+            この度は、
+            <br><br>株式会社ジエンジサービスの<br>ITスキル診断にお申込みいただき誠にありがとうございます。
+            <br>
+            内容を確認後、担当者よりご連絡いたしますので今しばらくお待ちください。
+            <br>
+            お申込みに関するお問い合わせ等はこちらまでお願いいたします。
+            <br>            <br>
+
+            recruit@gngs.co.jp
+
+        </div>
+    </div>
+</div>
+</main>
+
+
+<script>
+function getDayOfWeek(day) {
+    const weekdays = ['日', '月', '火', '水', '木', '金', '土'];
+    return weekdays[day];
+}
+
+function getCurrentDate() {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = today.getMonth() + 1;
+    const date = today.getDate();
+    const day = getDayOfWeek(today.getDay());
+
+    return year + '年 ' + addZero(month) + '月 ' + addZero(date) + '日（' + day + '）';
+}
+
+function addZero(num) {
+    return (num < 10 ? '0' : '') + num;
+}
+
+function displayCurrentDate() {
+    const dateContainer = document.getElementById('date-container');
+    dateContainer.textContent = getCurrentDate();
+}
+
+window.onload = displayCurrentDate;
+
+window.onload = function() {
+	displayCurrentDate();
+};
+
+</script>

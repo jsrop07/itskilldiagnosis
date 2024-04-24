@@ -33,7 +33,7 @@
 		width: 100%;
 		margin-top: 20px;
 		display: grid;
-		grid-template-columns: 50px 150px 150px 1fr 65px 150px 150px 65px 200px;
+		grid-template-columns: 50px 150px 150px 1fr 65px 150px 110px 65px 200px;
 		column-gap: 10px;
 
 		text-align: center;
@@ -94,14 +94,14 @@
 		<button class="emegra search confirm" onclick="SearchTitle()">検索</button>
 		<div style="display: flex; align-items: center;">並び替え</div>
 		<select class="form-select form-select-sm" onchange="ChangeSearch(this.value)">
-			<option value="status"<?php echo (isset($inputDatas["align"]) && $inputDatas["align"] == "status") ? " selected" : ""; ?>>ステータス（昇順）</option>
-			<option value="status DESC"<?php echo (isset($inputDatas["align"]) && $inputDatas["align"] == "status DESC") ? " selected" : ""; ?>>ステータス（降順）</option>
-			<option value="class1st"<?php echo (isset($inputDatas["align"]) && $inputDatas["align"] == "class1st") ? " selected" : ""; ?>>大分類（昇順）</option>
-			<option value="class1st DESC"<?php echo (isset($inputDatas["align"]) && $inputDatas["align"] == "class1st DESC") ? " selected" : ""; ?>>大分類（降順）</option>
-			<option value="class2nd"<?php echo (isset($inputDatas["align"]) && $inputDatas["align"] == "class2nd") ? " selected" : ""; ?>>小分類（昇順）</option>
-			<option value="class2nd DESC"<?php echo (isset($inputDatas["align"]) && $inputDatas["align"] == "class2nd DESC") ? " selected" : ""; ?>>小分類（降順）</option>
-			<option value="level"<?php echo (isset($inputDatas["align"]) && $inputDatas["align"] == "level") ? " selected" : ""; ?>>レベル（昇順）</option>
-			<option value="level DESC"<?php echo (isset($inputDatas["align"]) && $inputDatas["align"] == "level DESC") ? " selected" : ""; ?>>レベル（降順）</option>
+			<option value="status_ASC"<?php echo (isset($inputDatas["align"]) && $inputDatas["align"] == "status_ASC") ? " selected" : ""; ?>>ステータス（昇順）</option>
+			<option value="status_DESC"<?php echo (isset($inputDatas["align"]) && $inputDatas["align"] == "status_DESC") ? " selected" : ""; ?>>ステータス（降順）</option>
+			<option value="class1st_ASC"<?php echo (isset($inputDatas["align"]) && $inputDatas["align"] == "class1st_ASC") ? " selected" : ""; ?>>大分類（昇順）</option>
+			<option value="class1st_DESC"<?php echo (isset($inputDatas["align"]) && $inputDatas["align"] == "class1st_DESC") ? " selected" : ""; ?>>大分類（降順）</option>
+			<option value="class2nd_ASC"<?php echo (isset($inputDatas["align"]) && $inputDatas["align"] == "class2nd_ASC") ? " selected" : ""; ?>>小分類（昇順）</option>
+			<option value="class2nd_DESC"<?php echo (isset($inputDatas["align"]) && $inputDatas["align"] == "class2nd_DESC") ? " selected" : ""; ?>>小分類（降順）</option>
+			<option value="level_ASC"<?php echo (isset($inputDatas["align"]) && $inputDatas["align"] == "level_ASC") ? " selected" : ""; ?>>レベル（昇順）</option>
+			<option value="level_DESC"<?php echo (isset($inputDatas["align"]) && $inputDatas["align"] == "level_DESC") ? " selected" : ""; ?>>レベル（降順）</option>
 		</select>
 	</div>
 

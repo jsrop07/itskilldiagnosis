@@ -44,6 +44,7 @@ class QuestionController extends AbstractActionController
 
 			if ($userLevel >= 1) {
 				$totalQuestionDatas = iterator_to_array($questionTb->ReadListByOption($query));
+				$this->sortArrByKey($totalQuestionDatas, $query["align"]);
 				$paginationData = $questionTb->GetListByOption($query);
 			}
 			else {
@@ -184,6 +185,34 @@ class QuestionController extends AbstractActionController
 	public function csvAction() {
 		$this->layout("layout/list");
 		return $this->SetViewModel([], "/question/question_csv.phtml");
+	}
+
+	public function csvconAction() {
+		$fFile = $this->params()->fromFiles();
+		print_r($fFile);
+		exit;
+		
+		if($fFile['csvfile']['error']=='0'){
+			header('Content-Type: text/html; charset=utf-8');
+			$file=file_get_contents($fFile['csvfile']['tmp_name']);
+			$con=mb_detect_encoding($file, "SJIS, JIS, EUC-JP, UTF-8");
+			$file=iconv($con,"UTF-8",$file);
+
+			$r=explode("\n",$file);
+			$k=0;
+
+			for($i=0;$i<sizeof($r);$i++){
+				$c=explode(",",$r[$i]);
+				$c[0]=str_replace("\r","",$c[0]);
+				if($c[0]!=''){
+					print_r($c);
+					$k++;
+					$new[$k]=$n;
+			}
+		}
+		exit;
+	}
+
 	}
 
 	/** Make ViewModel with datas and template */
@@ -356,6 +385,34 @@ class QuestionController extends AbstractActionController
 
 		die(print_r($csvDatas[0]));
 	}
+
+	public function sortArrByKey($arr, $alignData) {
+		$optionTb = $this->getServiceLocator()->get("OptionTable");
+
+		$key = explode("_", $alignData)[0];
+		$align = explode("_", $alignData)[1];
+
+		$tempArr = array();
+		foreach ($arr as $idx => $data) {
+			$data[$key] = $optionTb->ReadOption(["idx" => $data[$key]])["text"];
+			$arr[$idx][$key] = $data[$key];
+			$tempArr[$idx] = $data[$key];
+		}
+
+		if ($align == "ASC") {
+			array_multisort($tempArr, SORT_ASC, $arr);
+		}
+		else {
+			array_multisort($tempArr, SORT_DESC, $arr);
+		}
+		unset($tempArr);
+
+		foreach ($arr as $idx => $data) {
+			$arr[$idx][$key] = $optionTb->ReadOption(["text" => $data[$key]])["idx"];
+		}
+
+		return $arr;
+}
 
 	/*
 	public function estimateAction(){

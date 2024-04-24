@@ -2,30 +2,17 @@
 
 <h1 class="title">CSV登録</h1>
 
-<textarea class="form-control" id="csv" rows="50"></textarea>
+<form enctype='multipart/form-data' method="post" action="./csvcon" id="form">
+	<input type="file" name="file" accept=".csv"/>
+</form>
 <div class="btn-place" style="margin-top: 32px;">
 	<button class="emegra" onclick="Regist();">登録</button>
 </div>
 
 <script type="text/javascript">
-	const csv = document.getElementById("csv");
+	const form = document.getElementById("form");
 
 	function Regist() {
-		const postForm = new FormData();
-
-const xhr = new XMLHttpRequest();
-xhr.open("POST", "savecsv", true);
-		postForm.append("csv", csv.value);
-		xhr.send(postForm);
-		xhr.onload = () => {
-			if (xhr.status == 200) {
-				let result = xhr.responseText;
-
-				if (result == "success") {
-					alert("登録しました。");
-				}
-				else { console.log(result); }
-			}
-		}
+		form.submit();
 	}
 </script>

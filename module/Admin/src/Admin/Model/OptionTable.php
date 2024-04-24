@@ -38,4 +38,9 @@ class OptionTable
 		$qry = $this->sql->select("option")->where(["text" => $text]);
 		return $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
 	}
+
+	public function ReadOption($whereData) {
+		$qry = $this->sql->select("option")->where($whereData);
+		return $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
+	}
 }

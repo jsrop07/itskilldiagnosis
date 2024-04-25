@@ -22,17 +22,17 @@ if ($ses_id) {
       <form id="form" method="post">
         <input name="end" type="hidden"/>
         <div  class="welcomeText">
-          <p style="font-weight: bold; font-size: 20px; text-align:center;margin-right:120px;"><?php echo $name; ?>様</p>         
-          <p>ITスキル診断を申込いただき誠にありがとうございます。</p>
-          <p>問題は合計50問、制限時間は30分です。</p>		
+          <p style="font-weight: bold; font-size: 20px; text-align:center;"><?php echo $name; ?>様</p>         
+          <!-- <p>ITスキル診断を申込いただき誠にありがとうございます。</p> -->
+          <!-- <p>問題は合計50問、制限時間は30分です。</p>		 -->
           <p>表示される問題に従って回答してください。</p>			
-          <p>ページ下部の一時停止ボタンを押すと10分間停止し、1回のみ使用可能です。</p>	
+          <p style="color:red;">※ ページ下部の一時停止ボタンを押すと10分間停止し、1回のみ使用可能です。</p>	
           <!-- <p>一時停止は1回のみ使用可能です。</p>		 -->
 	
         </div>
         <div style="padding:0px 50px;">
-        <p  style="margin-top:20px;font-weight:bold;">タイトル：Javaのキーワード</p>		
-            <p  style="font-weight:bold;">総問題数：50問				</p>				  
+        <!-- <p  style="margin-top:20px;font-weight:bold;">タイトル　Javaのキーワード</p>		 -->
+            <p  style="margin-top:20px;font-weight:bold;">問題数　　50問				</p>				  
         <div class="examBox">
             <p style="margin-top:20px; margin-left:50px;font-weight:bold;">問題１：Javaで変数を宣言するために使用されるキーワードは何ですか？				</p>						
             <input type="radio" id="html" name="fav_language" value="HTML" style="margin-left:150px;">
@@ -74,10 +74,7 @@ if ($ses_id) {
         </div>
 
       <br/><br/>
-      <div class="welcomeText" style="border-bottom:none">
-      <p style="text-align:center;">お疲れさまでした。</p>
-      <p>以下の送信ボタンをクリックしてください。</p>
-      </div>
+     
       
     </div>
     <div class="button_box" style="margin-bottom: 32px; gap:30px">
@@ -121,7 +118,7 @@ if ($ses_id) {
 
 <!-- modal -->
 <button type="button" class="btn btn-primary" id="loadPage" data-bs-toggle="modal" data-bs-target="#staticBackdrop" style="display:none"></button>
-			<div class="modal modal-sheet py-5" style="backdrop-filter: blur(100px); " tabindex="-1" role="dialog" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+			<div class="modal modal-sheet py-5" style="backdrop-filter: blur(100px);--bs-modal-width: 700px " tabindex="-1" role="dialog" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
 				<div class="modal-dialog" style="margin-top:100px;" role="document">
 					<div class="modal-content rounded-4">
 					<div class="modal-header border-bottom-0" style="background:linear-gradient(111deg, #87D782 0%, #22BC8E 100%); padding:10px 0px; font-size:20px; justify-content:center; color:white;border-top-left-radius:13px;border-top-right-radius:13px">株式会社ジエンジサービス
@@ -131,15 +128,16 @@ if ($ses_id) {
 					<div class="modal-body fs-5">
 					<p style="text-align:center; margin-top:1rem;">
           <?php echo $name; ?>　様<br/><br/>
-					ITスキル診断の受検は<br>一度限りとさせていただいております。<br/>
+					ITスキル診断の受検は一度限りとさせていただいております。<br/>
           スタートボタンを押すと診断が始まります。
           <br/>
+          問題は合計50問、制限時間は30分です。
 					<br/>
 					今すぐ受検を開始しますか？
 					</p>
 					</div>
-					<div class="modal-footer flex-column border-top-0">
-						<button type="button" class="btn btn-lg  w-75 mx-0" id="startBtn" data-bs-dismiss="modal" style="background: linear-gradient(111deg, #87D782 0%, #22BC8E 100%); color:white;">スタート</button>
+					<div class="modal-footer flex-column border-top-0" style="padding-bottom:32px;">
+						<button type="button" class="btn btn-lg  w-75 mx-0" id="startBtn" data-bs-dismiss="modal" style="background: linear-gradient(111deg, #87D782 0%, #22BC8E 100%); color:white; ">スタート</button>
 					</div>
 					</div>
 				</div>
@@ -157,7 +155,7 @@ if ($ses_id) {
 					<div id='a' style="text-align:center; margin-top:20px;"></div>
 					</div>
 					<div class="modal-footer flex-column border-top-0">
-						<button type="button" id='lock_time' class="btn btn-lg  w-75 mx-0" data-bs-dismiss="modal" style="background: linear-gradient(111deg, #87D782 0%, #22BC8E 100%); color:white;">スタート</button>
+						<button type="button" id='lock_time' class="btn btn-lg  w-75 mx-0" data-bs-dismiss="modal" style="background: linear-gradient(111deg, #87D782 0%, #22BC8E 100%); color:white;">再開</button>
 					</div>
 					</div>
 				</div>
@@ -273,7 +271,7 @@ document.getElementById("stopBtn").addEventListener("click", function() {
 		lock='y';
     updateTimer2(); 
     stopBtns.disabled='false';
-      stopBtns.style.backgroundColor = "gray";
+      stopBtns.style.backgroundColor = "red";
 	}
   });
 
@@ -286,7 +284,7 @@ function updateTimer2() {
     if(lock == 'y'){
         var stopMinutes = Math.floor(stopMinuteToSecond / 60);
         var stopSeconds = stopMinuteToSecond % 60;
-        document.getElementById("a").innerHTML="残り時間: " + stopMinutes + "分 " + stopSeconds + "秒<br><br>"+"再起動するには、<br>[スタート] ボタンを押します。";
+        document.getElementById("a").innerHTML="残り時間: " + stopMinutes + "分 " + stopSeconds + "秒";
         stopMinuteToSecond--;
 
         if (stopMinuteToSecond < 0) {
@@ -295,7 +293,7 @@ function updateTimer2() {
             document.getElementById("lock_time").click(); 
 
             stopBtns.disabled=false; 
-            stopBtns.style.backgroundColor = "gray";
+            stopBtns.style.backgroundColor = "red";
         }
     }
 }

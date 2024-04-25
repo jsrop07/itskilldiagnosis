@@ -1,0 +1,233 @@
+
+
+<?php echo $this->partial("breadcrumb", ["datas" => $breadcrumbData]); ?>
+
+<style type="text/css">
+	.header {
+		height: 110px;
+		display: flex;
+		justify-content: space-between;
+	}
+
+	.info-num {
+		height: 100%;
+		display: flex;
+		justify-content: end;
+	}
+
+	input.search {
+		width: 150px;
+	}
+	button.emegra.search.confirm {
+		height: 30px;
+		width: 100px;
+		flex-shrink: 0;
+		
+		font-size: 15px;
+		font-weight: 400;
+	}
+
+	/* 건드릴부분 */
+	table.emegra tr { grid-template-columns: 50px 100px repeat(2, 60px) 1fr repeat(2, 60px) 50px 60px 60px; }
+	table.emegra tr.index {
+		padding-top: 8px;
+		padding-bottom: 4px;
+		grid-template-columns: 50px 100px repeat(2, 60px) 1fr repeat(2, 60px) 50px 60px 60px;
+		grid-template-areas:
+		"no question question question title  class    class   num criteria update"
+		"no    id    applicant  level  title class1st class2nd num criteria update";
+	}
+	/* 여기까기 */
+
+
+	table.emegra tr.index > th {
+		padding: 4px 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.list-title {
+		text-align: left;
+		
+		cursor: pointer;
+	}
+	.list-title:hover { text-decoration: underline; }
+
+	.button-place {
+		display: flex;
+		justify-content: space-between;
+	}
+	.count {
+    width: 240px;
+    display: flex;
+    border-bottom: 1px solid black;
+    align-items: end;
+
+    font-size: 13px;
+}
+.count > .num {
+    width: 150px;
+    margin-right: 10px;
+    display: flex;
+    justify-content: end;
+
+    line-height: 40px;
+    font-size: 40px;
+}
+table.emegra > thead > tr {
+    position: relative;
+    left: -16px;
+    width: calc(100% + 32px);
+    padding: 0 16px;
+    border: 0;
+    background: var(--emegra-blue);
+}
+table.emegra > tbody > tr { border-top: 1px solid var(--line); }
+table.emegra > tbody > tr:nth-child(1) { border-top: 0; }
+table.emegra > tbody > tr:hover { background: var(--line); }
+table.emegra thead th {
+    padding-top: 16px;
+    padding-bottom: 8px;
+
+    font-size: 14px;
+    font-weight: 700;
+    color: white;
+}
+table.emegra tbody td {
+    padding: 16px 0;
+
+    font-size: 14px;
+    font-weight: 400;
+    color: #343A40;
+}
+</style>
+<content class="header">
+	<div class="title">ITスキル診断状況管理</div>
+</content>
+
+<content class="main">
+	<div style="width: 100%; display:flex; align-items:end; justify-content:space-between; text-align: center;">
+		<div class="info-num">
+			<div class="count">問項総計<div class="num"><?php echo $totalData; ?></div>問項</div>
+		</div>
+
+		<div style="display: flex;">
+			<select class="form-select form-select-sm" style="width: 150px; margin-right: 8px;" onchange="ChangeSearch(this.value)">
+				<option value="status">ステータス</option>
+				<option value="applicant">対象</option>
+				<option value="level">レベル</option>
+				<option value="class1st">大分類</option>
+				<option value="class2nd">小分類</option>
+			</select>
+			<div id="div-search" style="width: 150px; margin-right: 8px;">
+				<select class="form-select form-select-sm">
+					<option value="status">ステータス</option>
+					<option value="class1st">大分類</option>
+					<option value="class2nd">小分類</option>
+					<option value="level">レベル</option>
+				</select>
+			</div>
+			<button class="emegra search confirm" onclick="SearchRegister()">検索</button>
+		</div>
+	</div>
+
+	<?php if (false): ?>
+		<div class="table-empty" style="margin-top: 16px;">
+			データがありません。
+		</div>
+		
+		<!-- 건드릴 부분 -->
+	<?php else: ?>
+		<table class="emegra" style="margin-top: 8px;">
+			<thead>
+				<tr class="index">
+					<th style="grid-area: no">no</th>
+					<th style="grid-area: question">診断問題</th>
+					<th style="grid-area: title">タイトル</th>
+					<th style="grid-area: class">種別</th>
+					<th style="grid-area: num">問項数</th>
+					<th style="grid-area: criteria">合格基準</th>
+					<th style="grid-area: update">変更日</th>
+					<th style="grid-area: id">ID</th>
+					<th style="grid-area: applicant">応募対象</th>
+					<th style="grid-area: level">レベル</th>
+					<th style="grid-area: class1st">大分類</th>
+					<th style="grid-area: class2nd">小分類</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>1</td>
+					<td>B-50-T1</td>
+					<td>新卒</td>
+					<td>初級</td>
+					<td class="list-title" onclick="self.location.href='./detail/temp'">新卒の開発者向け提出問題（Java）</td>
+					<td>IT基礎</td>
+					<td>JAVA</td>
+					<td>50</td>
+					<td>70点</td>
+					<td>24.3.1</td>
+				</tr>
+			</tbody>
+		</table>
+	<?php endif; ?>
+<!-- 여기가끼 -->
+
+
+	<div class="button-place" style="margin-top: 10px;">
+		<div>
+			<?php echo $this->paginationControl($this->noticelist, "sliding", array("pagination2", "Notice"), array("url" => "")); ?>
+		</div>
+		<div>
+			<button class="emegra" onclick="self.window.location='./regist'">新規登録</button>
+		</div>	
+	</div>
+</content>
+
+<script type="text/javascript">
+	const divSearch = document.getElementById("div-search");
+
+	function ChangeSearch(value) {
+		searchChildren = Array.from(divSearch.children);
+		searchChildren.forEach(element => { element.remove(); });
+
+		if (value == "applicant") {
+			var input = document.createElement("input");
+			input.classList.add("form-control");
+			input.classList.add("form-control-sm");
+			divSearch.appendChild(input);
+		}
+		else {
+			var select = document.createElement("select");
+			select.classList.add("form-select");
+			select.classList.add("form-select-sm");
+			divSearch.appendChild(select);
+		}
+
+		var option = document.createElement("option");
+		option.value = "";
+		option.innerText = "選択";
+		option.hidden = true;
+		correct.appendChild(option);
+		for (let i = 0; i < answerCount; i++) {
+			let dt = document.createElement("dt");
+			dt.classList.add("essential");
+			dt.innerText = numTexts[i];
+			answers.appendChild(dt);
+
+			let dd = document.createElement("dd");
+			let input = document.createElement("input");
+			input.classList.add("form-control");
+			input.name = "answer" + Number(i + 1);
+			input.type = "text";
+			dd.appendChild(input);
+			answers.appendChild(dd);
+
+			var option = document.createElement("option");
+			option.value = Number(i) + 1;
+			option.innerText = numTexts[i];
+			correct.appendChild(option);
+}
+	}
+</script>

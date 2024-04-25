@@ -12,7 +12,7 @@ namespace Applicant;
 
 use Applicant\Model\AdminInfoTable;
 use Applicant\Model\QuestionTypeTable;
-use Applicant\Model\QuestionPoolTable;
+use Applicant\Model\QuestionTable;
 use Applicant\Model\ApplicantLoginTable;
 use Applicant\Model\ApplicationTable;
 use Applicant\Model\ApplicantExamTable;
@@ -68,9 +68,9 @@ class Module
                     $table = new QuestionTypeTable($dbAdapter);
                     return $table;
                 },
-                "QuestionPoolTable" => function ($sm) {
+                "QuestionTable" => function ($sm) {
                     $dbAdapter = $sm->get("Zend\Db\Adapter\Adapter");
-                    $table = new QuestionPoolTable($dbAdapter);
+                    $table = new QuestionTable($dbAdapter);
                     return $table;
                 },
                 "ApplicantLoginTable" => function ($sm) {

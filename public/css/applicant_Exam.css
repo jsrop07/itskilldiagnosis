@@ -72,8 +72,7 @@ button.emegra {
 .welcomeText{
     border-bottom: 1px solid #CED4DA;
     justify-content:center; 
-    display:grid;
-    margin-left: 120px;
+    padding: 0px 50px;
 }
 
 .applicant_cancel {

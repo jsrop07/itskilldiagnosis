@@ -1,4 +1,3 @@
-
 <div class="container-fluid">
     <div class="diagnosis card">
         <div class="diagnosis_head">
@@ -25,7 +24,10 @@
                         <option value="0">男</option>
                         <option value="1">女</option>
                     </select>
-                    
+
+                    <span class="no_after_style">生年月日</span>
+                    <input class="form-control" id="birth" name="birth" type="text" placeholder="YYYY-MM-DD" autocomplete="off"  style="width:30%">   
+
                     <span >応募区分</span>
                     <select class="" name="application_category" style="width:40%" >
                         <option value="" selected disabled hidden>選択してください。</option>
@@ -360,7 +362,17 @@ selectElements.forEach(function(selectElement) {
     });
 });
 </script>
-
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/datepicker/1.0.10/datepicker.min.js"></script>
+  <script>
+    $(document).ready(function(){
+      var birth = document.getElementById("birth");
+      $(birth).datepicker({
+        format: 'yyyy-mm-dd',
+        autohide: true
+      });
+    });
+  </script>
 
 
 

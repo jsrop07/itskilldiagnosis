@@ -190,29 +190,15 @@ class QuestionController extends AbstractActionController
 	public function csvconAction() {
 		$fFile = $this->params()->fromFiles();
 		print_r($fFile);
-		exit;
 		
-		if($fFile['csvfile']['error']=='0'){
-			header('Content-Type: text/html; charset=utf-8');
-			$file=file_get_contents($fFile['csvfile']['tmp_name']);
-			$con=mb_detect_encoding($file, "SJIS, JIS, EUC-JP, UTF-8");
-			$file=iconv($con,"UTF-8",$file);
-
-			$r=explode("\n",$file);
-			$k=0;
-
-			for($i=0;$i<sizeof($r);$i++){
-				$c=explode(",",$r[$i]);
-				$c[0]=str_replace("\r","",$c[0]);
-				if($c[0]!=''){
-					print_r($c);
-					$k++;
-					$new[$k]=$n;
-			}
+		$fp = fopen($fFile["file"]["full_path"], "r");
+		while(($csvData = fgetcsv($fp, 1000, ",")) !== false) {
+			print_r($csvData);
 		}
-		exit;
-	}
 
+
+		$this->layout("layout/list");
+		return $this->SetViewModel([], "/question/csvtest.phtml");
 	}
 
 	/** Make ViewModel with datas and template */

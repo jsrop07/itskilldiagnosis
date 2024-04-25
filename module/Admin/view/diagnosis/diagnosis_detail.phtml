@@ -165,6 +165,7 @@
 
 <div class="btn-place" style="margin-top: 32px;">
 	<button class="emegra cancel" onclick="history.back();">戻る</button>
+	<button class="emegra" onclick="Update();">修正</button>
 	<?php if ($isApprover || ($isRegister && $questionData["admin_approve"] == null)): ?>
 		<button class="emegra delete" onclick="Delete();">削除</button>
 	<?php endif; ?>

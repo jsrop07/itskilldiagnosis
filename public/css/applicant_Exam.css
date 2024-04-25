@@ -73,7 +73,7 @@ button.emegra {
     border-bottom: 1px solid #CED4DA;
     justify-content:center; 
     display:grid;
-
+    margin-left: 120px;
 }
 
 .applicant_cancel {

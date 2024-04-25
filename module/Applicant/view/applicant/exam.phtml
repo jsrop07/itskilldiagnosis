@@ -22,11 +22,12 @@ if ($ses_id) {
       <form id="form" method="post">
         <input name="end" type="hidden"/>
         <div  class="welcomeText">
-          <p style="font-weight: bold; font-size: 20px; text-align:center"><?php echo $name; ?>様</p>         
+          <p style="font-weight: bold; font-size: 20px; text-align:center;margin-right:120px;"><?php echo $name; ?>様</p>         
           <p>ITスキル診断を申込いただき誠にありがとうございます。</p>
           <p>問題は合計50問、制限時間は30分です。</p>		
           <p>表示される問題に従って回答してください。</p>			
-          <p>ページ下の一時停止ボタンを押すと10分間停止します。</p>			
+          <p>ページ下部の一時停止ボタンを押すと10分間停止し、1回のみ使用可能です。</p>	
+          <!-- <p>一時停止は1回のみ使用可能です。</p>		 -->
 	
         </div>
         <div style="padding:0px 50px;">
@@ -228,11 +229,15 @@ document.getElementById("startBtn").addEventListener("click", function() {
   var timerDisplay = document.getElementById("timerDisplay");
   var examTime = parseInt(30); 
 
-  var stopTime = parseInt(1); 
+  var stopTime = parseInt(10); 
   let now_time = 0;
 
   var minuteToSecond = examTime * 60;
   var stopMinuteToSecond = stopTime * 60;
+
+  var firstAlert= false;
+  var secondAlert= false;
+
 
   var timer = setInterval(function() {
     if(lock == 'n'){
@@ -246,14 +251,27 @@ document.getElementById("startBtn").addEventListener("click", function() {
     var seconds = minuteToSecond % 60;
 
     timerDisplay.innerHTML = getCurrentDate() + " <?php echo $name; ?> "+"<br> 残り時間: " + minutes + "分 " + seconds + "秒";
-    
-    minuteToSecond--;
+    if (minuteToSecond <= 0) {
+      clearInterval(timer);
+      timerDisplay.innerHTML = "終";
+      window.location.href = '../applicant/examclear';
+    }else if(minuteToSecond <= 600 && !firstAlert){
+      alert("残り10分です。")
+      firstAlert=true;
+    }else if(minuteToSecond <= 300 && !secondAlert){
+      alert("残り5分です。")
+      secondAlert=true;
+    }
+    else{
+      minuteToSecond--;
+    }
   }
 
 document.getElementById("stopBtn").addEventListener("click", function() {
   event.preventDefault();        
   if(lock == 'n'){
 		lock='y';
+    updateTimer2(); 
     stopBtns.disabled='false';
       stopBtns.style.backgroundColor = "gray";
 	}
@@ -263,13 +281,12 @@ document.getElementById("stopBtn").addEventListener("click", function() {
     updateTimer2();
   }, 1000);
 
-  updateTimer2(); 
 
 function updateTimer2() {
     if(lock == 'y'){
         var stopMinutes = Math.floor(stopMinuteToSecond / 60);
         var stopSeconds = stopMinuteToSecond % 60;
-        document.getElementById("a").innerHTML="残り時間: " + stopMinutes + "分 " + stopSeconds + "秒";
+        document.getElementById("a").innerHTML="残り時間: " + stopMinutes + "分 " + stopSeconds + "秒<br><br>"+"再起動するには、<br>[スタート] ボタンを押します。";
         stopMinuteToSecond--;
 
         if (stopMinuteToSecond < 0) {

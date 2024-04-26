@@ -35,13 +35,13 @@ class QuestionTable
   }
 
 
-    public function getNoticeList($params) {
-        $qry = $this->sql->select("question")->where(["date_delete" => null])->order("date_regist desc");
+    // public function getNoticeList($params) {
+    //     $qry = $this->sql->select("question")->where(["date_delete" => null])->order("date_regist desc");
 
-        $paginatorAdapter = new DbSelect($qry ,$this->adapter);
-        $return = new Paginator($paginatorAdapter);
-        return $return;
-    }
+    //     $paginatorAdapter = new DbSelect($qry ,$this->adapter);
+    //     $return = new Paginator($paginatorAdapter);
+    //     return $return;
+    // }
 
     public function ReadAllList() {
       $qry = $this->sql->select("question")->where(["date_delete" => null])->order("date_approve desc");

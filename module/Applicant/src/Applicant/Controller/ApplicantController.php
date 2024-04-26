@@ -192,6 +192,24 @@ class ApplicantController extends AbstractActionController
 		
 	}
 
+	function listDetailAction(){
+		$this->layout("layout/admin/layout_default");
+		$datas["breadcrumbData"] = ["ITスキル診断状況管理"];
+
+		$query = $this->params()->fromQuery();
+		unset($query["page"]);
+
+		$page = $this->params()->fromQuery("page", 1);
+		$printDataNum = 10;
+		$questionTb = $this->getServiceLocator()->get("QuestionTable");
+		$totalQuestionDatas = iterator_to_array($questionTb->ReadAllList());
+		$paginationData = $questionTb->GetAllList();
+
+		$datas["totalData"] = count($totalQuestionDatas);		$vm = $this->SetViewModel($datas, "/admin/listDetail.phtml");
+
+		return $vm;
+	}
+
 	    /** Make ViewModel with datas and template */
 	function SetViewModel($datas, $template) {
 		$this->layout("layout/admin/layout_default");

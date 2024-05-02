@@ -1,0 +1,432 @@
+<?php
+	if (!isset($_SESSION)) { session_start(); }
+
+	$isSetData = false;
+
+	function InitStyle() {
+		return " font-style: italic; color: grey;";
+	}
+?>
+
+<?php echo $this->partial("breadcrumb", ["datas" => $breadcrumbData]); ?>
+
+<h1 class="title"><?php echo $title; ?></h1>
+
+<form id="form" method="post" action="./confirm">
+	<?php if ($isSetData): ?>
+		<input name="idx" value="<?php echo $questionData["idx"]; ?>" hidden/>
+	<?php endif; ?>
+	<style type="text/css">
+		option { color: black; }
+		input::placeholder { font-style: italic; }
+	</style>
+
+	<div class="emegra card">
+		<div class="card-header">設定</div>
+
+		<div class="card-body">
+			<style type="text/css">
+				dl.emegra.setting { grid-template-columns: 140px 1fr; }
+			</style>
+			<dl class="emegra setting">
+				<dt>ID</dt>
+				<dd><input class="form-control form-control-sm" style="width: 70px;" disabled value="B-50-T2"/></dd>
+
+				<dt class="essential">大分類</dt>
+				<dd>
+					<select class="form-select" name="class1st" onchange="ChangeInputStyle(this)" style="width: 150px;<?php echo ($isSetData) ? "" : InitStyle(); ?>">
+						<option value="" hidden>選択</option>
+						<?php foreach($optionDatas["class1st"] as $data): ?>
+							<option value="<?php echo $data["idx"]; ?>"<?php echo ($isSetData && $questionData["class1st"] == $data["idx"]) ? " selected" : ""; ?>>
+								<?php echo $data["text"]; ?>
+							</option>
+						<?php endforeach; ?>
+					</select>
+				</dd>
+
+				<dt class="essential">小分類</dt>
+				<dd>
+					<select class="form-select" name="class2nd" onchange="ChangeInputStyle(this)" style="width: 150px;<?php echo ($isSetData) ? "" : InitStyle(); ?>">
+						<option value="" hidden>選択</option>
+						<?php foreach($optionDatas["class2nd"] as $idx => $data): ?>
+							<option value="<?php echo $data["idx"]; ?>"<?php echo ($isSetData && $questionData["class2nd"] == $data["idx"]) ? " selected" : ""; ?>>
+								<?php echo $data["text"]; ?>
+							</option>
+						<?php endforeach; ?>
+					</select>
+				</dd>
+		
+				<dt class="essential">レベル</dt>
+				<dd>
+					<select class="form-select" name="level" onchange="ChangeInputStyle(this)" style="width: 100px;<?php echo ($isSetData) ? "" : InitStyle(); ?>">
+						<option value="" hidden>選択</option>
+						<?php foreach($optionDatas["level"] as $data): ?>
+							<option value="<?php echo $data["idx"]; ?>"<?php echo ($isSetData && $questionData["level"] == $data["idx"]) ? " selected" : ""; ?>>
+								<?php echo $data["text"]; ?>
+							</option>
+						<?php endforeach; ?>
+					</select>
+				</dd>	
+		
+				<dt class="essential">タイトル</dt>
+				<dd><input class="form-control" name="title" type="text" placeholder="タイトルを入力してください" value="<?php echo ($isSetData) ? $questionData["title"] : ""; ?>"/></dd>
+			</dl>
+		</div>
+	</div>
+
+	<div class="emegra card" style="margin-top: 32px;">
+		<div class="card-header">問題</div>
+
+		<div class="card-body">
+			<style type="text/css">
+				dl.emegra.question { grid-template-columns: 140px 1fr; }
+			</style>
+			<dl class="emegra question">
+				<dt class="essential">問項数</dt>
+				<dd><input type="number" class="form-control" name="question" style="width: 80px;" value="50"/></dd>
+
+				<dt class="essential">診断時間</dt>
+				<dd><input type="number" class="form-control" name="question" style="width: 80px;" value="60"/></dd>
+
+				<dt class="essential" id="correct-title">問項一覧</dt>
+				<div style="width: 100%; display: flex;">
+					<style type="text/css">
+						table.emegra tr { grid-template-columns: 50px 1fr 60px 50px; }
+						table.emegra th, table.emegra td { padding: 5px 0 !important; }
+					</style>
+					<table class="emegra">
+						<thead>
+							<tr>
+								<th>No</th>
+								<th>問項タイトル</th>
+								<th>タイプ</th>
+								<th>点数</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>1</td>
+								<td style="text-align: start;">title1</td>
+								<td>4項選択</td>
+								<td>1</td>
+							</tr>
+							<tr>
+								<td>2</td>
+								<td style="text-align: start;">title2</td>
+								<td>3項選択</td>
+								<td>3</td>
+							</tr>
+							<tr>
+								<td>3</td>
+								<td style="text-align: start;">title3</td>
+								<td>4項選択</td>
+								<td>4</td>
+							</tr>
+							<tr>
+								<td>4</td>
+								<td style="text-align: start;">title4</td>
+								<td>5項選択</td>
+								<td>5</td>
+							</tr>
+							<tr>
+								<td style="grid-column: 1 / 4;"></td>
+								<td>100点</td>
+							</tr>
+						</tbody>
+					</table>
+					<button type="button" class="emegra" style="margin-left: 8px;">問題作成</button>
+				</div>
+			</dl>
+		</div>
+	</div>
+
+	<div class="emegra card" style="margin-top: 32px;">
+		<div class="card-header">情報</div>
+
+		<div class="card-body">
+			<style type="text/css">
+				dl.emegra.info { grid-template-columns: 140px 1fr; }
+			</style>
+			<dl class="emegra info">
+				<dt class="essential">評価等級</dt>
+				<dd class="expand">
+					<style type="text/css">
+						table.evaluation {
+							width: 100%;
+							text-align: center;
+						}
+						table.evaluation tr {
+							display: grid;
+							grid-template-columns: 50px 150px 150px 1fr;
+							grid-template-areas: 
+							"grade point evaluation comment";
+							gap: 0 8px;
+						}
+					</style>
+					<table class="evaluation">
+						<thead>
+							<tr>
+								<th style="grid-area: point;">評価点数</th>
+								<th style="grid-area: evaluation;">評価</th>
+								<th style="grid-area: comment;">評価コメント</th>
+							</tr>
+						</thead>
+						<thead>
+							<tr>
+								<td>A</td>
+								<td style="display: flex; justify-content:space-between">
+									<input class="form-control form-control-sm" style="width: 50px;"/>
+									~
+									<input class="form-control form-control-sm" style="width: 50px;"/>
+								</td>
+								<th>
+									<input class="form-control form-control-sm"/>
+								</th>
+								<th>
+									<input class="form-control form-control-sm"/>
+								</th>
+							</tr>
+							<tr>
+								<td>B</td>
+								<td style="display: flex; justify-content:space-between">
+									<input class="form-control form-control-sm" style="width: 50px;"/>
+									~
+									<input class="form-control form-control-sm" style="width: 50px;"/>
+								</td>
+								<th>
+									<input class="form-control form-control-sm"/>
+								</th>
+								<th>
+									<input class="form-control form-control-sm"/>
+								</th>
+							</tr>
+							<tr>
+								<td>C</td>
+								<td style="display: flex; justify-content:space-between">
+									<input class="form-control form-control-sm" style="width: 50px;"/>
+									~
+									<input class="form-control form-control-sm" style="width: 50px;"/>
+								</td>
+								<th>
+									<input class="form-control form-control-sm"/>
+								</th>
+								<th>
+									<input class="form-control form-control-sm"/>
+								</th>
+							</tr>
+							<tr>
+								<td>D</td>
+								<td style="display: flex; justify-content:space-between">
+									<input class="form-control form-control-sm" style="width: 50px;"/>
+									~
+									<input class="form-control form-control-sm" style="width: 50px;"/>
+								</td>
+								<th>
+									<input class="form-control form-control-sm"/>
+								</th>
+								<th>
+									<input class="form-control form-control-sm"/>
+								</th>
+							</tr>
+						</thead>
+					</table>
+				</dd>
+			</dl>
+		</div>
+	</div>
+</form>
+
+<div class="btn-place" style="margin-top: 32px;">
+	<button class="emegra cancel" onclick="history.back();">戻る</button>
+	<?php if (isset($questionData)): ?>
+		<button class="emegra" onclick="Update();">修正</button>
+	<?php else: ?>
+		<button class="emegra" onclick="Regist();">登録</button>
+	<?php endif; ?>
+</div>
+
+<script type="text/javascript">
+	const numTexts = ["①", "②", "③", "④", "⑤"];
+
+	const type = document.getElementById("type");
+	const answers = document.getElementById("answers");
+	const correct = document.getElementById("correct");
+	const dateRegist = document.getElementById("date_regist");
+
+	const form = document.getElementById("form");
+
+	let answerCount = 0;
+	let datetime = "";
+
+	window.onload = function() {
+		const now = new Date();
+		datetime = now.toISOString().replace("T", " ").substring(0, 19);
+	}
+
+	function ChangeInputStyle(element) {
+		element.style.fontStyle = "normal";
+		element.style.color = "black";
+	}
+
+	function ChangeType(element) {
+		if (answerCount == 0) { ChangeInputStyle(element); }
+
+		text = element[element.selectedIndex].innerText.trim();
+		switch(text) {
+			case "3項選択":
+				answerCount = 3;
+				break;
+			case "4項選択":
+				answerCount = 4;
+				break;
+			case "5項選択":
+				answerCount = 5;
+				break;
+		}
+
+		answerChildren = Array.from(answers.children);
+		answerChildren.forEach(element => { element.remove(); });
+		
+		correctChildren = Array.from(correct.children);
+		correctChildren.forEach(element => { element.remove(); });
+		
+		
+		correct.style.fontStyle = "italic";
+		correct.style.color = "grey";
+
+		var option = document.createElement("option");
+		option.value = "";
+		option.innerText = "選択";
+		option.hidden = true;
+		correct.appendChild(option);
+		for (let i = 0; i < answerCount; i++) {
+			let dt = document.createElement("dt");
+			dt.classList.add("essential");
+			dt.innerText = numTexts[i];
+			answers.appendChild(dt);
+
+			let dd = document.createElement("dd");
+			let input = document.createElement("input");
+			input.classList.add("form-control");
+			input.name = "answer" + Number(i + 1);
+			input.type = "text";
+			dd.appendChild(input);
+			answers.appendChild(dd);
+
+			var option = document.createElement("option");
+			option.value = Number(i) + 1;
+			option.innerText = numTexts[i];
+			correct.appendChild(option);
+		}
+	}
+
+	<?php if (!(isset($mode) && ($mode == "edit"))): ?>
+		function Regist() {
+			if (form.class1st.value == "") {
+				RequestSelect(form.class1st, "大分類");
+				return false;
+			}
+
+			if (form.class2nd.value == "") {
+				RequestSelect(form.class2nd, "小分類");
+				return false;
+			}
+
+			if (form.level.value == "") {
+				RequestSelect(form.level, "レベル");
+				return false;
+			}
+
+			if (form.type.value == "") {
+				RequestSelect(form.type, "問題タイプ");
+				return false;
+			}
+
+			if (form.title.value.trim() == "") {
+				alert("タイトルを入力してください");
+				setTimeout("form.title.focus()", 100);
+				return false;
+			}
+
+			if (form.question.value.trim() == "") {
+				alert("問題を入力してください");
+				setTimeout("form.question.focus()", 100);
+				return false;
+			}
+			
+			for (let i = 1; i <= answerCount; i++) {
+				var element = document.getElementsByName("answer" + i)[0];
+
+				if (element.value.trim() == "") {
+					alert("答え" + (Number(i) + 1) + "を入力してください");
+					setTimeout("form.answer" + i + ".focus()", 100);
+					return false;
+				}
+			}
+
+			if (form.correct.value == "") {
+				RequestSelect(form.correct, "正解番号");
+				return false;
+			}
+
+			if (form.point.value == "") {
+				RequestSelect(form.point, "点数");
+				return false;
+			}
+
+			dateRegist.disabled = false;
+			dateRegist.type = "text";
+			dateRegist.value = datetime;
+			
+			form.submit();
+		}
+	<?php endif; ?>
+
+function Update() {
+	const postForm = new FormData();
+
+	const xhr = new XMLHttpRequest();
+	xhr.open("POST", "../update", true);
+	
+	postForm.append("idx", form.idx.value);
+	postForm.append("class1st", form.class1st.value);
+	postForm.append("class2nd", form.class2nd.value);
+	postForm.append("level", form.level.value);
+	postForm.append("type", form.type.value);
+	postForm.append("title", form.title.value);
+	postForm.append("question", form.question.value);
+	
+	let answerList = document.querySelectorAll("input[name*='answer']");
+	let answers = "";
+	answerList.forEach(element => { answers += element.value + ","; });
+	postForm.append("answers", answers.slice(0, -1));
+
+	postForm.append("level", form.level.value);
+	postForm.append("correct", form.correct.value);
+	postForm.append("point", form.point.value);
+	postForm.append("admin_regist", form.admin_regist.value);
+	postForm.append("admin_regist", form.admin_regist.value);
+	postForm.append("note", form.note.value);
+
+	xhr.send(postForm);
+	
+	xhr.onload = () => {
+		if (xhr.status == 200) {
+			const result = xhr.responseText;
+			if (result == "success") {
+				alert("修正しました。");
+				self.location.href = "../detail/<?php echo isset($questionData["idx"]) ? $questionData["idx"] : ""; ?>";
+			}
+			else {
+				alert("Error");
+				console.log(result);
+			}
+		}
+	}
+}
+
+	function RequestSelect(element, text) {
+		alert(text + "を選択してください");
+		element.focus();
+	}
+</script>

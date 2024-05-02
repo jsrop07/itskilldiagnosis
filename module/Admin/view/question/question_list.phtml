@@ -1,3 +1,345 @@
+<?php
+	function ChkDeleter($data, $optionDatas) {
+		if ($optionDatas[$data["status"]] == "新規") { return true; }
+		return false;
+	}
 
+	if (!isset($_SESSION)) { session_start(); }
+	$url = $_SERVER["REQUEST_URI"] . "?";
+	$query = explode("?", $url)[1];
+
+	// Check authority
+	$isApprover = false;
+	if ($_SESSION["user"]["level"] >= 1) { $isApprover = true; }
+?>
 
 <?php echo $this->partial("breadcrumb", ["datas" => $breadcrumbData]); ?>
+
+<style type="text/css">
+	.header {
+		height: 110px;
+		display: flex;
+		justify-content: space-between;
+	}
+
+	.info-num {
+		height: 100%;
+		display: flex;
+		justify-content: end;
+	}
+
+	.search-place {
+		width: 100%;
+		margin-top: 20px;
+		display: grid;
+		grid-template-columns: 50px 150px 150px 1fr 65px 150px 110px 65px 200px;
+		column-gap: 10px;
+
+		text-align: center;
+	}
+	button.emegra.search.confirm {
+		height: 30px;
+		width: 100px;
+		
+		font-size: 15px;
+		font-weight: 400;
+	}
+
+	table.emegra tr { grid-template-columns: 50px 100px repeat(2, 60px) 60px 1fr 70px 50px repeat(2, 60px) 30px; }
+	table.emegra tr.index {
+		padding-top: 8px;
+		padding-bottom: 4px;
+		grid-template-columns: 50px 100px repeat(2, 60px) 60px 1fr 70px 50px repeat(2, 60px) 30px;
+		grid-template-areas:
+		"no status  class   class  level title type point confirm update select"
+		"no status class_l class_s level title type point confirm update select";
+	}
+	table.emegra tr.index > th {
+		padding: 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.list-title {
+		text-align: left;
+		
+		cursor: pointer;
+	}
+	.list-title:hover { text-decoration: underline; }
+
+	.button-place {
+		display: flex;
+		justify-content: space-between;
+	}
+</style>
+<content class="header">
+	<div class="title">ITスキル診断問項管理</div>
+	<div class="info-num">
+		<div class="count">問項総計<div class="num"><?php echo $totalDataNum; ?></div>問項</div>
+	</div>
+</content>
+
+<content class="main">
+	<div class="search-place">
+		<div style="display: flex; align-items: center;">承認者</div>
+		<input class="form-control form-control-sm" id="input_approver" value="<?php echo (isset($searchDatas["approver"])) ? $searchDatas["approver"] : ""; ?>"/>
+		<button class="emegra search confirm" onclick="SearchRegister()">検索</button>
+
+		<div></div>
+
+		<div style="display: flex; align-items: center;">タイトル</div>
+		<input class="form-control form-control-sm" id="input_title" value="<?php echo (isset($searchDatas["title"])) ? $searchDatas["title"] : ""; ?>"/>
+		<button class="emegra search confirm" onclick="SearchTitle()">検索</button>
+		<div style="display: flex; align-items: center;">並び替え</div>
+		<select class="form-select form-select-sm" onchange="ChangeSearch(this.value)">
+			<option value="regist_DESC"<?php echo (isset($searchDatas["align"]) && $searchDatas["align"] == "regist_DESC") ? " selected" : ""; ?>>作成日（昇順）</option>
+			<option value="regist_ASC"<?php echo (isset($searchDatas["align"]) && $searchDatas["align"] == "regist_ASC") ? " selected" : ""; ?>>作成日（降順）</option>
+			<option value="status_ASC"<?php echo (isset($searchDatas["align"]) && $searchDatas["align"] == "status_ASC") ? " selected" : ""; ?>>ステータス（昇順）</option>
+			<option value="status_DESC"<?php echo (isset($searchDatas["align"]) && $searchDatas["align"] == "status_DESC") ? " selected" : ""; ?>>ステータス（降順）</option>
+			<option value="class1st_ASC"<?php echo (isset($searchDatas["align"]) && $searchDatas["align"] == "class1st_ASC") ? " selected" : ""; ?>>大分類（昇順）</option>
+			<option value="class1st_DESC"<?php echo (isset($searchDatas["align"]) && $searchDatas["align"] == "class1st_DESC") ? " selected" : ""; ?>>大分類（降順）</option>
+			<option value="class2nd_ASC"<?php echo (isset($searchDatas["align"]) && $searchDatas["align"] == "class2nd_ASC") ? " selected" : ""; ?>>小分類（昇順）</option>
+			<option value="class2nd_DESC"<?php echo (isset($searchDatas["align"]) && $searchDatas["align"] == "class2nd_DESC") ? " selected" : ""; ?>>小分類（降順）</option>
+			<option value="level_ASC"<?php echo (isset($searchDatas["align"]) && $searchDatas["align"] == "level_ASC") ? " selected" : ""; ?>>レベル（昇順）</option>
+			<option value="level_DESC"<?php echo (isset($searchDatas["align"]) && $searchDatas["align"] == "level_DESC") ? " selected" : ""; ?>>レベル（降順）</option>
+		</select>
+	</div>
+
+	<?php if (empty($questionDatas)): ?>
+		<div class="table-empty" style="margin-top: 16px;">
+			データがありません。
+		</div>
+		
+	<?php else: ?>
+		<table class="emegra" style="margin-top: 8px;">
+			<thead>
+				<tr class="index">
+					<th style="grid-area: no">no</th>
+					<th style="grid-area: status">ステータス</th>
+					<th style="grid-area: class">問項種別</th>
+					<th style="grid-area: level">レベル</th>
+					<th style="grid-area: title">タイトル</th>
+					<th style="grid-area: type">タイプ</th>
+					<th style="grid-area: point">点数</th>
+					<th style="grid-area: confirm">作成日</th>
+					<th style="grid-area: update">承認日</th>
+					<th style="grid-area: select"><input id="checkAll" type="checkbox" onclick="Checking(this);" style="cursor: pointer;"></th>
+					<th style="grid-area: class_l">大分類</th>
+					<th style="grid-area: class_s">小分類</th>
+				</tr>
+			</thead>
+			<tbody>
+				<?php foreach($questionDatas as $data): ?>
+					<tr>
+						<td><?php echo $data["num"]; ?></td>
+						<td><?php echo $optionDatas[$data["status"]]; ?></td>
+						<td><?php echo $optionDatas[$data["class1st"]]; ?></td>
+						<td><?php echo $optionDatas[$data["class2nd"]]; ?></td>
+						<td><?php echo $optionDatas[$data["level"]]; ?></td>
+						<td class="list-title" onclick="self.location.href='./detail/<?php echo $data['idx']; ?>';"><?php echo $data["title"]; ?></td>
+						<td><?php echo $optionDatas[$data["type"]]; ?></td>
+						<td><?php echo $data["point"]; ?></td>
+						<td><?php echo date("y.m.d", strtotime($data["date_regist"])); ?></td>
+						<td><?php echo (isset($data["date_approve"])) ? date("y.m.d", strtotime($data["date_approve"])) : "未承認"; ?></td>
+						<td><input name="checkIdx" type="checkbox" value="<?php echo $data["idx"]; ?>" onclick="Checking(this);" style="cursor: pointer;"<?php echo ($isApprover || ChkDeleter($data, $optionDatas)) ? "" : " disabled"; ?>></td>
+					</tr>
+				<?php endforeach; ?>
+			</tbody>
+		</table>
+	<?php endif; ?>
+
+	<div class="button-place" style="margin-top: 10px;">
+		<div>
+			<?php echo $this->paginationControl($this->noticelist, "sliding", array("pagination", "Notice"), array("url" => "")); ?>
+		</div>
+		<div>
+			<?php if ($_SESSION["user"]["level"] >= 1): ?>
+				<button class="emegra" style="margin-right: 8px;" onclick="Regist()">承認</button>
+			<?php endif; ?>
+			<button class="emegra delete" style="margin-right: 8px" onclick="Delete()">削除</button>
+			<button class="emegra" style="margin-right: 8px;" onclick="self.window.location='./csv'">CSV登録</button>
+			<button class="emegra" onclick="self.window.location='./input'">新規登録</button>
+		</div>	
+	</div>
+</content>
+
+<script type="text/javascript">
+	const input_approver = document.getElementById("input_approver");
+	const input_title = document.getElementById("input_title");
+	const div_search = document.getElementById("div_search");
+	const check_all = document.getElementById("checkAll");
+	const check_idxs = document.getElementsByName("checkIdx");
+
+	let searchData = "status";
+
+	function Checking(element) {
+		if (element == check_all) {
+			if (element.checked) {
+				check_idxs.forEach(e => {
+					if (!e.disabled) { e.checked = true; }
+				});
+			}
+			else {
+				check_idxs.forEach(e => { e.checked = false; });
+			}
+		}
+
+		if (element != check_all) {
+			check_all.checked = false;
+
+			check_idxs.forEach(e => {
+				if (e.checked) { check_all.checked = true; return true; }
+			});
+		}
+	}
+
+	function SearchRegister() {
+		<?php
+			if (!empty($query)) {
+				$queryDatas = explode("&", $query);
+				
+				$newQueryDatas = array();
+				foreach ($queryDatas as $data) {
+					$key = explode("=", $data)[0];
+					if ($key != "page" && $key != "approver") {
+						array_push($newQueryDatas, $data);
+					}
+				}
+
+				$newQuery = implode("&", $newQueryDatas);
+				$url = explode("?", $_SERVER["REQUEST_URI"])[0] . "?" . $newQuery;
+				if (!empty($newQuery)) { $url .= "&"; }
+			}
+		?>
+
+		let url = "<?= $url; ?>";
+		
+		let approver = input_approver.value;
+		if (approver.trim() != "") { url += "approver=" + approver; }
+		else { url = url.slice(0, -1); }
+
+		self.window.location = url;
+	}
+
+	function SearchTitle() {
+		<?php
+			if (!empty($query)) {
+				$queryDatas = explode("&", $query);
+				
+				$newQueryDatas = array();
+				foreach ($queryDatas as $data) {
+					$key = explode("=", $data)[0];
+					if ($key != "page" && $key != "title") {
+						array_push($newQueryDatas, $data);
+					}
+				}
+
+				$newQuery = implode("&", $newQueryDatas);
+				$url = explode("?", $_SERVER["REQUEST_URI"])[0] . "?" . $newQuery;
+				if (!empty($newQuery)) { $url .= "&"; }
+			}
+		?>
+
+		let url = "<?= $url; ?>";
+		
+		let title = input_title.value;
+		if (title.trim() != "") { url += "title=" + title; }
+		else { url = url.slice(0, -1); }
+
+		self.window.location = url;
+	}
+
+	function ChangeSearch(value) {
+		<?php
+			if (!empty($query)) {
+				$queryDatas = explode("&", $query);
+				
+				$newQueryDatas = array();
+				foreach ($queryDatas as $data) {
+					$key = explode("=", $data)[0];
+					if ($key != "align") {
+						array_push($newQueryDatas, $data);
+					}
+				}
+
+				$newQuery = implode("&", $newQueryDatas);
+				$url = explode("?", $_SERVER["REQUEST_URI"])[0] . "?" . $newQuery;
+				if (!empty($newQuery)) { $url .= "&"; }
+			}
+		?>
+
+		let url = "<?= $url; ?>";
+		
+		let align = value;
+		url += "align=" + align;
+
+		self.window.location = url;
+	}
+
+	function Regist() {
+		let idxDatas = "";
+
+		check_idxs.forEach(e => {
+			if (e.checked) {
+				idxDatas += e.value + ",";
+			}
+		});
+
+		let chk = true;
+		const postForm = new FormData();
+		postForm.append("idxs", idxDatas.slice(0, -1));
+
+		const xhr = new XMLHttpRequest();
+		xhr.open("POST", "./approve", true);
+		xhr.send(postForm);
+		xhr.onload = () => {
+			if (xhr.status == 200) {
+				const result = xhr.responseText;
+
+				if (result == "success") {
+					alert("承認しました。");
+					location.reload(true);
+				}
+				else if (result == "fail") { alert("承認できたデータがあります。"); }
+				else {
+					alert("Error");
+					console.log($result);
+				}
+			}
+		}
+	}
+
+	function Delete() {
+		let idxDatas = "";
+
+		check_idxs.forEach(e => {
+			if (e.checked) {
+				idxDatas += e.value + ",";
+			}
+		});
+
+		idxDatas.slice(0, -1);
+
+		const postForm = new FormData();
+		postForm.append("idxs", idxDatas.slice(0, -1));
+
+		const xhr = new XMLHttpRequest();
+		xhr.open("POST", "./delete", true);
+		xhr.send(postForm);
+
+		xhr.onload = () => {
+			if (xhr.status == 200) {
+				const result = xhr.responseText;
+				if (result == "success") {
+					alert("削除しました。");
+					location.reload(true);
+				}
+				else {
+					alert("Error");
+					console.log($result);
+				}
+			}
+		}
+	}
+</script>

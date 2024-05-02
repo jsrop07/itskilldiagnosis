@@ -54,6 +54,28 @@ return array(
 					),
 				),
 			),
+			"diagnosis" => array(
+				"type" => "Zend\Mvc\Router\Http\Segment",
+				"options" => array(
+					"route" => "/admin/diagnosis[/:action][/:index]",
+					"constraints" => array(),
+					"defaults" => array(
+						"controller"	=> "Diagnosis",
+						"action"			=> "index",
+					),
+				),
+			),
+			"manager" => array(
+				"type" => "Zend\Mvc\Router\Http\Segment",
+				"options" => array(
+					"route" => "/admin/manager[/:action][/:index]",
+					"constraints" => array(),
+					"defaults" => array(
+						"controller"	=> "Manager",
+						"action"			=> "index",
+					),
+				),
+			),
 		),
 	),
     'service_manager' => array(
@@ -79,6 +101,8 @@ return array(
 		"invokables" => array(
 			"Account"		=> "Admin\Controller\AccountController",
 			"Question"	=> "Admin\Controller\QuestionController",
+			"Diagnosis"	=> "Admin\Controller\DiagnosisController",
+			"Manager"		=> "Admin\Controller\ManagerController",
 		),
 	),
     'view_manager' => array(
@@ -88,13 +112,13 @@ return array(
         'not_found_template'       => 'error/404',
         'exception_template'       => 'error/index',
         'template_map' => array(
-					"layout/list"						=> __DIR__ . "/../view/layout/layout_list.phtml",
+					"layout/default"						=> __DIR__ . "/../view/layout/layout_default.phtml",
 					"breadcrumb"						=> __DIR__ . "/../view/layout/breadcrumb.phtml",
+					"pagination"						=> __DIR__ . "/../view/layout/pagination.phtml",
 
 					"admin"									=> __DIR__ . "/../view/layout/admin_layout.phtml",
 					"layout/user"						=> __DIR__ . "/../view/layout/user/layout.phtml",
 					"layout/user/login"			=> __DIR__ . "/../view/layout/user/login.phtml",
-					"pagination"						=> __DIR__ . "/../view/layout/pagination.phtml",
             'layout/layout'           => __DIR__ . '/../view/layout/layout.phtml',
             'layout/mylayout'           => __DIR__ . '/../view/layout/mylayout.phtml',
             "layout/exam_layout" => __DIR__ . "/../view/layout/exam_layout.phtml",

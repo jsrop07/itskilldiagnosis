@@ -1,0 +1,175 @@
+<?php
+	if (!isset($_SESSION)) { session_start(); }
+	$userCode = $_SESSION["user"]["code"] ;
+	
+	//承認権限確認
+	$isApprover = false;
+	if ($_SESSION["user"]["level"] >= 1) { $isApprover = true; }
+?>
+
+<?php echo $this->partial("breadcrumb", ["datas" => $breadcrumbData]); ?>
+
+<h1 class="title">診断書詳細</h1>
+
+<div class="emegra card">
+	<div class="card-header">設定</div>
+
+	<div class="card-body">
+		<style type="text/css">
+				dl.emegra.setting { grid-template-columns: 140px 1fr; }
+		</style>
+		<dl class="emegra setting">
+			<dt>ID</dt>
+			<dd>B-50-T2</dd>
+			
+			<dt>分類</dt>
+			<dd>IT基礎 / JAVA</dd>
+		
+			<dt>レベル</dt>
+			<dd>初級</dd>
+		
+			<dt>タイトル</dt>
+			<dd>新卒の開発者向け提出問題（Java）</dd>
+		</dl>
+	</div>
+</div>
+
+<div class="emegra card" style="margin-top: 32px;">
+	<div class="card-header">問題</div>
+
+	<div class="card-body">
+		<style type="text/css">
+			dl.emegra.question { grid-template-columns: 90px 1fr; }
+		</style>
+		<dl class="emegra question">
+			<dt>問項数</dt>
+			<dd>50</dd>
+
+			<dt>診断時間</dt>
+			<dd>60分</dd>
+
+			<dt>問項一覧</dt>
+			<div style="width: 100%; display: flex;">
+				<style type="text/css">
+					table.emegra tr { grid-template-columns: 50px 1fr 60px 50px; }
+					table.emegra th, table.emegra td { padding: 5px 0 !important; }
+				</style>
+				<table class="emegra">
+					<thead>
+						<tr>
+							<th>No</th>
+							<th>問項タイトル</th>
+							<th>タイプ</th>
+							<th>点数</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>1</td>
+							<td style="text-align: start;">title1</td>
+							<td>4項選択</td>
+							<td>1</td>
+						</tr>
+						<tr>
+							<td>2</td>
+							<td style="text-align: start;">title2</td>
+							<td>3項選択</td>
+							<td>3</td>
+						</tr>
+						<tr>
+							<td>3</td>
+							<td style="text-align: start;">title3</td>
+							<td>4項選択</td>
+							<td>4</td>
+						</tr>
+						<tr>
+							<td>4</td>
+							<td style="text-align: start;">title4</td>
+							<td>5項選択</td>
+							<td>5</td>
+						</tr>
+						<tr>
+							<td style="grid-column: 1 / 4;"></td>
+							<td>100点</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</dl>
+	</div>
+</div>
+
+<div class="emegra card" style="margin-top: 32px;">
+	<div class="card-header">情報</div>
+
+	<div class="card-body">
+		<style type="text/css">
+			dl.emegra.info { grid-template-columns: 140px 1fr; }
+		</style>
+		<dl class="emegra info">
+			<dt>評価等級</dt>
+				<dd class="expand">
+					<style type="text/css">
+						table.evaluation {
+							width: 100%;
+							text-align: center;
+						}
+						table.evaluation tr {
+							display: grid;
+							grid-template-columns: 50px 100px 150px 1fr;
+							grid-template-areas: 
+							"grade point evaluation comment";
+							gap: 0 8px;
+						}
+					</style>
+					<table class="evaluation">
+						<thead>
+							<tr>
+								<th style="grid-area: point;">評価点数</th>
+								<th style="grid-area: evaluation;">評価</th>
+								<th style="grid-area: comment;">評価コメント</th>
+							</tr>
+						</thead>
+						<thead>
+							<tr>
+								<td>A</td>
+								<td>100 ~ 91</td>
+								<td style="text-align: left;">優秀</td>
+								<td style="text-align: left;">〜〜〜〜〜である</td>
+							</tr>
+							<tr>
+								<td>B</td>
+								<td>90 ~ 71</td>
+								<td style="text-align: left;">やや優秀</td>
+								<td style="text-align: left;">〜〜〜〜〜である</td>
+							</tr>
+							<tr>
+								<td>C</td>
+								<td>70 ~ 51</td>
+								<td style="text-align: left;">努力が必要</td>
+								<td style="text-align: left;">〜〜〜〜〜である</td>
+							</tr>
+							<tr>
+								<td>D</td>
+								<td>50 ~ 0	</td>
+								<td style="text-align: left;">IT職業に向いてない</td>
+								<td style="text-align: left;">〜〜〜〜〜である</td>
+							</tr>
+						</thead>
+					</table>
+				</dd>
+			</dl>
+		</dl>
+	</div>
+</div>
+
+<div class="btn-place" style="margin-top: 32px;">
+	<button class="emegra cancel" onclick="history.back();">戻る</button>
+	<button class="emegra" onclick="Update();">修正</button>
+	<?php if ($isApprover || ($isRegister && $questionData["admin_approve"] == null)): ?>
+		<button class="emegra delete" onclick="Delete();">削除</button>
+	<?php endif; ?>
+</div>
+
+<script type="text/javascript">
+</script>

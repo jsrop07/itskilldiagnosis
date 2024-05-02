@@ -1,0 +1,49 @@
+<?php
+	$url = $_SERVER["REQUEST_URI"];
+	$url = $url . "?";
+	$query = explode("?", $url)[1];
+	
+	if (!empty($query)) {
+		$queryDatas = explode("&", $query);
+
+		$newQueryDatas = array();
+		foreach ($queryDatas as $data) {
+			if (explode("=", $data)[0] != "page") {
+				array_push($newQueryDatas, $data);
+			}
+		}
+		$newQuery = implode("&", $newQueryDatas);
+		$url = explode("?", $_SERVER["REQUEST_URI"])[0] . "?" . $newQuery . "&";
+	}
+
+	$paging = false;
+	if ($totalPage > 1) {
+		$paging = true;
+
+		$previousPage = $currentPage - 1;
+		if ($previousPage < 1) { $previousPage = 1; }
+
+		$nextPage = $currentPage + 1;
+		if ($nextPage > $totalPage) { $nextPage = $totalPage; }
+	}
+?>
+
+<ul class="emegra pagination">
+	<?php if ($paging): ?>
+		<li class="item">
+			<a href="<?php echo $url . "page=" . $previousPage; ?>"><</a>
+		</li>
+	<?php endif; ?>
+
+	<?php for ($i = 1; $i <= $totalPage; $i++): ?>
+		<li class="item<?php echo ($currentPage == $i) ? " active" : ""; ?>">
+			<a href="<?php echo $url . "page=" . $i; ?>"><?= $i ?></a>
+		</li>
+	<?php endfor; ?>
+
+	<?php if ($paging): ?>
+		<li class="item">
+			<a href="<?php echo $url . "page=" . $nextPage; ?>">></a>
+		</li>
+	<?php endif; ?>
+</ul>

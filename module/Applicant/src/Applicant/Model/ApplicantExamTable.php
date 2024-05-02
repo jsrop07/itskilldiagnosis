@@ -1,6 +1,6 @@
 <?php
 
-namespace Test\Model;
+namespace Applicant\Model;
 
 use Zend\Db\Adapter\Adapter;
 use Zend\Db\ResultSet\ResultSet;
@@ -15,7 +15,7 @@ use Zend\Paginator\Adapter\DbSelect;
 use Zend\Paginator\Paginator;
 use Zend\Session\Container;
 
-class ExamTable
+class ApplicantExamTable
 {
   public function __construct()
   {
@@ -75,9 +75,9 @@ class ExamTable
     return $this->sql->prepareStatementForSqlObject($qry)->execute();
   }
 
-  public function readByUrl($url)
+  public function readByUrl($id)
   {
-    $qry = $this->sql->select("exam")->where(["url" => $url]);
+    $qry = $this->sql->select("applicant")->where(["id" => $id]);
     return $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
   }
 
@@ -100,12 +100,12 @@ class ExamTable
     return $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
   }
 
-  public function login($url, $id, $password)
+  public function login($id, $password)
   {
-    $qry = $this->sql->select("exam")->where(
+    $qry = $this->sql->select("applicant")->where(
       array(
-        "url" => $url,
-        "user_id" => $id,
+        "id" => $id,
+        "password" => $password,
       )
     );
 
@@ -114,7 +114,7 @@ class ExamTable
       return "wrong id";
     }
 
-    if ($result["user_pw"] == $password) {
+    if ($result["password"] == $password) {
       return "success";
     }
     return "wrong password";

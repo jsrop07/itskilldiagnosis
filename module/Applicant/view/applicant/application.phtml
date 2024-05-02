@@ -1,0 +1,366 @@
+
+<div class="container-fluid">
+    <div class="diagnosis card">
+        <div class="diagnosis_head">
+            <br>
+            <h3 style="font-weight: bold;">
+            ITスキル診断申込
+            </h3>
+        </div>
+        <form id="form" name="input_form" enctype="multipart/form-data" action="/applicant/application" method="post">
+            <div class="diagnosis_main">
+
+                    <span for="email">メール </span>
+                    <input class="form-control" name="email" type="email" placeholder="Emailを入力ください。" style="width:80%" maxlength='50'>
+                    
+                    <span>お名前（漢字）</span>
+                    <input class="form-control" id="userInput" name="name" type="text" placeholder="漢字を記入してください。"style="width:40%" maxlength='20'>
+
+                    <span>お名前（カナ）</span>
+                    <input class="form-control" name="kana" type="text" placeholder="カナを記入してください。"style="width:40%" maxlength='50'>
+
+                    <span class="no_after_style">性別</span>
+                    <select  name="gender" style="width:20%" >
+                        <option selected disabled hidden>選択</option>
+                        <option value="0">男</option>
+                        <option value="1">女</option>
+                    </select>
+                    
+                    <span >応募区分</span>
+                    <select class="" name="application_category" style="width:40%" >
+                        <option value="" selected disabled hidden>選択してください。</option>
+                        <option value="0">新卒</option>
+                        <option value="1">中途（経歴職）</option>
+                    </select>
+
+                    <span>学歴</span>
+                    <select class="" name="education" style="width:40%" id="educationSelect" >
+                        <option value=""selected disabled hidden>選択してください。</option>
+                        <option value="高卒">高卒</option>
+                        <option value="専門卒">専門卒</option>
+                        <option value="大卒">大卒</option>
+                        <option value="大学院卒">大学院卒</option>
+                        <option value="その他">その他</option>
+                    </select>
+                    <div id="otherEducationInput" style=" margin-top:-15px; display:none;">
+                        <input class="form-control" type="text" placeholder="その他の場合の、記入" id="otherEducation" name="education" maxlength='20'>
+                    </div>
+
+                    <span class="no_after_style">専攻</span>
+                    <select class="" name="major" style="width:40%" id="majorSelect" >
+                        <option value=""selected disabled hidden>選択してください。</option>
+                        <option value="IT・ソフトウェア専攻">IT・ソフトウェア専攻</option>
+                        <option value="IT・ソフトウェア以外">IT・ソフトウェア以外</option>
+                    </select>
+                    <div id="otherMajorInput" style=" margin-top:-15px; display:none;">
+                        <input class="form-control" type="text" placeholder="その他の場合の、記入" id="otherMajor" name="major" maxlength='20'>
+                    </div>
+
+                    <span>ITスキル有無</span>
+                    <select class="" name="skill" style="width:20%" >
+                        <option value="" selected disabled hidden>選択</option>
+                        <option value="0">有</option>
+                        <option value="1">無</option>
+                    </select>
+
+                    <span id="spanDevelopSelect">経験分野</span>
+                    <select class="" name="develop" style="width:40%" id="developSelect" >
+                    <option value="" selected  >選択してください。</option>
+                        <?php foreach ($this->develop as $row): ?>
+                            <?php $texts = explode(',', $row['text']); ?>
+                            <?php foreach ($texts as $text): ?>
+                                <option value="<?php echo $text; ?>"><?php echo $text; ?></option>
+                            <?php endforeach; ?>
+                        <?php endforeach; ?>
+                    </select>
+                    <div id="otherDevelopInput" style="margin-top:-15px; display:none;">
+                        <input class="form-control" type="text" placeholder="その他の場合の、記入" id="otherDevelop" name="develop" maxlength='20'>
+                    </div>
+
+                    <span id='spanCareer'>IT経験年数</span>
+                    <input class="form-control" id="career" name="career" type="text" placeholder="経歴を記入してください。" style="font-size:15px; width:40%" maxlength='2'>
+
+                    <span  id="spanTypeSelect">問題種別</span>
+                    <select class="" name="question_type" style="width:40%" id="typeSelect">
+                    <option value="" selected  >選択してください。</option>
+                    <?php foreach ($this->questionType as $row): ?>
+                        <?php $texts = explode(',', $row['text']); ?>
+                        <?php foreach ($texts as $text): ?>
+                            <option value="<?php echo $text; ?>"><?php echo $text; ?></option>
+                        <?php endforeach; ?>
+                    <?php endforeach; ?>
+                    </select>
+
+                    <span class="no_after_style" id='spanCertificates'>IT関連資格</span>
+                    <input class="form-control" name="certificates" type="text" placeholder="資格を記入してください。"style="width:80%" maxlength='50'>
+
+                    <span class="no_after_style" id='spanOther'>その他</span>
+                    <textarea class="form-control" name="other" type="textarea" placeholder="その他を記入してください。"style="width:80%" maxlength=500' ></textarea>
+                
+                </div>
+                <div class="button_box">
+                    <button class="applicant_cancel" onclick="window.location.href='../applicant/application';">キャンセル</button>
+                    <button id="btn_submit" name="mode" value="btn_submit" class="applicant_button" onclick="applicationConfirm();">申込</button>
+                </div>
+            </form>
+    </div>
+    
+<footer><a>GOMS Order・Received・Service.</a> Copyright G&GService. All Right Reserved.</footer>
+</body>
+</html>
+</div>
+
+<!-- ITスキル有無選択時に画面変化 -->
+<script>
+var skillSelect = document.querySelector('select[name="skill"]');
+
+var questionTypeSelect = document.getElementById('typeSelect');
+var questionTypeSpanSelect = document.getElementById('spanTypeSelect');
+
+var ApplicantDevelopSelect = document.getElementById('developSelect');
+var ApplicantDevelopSpanSelect=document.getElementById('spanDevelopSelect');
+
+var otherDevelopInput = document.getElementById('otherDevelopInput');
+
+var careerInput = document.getElementById('career');
+var ApplicantCareerInput = document.getElementById('spanCareer');
+
+var certificatesInput = document.querySelector('input[name="certificates"]');
+var ApplicantCertificatesInput = document.getElementById('spanCertificates');
+
+
+var otherTextarea = document.querySelector('textarea[name="other"]');
+var ApplicantOtherTextarea = document.getElementById('spanOther');
+
+
+skillSelect.addEventListener('change', function() {
+    var selectedValue = this.value;
+    if (selectedValue === '1') {
+        questionTypeSelect.style.display='none';        
+        questionTypeSpanSelect.style.display='none';
+
+        ApplicantDevelopSelect.style.display='none';
+        ApplicantDevelopSpanSelect.style.display='none';
+        otherDevelopInput.style.display='none';
+
+        careerInput.style.display='none';
+        ApplicantCareerInput.style.display='none';
+        
+        certificatesInput.style.display='none';
+        ApplicantCertificatesInput.style.display='none';
+
+
+        questionTypeSelect.disabled=true;
+        developSelect.disabled = true;
+        otherDevelopInput.querySelector('input').disabled = true;
+        careerInput.disabled = true;
+        certificatesInput.disabled = true;
+    } else {
+        questionTypeSelect.style.display='block';    
+        questionTypeSpanSelect.style.display='block'; 
+
+        ApplicantDevelopSelect.style.display='block';
+        ApplicantDevelopSpanSelect.style.display='block';
+        otherDevelopInput.style.display='block';
+        otherDevelopInput.style.display='none';
+
+        careerInput.style.display='block';
+        ApplicantCareerInput.style.display='block';
+
+        certificatesInput.style.display='block';
+        ApplicantCertificatesInput.style.display='block';
+
+
+        questionTypeSelect.disabled=false;
+        developSelect.disabled = false;
+        otherDevelopInput.querySelector('input').disabled = false;
+        careerInput.disabled = false;
+        certificatesInput.disabled = false;
+    }
+    
+});
+</script>
+
+<!-- educationとdevelopのその他項目画面変化 -->
+<script>
+    document.getElementById('educationSelect').addEventListener('change', function(event) {
+    var selectedOption = event.target.value;
+    var otherEducationInput = document.getElementById('otherEducationInput');
+
+    if (selectedOption === "その他") {
+        otherEducationInput.style.display = 'block';
+    } else {
+        otherEducationInput.style.display = 'none';
+    }
+
+    var otherEducation = document.getElementById('otherEducation');
+    if (selectedOption === "その他") {
+        otherEducation.removeAttribute('disabled');
+    } else {
+        otherEducation.setAttribute('disabled', 'disabled');
+    }
+});
+
+    document.getElementById('developSelect').addEventListener('change', function(event) {
+    var selectedOption = event.target.value;
+    var otherDevelopInput = document.getElementById('otherDevelopInput');
+
+    if (selectedOption === "その他") {
+        otherDevelopInput.style.display = 'block';
+    } else {
+        otherDevelopInput.style.display = 'none';
+    }
+
+    var otherDevelop = document.getElementById('otherDevelop');
+    if (selectedOption === "その他") {
+        otherDevelop.removeAttribute('disabled');
+    } else {
+        otherDevelop.setAttribute('disabled', 'disabled');
+    }
+});
+
+document.getElementById('majorSelect').addEventListener('change', function(event) {
+    var selectedOption = event.target.value;
+    var otherMajorInput = document.getElementById('otherMajorInput');
+
+    if (selectedOption === "IT・ソフトウェア以外") {
+        otherMajorInput.style.display = 'block';
+    } else {
+        otherMajorInput.style.display = 'none';
+    }
+
+    var otherMajor = document.getElementById('otherMajor');
+    if (selectedOption === "IT・ソフトウェア以外") {
+        otherMajor.removeAttribute('disabled');
+    } else {
+        otherMajor.setAttribute('disabled', 'disabled');
+    }
+});
+</script>
+
+<!-- 漢字カナ入力時有効性検査 -->
+<script>
+function checkKanji(input) {
+    var japaneseChineseRegex = /^[\u4E00-\u9FFF]+$/; 
+    return japaneseChineseRegex.test(input);
+}
+
+function checkKana(input) {
+    var katakanaRegex = /^[\u30A0-\u30FFー]+$/; 
+    return katakanaRegex.test(input);
+}
+</script>
+
+<!-- 必須項目有効性検査 -->
+<script type="text/javascript">
+	function applicationConfirm() {
+		if (form.email.value == "") {
+			alert("メールアドレスを入力してください。");
+            setTimeout("form.email.focus()",100);
+            event.preventDefault();
+			return false;
+		}
+
+        if (form.name.value == "" || !checkKanji(form.name.value)) {
+            alert("漢字を入力してください。");
+            setTimeout("form.name.focus()",100);
+            event.preventDefault();
+
+            return false;
+        }
+
+        if (form.kana.value == "" || !checkKana(form.kana.value)) {
+			alert("カナを入力してください。");
+            setTimeout("form.kana.focus()",100);
+            event.preventDefault();
+			return false;
+		}
+    
+        if (form.application_category.value == "") {
+			alert("応募区分を入力してください。");
+            setTimeout("form.application_category.focus()",100);
+            event.preventDefault();
+			return false;
+		}
+        if (form.educationSelect.value == "") {
+			alert("学歴入力してください。");
+            setTimeout("form.educationSelect.focus()",100);
+            event.preventDefault();
+			return false;
+		}
+
+        if (form.educationSelect.value == "その他" && form.otherEducation.value=="") {
+			alert("その他の場合の、記入してください。");
+            setTimeout("form.educationSelect.focus()",100);
+            event.preventDefault();
+			return false;
+		}
+
+
+        if (form.skill.value == "") {
+			alert("ITスキル有無を入力してください。");
+            setTimeout("form.skill.focus()",100);
+            event.preventDefault();
+			return false;
+		}
+
+     
+        if (!developSelect.disabled && form.developSelect.value === "") {
+            alert("経験分野を入力してくださいsd。");
+            setTimeout("form.developSelect.focus()",100);
+            event.preventDefault(); 
+            return false;
+        }
+
+
+        if (form.developSelect.value == "その他" && form.otherDevelop.value=="") {
+			alert("その他の場合の、記入してください");
+            setTimeout("form.developSelect.focus()",100);
+            event.preventDefault();
+			return false;
+		}
+
+        if (!careerInput.disabled && (isNaN(form.career.value) || form.career.value === "")) {
+            alert("IT経験年数を入力してください。");
+            setTimeout("form.careerInput.focus()",100);
+            event.preventDefault(); 
+            return false;
+        }
+
+        if (!typeSelect.disabled && form.typeSelect.value == "") {
+			alert("問題種別を入力してください。");
+            setTimeout("form.typeSelect.focus()",100);
+            event.preventDefault();
+			return false;
+		}
+        
+        var submitConfirm=confirm("申し込みますか？");
+        if (!submitConfirm){
+            event.preventDefault();
+            return false;
+        }
+	}
+
+</script>
+
+<!-- selectbox 選択時の　色 -->
+<script>
+var selectElements = document.querySelectorAll('[name="gender"],[name="application_category"],[name="education"],[name="skill"],[name="question_type"],[name="develop"],[name="major"]');
+
+selectElements.forEach(function(selectElement) {
+    selectElement.addEventListener('change', function() {
+        var selectedValue = selectElement.value;
+        
+        if (selectedValue != "") {
+            selectElement.style.color = 'black';
+        } else {
+            selectElement.style.color = 'gray';
+            // selectElement.style.fontStyle = 'italic'; 
+        }
+    });
+});
+</script>
+
+
+
+

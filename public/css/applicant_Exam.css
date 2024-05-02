@@ -1,0 +1,141 @@
+*{
+    font-family: "Roboto", "Noto Sans JP", sans-serif !important;    
+}
+:root {
+	--gradient: linear-gradient(111deg, #87D782 0%, #22BC8E 100%);
+	--background: #F0F8F1;
+	--line: #CED4DA;
+	--emegra-green: #27A374;
+	--font: #6C757D;
+}
+
+body {
+	min-height: 100vh;
+	background: var(--background);
+}
+header {
+    z-index: 10;
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #CED4DA;
+    background: linear-gradient(111deg, #87D782 0%, #22BC8E 100%);
+    position: fixed;
+    width: 100%;
+    color:white;
+    min-width: 700px;
+}
+.left-column, .middle-column, .right-column {
+    display: flex;
+    width:15%; 
+    padding: 10px; 
+    justify-content: center;
+    /* min-width:200px; */
+}
+.left-column{
+    min-width:120px;
+}
+.middle-column {
+    width: 50%; 
+    font-size: 30px;
+    min-width:260px;
+    margin-left:80px;
+    margin-top:3px;
+}
+.right-column {
+    min-width:120px;
+    width: 20%;
+}
+footer{
+    /* min-width: 850px; */
+    margin-top: 20px;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 400;
+    color: grey;
+
+}
+.container-fluid{
+    max-width:1000px;
+    min-width:600px;
+}
+button.emegra {
+	height: 38px;
+	width: 120px;
+	border-radius: 4px;
+	background: var(--gradient);
+
+	color: white;
+}
+
+.welcomeText{
+    border-bottom: 1px solid #CED4DA;
+    justify-content:center; 
+    display:grid;
+
+}
+
+.applicant_cancel {
+    background-color: #A4A8AD;
+    height: 38px;
+    width: 120px;
+    border-radius: 4px;
+    color: white;
+    border:0;
+}
+
+.applicant_stop{
+    height: 38px;
+    width: 120px;
+    border-radius: 4px;
+    color: white;
+    border:0;
+    background:#f59e0b;
+}
+
+.exam_submit{
+    align-items:center;
+    justify-content: center;
+    height: 38px;
+    width: 120px;
+    border-radius: 4px;
+    background: var(--gradient);
+    color: white;
+    border:0;
+}
+
+.examBox{
+    border: 1px solid green; 
+    margin-top:20px;
+    padding: 30px;
+}
+
+.button_box{
+    gap: 8px;
+    padding: 20px;
+    justify-content: center;
+    display: flex;
+}
+
+select{
+    color: gray;
+    width: 20%;
+    border: 1px solid #ced4da;
+    border-radius: 5px; 
+    padding: 5px 10px; 
+    font-size: 16px;
+    background-color: white;
+    cursor: pointer; 
+        /* font-style: italic;  */
+  }
+
+  select option[value]:not([value=""]) {
+    color: black;
+    font-style: normal; 
+  }
+
+  ::placeholder {
+    /* font-style: italic;  */
+    color: gray !important;
+}

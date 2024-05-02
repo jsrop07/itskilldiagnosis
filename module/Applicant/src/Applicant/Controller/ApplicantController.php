@@ -10,337 +10,154 @@ use Zend\Session\Container;
 
 class ApplicantController extends AbstractActionController
 {
-  public function applicantAction()
+  public function applicationAction()
   {
-	$this->layout("layout/user/applicant");
-  }
+	$this->layout("layout/applicant/application_layout");
+	$config=$this->getServiceLocator()->get('config');
+	//モデル連動
+	$tbl=$this->getServiceLocator()->get('ApplicationTable');
+	$questionType=$tbl->getQuestionType();
+	$develop=$tbl->getDevelop();
+	$p = $this->params()->fromPost();
+	$mode =(isset($p['mode'])    &&   $p['mode'] !='')? $p['mode']:'';
 
-  public function mainAction()
-  {
-		/* 機能の変更
-			作成：朴昰成
-			修正：朴昰成
-		*/
+	// print_r($p);
+	$viewModel = new ViewModel(['questionType' => $questionType,'develop' => $develop,'p' => $p]);
+	$viewModel->setTemplate("/applicant/application.phtml");
 
-		/* 修正前：
-    $this->layout("layout/none");
-		*/
+	if ($mode == 'btn_submit') {
+		// exit;
+		$email = $this->params()->fromPost('email');
+		$name = $this->params()->fromPost('name');
+		$kana = $this->params()->fromPost('kana');
+		$gender = $this->params()->fromPost('gender');
+		$application_category = $this->params()->fromPost('application_category');
+		$education = $this->params()->fromPost('education');
+		$major = $this->params()->fromPost('major');
+		$skill = $this->params()->fromPost('skill');
+		$question_type = $this->params()->fromPost('question_type');
+		$develop = $this->params()->fromPost('develop');
+		$career = $this->params()->fromPost('career');
+		$certificates = $this->params()->fromPost('certificates');
+		$other = $this->params()->fromPost('other');
+		$arr = [
+			'email' => $email,
+			'name' => $name,
+			'kana' => $kana,
+			'gender' => $gender,
+			'application_category' => $application_category,
+			'education' => $education,
+			'major' => $major,
+			'skill' => $skill,
+			'question_type' => $question_type,
+			'develop' => $develop,
+			'career' => $career,
+			'certificates' => $certificates,
+			'other' => $other,
+		];
+	   $tbl->insertAndUpdateApplication($arr);
 
-		/* 修正後： */
-		$this->layout("layout/user/login");
-		/* ここまで */
+	   echo "
+	   <script>
+	   self.location.href='/applicant/applicationclear';
+	   </script>
+	   ";
 
-    //main==============================================================
-    $post = $this->params()->fromPost();
+		exit;
+	}
 
-    if (isset($post["url"])) {
-      $examTb = $this->getServiceLocator()->get("ExamTable");
-      if ($examTb->readByUrl($post["url"]) != null) {
-        die("success");
-      }
-      die("fail");
-    }
-
-		/* 関数に変更
-			作成：朴昰成
-			修正：朴昰成
-			修正日：2024/03/18
-		*/
-
-		/* 修正前：
-    //view==============================================================
-    $vm = new ViewModel();
-    $vm->setTemplate("/user/main.phtml");
-    return $vm;
-		*/
-		
-		/* 修正後： */
-		return $this->SetViewModel([] , "/user/main.phtml");
-		/* ここまで */
+	return $viewModel;
+	
   }
 
   public function loginAction()
   {
-		/* 機能の変更
-			作成：朴昰成
-			修正：朴昰成
-			修正日：2024/03/14
-		*/
-
-		/* 修正前：
-    $this->layout("layout/none");
-		*/
-
-		/* 修正後： */
-		$this->layout("layout/user/login");
-		/* ここまで */
-
-    //main==============================================================
-		/* 機能の追加
-			作成：朴昰成
-			作成日：2024/03/15
-		*/
-		if (!isset($this->params()->fromRoute()["url"])) {
-			$this->RedirectToMain();
-			exit;
-		}
-		
-		/* ここまで */
-    $url = $this->params()->fromRoute()["url"];
-
-    $examTb = $this->getServiceLocator()->get("ExamTable");
-    $examData = $examTb->readByUrl($url);
-
-    if ($examData == null) {
-			/* 機能の変更
-				作成：朴昰成
-				修正：朴昰成
-				作成日：2024/03/18
-			*/
-
-			/* 修正前：
-      echo "
-      <script>
-        alert('URLを確認してください');
-        self.location.href='/user/main';
-      </script>
-      ";
-			*/
-
-			/* 修正後： */
-			$this->RedirectToMain();
-			/* ここまで */
-      exit;
-    }
-
-		/* 機能の削除
-			作成：朴昰成
-			削除：朴昰成
-			削除日：2024/03/18
-		*/
-	
-		/* 削除前：
-    if ($examData["get_point"] != null) {
-      $message[0] = "該当試験は受け済みの試験になります。";
-      $message[1] = "ご協力ありがとうございました。";
-      $vm = new ViewModel(["message" => $message]);
-      $vm->setTemplate("/user/alert");
-      return $vm;
-    }
-		ここまで */
-
-    $post = $this->params()->fromPost();
-
-    if (isset($post["id"])) {
-			/* 機能の変更
-				作成：朴昰成
-				修正：朴昰成
-				修正日：2024/03/14
-			*/
-
-			/* 修正前：
-      die($examTb->login($url, $post["id"], $post["password"]));
-			*/
-
-			/* 修正後： */
-			$result = $examTb->login($url, $post["id"], $post["password"]);
+	$this->layout("layout/applicant/login_layout");
+	//モデル連動
+    $p = $this->params()->fromPost();
+    if (isset($p["id"])) {
+			$loginTbl = $this->getServiceLocator()->get("ApplicantLoginTable");
+			$result = $loginTbl->login($p["id"], $p["password"]);
 			if ($result == "success") {
-				$session = new Container("user");
-				$session["id"] = $post["id"];
-				$session["url"] = $url;
+				$session = new Container("applicant");
+				$session["id"] = $p["id"];
 				$session["token"] = 1;
 			}
 			die($result);
-			/* ここまで */
     }
+	
+	$session = new Container("applicant");
+	if(isset($session['id']) && $session['id'] != '') {
+		return $this->redirect()->toUrl("../applicant/exam");
+	}
 
-    //view==============================================================
     $vm = new ViewModel();
-    $vm->setTemplate("/user/login.phtml");
+    $vm->setTemplate("/applicant/login.phtml");
     return $vm;
   }
 
   public function examAction()
   {
-		/* 問題がいない場合の機能追加
-			作成：朴昰成
-			修正：朴昰成
-			修正日：2024/03/04
-		*/
+	 // Set layout
+	  $this->layout("layout/applicant/exam_layout");
+	  $p = $this->params()->fromPost();
+	  $mode =(isset($p['mode'])    &&   $p['mode'] !='')? $p['mode']:'';
 
-		/* 修正前：
-    $this->layout("layout/none");
 
-    //main==============================================================
-    $url = $this->params()->fromRoute()["url"];
+	  $session = new Container("applicant");
+	  if (isset($session->id)) {
+		  $id = $session->id;
+		} else {
+		$this->RedirectToLogin();		  
+	  }
 
-    $examTb = $this->getServiceLocator()->get("ExamTable");
-    $questionTb = $this->getServiceLocator()->get("QuestionPoolTable");
-    $examData = $examTb->readByUrl($url);
-    $datas["examData"] = $examData;
-
-    $questionIdxs = explode(',', $examData["question_data"]);
-
-    $post = $this->params()->fromPost();
-
-    if (isset($post["question0"])) {
-      $point = 0;
-      foreach ($questionIdxs as $index => $questionIdx) {
-        $questionData = $questionTb->readByIdx($questionIdx);
-        if ($post["question" . $index] == $questionData["correct_answer"]) {
-          $point = $point + 1;
+	  if($mode=='cancel'){
+		if (isset($session->id)) {
+            $id = $session->id;
+            unset($id);
+            session_unset(); 
+			$this->RedirectToLogin();	
         }
-      }
-      $answers = implode(",", $post);
+	  }
+	  if($mode=='submit'){
+			$this->examclearAction();	
+	  }
+	  // Get exam name
+	  $examTb = $this->getServiceLocator()->get("ApplicantExamTable");
+	  $examData = $examTb->readByUrl($id);
+	  $name = $examData["name"];
+	  
+	  //TIMELIMIT TEST
+	  $idx = $examData["idx"];
+  
+	  // Set variables to be passed to the layout
+	  $viewModel = new ViewModel(["name" => $name, "idx" => $idx]);
+  
+	  // Set view template
+	  $viewModel->setTemplate("applicant/exam.phtml");
 
-      $examTb->updateSubmit($url, $answers, $point);
-
-      $message[0] = "内容を送信しました。";
-      $message[1] = "内容の検討後、担当者から連絡させていただきます。";
-      $message[2] = "ご協力いただきありがとうございました。";
-      $vm = new ViewModel(["message" => $message]);
-      $vm->setTemplate("/user/alert");
-      return $vm;
-    }
-
-    $questionDatas = [];
-    foreach ($questionIdxs as $index => $idx) {
-      $questionDatas[$index] = $questionTb->readByIdx($idx);
-    }
-    $datas["questionDatas"] = $questionDatas;
-
-
-    //view==============================================================
-    $vm = new ViewModel($datas);
-    $vm->setTemplate("/user/exam.phtml");
-    return $vm;
-		*/
-
-		/* 修正後： */
-		$url = $this->params()->fromRoute()["url"];
-
-		$session = new Container("user");
-		if (!isset($session) || $session["url"] != $url) { $this->RedirectToLogin($url); }
-
-		$this->layout("layout/user");
-
-		$post = $this->params()->fromPost();
-
-		$examTb = $this->getServiceLocator()->get("ExamTable");
-		$examData = $examTb->readByUrl($url);
-
-
-
-		if ($examData["get_point"] != "") {		// 試験をすでに受けた場合
-			$message[0] = "該当試験は受け済みの試験になります。";
-			$message[1] = "ご協力ありがとうございました。";
-			return $this->SetViewModel(["message" => $message], "user/alert.phtml");
-		}
-
-
-
-		// 設定ができてない場合
-		if ($examData["question_data"] == "") {
-			//　ログインをしなかった場合
-			if (!isset($session["token"])) { $this->RedirectToLogin($url); }
-			unset($session["token"]);
-
-			// 応募者が設定を確認しなかった場合、問題設定ページに移動
-			if (!isset($post["academic"])) {
-				$session["token"] = 1;
-				return $this->Setting($examData);
-			}
-			
-			// 応募者が設定を確認した時
-			$session["token"] = 1;
-			$this->MakeExam($url, $examData["question_nums"], $post);
-		}
-
-
-		// 試験受けるページに移動
-		if (isset($post["start"])) {
-			$datas["examData"] = $examData;
-
-			// 一時的にデータアップデート
-			$tempAnswers = "";
-			for ($i = 0; $i < $examData["question_nums"]; $i++) {
-				$tempAnswers .= "0,";
-			}
-			$tempAnswers = substr($tempAnswers , 0, -1);
-			$examTb->updateSubmit($url, null, 0);
-
-			$questionTb = $this->getServiceLocator()->get("QuestionPoolTable");
-			$questionIdxs = explode(",", $examData["question_data"]);
-			$questionDatas = array();
-			foreach ($questionIdxs as $index => $idx) {
-				$questionDatas[$index] = $questionTb->readByIdx($idx);
-			}
-
-			$datas["questionDatas"] = $questionDatas;
-
-			return $this->SetViewModel($datas, "user/exam.phtml");
-		}
-
-
-
-		// 試験を受けて送信した時
-		if (isset($post["end"])) {
-			unset($session);
-			unset($post["end"]);
-			$answers = implode(",", $post);
-			
-			$questionTb = $this->getServiceLocator()->get("QuestionPoolTable");
-			$questionIdxs = explode(",", $examData["question_data"]);
-			$point = 0;
-			foreach ($questionIdxs as $index => $questionIdx) {
-				$questionData = $questionTb->readByIdx($questionIdx);
-				if ($post["question" . $index] == $questionData["correct_answer"]) {
-					$point = $point + 1;
-				}
-			}
-
-			$examTb->updateSubmit($url, $answers, $point);
-
-			$message[0] = "該当試験は受け済みの試験になります。";
-			$message[1] = "内容の検討後、担当者から連絡させていただきます。";
-			$message[3] = "ご協力いただきありがとうございました。";
-			return $this->SetViewModel(["message" => $message], "user/alert.phtml");
-		}
-
-
-
-		//　ログインをしなかった場合
-		if (!isset($session["token"])) { $this->RedirectToLogin($url); }
-		unset($session["token"]);
-
-		// 試験案内ページに移動
-		return $this->SetViewModel(["name" => $examData["name"]] , "user/announce.phtml");
-		/* ここまで */
+	  return $viewModel;
   }
+  
+  function applicationclearAction() {
+	$this->layout("/applicant/applicationclear");
+	// $this->layout("layout/applicant/application_layout");
+	// $vm = new ViewModel();
+    // $vm->setTemplate("/applicant/applicationclear.phtml");
+    // return $vm;
+}
 
-	/* 問題がいない場合の機能追加
-		作成：朴昰成
-		作成日：2024/03/04
-	*/
+function examclearAction() {
+	$this->layout("/applicant/examclear");
+
+}
 
 
-	/** Redirect to Main page (user/main.phtml) */
-	function RedirectToMain() {
-		echo "
-		<script>
-			alert('URLを確認してください');
-			self.location.href='/user/main';
-		</script>
-		";
-		exit;
-	}
-
-	/** Redirect to Login page (user/login.phtml) */
-	function RedirectToLogin($url) {
+	function RedirectToLogin() {
 		echo "
 		<script>
 			alert('ログインしてください');
-			self.location.href='/user/login/$url';
+			self.location.href='/applicant/login';
 		</script>
 		";
 		exit;

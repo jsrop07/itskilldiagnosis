@@ -44,7 +44,6 @@ return array(
     ),
     'controllers' => array(
         'invokables' => array(
-            // "Admin" => "Applicant\Controller\AdminController",
             "Applicant" => "Applicant\Controller\ApplicantController",
         ),
     ),
@@ -55,15 +54,15 @@ return array(
         'not_found_template'       => 'error/404',
         'exception_template'       => 'error/index',
         'template_map' => array(
-					"admin"									=> __DIR__ . "/../view/layout/admin_layout.phtml",
-					"layout/user"						=> __DIR__ . "/../view/layout/user/layout.phtml",
-					"layout/user/login"			=> __DIR__ . "/../view/layout/user/login.phtml",
-					"breadcrumb"						=> __DIR__ . "/../view/layout/breadcrumb.phtml",
-					"pagination"						=> __DIR__ . "/../view/layout/pagination.phtml",
-            'layout/layout'           => __DIR__ . '/../view/layout/layout.phtml',
-            'layout/mylayout'           => __DIR__ . '/../view/layout/mylayout.phtml',
-            "layout/exam_layout" => __DIR__ . "/../view/layout/exam_layout.phtml",
-            "layout/none" => __DIR__ . "/../view/layout/none_layout.phtml",
+			// 		"admin"									=> __DIR__ . "/../view/layout/admin_layout.phtml",
+			// 		"layout/user"						=> __DIR__ . "/../view/layout/user/layout.phtml",
+			// 		"layout/user/login"			=> __DIR__ . "/../view/layout/user/login.phtml",
+			// 		"breadcrumb"						=> __DIR__ . "/../view/layout/breadcrumb.phtml",
+			// 		"pagination"						=> __DIR__ . "/../view/layout/pagination.phtml",
+            // 'layout/layout'           => __DIR__ . '/../view/layout/layout.phtml',
+            // 'layout/mylayout'           => __DIR__ . '/../view/layout/mylayout.phtml',
+            // "layout/exam_layout" => __DIR__ . "/../view/layout/exam_layout.phtml",
+            // "layout/none" => __DIR__ . "/../view/layout/none_layout.phtml",
         ),
         'template_path_stack' => array(
             __DIR__ . '/../view',

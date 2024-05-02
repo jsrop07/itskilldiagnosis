@@ -98,8 +98,10 @@ button.btn-sub {
 	height: 52px;
 	width: 100%;
 	border-bottom: 1px solid var(--line);
+	padding: 0 30px;
 	background: white;
 
+	text-align: left;
 	font-size: 14px;
 	font-weight: 700;
 	color: var(--font);

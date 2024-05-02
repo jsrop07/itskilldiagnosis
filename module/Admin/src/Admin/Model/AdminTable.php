@@ -27,7 +27,11 @@ class AdminTable
 	public function ReadAll()
 	{
 		$qry = $this->sql->select("admin")->where(["date_end" => null]);
-		return $this->sql->prepareStatementForSqlObject($qry)->execute();
+		try {
+			return $this->sql->prepareStatementForSqlObject($qry)->execute();
+		} catch (\Exception $e) {
+			return $e->getMessage();
+		}
 	}
 
 	/** Read Table data By Id
@@ -47,7 +51,11 @@ class AdminTable
 	public function ReadByCode($code)
 	{
 		$qry = $this->sql->select("admin")->where(["date_end" => null, "code" => $code]);
-		return $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
+		try {
+			return $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
+		} catch (\Exception $e) {
+			return $e->getMessage();
+		}
 	}
 
 	/** Read Table data By Name

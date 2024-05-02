@@ -26,10 +26,12 @@ class QuestionTable {
 		$this->sql = new Sql($this->adapter);
 	}
 
-	public function CreateQuestion($datas)
-	{
+	public function CreateQuestion($datas) {
 		$qry = $this->sql->insert("question")->values($datas);
-		return $this->sql->prepareStatementForSqlObject($qry)->execute();
+		try { return $this->sql->prepareStatementForSqlObject($qry)->execute();
+		} catch (\Exception $e) {
+			return $e->getMessage();
+		}
 	}
 
 	public function ReadQuestion() {
@@ -37,221 +39,179 @@ class QuestionTable {
 		return $this->sql->prepareStatementForSqlObject($qry)->execute();
 	}
 
+	/** Read for list
+	 * @return mixed datas
+	*/
 	public function ReadAllList() {
-		$qry = $this->sql->select("question")->where(["date_delete" => null])->order("date_approve desc");
-		return $this->sql->prepareStatementForSqlObject($qry)->execute();
-	}
-
-	public function ReadListByRegist($code) {
-		$where = new Where();
-		$where
-			->isNull("date_delete")
-			->and->nest()
-				->isNotNull("date_approve")
-				->or->equalTo("admin_regist", $code)
-			->unnest();
-		
-		$qry = $this->sql->select("question")->where($where)->order("date_approve desc");
-		return $this->sql->prepareStatementForSqlObject($qry)->execute();
-	}
-
-	public function ReadListByCode($code) {
-		$where = new Where();
-		$where
-			->equalTo("status", 3);
-			$where->or->nest()
-				->notEqualTo("status", 0)
-				->and->nest()
-					->equalTo("admin_create", $code)
-					->or->equalTo("admin_regist", $code)
-				->unnest()
-			->unnest();
-			
-
-		$qry = $this->sql->select("question")->where($where);
-		return $this->sql->prepareStatementForSqlObject($qry)->execute();
-	}
-
-	public function ReadByIdx($idx) {
-		$qry = $this->sql->select("question")->where(["idx" => $idx]);
-		return $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
-	}
-
-	public function ReadListByOption($optionDatas) {
-		$order = "date_approve DESC";
-		if (isset($optionDatas["align"])) {
-			$order = [str_replace("_", " ", $optionDatas["align"]), "date_approve DESC"];
-			unset($optionDatas["align"]);
+		$qry = $this->sql->select("question")->where(["date_delete" => null])->order("date_regist DESC");
+		try {
+			return iterator_to_array($this->sql->prepareStatementForSqlObject($qry)->execute());
+		} catch (\Exception $e) {
+			return $e->getMessage();
 		}
-
-		$where = new Where();
-		$where->isNull("date_delete");
-		
-		if (isset($optionDatas["title"])) {
-			$where->and->like("title", "%" . $optionDatas["title"] . "%");
-		}
-		
-		$qry = $this->sql->select("question")->where($where)->order($order);
-		return $this->sql->prepareStatementForSqlObject($qry)->execute();
 	}
-
-	public function ReadListByCode_Option($code, $optionDatas) {
-		$where = new Where();
-		$where
-			->nest()->equalTo("status", 3)
-				->or->nest()
-					->notEqualTo("status", 0)
-					->and->nest()
-						->equalTo("admin_create", $code)
-						->or->equalTo("admin_regist", $code)
-					->unnest()
-				->unnest()
-			->unnest();
-		foreach ($optionDatas as $key => $value) {
-			$where->and->equalTo($key, $value);
-		}
-		
-		$qry = $this->sql->select("question")->where($where);
-		return $this->sql->prepareStatementForSqlObject($qry)->execute();
-	}
-
-	public function ReadByAdminCode($code)
-	{
-		$where = new Where();
-		$where->isNotNull("date_regist")->or->equalTo("admin_regist", $code);
-
-		$qry = $this->sql->select("question")->where($where)->order("date_regist DESC");
-		return $this->sql->prepareStatementForSqlObject($qry)->execute();
-	}
-
-	public function ReadSaveByAdminCode($code)
-	{
-		$qry = $this->sql->select("question")->where(["status" => 0, "admin_create" => $code]);
-		return $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
-	}
-
-	public function ReadByAdminCode_RegisterCode($code_user, $code_register)
-	{
-		$where = new Where();
-		$where
-			->nest()	// (admin_regist = $code_user AND admin_regist = $code_register)
-				->equalTo("admin_regist", $code_user)
-				->and->equalTo("admin_regist", $code_register)
-			->unnest()
-			->or->nest()	// (admin_regist = $code_register AND date_regist <> null)
-				->equalTo("admin_regist", $code_register)
-				->and->isNotNull("date_regist")
-			->unnest();
-
-		$qry = $this->sql->select("question")->where($where)->order("date_regist DESC");
-		return $this->sql->prepareStatementForSqlObject($qry)->execute();
-	}
-
-	public function ReadByIndex($idx) {
-		$qry = $this->sql->select("question")->where(["idx" => $idx]);
-		return $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
-	}
-
-	public function ReadNotRegist() {
-		$qry = $this->sql->select("question")->where(["status != 3"]);
-		return $this->sql->prepareStatementForSqlObject($qry)->execute();
-	}
-
-	public function ReadNotRegistByRegister($code) {
-		$qry = $this->sql->select("question")->where(["status != 3", "admin_regist" => $code]);
-		return $this->sql->prepareStatementForSqlObject($qry)->execute();
-	}
-
-	public function ReadByCreater_Register($code) {
-		$where = new Where();
-		$where->equalTo("admin_create", $code)->or->equalTo("admin_regist", $code);
-
-		$qry = $this->sql->select("question")->where($where);
-		return $this->sql->prepareStatementForSqlObject($qry)->execute();
-	}
-
-	public function UpdateQuestion($whereData, $setData) {
-		$qry = $this->sql->update("question")->where($whereData)->set($setData);
-		return $this->sql->prepareStatementForSqlObject($qry)->execute();
-	}
-
-	public function UpdateQuestiont($datas) {
-		$idx = $datas["idx"];
-		unset($datas["idx"]);
-
-		$datas["date_update"] = date("Y-m-d H:i:s");
-
-		$qry = $this->sql->update("question")->where(["idx" => $idx])->set($datas);
-		$this->sql->prepareStatementForSqlObject($qry)->execute();
-	}
-
-	public function UpdateToRegistByIdx($idx, $code) {
-		$date = date("Y-m-d H:i:s");
-		
-		$qry = $this->sql->update("question")->where(["idx" => $idx])
-			->set(["admin_approve" => $code, "status" => 21, "date_approve" => $date]);
-		$this->sql->prepareStatementForSqlObject($qry)->execute();
-	}
-
-	public function UpdateToRegistByMaster_Idx($code, $idx) {
-		$date = date("Y-m-d H:i:s");
-		
-		$qry = $this->sql->update("question")->where(["idx" => $idx])
-			->set(["status" => 2, "admin_regist" => $code, "date_regist" => $date, "date_update" => $date]);
-		$this->sql->prepareStatementForSqlObject($qry)->execute();
-	}
-
-	public function DeleteQuestionByIdx($idx) {
-		$qry = $this->sql->delete("question")->where(["idx" => $idx]);
-		$this->sql->prepareStatementForSqlObject($qry)->execute();
-	}
-
 	public function GetAllList() {
 		$qry = $this->sql->select("question")->where(["date_delete" => null])->order("date_regist desc");
+		$paginatorAdapter = new DbSelect($qry, $this->adapter);
+		return new Paginator($paginatorAdapter);
+	}
+	
+	/** Read for list by search data 
+	 * @param mixed $whereDatas array #index => admin_approve, title
+	 * @return mixed datas
+	*/
+	public function ReadListByOption($whereDatas) {
+		$where = new Where();
+		$where->isNull("date_delete");
+		foreach ($whereDatas as $field => $data) {
+			if ($field == "title") {
+				$where->and->like("title", "%" . $data . "%");
+				continue;
+			}
+			$where->and->equalTo($field, $data);
+		}
 
+		$qry = $this->sql->select("question")->where($where)->order("date_regist DESC");
+		try {
+			return iterator_to_array($this->sql->prepareStatementForSqlObject($qry)->execute());
+		} catch (\Exception $e) {
+			return $e->getMessage();
+		}
+	}
+	public function GetListByOption($whereDatas) {
+		$where = new Where();
+		$where->isNull("date_delete");
+		foreach ($whereDatas as $field => $data) {
+			if ($field == "title") {
+				$where->and->like("title", "%" . $data . "%");
+				continue;
+			}
+			$where->and->equalTo($field, $data);
+		}
+
+		$qry = $this->sql->select("question")->where($where)->order("date_regist DESC");
 		$paginatorAdapter = new DbSelect($qry, $this->adapter);
 		return new Paginator($paginatorAdapter);
 	}
 
-	public function GetListByRegist($code) {
+	/** Read for list by admin_code
+	 * @param string $code admin_regist
+	 * @return mixed datas
+	 */
+	public function ReadValidList($code) {
 		$where = new Where();
-		$where
-			->isNull("date_delete")
+		$where->isNull("date_delete")
 			->and->nest()
 				->isNotNull("date_approve")
 				->or->equalTo("admin_regist", $code)
 			->unnest();
 
-		$qry = $this->sql->select("question")->where($where)->order("date_approve desc");
-
-		$paginatorAdapter = new DbSelect($qry, $this->adapter);
-		return new Paginator($paginatorAdapter);
-	}
-
-	public function GetListByOption($optionDatas) {
-		$order = "date_approve DESC";
-		if (isset($optionDatas["align"])) {
-			$order = [str_replace("_", " ", $optionDatas["align"]), "date_approve DESC"];
-			unset($optionDatas["align"]);
+		$qry = $this->sql->select("question")->where($where)->order("date_regist DESC");
+		try {
+			return iterator_to_array($this->sql->prepareStatementForSqlObject($qry)->execute());
+		} catch (\Exception $e) {
+			return $e->getMessage();
 		}
-
+	}
+	public function GetValidList($code) {
 		$where = new Where();
-		$where->isNull("date_delete");
-		foreach ($optionDatas as $key => $value) {
-			$where->and->equalTo($key, $value);
-		}
+		$where->isNull("date_delete")
+			->and->nest()
+				->isNotNull("date_approve")
+				->or->equalTo("admin_regist", $code)
+			->unnest();
 
-		$qry = $this->sql->select("question")->where($where)->order($order);
-
+		$qry = $this->sql->select("question")->where($where)->order("date_regist DESC");
 		$paginatorAdapter = new DbSelect($qry, $this->adapter);
 		return new Paginator($paginatorAdapter);
 	}
 
-	public function getNoticeList($params) {
-		$qry = $this->sql->select("question")->where(["date_delete" => null])->order("date_regist desc");
+	/** Read for list by admin_code and search data
+	 * @param string $code admin_regist
+	 * @param mixed $whereDatas array #index => admin_approve, title
+	 * @return mixed datas
+	*/
+	public function ReadValidListByOption($code, $whereDatas) {
+		$where = new Where();
+		$where->isNull("date_delete")
+			->and->nest()
+				->isNotNull("date_approve")
+				->or->equalTo("admin_regist", $code)
+			->unnest();
+		foreach ($whereDatas as $field => $data) {
+			if ($field == "title") {
+				$where->and->like("title", "%" . $data . "%");
+				continue;
+			}
+			$where->and->equalTo($field, $data);
+		}
 
-		$paginatorAdapter = new DbSelect($qry ,$this->adapter);
-		$return = new Paginator($paginatorAdapter);
-		return $return;
+		$qry = $this->sql->select("question")->where($where)->order("date_regist DESC");
+		try {
+			return iterator_to_array($this->sql->prepareStatementForSqlObject($qry)->execute());
+		} catch (\Exception $e) {
+			return $e->getMessage();
+		}
+	}
+	public function GetValidListByOption($code, $whereDatas) {
+		$where = new Where();
+		$where->isNull("date_delete")
+			->and->nest()
+				->isNotNull("date_approve")
+				->or->equalTo("admin_regist", $code)
+			->unnest();
+		foreach ($whereDatas as $field => $data) {
+			if ($field == "title") {
+				$where->and->like("title", "%" . $data . "%");
+				continue;
+			}
+			$where->and->equalTo($field, $data);
+		}
+
+		$qry = $this->sql->select("question")->where($where)->order("date_regist DESC");
+		$paginatorAdapter = new DbSelect($qry, $this->adapter);
+		return new Paginator($paginatorAdapter);
+	}
+
+	/** Read data by index
+	 * @param int $idx index
+	 * @return mixed data
+	 */
+	public function ReadByIdx($idx) {
+		$qry = $this->sql->select("question")->where(["idx" => $idx]);
+		try {
+			return $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
+		} catch (\Exception $e) {
+			return $e->getMessage();
+		}
+	}
+
+	/** Update data by index
+	 * @param int $idx index
+	 * @param mixed $setDatas
+	 * @return mixed data
+	 */
+	public function UpdateByIdx($idx, $setDatas) {
+		$qry = $this->sql->update("question")->where(["idx" => $idx])->set($setDatas);
+		try {
+			return $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
+		} catch (\Exception $e) {
+			return $e->getMessage();
+		}
+	}
+
+	/** Delete data by index
+	 * @param int $idx index
+	 * @param mixed $setDatas
+	 * @return mixed data
+	 */
+	public function DeleteQuestion($idx, $setDatas) {
+		$setDatas["date_delete"] = date("Y-m-d H:i:s");
+		$qry = $this->sql->update("question")->where(["idx" => $idx])->set($setDatas);
+		try {
+			return $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
+		} catch (\Exception $e) {
+			return $e->getMessage();
+		}
 	}
 }

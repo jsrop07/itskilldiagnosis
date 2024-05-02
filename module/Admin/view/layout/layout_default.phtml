@@ -1,12 +1,6 @@
 <?php
 	if (!isset($_SESSION)) { session_start(); }
-	if (!isset($_SESSION["user"]) || !isset($_SESSION["user"]["code"])) {
-		echo "<script>
-			alert('ログインをしてください。');
-			self.location.href='/admin/login';
-		</script>";
-	}
-	else { $userData = $_SESSION["user"]; }
+	$userData = $_SESSION["user"];
 
 	echo $this->doctype();
 	$url = explode("/", $_SERVER["REQUEST_URI"]);
@@ -19,6 +13,7 @@
 	$breadcrumb = json_decode($this->breadcrumb, true);
 	$title["question"] = "ITスキル診断問題管理";
 	$title["diagnosis"] = "ITスキル診断書管理";
+	$title["manager"] = "ITスキル診断管理者管理";
 ?>
 
 <html lang="jp">
@@ -63,6 +58,9 @@
 		</header>
 
 		<aside>
+			<?php if ($_SESSION["user"]["level"] >= 2): ?>
+				<button class="btn-sub <?php echo $title[$mainMenu] == "ITスキル診断管理者管理" ? " active" : ""; ?>" onclick="self.location.href='/admin/manager/list'">ITスキル診断管理者管理</button>
+			<?php endif; ?>
 			<button class="btn-sub <?php echo $title[$mainMenu] == "ITスキル診断状況管理" ? " active" : ""; ?>" onclick="self.location.href='/admin/situation/list'">ITスキル診断状況管理</button>
 			<button class="btn-sub <?php echo $title[$mainMenu] == "ITスキル診断書管理" ? " active" : ""; ?>" onclick="self.location.href='/admin/diagnosis/list'">ITスキル診断書診断管理</button>
 			<button class="btn-sub <?php echo $title[$mainMenu] == "ITスキル診断問題管理" ? " active" : ""; ?>" onclick="self.location.href='/admin/question/list'">ITスキル診断問題管理</button>

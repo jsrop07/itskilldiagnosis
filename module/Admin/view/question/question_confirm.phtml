@@ -1,15 +1,12 @@
 <?php
-	$register = $printDatas["register"];
-	unset($printDatas["register"]);
-
 	$numTexts = array("①", "②", "③", "④", "⑤");
+
+	$answers = explode(",", $printDatas["answers"]);
 ?>
 
 <?php echo $this->partial("breadcrumb", ["datas" => $breadcrumbData]); ?>
 
 <h1 class="title"><?php echo $title; ?></h1>
-
-<form id="form" method="post" action="./confirm">
 	<div class="emegra card">
 		<div class="card-header">設定</div>
 
@@ -49,7 +46,7 @@
 
 				<dt>答え</dt>
 				<div id="answers" name="answers" style="display: grid; grid-template-columns: 15px 1fr; grid-gap: 24px 8px;">
-					<?php foreach($printDatas["answers"] as $index => $data): ?>
+					<?php foreach($answers as $index => $data): ?>
 						<dt><?= $numTexts[$index]; ?></dt>
 						<dd><?php echo $data; ?></dd>
 					<?php endforeach; ?>
@@ -83,15 +80,23 @@
 			</dl>
 		</div>
 	</div>
+
+
+
+<form id="form" method="post" action="./input">
+	<?php foreach ($inputDatas as $key => $data): ?>
+		<input type="hidden" name="<?php echo $key; ?>" value="<?php echo $data; ?>"/>
+	<?php endforeach; ?>
 </form>
 
 <div class="btn-place" style="margin-top: 32px;">
-	<button class="emegra" onclick="Regist();">確認</button>
 	<button class="emegra cancel" onclick="Return();">戻る</button>
+	<button class="emegra" onclick="Regist();">確認</button>
 </div>
 
 <script type="text/javascript">
 	const numTexts = ["①", "②", "③", "④", "⑤"];
+	const form = document.getElementById("form");
 
 	function Regist() {
 		const postForm = new FormData();
@@ -116,5 +121,9 @@
 				}
 			}
 		}
+	}
+
+	function Return() {
+		form.submit();
 	}
 </script>

@@ -1,0 +1,90 @@
+<?php
+	if (!isset($_SESSION)) { session_start(); }
+
+	$isSetData = false;
+
+	function InitStyle() {
+		return " font-style: italic; color: grey;";
+	}
+?>
+
+<?php echo $this->partial("breadcrumb", ["datas" => $breadcrumbData]); ?>
+
+<h1 class="title"><?php echo $title; ?></h1>
+
+<form id="form" method="post" action="./confirm">
+	<?php if ($isSetData): ?>
+		<input name="idx" value="<?php echo $questionData["idx"]; ?>" hidden/>
+	<?php endif; ?>
+	<style type="text/css">
+		option { color: black; }
+		input::placeholder { font-style: italic; }
+	</style>
+
+	<div class="emegra card">
+		<div class="card-header">管理者情報</div>
+
+		<div class="card-body">
+			<style type="text/css">
+				dl.emegra.setting { grid-template-columns: 140px 1fr; }
+			</style>
+			<dl class="emegra setting">
+				<dt>固有番号</dt>
+				<dd><input class="form-control form-control-sm" style="width: 150px;" value="24-0415002"/></dd>
+
+				<dt>職別コード</dt>
+				<dd><input class="form-control form-control-sm" style="width: 150px;" value="24-0415002"/></dd>
+
+				<dt>権限</dt>
+				<dd>
+					<select class="form-select" name="class2nd" onchange="ChangeInputStyle(this)" style="width: 150px;">
+						<option>権限なし</option>
+						<option>承認者</option>
+					</select>
+				</dd>
+		
+				<dt>ログインID</dt>
+				<dd><input class="form-control" placeholder="IDを入力してください"/></dd>
+		
+				<dt>パスワード</dt>
+				<dd><input class="form-control" name="title" type="text" placeholder="パスワードを入力してください"/></dd>
+				
+				<dt>名前</dt>
+				<dd><input class="form-control" name="title" type="text" placeholder="名前を入力してください"/></dd>
+				
+				<dt>担当者</dt>
+				<dd>
+					<select class="form-select" name="class2nd" onchange="change(this.value)" style="width: 150px;">
+						<option value="y">承認者</option>
+						<option value="n">権限なし</option>
+					</select>
+				</dd>
+				
+				<dt>SMTP パスワード</dt>
+				<dd><input class="form-control" name="title" id="smtp" type="text" placeholder="SMTPを入力してください" disabled/></dd>
+			</dl>
+		</div>
+	</div>
+</form>
+
+<div class="btn-place" style="margin-top: 32px;">
+	<button class="emegra cancel" onclick="history.back();">戻る</button>
+	<?php if (isset($questionData)): ?>
+		<button class="emegra" onclick="Update();">修正</button>
+	<?php else: ?>
+		<button class="emegra" onclick="Regist();">登録</button>
+	<?php endif; ?>
+</div>
+
+<script type="text/javascript">
+	const smtp = document.getElementById("smtp");
+
+	function change(value) {
+		if (value == "y") {
+			smtp.disabled = false;
+		}
+		else {
+			smtp.disabled = true;
+		}
+	}
+</script>

@@ -4,6 +4,9 @@ namespace Admin\Model;
 
 use Zend\Db\Adapter\Adapter;
 use Zend\Db\Sql\Sql;
+use Zend\Db\Sql\Where;
+use Zend\Paginator\Adapter\DbSelect;
+use Zend\Paginator\Paginator;
 
 class AdminTable
 {
@@ -24,14 +27,21 @@ class AdminTable
 		$this->sql = new Sql($this->adapter);
 	}
 
-	public function ReadAll()
-	{
+	/** Read for list
+	 * @return mixed datas
+	*/
+	public function ReadAllList() {
 		$qry = $this->sql->select("admin")->where(["date_end" => null]);
 		try {
-			return $this->sql->prepareStatementForSqlObject($qry)->execute();
+			return iterator_to_array($this->sql->prepareStatementForSqlObject($qry)->execute());
 		} catch (\Exception $e) {
 			return $e->getMessage();
 		}
+	}
+	public function GetAllList() {
+		$qry = $this->sql->select("admin")->where(["date_end" => null]);
+		$paginatorAdapter = new DbSelect($qry, $this->adapter);
+		return new Paginator($paginatorAdapter);
 	}
 
 	/** Read Table data By Id

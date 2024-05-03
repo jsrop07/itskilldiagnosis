@@ -1,17 +1,7 @@
 <?php
+	$levelTexts = ["無し", "承認", "マスター"];
+
 	if (!isset($_SESSION)) { session_start(); }
-
-	$isApprover = false;
-	if ($_SESSION["user"]["level"] >= 1) { $isApprover = true; }
-
-	function ChkDeleter($data, $optionDatas) {
-		if ($optionDatas[$data["status"]] == "新規") { return true; }
-		return false;
-	}
-	
-	$url = $_SERVER["REQUEST_URI"];
-	$url = $url . "?";
-	$query = explode("?", $url)[1];
 ?>
 
 <?php echo $this->partial("breadcrumb", ["datas" => $breadcrumbData]); ?>
@@ -73,15 +63,14 @@
 	}
 </style>
 <content class="header">
-	<div class="title">管理者管理一覧</div>
+	<div class="title">ITスキル診断管理者管理</div>
 </content>
 
 <content class="main">
-	<?php if ( 	empty($questionDatas)): ?>
+	<?php if (empty($adminDatas)): ?>
 		<div class="table-empty" style="margin-top: 16px;">
 			データがありません。
 		</div>
-		
 	<?php else: ?>
 		<table class="emegra" style="margin-top: 8px;">
 			<thead>
@@ -96,30 +85,17 @@
 				</tr>
 			</thead>
 			<tbody>
-				<?php /*foreach($questionDatas as $data): ?>
-					<tr>
+				<?php foreach($adminDatas as $data): ?>
+					<tr onclick="self.location.href='./detail/<?php echo $data['idx']; ?>'" style="cursor: pointer;">
 						<td><?php echo $data["num"]; ?></td>
-						<td><?php echo $optionDatas[$data["status"]]; ?></td>
-						<td><?php echo $optionDatas[$data["class1st"]]; ?></td>
-						<td><?php echo $optionDatas[$data["class2nd"]]; ?></td>
-						<td><?php echo $optionDatas[$data["level"]]; ?></td>
-						<td class="list-title" onclick="self.location.href='./detail/<?php echo $data['idx']; ?>';"><?php echo $data["title"]; ?></td>
-						<td><?php echo $optionDatas[$data["type"]]; ?></td>
-						<td><?php echo $data["point"]; ?></td>
-						<td><?php echo date("y.m.d", strtotime($data["date_regist"])); ?></td>
-						<td><?php echo (isset($data["date_approve"])) ? date("y.m.d", strtotime($data["date_approve"])) : "未承認"; ?></td>
-						<td><input name="checkIdx" type="checkbox" value="<?php echo $data["idx"]; ?>" onclick="Checking(this);" style="cursor: pointer;"<?php echo ($isApprover || ChkDeleter($data, $optionDatas)) ? "" : " disabled"; ?>></td>
+						<td style="text-align: start;"><?php echo $data["id"]; ?></td>
+						<td style="text-align: start;"><?php echo $data["name"]; ?></td>
+						<td style="text-align: start;"><?php echo $levelTexts[$data["level"]]; ?></td>
+						<td><?php echo ($data["pic"] == "y") ? "o" : "x"; ?></td>
+						<td style="text-align: start;"><?php echo date("Y/m/d h:i:s", strtotime($data["date_login"])); ?></td>
+						<td style="text-align: start;"><?php echo date("Y/m/d h:i:s", strtotime($data["date_start"])); ?></td>
 					</tr>
-				<?php endforeach; */?>
-					<tr onclick="self.location.href='./detail'">
-						<td>1</td>
-						<td style="text-align: start;">manage@gngs.co.jp</td>
-						<td style="text-align: start;">マスター</td>
-						<td style="text-align: start;">マスター</td>
-						<td>x</td>
-						<td><?= date("Y-m-d H:m:s"); ?></td>
-						<td><?= date("Y-m-d H:m:s"); ?></td>
-					</tr>
+				<?php endforeach; ?>
 			</tbody>
 		</table>
 	<?php endif; ?>
@@ -133,6 +109,3 @@
 		</div>	
 	</div>
 </content>
-
-<script type="text/javascript">
-</script>

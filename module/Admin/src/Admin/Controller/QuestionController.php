@@ -88,10 +88,11 @@ class QuestionController extends AbstractActionController
 			$datas["searchDatas"]["align"] = $query["align"];
 		}	
 
-		// Save output datas
+		// Save total datas number
 		$datas["totalDataNum"] = count($totalQuestionDatas);
 		$datas = $this->GetOptionDatas($datas);
 
+		// Extract output datas and Add numbering
 		if (!empty($totalQuestionDatas)) {
 			$PrintQuestionDatas = array();
 			$startIdx = ($page - 1) * $printDataNum;

@@ -7,34 +7,64 @@ use Zend\Session\Container;
 
 class ManagerController extends AbstractActionController
 {
-	public function indexAction() { print_r("Diagnosis Index"); exit; }
+	function ChkLogin() {
+		$session = new Container("user");
+
+		if (!isset($session["code"]) || $session["level"] < 2) {
+			echo "
+				<script>
+					alert('ログインしてくたさい。');
+					self.location.href='/admin/login';
+				</script>
+			";
+		}
+	}
+
+	public function indexAction() {
+		$this->ChkLogin();
+		print_r("Manager Index");
+		exit;
+	}
 	
 	public function listAction() {
-		$datas["breadcrumbData"] = ["ITスキル診断管理者管理"];
+		$this->ChkLogin();
+		$datas["breadcrumbData"] = ["ITスキル診断問項管理"];
 
-		$query = $this->params()->fromQuery();
-		unset($query["page"]);
+		$printDataNum = 10;							// Number of data to output on one page
 
+		// Get Current Page
 		$page = $this->params()->fromQuery("page", 1);
-		$printDataNum = 10;
-		$questionTb = $this->getServiceLocator()->get("QuestionTable");
-		$totalQuestionDatas = iterator_to_array($questionTb->ReadAllList());
-		$paginationData = $questionTb->GetAllList();
 
-		$datas["questionDatas"] = $totalQuestionDatas;
-		$datas["totalData"] = count($totalQuestionDatas);
+		// Get datas from AdminTable
+		$adminTb = $this->getServiceLocator()->get("AdminTable");
+		$totalQuestionDatas = $adminTb->ReadAllList();
+		$paginationData = $adminTb->GetAllList();
+
+		// Extract output datas and Add numbering
+		if (!empty($totalQuestionDatas)) {
+			$PrintQuestionDatas = array();
+			$startIdx = ($page - 1) * $printDataNum;
+			$endIdx = ($page * $printDataNum);
+			
+			for ($i = 0; $startIdx + $i < $endIdx; $i++) {
+				if (!isset($totalQuestionDatas[$startIdx + $i])) break;
+
+				$PrintQuestionDatas[$i] = $totalQuestionDatas[$startIdx + $i];
+				$PrintQuestionDatas[$i]["num"] = count($totalQuestionDatas) - ($startIdx + $i);
+			}
+
+			$datas["adminDatas"] = $PrintQuestionDatas;
+		}
 
 		$vm = $this->SetViewModel($datas, "/manager/manager_list.phtml");
-		
 		$vm->noticelist = $paginationData;
 		$vm->noticelist->setCurrentPageNumber($page);
 		$vm->noticelist->setItemCountPerPage($printDataNum);
-
 		return $vm;
 	}
 
 	public function registAction() {
-		$datas["breadcrumbData"] = ["ITスキル診断管理者管理", "管理者登録"];
+		$datas["breadcrumbData"] = ["ITスキル診断問項管理", "管理者登録"];
 		$datas["title"] = "管理者登録";
 
 		return $this->SetViewModel($datas, "/manager/manager_input.phtml");

@@ -111,21 +111,40 @@ class ManagerController extends AbstractActionController
 		return $this->SetViewModel($datas, "/manager/manager_confirm.phtml");
 	}
 
+	/** When you choose list data on 管理者一覧 page */
 	public function detailAction() {
 		$this->ChkLogin();
 		$datas["breadcrumbData"] = ["ITスキル診断書管理", "管理者詳細"];
 		$datas["title"] = "管理者詳細";
 
-		// Get Admin record Idx
-		$idx = $this->params()->fromRoute("index");
+		// Get Code
+		$code = $this->params()->fromRoute("index");
 
 		$adminTb = $this->getServiceLocator()->get("AdminTable");
-		try { $datas["adminData"] = $adminTb->ReadByIdx($idx); }
+		try { $datas["adminData"] = $adminTb->ReadByCode($code); }
 		catch (\Exception $e) { print_r($e->getMessage()); exit; }
 
-		print_r($datas["adminData"]);
-
 		return $this->SetViewModel($datas, "/manager/manager_detail.phtml");
+	}
+
+	/** When you click 修正 on 管理者詳細 page */
+	public function modifyAction() {
+		$this->ChkLogin();
+		$datas["breadcrumbData"] = ["ITスキル診断書管理", "管理者詳細", "管理者修正"];
+		$datas["title"] = "管理者修正";
+
+		$post = $this->params()->fromPost();
+
+		// Check return from 登録確認　page
+		if (isset($post["id"])) {
+			$datas["adminData"] = $post;
+		} else {
+			$adminTb = $this->getServiceLocator()->get("AdminTable");
+			try { $datas["adminData"] = $adminTb->ReadByCode($post["code"]); }
+			catch (\Exception $e) { print_r($e->getMessage()); exit; }
+		}
+
+		return $this->SetViewModel($datas, "/manager/manager_modify.phtml");
 	}
 
 	public function createAction() {
@@ -135,25 +154,48 @@ class ManagerController extends AbstractActionController
 		unset($post["num"]);
 
 		$post["password"] = $this->Encryption($post["password"]);
-		$post["date_start"] = date("Y-m-d H:i:s");
 
 		$adminTb = $this->getServiceLocator()->get("AdminTable");
 
-		// Check code overlap
+		// Check Code overlap
 		try { $result = $adminTb->ReadByCode($post["code"]); }
 		catch (\Exception $e) { die($e->getMessage()); }
 		if (!empty($result)) { die("code overlapped"); }
 
-		// Check id overlap
+		// Check Id overlap
 		try { $result = $adminTb->ReadById($post["id"]); }
 		catch (\Exception $e) { die($e->getMessage()); }
 		if (!empty($result)) { die("id overlapped"); }
 
-		// Insert record
+		// Insert Record
 		try { $adminTb->CreateAdmin($post); }
 		catch (\Exception $e) { die($e->getMessage()); }
 
 		die("success");
+	}
+
+	public function updateAction() {
+		$post = $this->params()->fromPost();
+
+		$adminTb = $this->getServiceLocator()->get("AdminTable");
+
+		// Add password & date_login from Before data
+		try {
+			$adminData = $adminTb->ReadByCode($post["code"]);
+			$post["password"] = $adminData["password"];
+			$post["date_login"] = $adminData["date_login"];
+		} catch (\Exception $e) { die($e->getMessage()); }
+
+		// Update Before data to delete
+		try { $adminTb->UpdateToDelete($post["idx"]); }
+		catch (\Exception $e) { die($e->getMessage()); }
+		unset($post["idx"]);
+
+		// Insert Record
+		try { $adminTb->CreateAdmin($post); }
+		catch (\Exception $e) { die($e->getMessage()); }
+
+		die ("success");
 	}
 
 	/** Set Layout & Make ViewModel with datas and template 

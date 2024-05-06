@@ -27,16 +27,17 @@ class AdminTable
 		$this->sql = new Sql($this->adapter);
 	}
 
-	/** Create record
+	/** Create Record
 	 * @param mixed $valueDatas Array["field" => "value"]
 	*/
 	public function CreateAdmin($valueDatas) {
+		$valueDatas["date_start"] = date("Y-m-d H:i:s");
 		$qry = $this->sql->insert("admin")->values($valueDatas);
 		return $this->sql->prepareStatementForSqlObject($qry)->execute();
 	}
 
-	/** Read for list
-	 * @return mixed Record Array
+	/** Read Records for List
+	 * @return mixed Records
 	*/
 	public function ReadAllList() {
 		$qry = $this->sql->select("admin")->where(["date_end" => null]);
@@ -61,7 +62,7 @@ class AdminTable
 	}
 
 	/** Read Table record By Code
-	 * @param mixed $code
+	 * @param string $code
 	 * @return mixed Record
 	 */
 	public function ReadByCode($code) {
@@ -118,6 +119,14 @@ class AdminTable
 		$qry = $this->sql->update("admin")
 			->where(["code" => $code, "date_end" => null])
 			->set(["date_login" => date("Y-m-d H:i:s")]);
+		$this->sql->prepareStatementForSqlObject($qry)->execute();
+	}
+
+	/** Update date_end for Record deleted
+	 * @param int $idx
+	 */
+	public function UpdateToDelete($idx) {
+		$qry = $this->sql->update("admin")->where(["idx" => $idx])->set(["date_end" => date("Y-m-d H:i:s")]);
 		$this->sql->prepareStatementForSqlObject($qry)->execute();
 	}
 }

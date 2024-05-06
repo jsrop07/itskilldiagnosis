@@ -92,7 +92,7 @@
 						<td style="text-align: start;"><?php echo $data["name"]; ?></td>
 						<td style="text-align: start;"><?php echo $levelTexts[$data["level"]]; ?></td>
 						<td><?php echo ($data["pic"] == "y") ? "o" : "x"; ?></td>
-						<td style="text-align: start;"><?php echo date("Y/m/d h:i:s", strtotime($data["date_login"])); ?></td>
+						<td style="text-align: start;"><?php echo (empty($data["date_login"])) ? "無し" : date("Y/m/d h:i:s", strtotime($data["date_login"])); ?></td>
 						<td style="text-align: start;"><?php echo date("Y/m/d h:i:s", strtotime($data["date_start"])); ?></td>
 					</tr>
 				<?php endforeach; ?>
@@ -105,7 +105,7 @@
 			<?php echo $this->paginationControl($this->noticelist, "sliding", array("pagination", "Notice"), array("url" => "")); ?>
 		</div>
 		<div>
-			<button class="emegra" onclick="self.window.location='./regist'">新規登録</button>
+			<button class="emegra" onclick="self.window.location='./input'">新規登録</button>
 		</div>	
 	</div>
 </content>

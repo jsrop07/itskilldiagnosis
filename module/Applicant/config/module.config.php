@@ -21,6 +21,19 @@ return array(
                     ),
                 ),
             ),
+
+            "temp" => array(
+                'type' => 'Zend\Mvc\Router\Http\Segment',
+                'options' => array(
+                    'route'    => "/admin/applicant[/:action][/:index]",
+                    'constraints' => array(),
+                    'defaults' => array(
+                        "controller" => "Applicant",
+                        'action'     => 'index',
+                    ),
+                ),
+            ),
+            
         ),
     ),
     'service_manager' => array(
@@ -54,6 +67,10 @@ return array(
         'not_found_template'       => 'error/404',
         'exception_template'       => 'error/index',
         'template_map' => array(
+			"layout/default"									=> __DIR__ . "/../applicant/view/layout/admin/layout_default.phtml",
+            "breadcrumb"									=> __DIR__ . "/../view/layout/admin/breadcrumb.phtml",
+            "pagination2"                                    => __DIR__ . "/../view/layout/admin/pagination2.phtml",
+                                        // C:\xampp\htdocs\gngitskill\admin\module\Applicant\view\layout\admin\pagination2.phtml
 			// 		"admin"									=> __DIR__ . "/../view/layout/admin_layout.phtml",
 			// 		"layout/user"						=> __DIR__ . "/../view/layout/user/layout.phtml",
 			// 		"layout/user/login"			=> __DIR__ . "/../view/layout/user/login.phtml",

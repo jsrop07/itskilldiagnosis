@@ -37,7 +37,7 @@ class ApplicationTable
     public function getQuestionType(){
         $qry = $this->sql->select("option");
         $qry->columns([
-            'type','text'
+            'idx','type','text'
         ]);
         $qry->where(['type' => 'class2nd']);
         $statement = $this->sql->prepareStatementForSqlObject($qry);
@@ -79,6 +79,7 @@ class ApplicationTable
                 'name' => $dataArray['name'],
                 'kana' => $dataArray['kana'],
                 'gender' => $dataArray['gender'],
+                'birth' => $dataArray['birth'],
                 'career' => $dataArray['career'],
                 'certificates' => $dataArray['certificates'],
                 'other' => $dataArray['other'],
@@ -96,6 +97,7 @@ class ApplicationTable
                 'name' => $dataArray['name'],
                 'kana' => $dataArray['kana'],
                 'gender' => $dataArray['gender'],
+                'birth' => $dataArray['birth'],
                 'career' => $dataArray['career'],
                 'certificates' => $dataArray['certificates'],
                 'other' => $dataArray['other'],

@@ -1,4 +1,3 @@
-
 <div class="container-fluid">
     <div class="diagnosis card">
         <div class="diagnosis_head">
@@ -25,7 +24,10 @@
                         <option value="0">男</option>
                         <option value="1">女</option>
                     </select>
-                    
+
+                    <span class="no_after_style">生年月日</span>
+                    <input class="form-control" id="birth" name="birth" type="text" placeholder="YYYY-MM-DD" autocomplete="off"  style="width:30%">   
+
                     <span >応募区分</span>
                     <select class="" name="application_category" style="width:40%" >
                         <option value="" selected disabled hidden>選択してください。</option>
@@ -240,6 +242,10 @@ document.getElementById('majorSelect').addEventListener('change', function(event
 
 <!-- 漢字カナ入力時有効性検査 -->
 <script>
+function emailValidationCheck(input){
+    var emailValidation =  /^[A-Za-z0-9_\.\-]+@[A-Za-z0-9\-]+\.[A-Za-z0-9\-]+/;
+    return emailValidation.test(input);
+}
 function checkKanji(input) {
     var japaneseChineseRegex = /^[\u4E00-\u9FFF]+$/; 
     return japaneseChineseRegex.test(input);
@@ -254,7 +260,7 @@ function checkKana(input) {
 <!-- 必須項目有効性検査 -->
 <script type="text/javascript">
 	function applicationConfirm() {
-		if (form.email.value == "") {
+		if (form.email.value == "" || !emailValidationCheck(form.email.value)) {
 			alert("メールアドレスを入力してください。");
             setTimeout("form.email.focus()",100);
             event.preventDefault();
@@ -360,7 +366,17 @@ selectElements.forEach(function(selectElement) {
     });
 });
 </script>
-
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/datepicker/1.0.10/datepicker.min.js"></script>
+  <script>
+    $(document).ready(function(){
+      var birth = document.getElementById("birth");
+      $(birth).datepicker({
+        format: 'yyyy-mm-dd',
+        autohide: true
+      });
+    });
+  </script>
 
 
 

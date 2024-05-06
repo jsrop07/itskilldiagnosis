@@ -1,0 +1,61 @@
+<?php if ($this->pageCount): ?>
+
+<?php
+	$url = $_SERVER["REQUEST_URI"];
+	$url = $url . "?";
+	$query = explode("?", $url)[1];
+	
+	if (!empty($query)) {
+		$queryDatas = explode("&", $query);
+
+		$newQueryDatas = array();
+		foreach ($queryDatas as $data) {
+			if (explode("=", $data)[0] != "page") {
+				array_push($newQueryDatas, $data);
+			}
+		}
+		$newQuery = implode("&", $newQueryDatas);
+		$url = explode("?", $_SERVER["REQUEST_URI"])[0] . "?" . $newQuery . "&";
+	}
+?>
+
+<nav aria-label="Page navigation">
+	<ul class="emegra pagination justify-content-center">
+		<?php if (isset($this->previous)): ?>
+			<li class="item">
+				<a href="<?php echo $url; ?>page=1">&laquo;</a>
+			</li>
+			<li class="item">
+				<a href="<?php echo $url; ?>page=<?php echo $this->previous;?>">&lsaquo;</a>
+			</li>
+		<?php else: ?>
+			<li class="item disabled">
+				<a>&laquo;</a>
+			</li>
+		<?php endif; ?>
+		<?php foreach ($this->pagesInRange as $page): ?>
+			<?php if ($page != $this->current): ?>
+				<li class="item">
+					<a href="<?php echo $url; ?>page=<?php echo $page;?>"><?php echo $page;?></a>
+				</li>
+			<?php else: ?>
+				<li class="item active">
+					<a><?php echo $page; ?></a>
+				</li>
+			<?php endif; ?>
+		<?php endforeach; ?>
+		<?php if (isset($this->next)): ?>
+			<li class="item">
+				<a href="<?php echo $url; ?>page=<?php echo $this->next;?>">&rsaquo;</a>
+			</li>
+			<li class="item">
+				<a href="<?php echo $url; ?>page=<?php echo $this->pageCount;?>">&raquo;</a>
+			</li>
+		<?php else: ?>
+			<li class="item disabled">
+				<a>&raquo;</a>
+			</li>
+		<?php endif; ?>
+	</ul>
+</nav>
+<?php endif; ?>

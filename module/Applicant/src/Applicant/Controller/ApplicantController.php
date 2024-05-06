@@ -20,7 +20,6 @@ class ApplicantController extends AbstractActionController
 	$develop=$tbl->getDevelop();
 	$p = $this->params()->fromPost();
 	$mode =(isset($p['mode'])    &&   $p['mode'] !='')? $p['mode']:'';
-
 	// print_r($p);
 	$viewModel = new ViewModel(['questionType' => $questionType,'develop' => $develop,'p' => $p]);
 	$viewModel->setTemplate("/applicant/application.phtml");
@@ -31,6 +30,7 @@ class ApplicantController extends AbstractActionController
 		$name = $this->params()->fromPost('name');
 		$kana = $this->params()->fromPost('kana');
 		$gender = $this->params()->fromPost('gender');
+		$birth = $this->params()->fromPost('birth');
 		$application_category = $this->params()->fromPost('application_category');
 		$education = $this->params()->fromPost('education');
 		$major = $this->params()->fromPost('major');
@@ -45,6 +45,7 @@ class ApplicantController extends AbstractActionController
 			'name' => $name,
 			'kana' => $kana,
 			'gender' => $gender,
+			'birth' => $birth,
 			'application_category' => $application_category,
 			'education' => $education,
 			'major' => $major,
@@ -120,7 +121,11 @@ class ApplicantController extends AbstractActionController
         }
 	  }
 	  if($mode=='submit'){
-			$this->examclearAction();	
+		echo "
+		<script>
+		self.location.href='/applicant/examclear';
+		</script>
+		";	
 	  }
 	  // Get exam name
 	  $examTb = $this->getServiceLocator()->get("ApplicantExamTable");
@@ -145,12 +150,11 @@ class ApplicantController extends AbstractActionController
 	// $vm = new ViewModel();
     // $vm->setTemplate("/applicant/applicationclear.phtml");
     // return $vm;
-}
+	}
 
-function examclearAction() {
-	$this->layout("/applicant/examclear");
-
-}
+	function examclearAction() {
+		$this->layout("/applicant/examclear");
+	}
 
 
 	function RedirectToLogin() {
@@ -162,6 +166,77 @@ function examclearAction() {
 		";
 		exit;
 	}
+
+	function listAction() {
+		$this->layout("layout/admin/layout_default");
+		$datas["breadcrumbData"] = ["ITスキル診断状況管理"];
+
+		$query = $this->params()->fromQuery();
+		unset($query["page"]);
+
+		$page = $this->params()->fromQuery("page", 1);
+		$printDataNum = 10;
+		$questionTb = $this->getServiceLocator()->get("AppQuestionTable");
+		$totalQuestionDatas = iterator_to_array($questionTb->ReadAllList());
+		$paginationData = $questionTb->GetAllList();
+
+		$datas["totalData"] = count($totalQuestionDatas);
+
+		$vm = $this->SetViewModel($datas, "/admin/diagnosis_list.phtml");
+
+		$vm->noticelist = $paginationData;
+		$vm->noticelist->setCurrentPageNumber($page);
+		$vm->noticelist->setItemCountPerPage($printDataNum);
+
+		return $vm;
+		
+	}
+	
+
+	function inputAction(){
+		$this->layout("layout/admin/layout_default");
+		$datas["breadcrumbData"] = ["ITスキル診断状況管理"];
+
+		$query = $this->params()->fromQuery();
+		unset($query["page"]);
+
+
+		$applicantTb = $this->getServiceLocator()->get("AppQuestionTable");
+		// $applicantData = $applicantTb->readByUrl($id);
+
+		// $name = $applicantData["name"];
+
+		$vm = $this->SetViewModel($datas, "/admin/input.phtml");
+
+		return $vm;
+	}
+
+	function detailAction(){
+		$this->layout("layout/admin/layout_default");
+		$datas["breadcrumbData"] = ["ITスキル診断状況管理"];
+
+		$query = $this->params()->fromQuery();
+		unset($query["page"]);
+
+
+		$applicantTb = $this->getServiceLocator()->get("AppQuestionTable");
+		// $applicantData = $applicantTb->readByUrl($id);
+
+		// $name = $applicantData["name"];
+
+		$vm = $this->SetViewModel($datas, "/admin/detail.phtml");
+
+		return $vm;
+	}
+
+	    /** Make ViewModel with datas and template */
+	function SetViewModel($datas, $template) {
+		$this->layout("layout/admin/layout_default");
+		$vm = new ViewModel($datas);
+		$vm->setTemplate($template);
+		return $vm;
+	}
+
 	
 	/** Read examTable for Testing page (user/exam.phtml) */
 	public function Setting($examData) {		// 問題設定ページに移動
@@ -191,12 +266,4 @@ function examclearAction() {
 
 		$examTb->updateExamSetting($url, $post);
 	}
-
-	/** Make ViewModel with datas and template */
-	function SetViewModel($datas, $template) {
-		$vm = new ViewModel($datas);
-		$vm->setTemplate($template);
-		return $vm;
-	}
-	/* ここまで */
 }

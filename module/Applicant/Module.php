@@ -68,7 +68,7 @@ class Module
                     $table = new QuestionTypeTable($dbAdapter);
                     return $table;
                 },
-                "QuestionTable" => function ($sm) {
+                "AppQuestionTable" => function ($sm) {
                     $dbAdapter = $sm->get("Zend\Db\Adapter\Adapter");
                     $table = new QuestionTable($dbAdapter);
                     return $table;

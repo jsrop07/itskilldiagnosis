@@ -53,6 +53,12 @@ class QuestionTable
 
     $paginatorAdapter = new DbSelect($qry, $this->adapter);
     return new Paginator($paginatorAdapter);
-}
+  }
+  
+  public function readByUrl($id)
+  {
+    $qry = $this->sql->select("applicant")->where(["id" => $id])->order("idx");
+    return $this->sql->prepareStatementForSqlObject($qry)->execute();
+  }
 
 }

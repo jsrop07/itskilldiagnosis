@@ -44,9 +44,18 @@ header {
     margin-top:3px;
 }
 .right-column {
+    margin-top:5px;
     min-width:120px;
     width: 20%;
+    display: grid;
+    grid-template-rows: repeat(2, 30px);
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-areas:
+    "date date namae"
+    "timer timer stop"
 }
+
+
 footer{
     /* min-width: 850px; */
     margin-top: 20px;

@@ -12,10 +12,16 @@ if ($ses_id) {
 ?>
 <?php if ($logged == true): ?>
 <header>
-	<div class="left-column"><img src="/img/hd_logo.png" alt="logo" height="56px" width="auto"></div>
+	<div class="left-column"><img src="/img/hd_logo.png" alt="logo" height="40px" width="auto"></div>
 	<div class="middle-column" style="font-size:bold">ITスキル診断</div>
-	<div class="right-column" ><span id="timerDisplay" style="text-align:right;"></span></div>
-</header>	
+	<div class="right-column"> 
+    <span id="date-container" style="grid-area: date"></span>
+    <span style="grid-area:namae; text-align:center"><?php echo $name; ?></span>
+    <span id="timerDisplay" style="grid-area: timer "></span>
+    <button class=" btn btn-sm" id="stopBtn" style="grid-area:stop; text-align:center; margin-top:-5px; color:yellow; border:none;"  data-bs-toggle="modal" data-bs-target="#staticBackdrop2">一時停止</button>
+</div>
+</header>	     
+
 <div class="container-fluid">
   <div class="card emegra" >
     <div class="card-body"style="margin-top:70px;">
@@ -79,7 +85,7 @@ if ($ses_id) {
     </div>
     <div class="button_box" style="margin-bottom: 32px; gap:30px">
       <button class="applicant_cancel" name="mode"  value="cancel" onclick="window.location.href='../applicant/login';">キャンセル</button>
-      <button class="applicant_stop" id="stopBtn"  data-bs-toggle="modal" data-bs-target="#staticBackdrop2">一時停止</button>
+      <!-- <button class="applicant_stop" id="stopBtn"  data-bs-toggle="modal" data-bs-target="#staticBackdrop2">一時停止</button> -->
       <button class="exam_submit" name="mode"  value="submit" onclick="check();">提出</button>
     </div>
     </form>
@@ -133,7 +139,6 @@ if ($ses_id) {
           <br/>
           問題は合計50問、制限時間は30分です。
 					<br/>
-					今すぐ受検を開始しますか？
 					</p>
 					</div>
 					<div class="modal-footer flex-column border-top-0" style="padding-bottom:32px;">
@@ -154,7 +159,7 @@ if ($ses_id) {
 					<div class="modal-body fs-5">
 					<div id='a' style="text-align:center; margin-top:20px;"></div>
 					</div>
-					<div class="modal-footer flex-column border-top-0">
+					<div class="modal-footer flex-column border-top-0" style="margin-bottom:12px;">
 						<button type="button" id='lock_time' class="btn btn-lg  w-75 mx-0" data-bs-dismiss="modal" style="background: linear-gradient(111deg, #87D782 0%, #22BC8E 100%); color:white;">再開</button>
 					</div>
 					</div>
@@ -204,7 +209,7 @@ function addZero(num) {
 }
 
 function displayCurrentDate() {
-    const dateContainer = document.getElementById('timerDisplay');
+    const dateContainer = document.getElementById('date-container');
     dateContainer.textContent = getCurrentDate();
 }
 
@@ -214,97 +219,99 @@ function onLoadEvent() {
 
 window.onload = function() {
 	onLoadEvent();
+  displayCurrentDate();
 };
 
 </script>
 
 
 <script>
-document.getElementById("startBtn").addEventListener("click", function() {
-  var lock = 'n';
-  var stopBtns = document.getElementById('stopBtn');
+  document.getElementById("startBtn").addEventListener("click", function() {
+    var lock = 'n';
+    var stopBtns = document.getElementById('stopBtn');
 
-  var timerDisplay = document.getElementById("timerDisplay");
-  var examTime = parseInt(30); 
+    var timerDisplay = document.getElementById("timerDisplay");
+    
+    var examTime = parseInt(30); 
 
-  var stopTime = parseInt(10); 
-  let now_time = 0;
+    var stopTime = parseInt(10); 
+    let now_time = 0;
 
-  var minuteToSecond = examTime * 60;
-  var stopMinuteToSecond = stopTime * 60;
+    var minuteToSecond = examTime * 60;
+    var stopMinuteToSecond = stopTime * 60;
 
-  var firstAlert= false;
-  var secondAlert= false;
+    var firstAlert= false;
+    var secondAlert= false;
 
 
-  var timer = setInterval(function() {
+    var timer = setInterval(function() {
+      if(lock == 'n'){
+        updateTimer();
+      }
+    }, 1000);
+    updateTimer();
+    
+    function updateTimer() {
+      var minutes = Math.floor(minuteToSecond / 60);
+      var seconds = minuteToSecond % 60;
+
+      timerDisplay.innerHTML ="残り時間: " + minutes + "分 " + seconds + "秒";
+      if (minuteToSecond <= 0) {
+        clearInterval(timer);
+        timerDisplay.innerHTML = "終";
+        window.location.href = '../applicant/examclear';
+      }else if(minuteToSecond <= 600 && !firstAlert){
+        alert("残り10分です。")
+        firstAlert=true;
+      }else if(minuteToSecond <= 300 && !secondAlert){
+        alert("残り5分です。")
+        secondAlert=true;
+      }
+      else{
+        minuteToSecond--;
+      }
+    }
+
+  document.getElementById("stopBtn").addEventListener("click", function() {
+    event.preventDefault();        
     if(lock == 'n'){
-      updateTimer();
+      lock='y';
+      updateTimer2(); 
+      stopBtns.disabled='false';
+      stopBtns.style.Color = "gray";
     }
-  }, 1000);
-  updateTimer();
-  
-  function updateTimer() {
-    var minutes = Math.floor(minuteToSecond / 60);
-    var seconds = minuteToSecond % 60;
+    });
 
-    timerDisplay.innerHTML = getCurrentDate() + " <?php echo $name; ?> "+"<br> 残り時間: " + minutes + "分 " + seconds + "秒";
-    if (minuteToSecond <= 0) {
-      clearInterval(timer);
-      timerDisplay.innerHTML = "終";
-      window.location.href = '../applicant/examclear';
-    }else if(minuteToSecond <= 600 && !firstAlert){
-      alert("残り10分です。")
-      firstAlert=true;
-    }else if(minuteToSecond <= 300 && !secondAlert){
-      alert("残り5分です。")
-      secondAlert=true;
-    }
-    else{
-      minuteToSecond--;
-    }
+    var calc_time=setInterval(function() {
+      updateTimer2();
+    }, 1000);
+
+
+  function updateTimer2() {
+      if(lock == 'y'){
+          var stopMinutes = Math.floor(stopMinuteToSecond / 60);
+          var stopSeconds = stopMinuteToSecond % 60;
+          document.getElementById("a").innerHTML="残り時間: " + stopMinutes + "分 " + stopSeconds + "秒";
+          stopMinuteToSecond--;
+
+          if (stopMinuteToSecond < 0) {
+              clearInterval(calc_time);
+              lock = 'y';
+              document.getElementById("lock_time").click(); 
+
+              stopBtns.disabled=false; 
+              stopBtns.style.backgroundColor = "gray";
+          }
+      }
   }
 
-document.getElementById("stopBtn").addEventListener("click", function() {
-  event.preventDefault();        
-  if(lock == 'n'){
-		lock='y';
-    updateTimer2(); 
-    stopBtns.disabled='false';
-      stopBtns.style.backgroundColor = "red";
-	}
-  });
 
-  var calc_time=setInterval(function() {
-    updateTimer2();
-  }, 1000);
-
-
-function updateTimer2() {
+  document.getElementById("lock_time").addEventListener("click",function(){
     if(lock == 'y'){
-        var stopMinutes = Math.floor(stopMinuteToSecond / 60);
-        var stopSeconds = stopMinuteToSecond % 60;
-        document.getElementById("a").innerHTML="残り時間: " + stopMinutes + "分 " + stopSeconds + "秒";
-        stopMinuteToSecond--;
-
-        if (stopMinuteToSecond < 0) {
-            clearInterval(calc_time);
-            lock = 'y';
-            document.getElementById("lock_time").click(); 
-
-            stopBtns.disabled=false; 
-            stopBtns.style.backgroundColor = "red";
-        }
+      lock='n';
     }
-}
-
-
-document.getElementById("lock_time").addEventListener("click",function(){
-  if(lock == 'y'){
-		lock='n';
-	}
-});  
-});
+  });  
+  });
 
 
 </script>

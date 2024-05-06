@@ -176,14 +176,14 @@ class ApplicantController extends AbstractActionController
 
 		$page = $this->params()->fromQuery("page", 1);
 		$printDataNum = 10;
-		$questionTb = $this->getServiceLocator()->get("QuestionTable");
+		$questionTb = $this->getServiceLocator()->get("AppQuestionTable");
 		$totalQuestionDatas = iterator_to_array($questionTb->ReadAllList());
 		$paginationData = $questionTb->GetAllList();
 
 		$datas["totalData"] = count($totalQuestionDatas);
 
 		$vm = $this->SetViewModel($datas, "/admin/diagnosis_list.phtml");
-		
+
 		$vm->noticelist = $paginationData;
 		$vm->noticelist->setCurrentPageNumber($page);
 		$vm->noticelist->setItemCountPerPage($printDataNum);
@@ -191,21 +191,40 @@ class ApplicantController extends AbstractActionController
 		return $vm;
 		
 	}
+	
 
-	function listDetailAction(){
+	function inputAction(){
 		$this->layout("layout/admin/layout_default");
 		$datas["breadcrumbData"] = ["ITスキル診断状況管理"];
 
 		$query = $this->params()->fromQuery();
 		unset($query["page"]);
 
-		$page = $this->params()->fromQuery("page", 1);
-		$printDataNum = 10;
-		$questionTb = $this->getServiceLocator()->get("QuestionTable");
-		$totalQuestionDatas = iterator_to_array($questionTb->ReadAllList());
-		$paginationData = $questionTb->GetAllList();
 
-		$datas["totalData"] = count($totalQuestionDatas);		$vm = $this->SetViewModel($datas, "/admin/listDetail.phtml");
+		$applicantTb = $this->getServiceLocator()->get("AppQuestionTable");
+		// $applicantData = $applicantTb->readByUrl($id);
+
+		// $name = $applicantData["name"];
+
+		$vm = $this->SetViewModel($datas, "/admin/input.phtml");
+
+		return $vm;
+	}
+
+	function detailAction(){
+		$this->layout("layout/admin/layout_default");
+		$datas["breadcrumbData"] = ["ITスキル診断状況管理"];
+
+		$query = $this->params()->fromQuery();
+		unset($query["page"]);
+
+
+		$applicantTb = $this->getServiceLocator()->get("AppQuestionTable");
+		// $applicantData = $applicantTb->readByUrl($id);
+
+		// $name = $applicantData["name"];
+
+		$vm = $this->SetViewModel($datas, "/admin/detail.phtml");
 
 		return $vm;
 	}

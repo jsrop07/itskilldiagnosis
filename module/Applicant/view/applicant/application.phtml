@@ -242,6 +242,10 @@ document.getElementById('majorSelect').addEventListener('change', function(event
 
 <!-- 漢字カナ入力時有効性検査 -->
 <script>
+function emailValidationCheck(input){
+    var emailValidation =  /^[A-Za-z0-9_\.\-]+@[A-Za-z0-9\-]+\.[A-Za-z0-9\-]+/;
+    return emailValidation.test(input);
+}
 function checkKanji(input) {
     var japaneseChineseRegex = /^[\u4E00-\u9FFF]+$/; 
     return japaneseChineseRegex.test(input);
@@ -256,7 +260,7 @@ function checkKana(input) {
 <!-- 必須項目有効性検査 -->
 <script type="text/javascript">
 	function applicationConfirm() {
-		if (form.email.value == "") {
+		if (form.email.value == "" || !emailValidationCheck(form.email.value)) {
 			alert("メールアドレスを入力してください。");
             setTimeout("form.email.focus()",100);
             event.preventDefault();

@@ -9,16 +9,16 @@ use Zend\Paginator\Adapter\DbSelect;
 use Zend\Paginator\Paginator;
 
 class QuestionTable {
-	public function __construct()
-	{
+	public function __construct() {
 		//Local設定ファイルがある場合、Local設定を優先する
-		if (is_file($_SERVER['DOCUMENT_ROOT'] . '/../config/autoload/local.php')) {
-			$this->config = require $_SERVER['DOCUMENT_ROOT'] . '/../config/autoload/local.php';
+		if (is_file($_SERVER["DOCUMENT_ROOT"] . "/../config/autoload/local.php")) {
+			$this->config = require $_SERVER["DOCUMENT_ROOT"] . "/../config/autoload/local.php";
 		} else {
-			$this->config = require $_SERVER['DOCUMENT_ROOT'] . '/../config/autoload/global.php';
+			$this->config = require $_SERVER["DOCUMENT_ROOT"] . "/../config/autoload/global.php";
 		}
+
 		//指定DB設定情報通り接続
-		$dbArr = $this->config['db'];
+		$dbArr = $this->config["db"];
 		$adapter = new Adapter($dbArr);
 		//Adapter設定
 		$this->adapter = $adapter;

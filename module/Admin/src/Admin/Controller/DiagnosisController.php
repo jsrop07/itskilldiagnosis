@@ -7,21 +7,47 @@ use Zend\Session\Container;
 
 class DiagnosisController extends AbstractActionController
 {
-	public function indexAction() { print_r("Diagnosis Index"); exit; }
+	// public function __construct() {
+	// 	$this->diagnosisTb = $this->serviceLocator->get("DiagnosisTable-Admin");
+	// }
+
+	function ChkLogin() {
+		$session = new Container("user");
+
+		if (!isset($session["code"])) {
+			echo "
+				<script>
+					alert('ログインしてくたさい。');
+					self.location.href='/admin/login';
+				</script>
+			";
+		}
+	}
+
+	public function indexAction() {
+		$this->ChkLogin();
+		print_r("Diagnosis Index");
+		exit;
+	}
 	
 	public function listAction() {
+		$this->ChkLogin();
 		$datas["breadcrumbData"] = ["ITスキル診断書管理"];
 
 		$query = $this->params()->fromQuery();
 		unset($query["page"]);
 
+
 		$page = $this->params()->fromQuery("page", 1);
 		$printDataNum = 10;
-		$questionTb = $this->getServiceLocator()->get("QuestionTable");
-		$totalQuestionDatas = iterator_to_array($questionTb->ReadAllList());
-		$paginationData = $questionTb->GetAllList();
+		$diagnosisTb = $this->getServiceLocator()->get("DiagnosisTable");
+		print_r("dd"); exit;
+		$totalDiagnosisDatas = $diagnosisTb->ReadAllList();
+		$paginationData = $diagnosisTb->GetAllList();
 
-		$datas["totalData"] = count($totalQuestionDatas);
+		print_r($totalDiagnosisDatas); exit;
+
+		$datas["totalData"] = count($totalDiagnosisDatas);
 
 		$vm = $this->SetViewModel($datas, "/diagnosis/diagnosis_list.phtml");
 		

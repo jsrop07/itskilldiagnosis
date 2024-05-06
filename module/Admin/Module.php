@@ -17,6 +17,7 @@ use Admin\Model\QuestionTypeTable;
 use Admin\Model\QuestionPoolTable;
 use Admin\Model\OptionTable;
 use Admin\Model\ExamTable;
+use Admin\Model\DiagnosisTable;
 use Zend\Mvc\ModuleRouteListener;
 use Zend\Mvc\MvcEvent;
 
@@ -65,6 +66,11 @@ class Module
 				"OptionTable" => function ($sm) {
 					$dbAdapter = $sm->get("Zend\Db\Adapter\Adapter");
 					$table = new OptionTable($dbAdapter);
+					return $table;
+				},
+				"DiagnosisTable" => function ($sm) {
+					$dbAdapter = $sm->get("Zend\Db\Adapter\Adapter");
+					$table = new DiagnosisTable($dbAdapter);
 					return $table;
 				},
                 'CommonTable' =>  function ($sm) {

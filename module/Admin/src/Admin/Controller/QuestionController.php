@@ -88,10 +88,11 @@ class QuestionController extends AbstractActionController
 			$datas["searchDatas"]["align"] = $query["align"];
 		}	
 
-		// Save output datas
+		// Save total datas number
 		$datas["totalDataNum"] = count($totalQuestionDatas);
 		$datas = $this->GetOptionDatas($datas);
 
+		// Extract output datas and Add numbering
 		if (!empty($totalQuestionDatas)) {
 			$PrintQuestionDatas = array();
 			$startIdx = ($page - 1) * $printDataNum;
@@ -136,8 +137,8 @@ class QuestionController extends AbstractActionController
 	/** When you click 登録 button on 問題登録 page */
 	public function confirmAction() {
 		$this->ChkLogin();
-		$datas["title"] = "登録確認";
 		$datas["breadcrumbData"] = ["ITスキル診断問項管理", "問題登録", "登録確認"];
+		$datas["title"] = "登録確認";
 
 		$post = $this->params()->fromPost();
 

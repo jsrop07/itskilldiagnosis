@@ -4,47 +4,156 @@ namespace Admin\Controller;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Zend\Session\Container;
+use Zend\Crypt\Password\Bcrypt;
 
 class ManagerController extends AbstractActionController
 {
-	public function indexAction() { print_r("Diagnosis Index"); exit; }
+	function ChkLogin() {
+		$session = new Container("user");
+
+		if (!isset($session["code"]) || $session["level"] < 2) {
+			echo "
+				<script>
+					alert('ログインしてくたさい。');
+					self.location.href='/admin/login';
+				</script>
+			";
+		}
+	}
+
+	public function indexAction() {
+		$this->ChkLogin();
+		print_r("Manager Index");
+		exit;
+	}
 	
 	public function listAction() {
-		$datas["breadcrumbData"] = ["ITスキル診断管理者管理"];
+		$this->ChkLogin();
+		$datas["breadcrumbData"] = ["ITスキル診断問項管理"];
 
-		$query = $this->params()->fromQuery();
-		unset($query["page"]);
+		$printDataNum = 10;	// Number of data to output on one page
 
+		// Get Current Page
 		$page = $this->params()->fromQuery("page", 1);
-		$printDataNum = 10;
-		$questionTb = $this->getServiceLocator()->get("QuestionTable");
-		$totalQuestionDatas = iterator_to_array($questionTb->ReadAllList());
-		$paginationData = $questionTb->GetAllList();
 
-		$datas["questionDatas"] = $totalQuestionDatas;
-		$datas["totalData"] = count($totalQuestionDatas);
+		// Get datas from AdminTable
+		$adminTb = $this->getServiceLocator()->get("AdminTable");
+		$totalQuestionDatas = $adminTb->ReadAllList();
+		$paginationData = $adminTb->GetAllList();
+
+		// Extract output datas and Add numbering
+		if (!empty($totalQuestionDatas)) {
+			$PrintQuestionDatas = array();
+			$startIdx = ($page - 1) * $printDataNum;
+			$endIdx = ($page * $printDataNum);
+			
+			for ($i = 0; $startIdx + $i < $endIdx; $i++) {
+				if (!isset($totalQuestionDatas[$startIdx + $i])) break;
+
+				$PrintQuestionDatas[$i] = $totalQuestionDatas[$startIdx + $i];
+				$PrintQuestionDatas[$i]["num"] = count($totalQuestionDatas) - ($startIdx + $i);
+			}
+
+			$datas["adminDatas"] = $PrintQuestionDatas;
+		}
 
 		$vm = $this->SetViewModel($datas, "/manager/manager_list.phtml");
-		
 		$vm->noticelist = $paginationData;
 		$vm->noticelist->setCurrentPageNumber($page);
 		$vm->noticelist->setItemCountPerPage($printDataNum);
-
 		return $vm;
 	}
 
-	public function registAction() {
-		$datas["breadcrumbData"] = ["ITスキル診断管理者管理", "管理者登録"];
+	/** When you click 新規登録 button on 一覧 page */
+	public function inputAction() {
+		$this->ChkLogin();
+		$datas["breadcrumbData"] = ["ITスキル診断問項管理", "管理者登録"];
 		$datas["title"] = "管理者登録";
+
+		// Make Code
+		$adminTb = $this->getServiceLocator()->get("AdminTable");
+		$code = date("y-md");
+		$adminDatas = $adminTb->ReadListByCode($code);
+
+		$num = 1;
+		if (!empty($adminDatas)) {
+			$index = 0;
+			while (isset($adminDatas[$index])) {
+				// Check empty number
+				if ($num != intval(substr($adminDatas[$index]["code"], 7, 3))) {
+					break;
+				}
+				
+				$index++; $num++;
+			}
+		}
+		$num = str_pad($num, 3, "0", STR_PAD_LEFT);
+		$code .= $num;
+		$datas["code"] = $code;
+
+		// Check return from 登録確認　page
+		$post = $this->params()->fromPost();
+		if (isset($post["code"])) {
+			$datas["adminData"] = $post;
+		}
 
 		return $this->SetViewModel($datas, "/manager/manager_input.phtml");
 	}
 
+	/** When you click 登録 button on 管理者登録 page */
+	public function confirmAction() {
+		$this->ChkLogin();
+		$datas["breadcrumbData"] = ["ITスキル診断問項管理", "管理者登録" ,"登録確認"];
+		$datas["title"] = "登録確認";
+
+		$datas["adminData"] = $this->params()->fromPost();
+
+		return $this->SetViewModel($datas, "/manager/manager_confirm.phtml");
+	}
+
 	public function detailAction() {
-		$datas["breadcrumbData"] = ["ITスキル診断書管理", "診断書詳細"];
-		$datas["title"] = "診断書詳細";
+		$this->ChkLogin();
+		$datas["breadcrumbData"] = ["ITスキル診断書管理", "管理者詳細"];
+		$datas["title"] = "管理者詳細";
+
+		// Get Admin record Idx
+		$idx = $this->params()->fromRoute("index");
+
+		$adminTb = $this->getServiceLocator()->get("AdminTable");
+		try { $datas["adminData"] = $adminTb->ReadByIdx($idx); }
+		catch (\Exception $e) { print_r($e->getMessage()); exit; }
+
+		print_r($datas["adminData"]);
 
 		return $this->SetViewModel($datas, "/manager/manager_detail.phtml");
+	}
+
+	public function createAction() {
+		$post = $this->params()->fromPost();
+
+		// temp
+		unset($post["num"]);
+
+		$post["password"] = $this->Encryption($post["password"]);
+		$post["date_start"] = date("Y-m-d H:i:s");
+
+		$adminTb = $this->getServiceLocator()->get("AdminTable");
+
+		// Check code overlap
+		try { $result = $adminTb->ReadByCode($post["code"]); }
+		catch (\Exception $e) { die($e->getMessage()); }
+		if (!empty($result)) { die("code overlapped"); }
+
+		// Check id overlap
+		try { $result = $adminTb->ReadById($post["id"]); }
+		catch (\Exception $e) { die($e->getMessage()); }
+		if (!empty($result)) { die("id overlapped"); }
+
+		// Insert record
+		try { $adminTb->CreateAdmin($post); }
+		catch (\Exception $e) { die($e->getMessage()); }
+
+		die("success");
 	}
 
 	/** Set Layout & Make ViewModel with datas and template 
@@ -57,5 +166,28 @@ class ManagerController extends AbstractActionController
 		$vm = new ViewModel($datas);
 		$vm->setTemplate($template);
 		return $vm;
+	}
+
+	/** Encryption password
+	 * @param string $password
+	 * @return string $Encrypted password
+	 */
+	function Encryption($password) {
+		$bcrypt = new Bcrypt();
+		return $bcrypt->create($password);
+	}
+
+	/** Compare Encryption password
+	 * @param string $password inputpassword
+	 * @param string $enPassword encrypted string
+	 * @return bool result
+	 */
+	function CheckPassword($password, $enPassword) {
+		$bcrypt = new Bcrypt();
+		if ($bcrypt->verify($password, $enPassword)) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 }

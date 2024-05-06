@@ -27,13 +27,20 @@ class AdminTable
 		$this->sql = new Sql($this->adapter);
 	}
 
+	/** Create record
+	 * @param mixed $valueDatas Array["field" => "value"]
+	*/
+	public function CreateAdmin($valueDatas) {
+		$qry = $this->sql->insert("admin")->values($valueDatas);
+		return $this->sql->prepareStatementForSqlObject($qry)->execute();
+	}
+
 	/** Read for list
-	 * @return mixed datas
+	 * @return mixed Record Array
 	*/
 	public function ReadAllList() {
 		$qry = $this->sql->select("admin")->where(["date_end" => null]);
-		try {
-			return iterator_to_array($this->sql->prepareStatementForSqlObject($qry)->execute());
+		try { return iterator_to_array($this->sql->prepareStatementForSqlObject($qry)->execute());
 		} catch (\Exception $e) {
 			return $e->getMessage();
 		}
@@ -44,25 +51,45 @@ class AdminTable
 		return new Paginator($paginatorAdapter);
 	}
 
-	/** Read Table data By Id
-	 * @param mixed $id input id
-	 * @return mixed Record Array
+	/** Read Table record By Idx
+	 * @param mixed $idx
+	 * @return mixed Record
 	 */
-	public function ReadById($id)
-	{
-		$qry = $this->sql->select("admin")->where(["id" => $id, "date_end" => null]);
+	public function ReadByIdx($idx) {
+		$qry = $this->sql->select("admin")->where(["idx" => $idx]);
+		return $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
+	}
+
+	/** Read Table record By Code
+	 * @param mixed $code
+	 * @return mixed Record
+	 */
+	public function ReadByCode($code) {
+		$qry = $this->sql->select("admin")->where(["date_end" => null, "code" => $code]);
 		return $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
 	}
 
 	/** Read Table data By Id
-	 * @param mixed $id input id
+	 * @param mixed $id
+	 * @return mixed Record
+	 */
+	public function ReadById($id) {
+		$qry = $this->sql->select("admin")->where(["id" => $id, "date_end" => null]);
+		return $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
+	}
+
+	/** Read table data for Create code
+	 * @param mixed $code #yy-mmdd
 	 * @return mixed Record Array
 	 */
-	public function ReadByCode($code)
+	public function ReadListByCode($code)
 	{
-		$qry = $this->sql->select("admin")->where(["date_end" => null, "code" => $code]);
+		$where = new Where();
+		$where->isNull("date_end")->and->like("code", $code . "%");
+
+		$qry = $this->sql->select("admin")->where($where)->order("code");
 		try {
-			return $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
+			return iterator_to_array($this->sql->prepareStatementForSqlObject($qry)->execute());
 		} catch (\Exception $e) {
 			return $e->getMessage();
 		}

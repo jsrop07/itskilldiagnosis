@@ -179,11 +179,7 @@ class QuestionTable {
 	 */
 	public function ReadByIdx($idx) {
 		$qry = $this->sql->select("question")->where(["idx" => $idx]);
-		try {
-			return $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
-		} catch (\Exception $e) {
-			return $e->getMessage();
-		}
+		return $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
 	}
 
 	/** Update data by index

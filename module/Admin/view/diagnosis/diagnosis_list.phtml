@@ -1,8 +1,6 @@
 <?php
-	if (!isset($_SESSION)) { session_start(); }
 
-	$isApprover = false;
-	if ($_SESSION["user"]["level"] >= 1) { $isApprover = true; }
+	if (!isset($_SESSION)) { session_start(); }
 ?>
 
 <?php echo $this->partial("breadcrumb", ["datas" => $breadcrumbData]); ?>
@@ -39,7 +37,7 @@
 		grid-template-columns: 50px 100px repeat(2, 60px) 1fr repeat(2, 60px) 50px 60px 60px;
 		grid-template-areas:
 		"no question question question title  class    class   num criteria update"
-		"no    id    applicant  level  title class1st class2nd num criteria update";
+		"no    id      case     level  title class1st class2nd num criteria update";
 	}
 	table.emegra tr.index > th {
 		padding: 0;
@@ -90,11 +88,10 @@
 		</div>
 	</div>
 
-	<?php if (false): ?>
+	<?php if (empty($diagnosisDatas)): ?>
 		<div class="table-empty" style="margin-top: 16px;">
 			データがありません。
 		</div>
-		
 	<?php else: ?>
 		<table class="emegra" style="margin-top: 8px;">
 			<thead>
@@ -107,25 +104,27 @@
 					<th style="grid-area: criteria">合格基準</th>
 					<th style="grid-area: update">変更日</th>
 					<th style="grid-area: id">ID</th>
-					<th style="grid-area: applicant">応募対象</th>
+					<th style="grid-area: case">応募対象</th>
 					<th style="grid-area: level">レベル</th>
 					<th style="grid-area: class1st">大分類</th>
 					<th style="grid-area: class2nd">小分類</th>
 				</tr>
 			</thead>
 			<tbody>
-				<tr>
-					<td>1</td>
-					<td>B-50-T1</td>
-					<td>新卒</td>
-					<td>初級</td>
-					<td class="list-title" onclick="self.location.href='./detail/temp'">新卒の開発者向け提出問題（Java）</td>
-					<td>IT基礎</td>
-					<td>JAVA</td>
-					<td>50</td>
-					<td>70点</td>
-					<td>24.3.1</td>
-				</tr>
+				<?php foreach ($diagnosisDatas as $data): ?>
+					<tr>
+						<td><?php echo $data["num"]; ?></td>
+						<td><?php echo $data["code"]; ?></td>
+						<td><?php echo $optionDatas[$data["case"]]; ?></td>
+						<td><?php echo $optionDatas[$data["level"]]; ?></td>
+						<td class="list-title" onclick="self.location.href='./detail/<?php echo $data['code']; ?>'"><?php echo $data["title"]; ?></td>
+						<td><?php echo $optionDatas[$data["class1st"]]; ?></td>
+						<td><?php echo $optionDatas[$data["class2nd"]]; ?></td>
+						<td><?php echo $data["question_num"]; ?></td>
+						<td>100点</td>
+						<td><?php echo date("y.m.d", strtotime($data["date_update"])); ?></td>
+					</tr>
+				<?php endforeach; ?>
 			</tbody>
 		</table>
 	<?php endif; ?>

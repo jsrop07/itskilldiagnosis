@@ -135,7 +135,7 @@ class ManagerController extends AbstractActionController
 
 		$post = $this->params()->fromPost();
 
-		// Check return from 登録確認　page
+		// Check return from 登録確認 page
 		if (isset($post["id"])) {
 			$datas["adminData"] = $post;
 		} else {

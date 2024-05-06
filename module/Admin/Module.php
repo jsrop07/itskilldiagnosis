@@ -10,23 +10,14 @@
 
 namespace Admin;
 
-use Admin\Model\AdminInfoTable;
 use Admin\Model\AdminTable;
 use Admin\Model\QuestionTable;
-use Admin\Model\QuestionTypeTable;
-use Admin\Model\QuestionPoolTable;
 use Admin\Model\OptionTable;
-use Admin\Model\ExamTable;
 use Admin\Model\DiagnosisTable;
 use Zend\Mvc\ModuleRouteListener;
 use Zend\Mvc\MvcEvent;
 
-//use Common\Model\CommonTable;
-
-
-class Module
-{
-
+class Module {
     public function onBootstrap(MvcEvent $e)
     {
         $eventManager        = $e->getApplication()->getEventManager();
@@ -68,36 +59,11 @@ class Module
 					$table = new OptionTable($dbAdapter);
 					return $table;
 				},
-				"DiagnosisTable" => function ($sm) {
+				"DiagnosisTable-Admin" => function($sm) {
 					$dbAdapter = $sm->get("Zend\Db\Adapter\Adapter");
 					$table = new DiagnosisTable($dbAdapter);
 					return $table;
 				},
-                'CommonTable' =>  function ($sm) {
-                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
-                    //$table = new CommonTable($dbAdapter);
-                    //return $table;
-                },
-                "AdminInfoTable" => function ($sm) {
-                    $dbAdapter = $sm->get("Zend\Db\Adapter\Adapter");
-                    $table = new AdminInfoTable($dbAdapter);
-                    return $table;
-                },
-                "QuestionTypeTable" => function ($sm) {
-                    $dbAdapter = $sm->get("Zend\Db\Adapter\Adapter");
-                    $table = new QuestionTypeTable($dbAdapter);
-                    return $table;
-                },
-                "QuestionPoolTable" => function ($sm) {
-                    $dbAdapter = $sm->get("Zend\Db\Adapter\Adapter");
-                    $table = new QuestionPoolTable($dbAdapter);
-                    return $table;
-                },
-                "ExamTable" => function ($sm) {
-                    $dbAdapter = $sm->get("Zend\Db\Adapter\Adapter");
-                    $table = new ExamTable($dbAdapter);
-                    return $table;
-                },
 			),
 		);
 	}

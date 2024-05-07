@@ -15,10 +15,10 @@ if ($ses_id) {
 	<div class="left-column"><img src="/img/hd_logo.png" alt="logo" height="40px" width="auto"></div>
 	<div class="middle-column" style="font-size:bold">ITスキル診断</div>
 	<div class="right-column"> 
-    <span id="date-container" style="grid-area: date"></span>
-    <span style="grid-area:namae; text-align:center"><?php echo $name; ?></span>
-    <span id="timerDisplay" style="grid-area: timer "></span>
-    <button class=" btn btn-sm" id="stopBtn" style="grid-area:stop; text-align:center; margin-top:-5px; color:yellow; border:none;"  data-bs-toggle="modal" data-bs-target="#staticBackdrop2">一時停止</button>
+    <div id="date-container" style="display:flex; align-items:center"></div>
+    <div style="text-align:center;display:flex; align-items:center "><?php echo $name; ?></div>
+    <div id="timerDisplay" style=" display:flex; align-items:center"></div>
+    <button class=" btn btn-sm" id="stopBtn" style=" display:flex; align-items:center; text-align:center;color:yellow; border:none;"  data-bs-toggle="modal" data-bs-target="#staticBackdrop2">一時停止</button>
 </div>
 </header>	     
 
@@ -234,7 +234,7 @@ window.onload = function() {
     
     var examTime = parseInt(30); 
 
-    var stopTime = parseInt(10); 
+    var stopTime = parseInt(1); 
     let now_time = 0;
 
     var minuteToSecond = examTime * 60;
@@ -278,7 +278,7 @@ window.onload = function() {
       lock='y';
       updateTimer2(); 
       stopBtns.disabled='false';
-      stopBtns.style.Color = "gray";
+      stopBtns.style.color = "gray";
     }
     });
 
@@ -300,7 +300,7 @@ window.onload = function() {
               document.getElementById("lock_time").click(); 
 
               stopBtns.disabled=false; 
-              stopBtns.style.backgroundColor = "gray";
+              stopBtns.style.color = "gray";
           }
       }
   }

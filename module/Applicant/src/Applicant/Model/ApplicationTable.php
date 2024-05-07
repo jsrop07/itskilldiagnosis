@@ -76,6 +76,7 @@ class ApplicationTable
         if ($existingRecord) {
             $applicantUpdate = $qry->update('applicant');
             $applicantUpdate->set([
+                'password' => $dataArray['password'],
                 'name' => $dataArray['name'],
                 'kana' => $dataArray['kana'],
                 'gender' => $dataArray['gender'],
@@ -93,6 +94,7 @@ class ApplicationTable
         } else {
             $applicantInsert = $qry->insert('applicant');
             $applicantInsert->values([
+                'password' => $dataArray['password'],
                 'email' => $dataArray['email'],
                 'name' => $dataArray['name'],
                 'kana' => $dataArray['kana'],

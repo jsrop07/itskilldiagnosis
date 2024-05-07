@@ -6,7 +6,7 @@ function InitStyle() { return " font-style: italic; color: grey;"; }
 
 <h1 class="title">ITスキル診断状況管理</h1>
 
-<form id="form" method="post" action="./inputconfirm">
+<form id="form" method="post" action="./editconfirm">
 	<style type="text/css">
 		option { color: black; }
 		/* input::placeholder { font-style: italic; } */
@@ -21,7 +21,7 @@ function InitStyle() { return " font-style: italic; color: grey;"; }
 			</style>
 			<dl class="emegra info">
 				<dt>ID</dt>
-				<dd><input class="form-control" name="id" type="text" style="width:50%; text-align:center;"></dd>
+				<dd><input class="form-control" name="id" type="text" style="width:50%; text-align:center;" value="tanaka@gmail.com"></dd>
 				
                 <dt class="essential">応募区分</dt>
 				<select class="form-select" name="application_category" style="width:40%;<?php echo ($isReturn) ? "" : InitStyle(); ?>" onchange="ChangeInputStyle(this)" >
@@ -30,18 +30,18 @@ function InitStyle() { return " font-style: italic; color: grey;"; }
                         <option value="1">中途（経歴職）</option>
                     </select>
 
-				<dt>申込日</dt>
-				<dd><input class="form-control" name="apply_date" type="text" style="width:50%; text-align:center;" value="2024.5.6" disabled></dd>
+                <dt>パスワード</dt>
+				<dd><input class="form-control" name="password" type="text" style="width:50%; text-align:center;" value="A1b3c4"></dd>
 
 				<dt class="essential">お名前（漢字）</dt>
 				<dd><input class="form-control" id="userInput" name="name" type="text" placeholder="漢字を記入してください。"style="width:80%" maxlength='20'></dd>
 
-                <dt>パスワード</dt>
-				<dd><input class="form-control" name="password" type="text" style="width:50%; text-align:center;" value="1234" disabled></dd>
+                <dt>申込日</dt>
+				<dd><input class="form-control" name="apply_date" type="text" style="width:50%; text-align:center;" value="2024.5.6"></dd>
 				
-                <dt class="essential">メール</dt>
-				<dd><input class="form-control" name="email" type="email" placeholder="Emailを入力ください。" style="width:80%" maxlength='50'></dd>
-                
+                <dt class="essential">お名前（カナ）</dt>
+				<dd><input class="form-control" name="kana" type="text" placeholder="カナを記入してください。"style="width:80%" maxlength='50'></dd>
+
                 <dt>性別</dt>
 				<dd> 
 					<select class="form-select"  name="gender" style="width:20%;<?php echo ($isReturn) ? "" : InitStyle(); ?>" onchange="ChangeInputStyle(this)" >
@@ -50,13 +50,6 @@ function InitStyle() { return " font-style: italic; color: grey;"; }
                         <option value="1">女</option>
                     </select>
 				</dd>
-				
-				<dt class="essential">お名前（カナ）</dt>
-				<dd><input class="form-control" name="kana" type="text" placeholder="カナを記入してください。"style="width:80%" maxlength='50'></dd>
-
-                <dt>生年月日</dt>
-				<dd><input class="form-control" id="birth" name="birth" type="text" placeholder="YYYY-MM-DD" autocomplete="off"  style="width:50%"></dd> 
-
 				
                 <dt class="essential">学歴</dt>
 				<dd>
@@ -72,6 +65,10 @@ function InitStyle() { return " font-style: italic; color: grey;"; }
                         <input class="form-control" type="text" placeholder="その他の場合の、記入" id="otherEducation" name="education" maxlength='20'>
                     </div>
 				</dd>
+
+                <dt>生年月日</dt>
+				<dd><input class="form-control" id="birth" name="birth" type="text" placeholder="YYYY-MM-DD" autocomplete="off"  style="width:50%"></dd> 
+
 
 			</dl>
 		</div>
@@ -140,7 +137,7 @@ function InitStyle() { return " font-style: italic; color: grey;"; }
 		</style>
 		<dl class="emegra detail">
                 <dt>診断依頼</dt>
-				<dd>2024.05.06</dd>
+				<dd><input class="form-control" name="apply_date" type="text" style="width:30%; text-align:center;" value="2024.5.6"></dd>
 
 				<dt class="essential">診断問項ID</dt>
 				<dd>B-50-T1</dd> 
@@ -153,7 +150,7 @@ function InitStyle() { return " font-style: italic; color: grey;"; }
 		
 				<dt class="essential">診断方法</dt>
                 <dd style="grid-column: 2 / 5;">
-					<select class="form-select" style="width:10%;<?php echo ($isReturn) ? "" : InitStyle(); ?>" onchange="ChangeInputStyle(this)" >
+					<select class="form-select" style="width:13%;<?php echo ($isReturn) ? "" : InitStyle(); ?>" onchange="ChangeInputStyle(this)" >
                         <option value="" selected disabled hidden>選択</option>
                         <option value="0">WEB</option>
                         <option value="1">対面</option>
@@ -163,22 +160,22 @@ function InitStyle() { return " font-style: italic; color: grey;"; }
 	</div>
 </div>
 
-    <!-- <div class="emegra card" style="margin-top: 32px;">
+<div class="emegra card" style="margin-top: 32px;">
 		<div class="card-header">ITスキル診断状況</div>
 
 		<div class="card-body">
 			<style type="text/css">
-			dl.emegra.info { grid-template-columns: repeat(2, 180px 1fr); }
+			dl.emegra.detail { grid-template-columns: repeat(2, 150px 1fr); }
 			</style>
-			<dl class="emegra info">
+			<dl class="emegra detail">
 				<dt>診断実施日</dt>
-				<dd><span value="">asd</span></dd>
+				<dd><input class="form-control" name="apply_date" type="text" style="width:30%; text-align:center;" value="2024.5.6"></dd>
 
 				<dt>得点</dt>
-				<dd><span>11</span></dd> 
+				<dd><input class="form-control" name="apply_date" type="text" style="width:30%; text-align:center;" value="76"></dd> 
 
 				<dt>評価等級</dt>
-				<dd>2024.5.7</dd>
+				<dd><input class="form-control" name="apply_date" type="text" style="width:30%; text-align:center;" value="B"></dd>
 
 				<dt>診断者のコメント</dt>
 				<dd></dd>
@@ -187,13 +184,12 @@ function InitStyle() { return " font-style: italic; color: grey;"; }
 				<dd></dd>
 			</dl>
 		</div>
-	</div> -->
+	</div>
 </form>
 
 <div class="btn-place" style="margin-top: 32px;">
 	<button class="emegra cancel" onclick="self.location.href='./list';">戻る</button>
-    <button class="emegra" style="background:#f59e0b;" onclick="Regist();">一時保存</button>
-	<button class="emegra" style="width:150px;" onclick="self.location.href='./inputconfirm';">ITスキル診断依頼</button>
+	<button class="emegra" style="width:150px;" onclick="self.location.href='./editconfirm';">ITスキル診断依頼</button>
 </div>
 
 <script type="text/javascript">

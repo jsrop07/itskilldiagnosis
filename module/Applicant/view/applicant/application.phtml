@@ -9,6 +9,9 @@
         <form id="form" name="input_form" enctype="multipart/form-data" action="/applicant/application" method="post">
             <div class="diagnosis_main">
 
+                    <input class="form-control" name="password" type="password" hidden value="123">
+
+
                     <span for="email">メール </span>
                     <input class="form-control" name="email" type="email" placeholder="Emailを入力ください。" style="width:80%" maxlength='50'>
                     
@@ -25,7 +28,7 @@
                         <option value="1">女</option>
                     </select>
 
-                    <span class="no_after_style">生年月日</span>
+                    <span >生年月日</span>
                     <input class="form-control" id="birth" name="birth" type="text" placeholder="YYYY-MM-DD" autocomplete="off"  style="width:30%">   
 
                     <span >応募区分</span>
@@ -246,9 +249,20 @@ function emailValidationCheck(input){
     var emailValidation =  /^[A-Za-z0-9_\.\-]+@[A-Za-z0-9\-]+\.[A-Za-z0-9\-]+/;
     return emailValidation.test(input);
 }
+
 function checkKanji(input) {
-    var japaneseChineseRegex = /^[\u4E00-\u9FFF]+$/; 
-    return japaneseChineseRegex.test(input);
+    function toHalfWidth(str) {
+        return str.replace(/[！-～]/g, function(s) {
+            return String.fromCharCode(s.charCodeAt(0) - 0xFEE0);
+        }).replace(/　/g, " ");
+    }
+
+    var halfWidthInput = toHalfWidth(input);
+    var japaneseRegex = /^[\u4E00-\u9FFF]+$/; // 
+    var hiraganaRegex = /^[\u3040-\u309F]+$/; // 
+    var katakanaRegex = /^[\u30A0-\u30FF]+$/; // 
+
+    return japaneseRegex.test(halfWidthInput) || hiraganaRegex.test(halfWidthInput) || katakanaRegex.test(halfWidthInput);
 }
 
 function checkKana(input) {
@@ -278,6 +292,13 @@ function checkKana(input) {
         if (form.kana.value == "" || !checkKana(form.kana.value)) {
 			alert("カナを入力してください。");
             setTimeout("form.kana.focus()",100);
+            event.preventDefault();
+			return false;
+		}
+
+        if (form.birth.value == "" ) {
+			alert("生年月日を入力してください。");
+            setTimeout("form.birth.focus()",100);
             event.preventDefault();
 			return false;
 		}
@@ -380,6 +401,6 @@ $(document).ready(function(){
     });
   });
   </script>
+<script>
 
-
-
+</script>

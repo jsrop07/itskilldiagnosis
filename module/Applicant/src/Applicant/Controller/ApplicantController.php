@@ -7,6 +7,8 @@ use Zend\Mvc\Controller\Plugin\Redirect;
 use Zend\View\Model\ViewModel;
 use Zend\View\Model\JsonModel;
 use Zend\Session\Container;
+use Zend\Crypt\Password\Bcrypt;
+
 
 class ApplicantController extends AbstractActionController
 {
@@ -25,7 +27,7 @@ class ApplicantController extends AbstractActionController
 	$viewModel->setTemplate("/applicant/application.phtml");
 
 	if ($mode == 'btn_submit') {
-		// exit;
+		$password = $this->params()->fromPost('password');
 		$email = $this->params()->fromPost('email');
 		$name = $this->params()->fromPost('name');
 		$kana = $this->params()->fromPost('kana');
@@ -41,6 +43,7 @@ class ApplicantController extends AbstractActionController
 		$certificates = $this->params()->fromPost('certificates');
 		$other = $this->params()->fromPost('other');
 		$arr = [
+			'password' => $password,
 			'email' => $email,
 			'name' => $name,
 			'kana' => $kana,
@@ -68,8 +71,8 @@ class ApplicantController extends AbstractActionController
 	}
 
 	return $viewModel;
-	
   }
+
 
   public function loginAction()
   {
@@ -96,6 +99,7 @@ class ApplicantController extends AbstractActionController
     $vm->setTemplate("/applicant/login.phtml");
     return $vm;
   }
+
 
   public function examAction()
   {
@@ -211,6 +215,24 @@ class ApplicantController extends AbstractActionController
 		return $vm;
 	}
 
+	function inputconfirmAction(){
+		$this->layout("layout/admin/layout_default");
+		$datas["breadcrumbData"] = ["ITスキル診断状況管理"];
+
+		$query = $this->params()->fromQuery();
+		unset($query["page"]);
+
+
+		$applicantTb = $this->getServiceLocator()->get("AppQuestionTable");
+		// $applicantData = $applicantTb->readByUrl($id);
+
+		// $name = $applicantData["name"];
+
+		$vm = $this->SetViewModel($datas, "/admin/inputconfirm.phtml");
+
+		return $vm;
+	}
+
 	function detailAction(){
 		$this->layout("layout/admin/layout_default");
 		$datas["breadcrumbData"] = ["ITスキル診断状況管理"];
@@ -225,6 +247,42 @@ class ApplicantController extends AbstractActionController
 		// $name = $applicantData["name"];
 
 		$vm = $this->SetViewModel($datas, "/admin/detail.phtml");
+
+		return $vm;
+	}
+
+	function detaileditAction(){
+		$this->layout("layout/admin/layout_default");
+		$datas["breadcrumbData"] = ["ITスキル診断状況管理"];
+
+		$query = $this->params()->fromQuery();
+		unset($query["page"]);
+
+
+		$applicantTb = $this->getServiceLocator()->get("AppQuestionTable");
+		// $applicantData = $applicantTb->readByUrl($id);
+
+		// $name = $applicantData["name"];
+
+		$vm = $this->SetViewModel($datas, "/admin/detailedit.phtml");
+
+		return $vm;
+	}
+
+	function editconfirmAction(){
+		$this->layout("layout/admin/layout_default");
+		$datas["breadcrumbData"] = ["ITスキル診断状況管理"];
+
+		$query = $this->params()->fromQuery();
+		unset($query["page"]);
+
+
+		$applicantTb = $this->getServiceLocator()->get("AppQuestionTable");
+		// $applicantData = $applicantTb->readByUrl($id);
+
+		// $name = $applicantData["name"];
+
+		$vm = $this->SetViewModel($datas, "/admin/editconfirm.phtml");
 
 		return $vm;
 	}

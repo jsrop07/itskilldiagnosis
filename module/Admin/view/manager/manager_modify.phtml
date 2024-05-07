@@ -29,7 +29,7 @@
 			</style>
 			<dl class="emegra setting">
 				<dt>固有番号</dt>
-				<dd><input class="form-control form-control-sm" name="code" style="width: 150px;" value="<?php echo $adminData["code"]; ?>" disabled/></dd>
+				<dd><input class="form-control form-control-sm" name="code" style="width: 150px;" value="<?php echo $adminData["idx"]; ?>" disabled/></dd>
 
 				<dt>職別コード</dt>
 				<dd><input class="form-control form-control-sm" name="code" style="width: 150px;" value="<?php echo $adminData["code"]; ?>" disabled/></dd>
@@ -45,6 +45,9 @@
 
 				<dt>ログインID</dt>
 				<dd><input type="email" class="form-control" name="id" placeholder="IDを入力してください" value="<?php echo $adminData["id"]; ?>"/></dd>
+
+				<dt>パスワード</dt>
+				<dd><input class="form-control" name="password" placeholder="パスワードを入力してください"/></dd>
 
 				<dt>名前</dt>
 				<dd><input class="form-control" name="name" placeholder="名前を入力してください" value="<?php echo $adminData["name"]; ?>"/></dd>

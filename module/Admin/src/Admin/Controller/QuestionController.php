@@ -4,7 +4,6 @@ namespace Admin\Controller;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Zend\Session\Container;
-
 class QuestionController extends AbstractActionController
 {
 	function ChkLogin() {
@@ -128,7 +127,7 @@ class QuestionController extends AbstractActionController
 		}
 
 		$adminTb = $this->getServiceLocator()->get("AdminTable");
-		$datas["adminDatas"] = iterator_to_array($adminTb->ReadAll());
+		$datas["adminDatas"] = $adminTb->ReadAllList();
 
 		$datas = $this->GetOptionDatasForInput($datas);
 		return $this->SetViewModel($datas, "/question/question_input.phtml");
@@ -168,7 +167,7 @@ class QuestionController extends AbstractActionController
 		return $this->SetViewModel($datas, "/question/question_confirm.phtml");
 	}
 	
-	/** When you choose list data on 問題登録 page */
+	/** When you choose list data on 問題一覧 page */
 	public function detailAction() {
 		$this->ChkLogin();
 		$datas["breadcrumbData"] = ["ITスキル診断問項管理", "問題詳細"];

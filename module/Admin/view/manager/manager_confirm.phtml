@@ -8,7 +8,7 @@
 
 	// Check create or update
 	$isUpdate = false;
-	if(isset($adminData["idx"])) { $isUpdate = true; }
+	if (isset($adminData["idx"])) { $isUpdate = true; }
 ?>
 
 <?php echo $this->partial("breadcrumb", ["datas" => $breadcrumbData]); ?>
@@ -19,15 +19,17 @@
 	<div class="card-header">管理者情報</div>
 
 	<div class="card-body">
-		<?php if($isUpdate): ?>
-			<input name="idx" value="<?php echo $adminData["idx"]; ?>" hidden/>
-		<?php endif; ?>
 		<style type="text/css">
 			dl.emegra.setting { grid-template-columns: 140px 1fr; }
 		</style>
+
+		<?php if ($isUpdate): ?>
+			<input name="idx" value="<?php echo $adminData["idx"]; ?>" hidden/>
+		<?php endif; ?>
+
 		<dl class="emegra setting">
 			<dt>固有番号</dt>
-			<dd><?php echo $adminData["code"]; ?></dd>
+			<dd><?php echo ($isUpdate) ? $adminData["idx"] : $adminData["tempIdx"]; ?></dd>
 
 			<dt>職別コード</dt>
 			<dd><?php echo $adminData["code"]; ?></dd>
@@ -39,7 +41,7 @@
 			<dd><?php echo $adminData["id"]; ?></dd>
 
 			<dt>パスワード</dt>
-			<dd><?php echo $adminData["password"]; ?></dd>
+			<dd><?php echo (empty($adminData["password"]) || str_replace(" ", "", $adminData["password"]) == "") ? "変更無し" : $adminData["password"]; ?></dd>
 
 			<dt>名前</dt>
 			<dd><?php echo $adminData["name"]; ?></dd>
@@ -55,7 +57,7 @@
 	</div>
 </div>
 
-<form id="form" method="post" action="./input">
+<form id="form" method="post" action="./<?php echo ($isUpdate) ? "modify" : "input"; ?>">
 	<?php foreach ($adminData as $key => $data): ?>
 		<input type="hidden" name="<?php echo $key; ?>" value="<?php echo $data; ?>"/>
 	<?php endforeach; ?>
@@ -63,10 +65,10 @@
 
 
 <div class="btn-place" style="margin-top: 32px;">
-	<button class="emegra cancel" onclick="<?php echo ($isUpdate) ? "history.back()" : "Return()"; ?>;">戻る</button>
+	<button class="emegra cancel" onclick="Return();">戻る</button>
 
-	<?php if($isUpdate): ?>
-		<button class="emegra" onclick="Regist();">登録</button>
+	<?php if ($isUpdate): ?>
+		<button class="emegra" onclick="Update();">修正</button>
 	<?php else: ?>
 		<button class="emegra" onclick="Regist();">登録</button>
 	<?php endif; ?>
@@ -75,7 +77,26 @@
 <script type="text/javascript">
 	const form = document.getElementById("form");
 
-	<?php if($isUpdate): ?>
+	<?php if ($isUpdate): ?>
+		function Update() {
+			const postForm = new FormData(form);
+			const xhr = new XMLHttpRequest();
+			xhr.open("POST", "./update", true);
+			xhr.send(postForm);
+			xhr.onload = () => {
+				if (xhr.status == 200) {
+					const result = xhr.responseText;
+					if (result == "success") {
+						alert("修正しました。");
+						self.location.href = "./detail/<?php echo $adminData["code"]; ?>";
+					}
+					else {
+						alert("Error");
+						console.log(result);
+					}
+				}
+			}
+		}
 	<?php else: ?>
 		function Regist() {
 			const postForm = new FormData(form);

@@ -86,7 +86,7 @@
 			</thead>
 			<tbody>
 				<?php foreach($adminDatas as $data): ?>
-					<tr onclick="self.location.href='./detail/<?php echo $data['idx']; ?>'" style="cursor: pointer;">
+					<tr onclick="self.location.href='./detail/<?php echo $data['code']; ?>'" style="cursor: pointer;">
 						<td><?php echo $data["num"]; ?></td>
 						<td style="text-align: start;"><?php echo $data["id"]; ?></td>
 						<td style="text-align: start;"><?php echo $data["name"]; ?></td>

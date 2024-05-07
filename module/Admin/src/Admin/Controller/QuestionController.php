@@ -4,7 +4,6 @@ namespace Admin\Controller;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Zend\Session\Container;
-
 class QuestionController extends AbstractActionController
 {
 	function ChkLogin() {

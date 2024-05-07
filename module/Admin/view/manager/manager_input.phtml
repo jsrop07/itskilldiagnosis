@@ -29,7 +29,7 @@
 			</style>
 			<dl class="emegra setting">
 				<dt>固有番号</dt>
-				<dd><input class="form-control form-control-sm" name="num" style="width: 150px;" value="24-0415002"/></dd>
+				<dd><input class="form-control form-control-sm" name="tempIdx" style="width: 150px;" value="<?php echo ($isReturn) ? $adminData["tempIdx"] : $tempIdx; ?>"/></dd>
 
 				<dt>職別コード</dt>
 				<dd><input class="form-control form-control-sm" name="code" style="width: 150px;" value="<?php echo ($isReturn) ? $adminData["code"] : $code; ?>"/></dd>

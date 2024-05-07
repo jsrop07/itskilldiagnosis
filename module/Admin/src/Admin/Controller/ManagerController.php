@@ -72,6 +72,14 @@ class ManagerController extends AbstractActionController
 
 		// Make Code
 		$adminTb = $this->getServiceLocator()->get("AdminTable");
+		try {
+			$adminDatas = $adminTb->ReadAll();
+			$datas["tempIdx"] = end($adminDatas)["idx"] + 1;
+		} catch (\Exception $e) {
+			print_r($e->getMessage());
+			exit;
+		}
+
 		$code = date("y-md");
 		$adminDatas = $adminTb->ReadListByCode($code);
 
@@ -135,7 +143,7 @@ class ManagerController extends AbstractActionController
 
 		$post = $this->params()->fromPost();
 
-		// Check return from 登録確認　page
+		// Check return from 登録確認 page
 		if (isset($post["id"])) {
 			$datas["adminData"] = $post;
 		} else {
@@ -150,11 +158,6 @@ class ManagerController extends AbstractActionController
 	public function createAction() {
 		$post = $this->params()->fromPost();
 
-		// temp
-		unset($post["num"]);
-
-		$post["password"] = $this->Encryption($post["password"]);
-
 		$adminTb = $this->getServiceLocator()->get("AdminTable");
 
 		// Check Code overlap
@@ -166,6 +169,9 @@ class ManagerController extends AbstractActionController
 		try { $result = $adminTb->ReadById($post["id"]); }
 		catch (\Exception $e) { die($e->getMessage()); }
 		if (!empty($result)) { die("id overlapped"); }
+
+		unset($post["tempIdx"]);
+		$post["password"] = $this->Encryption($post["password"]);
 
 		// Insert Record
 		try { $adminTb->CreateAdmin($post); }
@@ -180,11 +186,18 @@ class ManagerController extends AbstractActionController
 		$adminTb = $this->getServiceLocator()->get("AdminTable");
 
 		// Add password & date_login from Before data
-		try {
-			$adminData = $adminTb->ReadByCode($post["code"]);
+		$adminData = array();
+		try { $adminData = $adminTb->ReadByCode($post["code"]); }
+		catch (\Exception $e) { die($e->getMessage()); }
+		
+		$post["date_login"] = $adminData["date_login"];
+
+		// Check Password Reset
+		if (empty($post["password"]) || str_replace(" ", "", $post["password"]) == "") {
 			$post["password"] = $adminData["password"];
-			$post["date_login"] = $adminData["date_login"];
-		} catch (\Exception $e) { die($e->getMessage()); }
+		} else {
+			$post["password"] = $this->Encryption($post["password"]);
+		}
 
 		// Update Before data to delete
 		try { $adminTb->UpdateToDelete($post["idx"]); }

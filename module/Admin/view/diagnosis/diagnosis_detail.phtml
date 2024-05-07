@@ -1,8 +1,13 @@
 <?php
+	$pointTexts = ["A", "B", "C", "D"];
+
 	if (!isset($_SESSION)) { session_start(); }
-	$userCode = $_SESSION["user"]["code"] ;
-	
-	//承認権限確認
+
+	$resultPoints = explode(",", $diagnosisData["result_points"]);
+	$resultTexts = explode(",", $diagnosisData["result_texts"]);
+	$resultComments = explode(",", $diagnosisData["result_comments"]);
+
+	// Check approve authority
 	$isApprover = false;
 	if ($_SESSION["user"]["level"] >= 1) { $isApprover = true; }
 ?>
@@ -20,16 +25,16 @@
 		</style>
 		<dl class="emegra setting">
 			<dt>ID</dt>
-			<dd>B-50-T2</dd>
+			<dd><?php echo $diagnosisData["code"]; ?></dd>
 			
 			<dt>分類</dt>
-			<dd>IT基礎 / JAVA</dd>
+			<dd><?php echo $optionDatas[$diagnosisData["class1st"]]; ?> / <?php echo $optionDatas[$diagnosisData["class2nd"]]; ?></dd>
 		
 			<dt>レベル</dt>
-			<dd>初級</dd>
+			<dd><?php echo $optionDatas[$diagnosisData["level"]]; ?></dd>
 		
 			<dt>タイトル</dt>
-			<dd>新卒の開発者向け提出問題（Java）</dd>
+			<dd><?php echo $diagnosisData["title"]; ?></dd>
 		</dl>
 	</div>
 </div>
@@ -43,10 +48,10 @@
 		</style>
 		<dl class="emegra question">
 			<dt>問項数</dt>
-			<dd>50</dd>
+			<dd><?php echo $diagnosisData["question_num"]; ?></dd>
 
 			<dt>診断時間</dt>
-			<dd>60分</dd>
+			<dd><?php echo $diagnosisData["time_limit"]; ?>分</dd>
 
 			<dt>問項一覧</dt>
 			<div style="width: 100%; display: flex;">
@@ -54,6 +59,7 @@
 					table.emegra tr { grid-template-columns: 50px 1fr 60px 50px; }
 					table.emegra th, table.emegra td { padding: 5px 0 !important; }
 				</style>
+
 				<table class="emegra">
 					<thead>
 						<tr>
@@ -64,34 +70,14 @@
 						</tr>
 					</thead>
 					<tbody>
-						<tr>
-							<td>1</td>
-							<td style="text-align: start;">title1</td>
-							<td>4項選択</td>
-							<td>1</td>
-						</tr>
-						<tr>
-							<td>2</td>
-							<td style="text-align: start;">title2</td>
-							<td>3項選択</td>
-							<td>3</td>
-						</tr>
-						<tr>
-							<td>3</td>
-							<td style="text-align: start;">title3</td>
-							<td>4項選択</td>
-							<td>4</td>
-						</tr>
-						<tr>
-							<td>4</td>
-							<td style="text-align: start;">title4</td>
-							<td>5項選択</td>
-							<td>5</td>
-						</tr>
-						<tr>
-							<td style="grid-column: 1 / 4;"></td>
-							<td>100点</td>
-						</tr>
+						<?php foreach ($questionDatas as $index => $data): ?>
+							<tr>
+								<td><?php echo $index + 1; ?></td>
+								<td style="text-align: left;"><?php echo $data["title"]; ?></td>
+								<td><?php echo $optionDatas[$data["type"]]; ?></td>
+								<td><?php echo $data["point"]; ?></td>
+							</tr>
+						<?php endforeach; ?>
 					</tbody>
 				</table>
 			</div>
@@ -130,32 +116,16 @@
 								<th style="grid-area: comment;">評価コメント</th>
 							</tr>
 						</thead>
-						<thead>
-							<tr>
-								<td>A</td>
-								<td>100 ~ 91</td>
-								<td style="text-align: left;">優秀</td>
-								<td style="text-align: left;">〜〜〜〜〜である</td>
-							</tr>
-							<tr>
-								<td>B</td>
-								<td>90 ~ 71</td>
-								<td style="text-align: left;">やや優秀</td>
-								<td style="text-align: left;">〜〜〜〜〜である</td>
-							</tr>
-							<tr>
-								<td>C</td>
-								<td>70 ~ 51</td>
-								<td style="text-align: left;">努力が必要</td>
-								<td style="text-align: left;">〜〜〜〜〜である</td>
-							</tr>
-							<tr>
-								<td>D</td>
-								<td>50 ~ 0	</td>
-								<td style="text-align: left;">IT職業に向いてない</td>
-								<td style="text-align: left;">〜〜〜〜〜である</td>
-							</tr>
-						</thead>
+						<tbody>
+							<?php foreach ($resultPoints as $index => $point): ?>
+								<tr>
+									<td><?php echo $pointTexts[$index]; ?></td>
+									<td><?php echo ($index == 0) ? "100" : $resultPoints[$index - 1] - 1; ?> ~ <?php echo $point; ?></td>
+									<td><?php echo $resultTexts[$index]; ?></td>
+									<td style="text-align: left;"><?php echo $resultComments[$index]; ?></td>
+								</tr>
+							<?php endforeach; ?>
+						</tbody>
 					</table>
 				</dd>
 			</dl>

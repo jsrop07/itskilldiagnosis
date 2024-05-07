@@ -36,6 +36,12 @@ class AdminTable
 		return $this->sql->prepareStatementForSqlObject($qry)->execute();
 	}
 
+	/** Read All Records */
+	public function ReadAll() {
+		$qry = $this->sql->select("admin");
+		return iterator_to_array($this->sql->prepareStatementForSqlObject($qry)->execute());
+	}
+
 	/** Read Records for List
 	 * @return mixed Records
 	*/

@@ -50,17 +50,12 @@
 		justify-content: center;
 	}
 
-	.list-title {
-		text-align: left;
-		
-		cursor: pointer;
-	}
-	.list-title:hover { text-decoration: underline; }
-
-	.button-place {
+	.pagination-place, .button-place {
+		margin-top: 10px;
 		display: flex;
-		justify-content: space-between;
+		justify-content: center;
 	}
+	.button-place { justify-content: space-between; }
 </style>
 <content class="header">
 	<div class="title">ITスキル診断管理者管理</div>
@@ -78,7 +73,7 @@
 					<th style="grid-area: no">no</th>
 					<th style="grid-area: id">ログインID</th>
 					<th style="grid-area: name">名前</th>
-					<th style="grid-area: level">レベル</th>
+					<th style="grid-area: level">権限</th>
 					<th style="grid-area: ipc">担当者</th>
 					<th style="grid-area: date_login">最終ログイン</th>
 					<th style="grid-area: date_start">更新日</th>
@@ -86,24 +81,26 @@
 			</thead>
 			<tbody>
 				<?php foreach($adminDatas as $data): ?>
-					<tr onclick="self.location.href='./detail/<?php echo $data['code']; ?>'" style="cursor: pointer;">
+					<tr>
 						<td><?php echo $data["num"]; ?></td>
-						<td style="text-align: start;"><?php echo $data["id"]; ?></td>
-						<td style="text-align: start;"><?php echo $data["name"]; ?></td>
-						<td style="text-align: start;"><?php echo $levelTexts[$data["level"]]; ?></td>
+						<td class="link left" onclick="self.location.href='./detail/<?php echo $data['code']; ?>'"><?php echo $data["id"]; ?></td>
+						<td class="left"><?php echo $data["name"]; ?></td>
+						<td><?php echo $levelTexts[$data["level"]]; ?></td>
 						<td><?php echo ($data["pic"] == "y") ? "o" : "x"; ?></td>
-						<td style="text-align: start;"><?php echo (empty($data["date_login"])) ? "無し" : date("Y/m/d h:i:s", strtotime($data["date_login"])); ?></td>
-						<td style="text-align: start;"><?php echo date("Y/m/d h:i:s", strtotime($data["date_start"])); ?></td>
+						<td class="left"><?php echo (empty($data["date_login"])) ? "無し" : date("Y/m/d h:i:s", strtotime($data["date_login"])); ?></td>
+						<td class="left"><?php echo date("Y/m/d h:i:s", strtotime($data["date_start"])); ?></td>
 					</tr>
 				<?php endforeach; ?>
 			</tbody>
 		</table>
 	<?php endif; ?>
 
-	<div class="button-place" style="margin-top: 10px;">
-		<div>
-			<?php echo $this->paginationControl($this->noticelist, "sliding", array("pagination", "Notice"), array("url" => "")); ?>
-		</div>
+	<div class="pagination-place">
+		<?php echo $this->paginationControl($this->noticelist, "sliding", array("pagination", "Notice"), array("url" => "")); ?>
+	</div>
+	<div class="button-place">
+		<div></div>
+
 		<div>
 			<button class="emegra" onclick="self.window.location='./input'">新規登録</button>
 		</div>	

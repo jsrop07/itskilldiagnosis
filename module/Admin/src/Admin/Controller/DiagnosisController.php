@@ -67,6 +67,24 @@ class DiagnosisController extends AbstractActionController {
 		$vm->noticelist->setItemCountPerPage($printDataNum);
 		return $vm;
 	}
+	
+	/** When you click 新規登録 button on 一覧 page */
+	public function inputAction() {
+		$this->ChkLogin();
+		$datas["breadcrumbData"] = ["ITスキル診断書管理", "診断書登録"];
+		$datas["title"] = "診断書登録";
+
+		// Check return from 登録確認　page
+		$post = $this->params()->fromPost();
+		if (isset($post["code"])) {
+			$datas["diagnosisData"] = $post;
+		}
+
+		$diagnosisTb = $this->getServiceLocator()->get("DiagnosisTable-Admin");
+
+		$datas = $this->GetOptionDatasForInput($datas);
+		return $this->SetViewModel($datas, "/diagnosis/diagnosis_input.phtml");
+	}
 
 	/** When you choose list data on 問題一覧 page */
 	public function detailAction() {

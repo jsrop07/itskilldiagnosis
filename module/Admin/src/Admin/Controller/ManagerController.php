@@ -70,38 +70,9 @@ class ManagerController extends AbstractActionController
 		$datas["breadcrumbData"] = ["ITスキル診断問項管理", "管理者登録"];
 		$datas["title"] = "管理者登録";
 
-		// Make Code
-		$adminTb = $this->getServiceLocator()->get("AdminTable");
-		try {
-			$adminDatas = $adminTb->ReadAll();
-			$datas["tempIdx"] = end($adminDatas)["idx"] + 1;
-		} catch (\Exception $e) {
-			print_r($e->getMessage());
-			exit;
-		}
-
-		$code = date("y-md");
-		$adminDatas = $adminTb->ReadListByCode($code);
-
-		$num = 1;
-		if (!empty($adminDatas)) {
-			$index = 0;
-			while (isset($adminDatas[$index])) {
-				// Check empty number
-				if ($num != intval(substr($adminDatas[$index]["code"], 7, 3))) {
-					break;
-				}
-				
-				$index++; $num++;
-			}
-		}
-		$num = str_pad($num, 3, "0", STR_PAD_LEFT);
-		$code .= $num;
-		$datas["code"] = $code;
-
 		// Check return from 登録確認　page
 		$post = $this->params()->fromPost();
-		if (isset($post["code"])) {
+		if (isset($post["id"])) {
 			$datas["adminData"] = $post;
 		}
 
@@ -115,6 +86,8 @@ class ManagerController extends AbstractActionController
 		$datas["title"] = "登録確認";
 
 		$datas["adminData"] = $this->params()->fromPost();
+
+		$adminTb = $this->getServiceLocator()->get("AdminTable");
 
 		return $this->SetViewModel($datas, "/manager/manager_confirm.phtml");
 	}
@@ -160,17 +133,34 @@ class ManagerController extends AbstractActionController
 
 		$adminTb = $this->getServiceLocator()->get("AdminTable");
 
-		// Check Code overlap
-		try { $result = $adminTb->ReadByCode($post["code"]); }
-		catch (\Exception $e) { die($e->getMessage()); }
-		if (!empty($result)) { die("code overlapped"); }
-
 		// Check Id overlap
 		try { $result = $adminTb->ReadById($post["id"]); }
 		catch (\Exception $e) { die($e->getMessage()); }
 		if (!empty($result)) { die("id overlapped"); }
 
-		unset($post["tempIdx"]);
+		// Make Code
+		$code = date("y-md");
+		$adminDatas = array();
+		try { $adminDatas = $adminTb->ReadListByCode($code);}
+		catch (\Exception $e) { die($e->getMessage()); }
+
+		// If it keep going, Modify it
+		$num = 1;
+		if (!empty($adminDatas)) {
+			$index = 0;
+			while (isset($adminDatas[$index])) {
+				// Check empty number
+				if ($num != intval(substr($adminDatas[$index]["code"], 7, 3))) {
+					break;
+				}
+				
+				$index++; $num++;
+			}
+		}
+		$num = str_pad($num, 3, "0", STR_PAD_LEFT);
+		$code .= $num;
+		$post["code"] = $code;
+
 		$post["password"] = $this->Encryption($post["password"]);
 
 		// Insert Record

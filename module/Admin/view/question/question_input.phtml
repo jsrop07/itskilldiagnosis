@@ -159,7 +159,7 @@
 				</dd>
 
 				<dt class="essential">作成日</dt>
-				<dd><input class="form-control" name="date_regist" id="date_regist" type="date" style="width: 150px;" disabled value="<?php echo ($isReturn) ? date("Y-m-d", strtotime($questionData["date_regist"])) : date("Y-m-d"); ?>"></dd>
+				<dd><input class="form-control" name="date_regist" id="date_regist" type="date" style="width: 150px;" readonly value="<?php echo ($isReturn) ? date("Y-m-d", strtotime($questionData["date_regist"])) : date("Y-m-d"); ?>"></dd>
 			
 				<dt>備考</dt>
 				<dd class="expand">
@@ -308,7 +308,6 @@
 		}
 
 		// Change 作成日 data
-		dateRegist.disabled = false;
 		dateRegist.type = "text";
 		dateRegist.value = datetime;
 

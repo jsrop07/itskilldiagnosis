@@ -188,6 +188,9 @@ class QuestionController extends AbstractActionController
 			$datas["approver"] = $adminTb->ReadByCode($questionData["admin_approve"])["name"];
 		}
 
+		// Save Note
+		$datas["note"] = str_replace("\n", "<br/>", $datas["questionData"]["note"]);
+
 		return $this->SetViewModel($datas, "/question/question_detail.phtml");
 	}
 
@@ -297,16 +300,22 @@ class QuestionController extends AbstractActionController
 		$session = new Container("user");
 
 		$questionTb = $this->getServiceLocator()->get("QuestionTable");
+
+		$beforeNotes = array();
 		foreach ($idxDatas as $idx) {
 			$result = $questionTb->ReadByIdx($idx);
 			if ($result["date_approve"] != null) { die("fail"); }
+			else { array_push($beforeNotes, $result["note"]); }
 		}
 
 		$optionTb = $this->getServiceLocator()->get("OptionTable");
 		$sqlSet["status"] = $optionTb->ReadByText("承認済")["idx"];
 		$sqlSet["admin_approve"] = $session["code"];
 		$sqlSet["date_approve"] = date("Y-m-d H:i:s");
-		foreach ($idxDatas as $idx) {
+		$log = "承認　" . date("Y.m.d") . "　" . $session["name"] . "\n";
+
+		foreach ($idxDatas as $index => $idx) {
+			$sqlSet["note"] = $beforeNotes[$index] . $log;
 			$questionTb->UpdateByIdx($idx, $sqlSet);
 		}
 

@@ -7,8 +7,8 @@
 	if (!isset($_SESSION)) { session_start(); }
 
 	// Check create or update
-	$isUpdate = false;
-	if (isset($adminData["idx"])) { $isUpdate = true; }
+	$isRegist = true;
+	if (isset($adminData["idx"])) { $isRegist = false; }
 ?>
 
 <?php echo $this->partial("breadcrumb", ["datas" => $breadcrumbData]); ?>
@@ -23,20 +23,11 @@
 			dl.emegra.setting { grid-template-columns: 140px 1fr; }
 		</style>
 
-		<?php if ($isUpdate): ?>
+		<?php if ($isRegist == false): ?>
 			<input name="idx" value="<?php echo $adminData["idx"]; ?>" hidden/>
 		<?php endif; ?>
 
 		<dl class="emegra setting">
-			<dt>固有番号</dt>
-			<dd><?php echo ($isUpdate) ? $adminData["idx"] : $adminData["tempIdx"]; ?></dd>
-
-			<dt>職別コード</dt>
-			<dd><?php echo $adminData["code"]; ?></dd>
-
-			<dt>権限</dt>
-			<dd><?php echo $levelTexts[$adminData["level"]]; ?></dd>
-
 			<dt>ログインID</dt>
 			<dd><?php echo $adminData["id"]; ?></dd>
 
@@ -45,6 +36,9 @@
 
 			<dt>名前</dt>
 			<dd><?php echo $adminData["name"]; ?></dd>
+
+			<dt>権限</dt>
+			<dd><?php echo $levelTexts[$adminData["level"]]; ?></dd>
 
 			<dt>担当者</dt>
 			<dd><?php echo $picTexts[$adminData["pic"]]; ?></dd>
@@ -57,7 +51,7 @@
 	</div>
 </div>
 
-<form id="form" method="post" action="./<?php echo ($isUpdate) ? "modify" : "input"; ?>">
+<form id="form" method="post" action="./<?php echo ($isRegist) ? "input" : "modify"; ?>">
 	<?php foreach ($adminData as $key => $data): ?>
 		<input type="hidden" name="<?php echo $key; ?>" value="<?php echo $data; ?>"/>
 	<?php endforeach; ?>
@@ -67,37 +61,17 @@
 <div class="btn-place" style="margin-top: 32px;">
 	<button class="emegra cancel" onclick="Return();">戻る</button>
 
-	<?php if ($isUpdate): ?>
-		<button class="emegra" onclick="Update();">修正</button>
-	<?php else: ?>
+	<?php if ($isRegist): ?>
 		<button class="emegra" onclick="Regist();">登録</button>
+	<?php else: ?>
+		<button class="emegra" onclick="Update();">修正</button>
 	<?php endif; ?>
 </div>
 
 <script type="text/javascript">
 	const form = document.getElementById("form");
 
-	<?php if ($isUpdate): ?>
-		function Update() {
-			const postForm = new FormData(form);
-			const xhr = new XMLHttpRequest();
-			xhr.open("POST", "./update", true);
-			xhr.send(postForm);
-			xhr.onload = () => {
-				if (xhr.status == 200) {
-					const result = xhr.responseText;
-					if (result == "success") {
-						alert("修正しました。");
-						self.location.href = "./detail/<?php echo $adminData["code"]; ?>";
-					}
-					else {
-						alert("Error");
-						console.log(result);
-					}
-				}
-			}
-		}
-	<?php else: ?>
+	<?php if ($isRegist): ?>
 		function Regist() {
 			const postForm = new FormData(form);
 			const xhr = new XMLHttpRequest();
@@ -110,13 +84,29 @@
 						alert("登録しました。");
 						self.location.href = "./list";
 					}
-					else if (result == "code overlapped") {
-						alert("コードが重複しています");
-						form.submit();
-					}
 					else if (result == "id overlapped") {
 						alert("IDが重複しています");
 						form.submit();
+					}
+					else {
+						alert("Error");
+						console.log(result);
+					}
+				}
+			}
+		}
+	<?php else: ?>
+		function Update() {
+			const postForm = new FormData(form);
+			const xhr = new XMLHttpRequest();
+			xhr.open("POST", "./update", true);
+			xhr.send(postForm);
+			xhr.onload = () => {
+				if (xhr.status == 200) {
+					const result = xhr.responseText;
+					if (result == "success") {
+						alert("修正しました。");
+						self.location.href = "./detail/<?php echo $adminData["code"]; ?>";
 					}
 					else {
 						alert("Error");

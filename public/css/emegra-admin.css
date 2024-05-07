@@ -131,12 +131,12 @@ main {
 	display: flex;
 	align-items: center;
 }
-.essential::before {
+.essential::after {
 	content: "必須";
 
 	height: 20px;
 	width: 40px;
-	margin-right: 8px;
+	margin-left: 8px;
 	border-radius: 4px;
 	display: flex;
 	justify-content: center;
@@ -321,6 +321,7 @@ dl.emegra dt, dl.emegra dd {
 	font-size: 16px;
 	font-weight: 700;
 }
+dl.emegra dt { justify-content: end; }
 dl.emegra dd { font-weight: 400; }
 dl.emegra dd.expand {
 	height: auto;
@@ -354,7 +355,7 @@ table.emegra > thead > tr {
 }
 table.emegra > tbody > tr { border-top: 1px solid var(--line); }
 table.emegra > tbody > tr:nth-child(1) { border-top: 0; }
-table.emegra > tbody > tr:hover { background: var(--line); }
+/* table.emegra > tbody > tr:hover { background: var(--line); } */
 table.emegra thead th {
 	padding-top: 16px;
 	padding-bottom: 8px;
@@ -369,6 +370,13 @@ table.emegra tbody td {
 	font-size: 14px;
 	font-weight: 400;
 	color: #343A40;
+}
+table.emegra td.left { text-align: left; }
+table.emegra td.link {
+	text-decoration: underline;
+	color: blue;
+
+	cursor: pointer;
 }
 
 

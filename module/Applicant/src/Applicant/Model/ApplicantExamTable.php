@@ -75,11 +75,71 @@ class ApplicantExamTable
     return $this->sql->prepareStatementForSqlObject($qry)->execute();
   }
 
-  public function readByUrl($id)
+
+  // SEOKWON CODE
+  public function readById($email)
   {
-    $qry = $this->sql->select("applicant")->where(["id" => $id]);
+    $qry = $this->sql->select("applicant")->where(["email" => $email]);
     return $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
   }
+
+  public function readByApplicantIdx($applicant_idx)
+  {
+    $qry = $this->sql->select("record")->where(["applicant_idx" => $applicant_idx])->order("write_date DESC");
+    return $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
+  }
+
+  public function readByDiagnosisCode($code)
+  {
+    $qry = $this->sql->select("diagnosis")->where(["code" => $code]);
+    return $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
+  }
+
+  public function findCompareIdx($p)
+  {
+      $select = $this->sql->select('question');
+      $select->columns([
+          'idx',
+          'question',
+          'answers',
+          'correct'
+          // 'wdate' => new Expression("DATE_FORMAT(wdate, '%Y-%m-%d %H:%i')")
+      ]);
+  
+      if (!empty($p['idx'])) {
+          $select->where(['idx' => $p['idx']]);
+      }
+  
+      $statement = $this->sql->prepareStatementForSqlObject($select);
+      $result = $statement->execute();
+  
+      $resultSet = new ResultSet();
+      $resultSet->initialize($result);
+      $resultSet->buffer(); 
+      
+      return $resultSet;
+  }
+
+  public function updateExam($examData){
+    $qry=new sql($this->adapter);
+    $update=$qry->update('record');
+    $update->set([
+      'answer_data'=>$examData['answer_data'],
+      'get_point'=>$examData['get_point'],
+      'comment'=>$examData['comment'],
+      'execute_date'=>date("Y-m-d H:i:s")
+    ]);
+    $update->where(['idx'=>$examData['id']]);
+
+    $sqlString = $qry->getSqlStringForSqlObject($update);
+    $result = $this->adapter->query($sqlString, Adapter::QUERY_MODE_EXECUTE);
+
+    return $result;   
+  }
+
+  
+
+// ここまで
 
   public function readTenByPage($page)
   {

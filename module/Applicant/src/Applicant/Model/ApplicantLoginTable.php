@@ -34,11 +34,11 @@ class ApplicantLoginTable
     $this->sql = new Sql($this->adapter);
   }
 
-  public function login($id, $password)
+  public function login($email, $password)
   {
     $qry = $this->sql->select("applicant")->where(
       array(
-        "id" => $id,
+        "email" => $email,
         "password" => $password,
       )
     );

@@ -82,6 +82,7 @@ class ApplicantController extends AbstractActionController
     if (isset($p["id"])) {
 			$loginTbl = $this->getServiceLocator()->get("ApplicantLoginTable");
 			$result = $loginTbl->login($p["id"], $p["password"]);
+
 			if ($result == "success") {
 				$session = new Container("applicant");
 				$session["id"] = $p["id"];
@@ -107,6 +108,8 @@ class ApplicantController extends AbstractActionController
 	  $this->layout("layout/applicant/exam_layout");
 	  $p = $this->params()->fromPost();
 	  $mode =(isset($p['mode'])    &&   $p['mode'] !='')? $p['mode']:'';
+	  $answer_data = (isset($p['answer_data'])  &&   $p['answer_data'    ] !='')  ? $p['answer_data']    : '';
+	  $comment = (isset($p['comment'])  &&   $p['comment'    ] !='')  ? $p['comment']    : '';
 
 
 	  $session = new Container("applicant");
@@ -124,23 +127,73 @@ class ApplicantController extends AbstractActionController
 			$this->RedirectToLogin();	
         }
 	  }
-	  if($mode=='submit'){
-		echo "
-		<script>
-		self.location.href='/applicant/examclear';
-		</script>
-		";	
-	  }
-	  // Get exam name
+
+	  // 아이디 값 불러오기
+
 	  $examTb = $this->getServiceLocator()->get("ApplicantExamTable");
-	  $examData = $examTb->readByUrl($id);
-	  $name = $examData["name"];
-	  
-	  //TIMELIMIT TEST
-	  $idx = $examData["idx"];
-  
+	  $examId = $examTb->readById($id);
+	  $idx = $examId["idx"];
+
+	  // applicant의 id값과 record의 idx값 비교해서 불러오기
+	  $examRecordIdx = $examTb->readByApplicantIdx($idx);
+	  $name = $examId["name"];
+	  $recordIdx=$examRecordIdx['idx'];
+	  $applicantIdx = $examRecordIdx["applicant_idx"];
+
+	  // code diagnosis테이블의 code와 question_num, time_limit값 불러오기
+	  $code = $examRecordIdx["code"];
+	  $diagnosisCode = $examTb->readByDiagnosisCode($code);
+	  $question_num=$diagnosisCode["question_num"];
+	  $time_limit=$diagnosisCode["time_limit"];
+
+	  // 정답값 비교하기
+	  $findData=$examTb->findCompareIdx($p);
+	  $findselectedData=['question_idxs'=>isset($diagnosisCode['question_idxs'])? $diagnosisCode['question_idxs']:null];
+	  $selectedQnA=[['question_idxs'=> $diagnosisCode['question_idxs'],'answer_data'=>$examRecordIdx['answer_data']]];
+	  $matchedData=[];
+	  foreach(explode(',',$findselectedData["question_idxs"]) as $value)
+	  {
+		foreach($findData as $data)
+		{
+			if($data['idx']==$value)
+			{
+				$matchedData[]=$data;
+			}
+		}
+	  }
+
+	  $output = [];
+		foreach ($matchedData as $item) {
+			$output[] = $item['correct'];
+		}
+		$result = implode(',', $output);
+		$answerDataArray = explode(',',$answer_data);
+		$resultArray = explode(',', $result);
+
+		$length = count($answerDataArray);
+		$get_point = 0;
+		for ($i = 0; $i < $length; $i++) {
+			if ($resultArray[$i] == $answerDataArray[$i]) {
+				$get_point++;
+			}
+		}
+		if($mode=='btn_submit'){
+
+			$arr=[
+				'id' => $recordIdx,
+				'answer_data' => $answer_data,
+				'get_point'=>$get_point,
+				'comment'=>$comment
+			];
+			$examTb->updateExam($arr);
+			echo "
+			<script>
+			self.location.href='/applicant/examclear';
+			</script>
+			";	
+		  }
 	  // Set variables to be passed to the layout
-	  $viewModel = new ViewModel(["name" => $name, "idx" => $idx]);
+	  $viewModel = new ViewModel(["name" => $name, "question_num" => $question_num, "time_limit" => $time_limit, "matchedData"=>$matchedData]);
   
 	  // Set view template
 	  $viewModel->setTemplate("applicant/exam.phtml");

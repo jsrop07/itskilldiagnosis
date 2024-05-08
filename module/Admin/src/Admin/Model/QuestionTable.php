@@ -65,7 +65,10 @@ class QuestionTable {
 		$where->isNull("date_delete");
 		foreach ($whereDatas as $field => $data) {
 			if ($field == "title") {
-				$where->and->like("title", "%" . $data . "%");
+				$where->and->nest()
+					->like("title", "%" . $data . "%")
+					->or->like("question", "%" . $data . "%")
+				->unnest();
 				continue;
 			}
 			$where->and->equalTo($field, $data);

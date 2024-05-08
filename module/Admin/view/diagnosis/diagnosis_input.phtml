@@ -1,11 +1,10 @@
 <?php
+	function InitStyle() { return " font-style: italic; color: grey;"; }
+
 	if (!isset($_SESSION)) { session_start(); }
 
-	$isSetData = false;
-
-	function InitStyle() {
-		return " font-style: italic; color: grey;";
-	}
+	$isReturn = false;
+	if (isset($adminData)) { $isReturn = true; }
 ?>
 
 <?php echo $this->partial("breadcrumb", ["datas" => $breadcrumbData]); ?>
@@ -13,7 +12,7 @@
 <h1 class="title"><?php echo $title; ?></h1>
 
 <form id="form" method="post" action="./confirm">
-	<?php if ($isSetData): ?>
+	<?php if ($isReturn): ?>
 		<input name="idx" value="<?php echo $questionData["idx"]; ?>" hidden/>
 	<?php endif; ?>
 	<style type="text/css">
@@ -30,14 +29,14 @@
 			</style>
 			<dl class="emegra setting">
 				<dt>ID</dt>
-				<dd><input class="form-control form-control-sm" style="width: 70px;" disabled value="B-50-T2"/></dd>
+				<dd><input class="form-control form-control-sm" style="width: 150px;" readonly value="<?php echo $code; ?>"/></dd>
 
 				<dt class="essential">大分類</dt>
 				<dd>
-					<select class="form-select" name="class1st" onchange="ChangeInputStyle(this)" style="width: 150px;<?php echo ($isSetData) ? "" : InitStyle(); ?>">
+					<select class="form-select" name="class1st" onchange="ChangeInputStyle(this)" style="width: 150px;<?php echo ($isReturn) ? "" : InitStyle(); ?>">
 						<option value="" hidden>選択</option>
 						<?php foreach($optionDatas["class1st"] as $data): ?>
-							<option value="<?php echo $data["idx"]; ?>"<?php echo ($isSetData && $questionData["class1st"] == $data["idx"]) ? " selected" : ""; ?>>
+							<option value="<?php echo $data["idx"]; ?>"<?php echo ($isReturn && $questionData["class1st"] == $data["idx"]) ? " selected" : ""; ?>>
 								<?php echo $data["text"]; ?>
 							</option>
 						<?php endforeach; ?>
@@ -46,10 +45,10 @@
 
 				<dt class="essential">小分類</dt>
 				<dd>
-					<select class="form-select" name="class2nd" onchange="ChangeInputStyle(this)" style="width: 150px;<?php echo ($isSetData) ? "" : InitStyle(); ?>">
+					<select class="form-select" name="class2nd" onchange="ChangeInputStyle(this)" style="width: 150px;<?php echo ($isReturn) ? "" : InitStyle(); ?>">
 						<option value="" hidden>選択</option>
 						<?php foreach($optionDatas["class2nd"] as $idx => $data): ?>
-							<option value="<?php echo $data["idx"]; ?>"<?php echo ($isSetData && $questionData["class2nd"] == $data["idx"]) ? " selected" : ""; ?>>
+							<option value="<?php echo $data["idx"]; ?>"<?php echo ($isReturn && $questionData["class2nd"] == $data["idx"]) ? " selected" : ""; ?>>
 								<?php echo $data["text"]; ?>
 							</option>
 						<?php endforeach; ?>
@@ -58,10 +57,10 @@
 		
 				<dt class="essential">レベル</dt>
 				<dd>
-					<select class="form-select" name="level" onchange="ChangeInputStyle(this)" style="width: 100px;<?php echo ($isSetData) ? "" : InitStyle(); ?>">
+					<select class="form-select" name="level" onchange="ChangeInputStyle(this)" style="width: 100px;<?php echo ($isReturn) ? "" : InitStyle(); ?>">
 						<option value="" hidden>選択</option>
 						<?php foreach($optionDatas["level"] as $data): ?>
-							<option value="<?php echo $data["idx"]; ?>"<?php echo ($isSetData && $questionData["level"] == $data["idx"]) ? " selected" : ""; ?>>
+							<option value="<?php echo $data["idx"]; ?>"<?php echo ($isReturn && $questionData["level"] == $data["idx"]) ? " selected" : ""; ?>>
 								<?php echo $data["text"]; ?>
 							</option>
 						<?php endforeach; ?>
@@ -69,7 +68,7 @@
 				</dd>	
 		
 				<dt class="essential">タイトル</dt>
-				<dd><input class="form-control" name="title" type="text" placeholder="タイトルを入力してください" value="<?php echo ($isSetData) ? $questionData["title"] : ""; ?>"/></dd>
+				<dd><input class="form-control" name="title" type="text" placeholder="タイトルを入力してください" value="<?php echo ($isReturn) ? $questionData["title"] : ""; ?>"/></dd>
 			</dl>
 		</div>
 	</div>
@@ -83,10 +82,10 @@
 			</style>
 			<dl class="emegra question">
 				<dt class="essential">問項数</dt>
-				<dd><input type="number" class="form-control" name="question" style="width: 80px;" value="50"/></dd>
+				<dd><input type="number" class="form-control" name="question_num" style="width: 80px;" value="30"/></dd>
 
 				<dt class="essential">診断時間</dt>
-				<dd><input type="number" class="form-control" name="question" style="width: 80px;" value="60"/></dd>
+				<dd><input type="number" class="form-control" name="time_limit" style="width: 80px;" value="120"/>分</dd>
 
 				<dt class="essential" id="correct-title">問項一覧</dt>
 				<div style="width: 100%; display: flex;">
@@ -103,7 +102,7 @@
 								<th>点数</th>
 							</tr>
 						</thead>
-						<tbody>
+						<tbody id="tbody-list">
 							<tr>
 								<td>1</td>
 								<td style="text-align: start;">title1</td>
@@ -134,7 +133,7 @@
 							</tr>
 						</tbody>
 					</table>
-					<button type="button" class="emegra" style="margin-left: 8px;">問題作成</button>
+					<button type="button" class="emegra" onclick="CreateList()" style="margin-left: 8px;">問題作成</button>
 				</div>
 			</dl>
 		</div>
@@ -248,7 +247,7 @@
 <script type="text/javascript">
 	const numTexts = ["①", "②", "③", "④", "⑤"];
 
-	const type = document.getElementById("type");
+	const listBody = document.getElementById("tbody-list");
 	const answers = document.getElementById("answers");
 	const correct = document.getElementById("correct");
 	const dateRegist = document.getElementById("date_regist");
@@ -268,55 +267,74 @@
 		element.style.color = "black";
 	}
 
-	function ChangeType(element) {
-		if (answerCount == 0) { ChangeInputStyle(element); }
+	function CreateList(element) {
+		const postForm = new FormData();
+		postForm.append("class1st", form.class1st.value);
+		postForm.append("class2nd", form.class2nd.value);
+		postForm.append("level", form.level.value);
+		postForm.append("question_num", form.question_num.value);
+		postForm.append("time_limit", form.time_limit.value);
 
-		text = element[element.selectedIndex].innerText.trim();
-		switch(text) {
-			case "3項選択":
-				answerCount = 3;
-				break;
-			case "4項選択":
-				answerCount = 4;
-				break;
-			case "5項選択":
-				answerCount = 5;
-				break;
-		}
+		const xhr = new XMLHttpRequest();
+		xhr.open("POST", "./read", true);
+		xhr.send(postForm);
 
-		answerChildren = Array.from(answers.children);
-		answerChildren.forEach(element => { element.remove(); });
-		
-		correctChildren = Array.from(correct.children);
-		correctChildren.forEach(element => { element.remove(); });
-		
-		
-		correct.style.fontStyle = "italic";
-		correct.style.color = "grey";
+		let questionDatas = "";
+		xhr.onload = () => {
+			if (xhr.status == 200) {
+				const result = xhr.responseText;
+				console.log(result);
+				
+				// Check is json
+				try {
+					questionDatas = JSON.parse(result);
+				} catch (e) {
+					alert("error");
+					console.log(result);
+					return false;
+				}
 
-		var option = document.createElement("option");
-		option.value = "";
-		option.innerText = "選択";
-		option.hidden = true;
-		correct.appendChild(option);
-		for (let i = 0; i < answerCount; i++) {
-			let dt = document.createElement("dt");
-			dt.classList.add("essential");
-			dt.innerText = numTexts[i];
-			answers.appendChild(dt);
+				listBody.replaceChildren();
+				let point = 0;
+				let questionTdxs = "";
+				for (let i = 0; i < questionDatas.length; i++) {
+					let tr = document.createElement("tr");
 
-			let dd = document.createElement("dd");
-			let input = document.createElement("input");
-			input.classList.add("form-control");
-			input.name = "answer" + Number(i + 1);
-			input.type = "text";
-			dd.appendChild(input);
-			answers.appendChild(dd);
+					let numTd = document.createElement("td");
+					numTd.innerHTML = Number(i) + 1;
+					tr.appendChild(numTd);
 
-			var option = document.createElement("option");
-			option.value = Number(i) + 1;
-			option.innerText = numTexts[i];
-			correct.appendChild(option);
+					let titleTd = document.createElement("td");
+					titleTd.style.textAlign = "start";
+					titleTd.innerHTML = questionDatas[i]["title"];
+					tr.appendChild(titleTd);
+
+					let typeTd = document.createElement("td");
+					typeTd.innerHTML = questionDatas[i]["type"];
+					tr.appendChild(typeTd);
+
+					let pointTd = document.createElement("td");
+					pointTd.innerHTML = questionDatas[i]["point"];
+					tr.appendChild(pointTd);
+
+					listBody.appendChild(tr);
+					point += Number(questionDatas[i]["point"]);
+					questionTdxs += questionDatas[i]["idx"] + ",";
+				}
+				
+				let resultTr = document.createElement("tr");
+				let emptyTd = document.createElement("td");
+				emptyTd.style.gridColumn = "1 / 4";
+				resultTr.appendChild(emptyTd);
+
+				let resultTd = document.createElement("td");
+				resultTd.innerText = point + "点";
+				resultTr.appendChild(resultTd);
+				listBody.appendChild(resultTr);
+
+				questionTdxs = questionTdxs.slice(0, -1);
+				console.log(questionTdxs);
+			}
 		}
 	}
 

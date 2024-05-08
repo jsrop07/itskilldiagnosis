@@ -78,9 +78,20 @@ class DiagnosisController extends AbstractActionController {
 		$post = $this->params()->fromPost();
 		if (isset($post["code"])) {
 			$datas["diagnosisData"] = $post;
-		}
+		} else {
+			$diagnosisTb = $this->getServiceLocator()->get("DiagnosisTable-Admin");
 
-		$diagnosisTb = $this->getServiceLocator()->get("DiagnosisTable-Admin");
+			// Make Code
+			$code = "";
+			$result = array();
+			do {
+				$code = chr(rand(65, 90)) . "-" . date("ymd") . str_pad(rand(0, 99), 2, "0", STR_PAD_LEFT);
+				try { $result = $diagnosisTb->ReadByCode($code);}
+				catch (\Exception $e) { print_r($e->getMessage()); exit; }
+			} while (!empty($result));
+
+			$datas["code"] = $code;
+		}
 
 		$datas = $this->GetOptionDatasForInput($datas);
 		return $this->SetViewModel($datas, "/diagnosis/diagnosis_input.phtml");
@@ -114,11 +125,91 @@ class DiagnosisController extends AbstractActionController {
 		return $this->SetViewModel($datas, "/diagnosis/diagnosis_detail.phtml");
 	}
 
-	public function registAction() {
-		$datas["breadcrumbData"] = ["ITスキル診断書管理", "診断書登録"];
-		$datas["title"] = "診断書登録";
+	public function readAction() {
+		$post = $this->params()->fromPost();
 
-		return $this->SetViewModel($datas, "/diagnosis/diagnosis_input.phtml");
+		$sqlWhere = $post;
+
+		unset($sqlWhere["question_num"]);
+		unset($sqlWhere["time_limit"]);
+
+		$post["question_num"] = 30;
+		$sqlWhere["class1st"] = 7;
+		$sqlWhere["class2nd"] = 2;
+		$sqlWhere["level"] = 3;
+
+		$totalQuestionDatas = $this->ReadDataForDiagnosis($sqlWhere);
+
+		$totalPoint = 0;
+		for ($i = 1; $i <= 5; $i++) {
+			$totalPoint += count($totalQuestionDatas[$i]) * $i;
+		}
+
+		if ($totalPoint <= 100) {
+			die($this->PointQuestionsToJson($totalQuestionDatas));
+		}
+
+		$questionDatas = array();
+		for ($i = 1; $i <= 5; $i++) {
+			$questionDatas[$i] = array();
+		}
+		$totalPoint = 0;
+		for ($i = 0; $i < $post["question_num"]; $i++) {
+			do { $point = rand(1, 5); }
+			while (empty($totalQuestionDatas[$point]));
+			$rndIdx = array_rand($totalQuestionDatas[$point]);
+			$questionDatas[$point][$rndIdx] = $totalQuestionDatas[$point][$rndIdx];
+			unset($totalQuestionDatas[$point][$rndIdx]);
+			$totalPoint += $point;
+
+			if ($totalPoint > 100) {
+				$before = array();
+				$after = array();
+				$tempQuestionDatas = $totalQuestionDatas;
+				while ($totalPoint > 100) {
+					for ($j = 1; $j <= 4; $j++) {
+						if (!empty($tempQuestionDatas[$j])) { break; }
+						if ($j >= 5) { die($this->PointQuestionsToJson($questionDatas)); }
+					}
+
+					for ($j = 2; $j <= 5; $j++) {
+						if (!empty($questionDatas[$j])) { break; }
+						if ($j >= 5) { die($this->PointQuestionsToJson($questionDatas)); }
+					}
+					
+					do { $point = rand(2, 5); }
+					while (empty($questionDatas[$point]));
+					$index = array_rand($questionDatas[$point]);
+					$before["point"] = $point;
+					$before["index"] = $index;
+					$before["data"] = $questionDatas[$point][$index];
+					unset($questionDatas[$point][$index]);
+
+					do { $point = rand(1, $before["point"]); }
+					while (empty($tempQuestionDatas[$point]));
+					$index = array_rand($tempQuestionDatas[$point]);
+					$after["point"] = $point;
+					$after["index"] = $index;
+
+					$questionDatas[$point][$index] = $tempQuestionDatas[$point][$index];
+					unset($tempQuestionDatas[$point][$index]);
+
+					$totalPoint += $after["point"] - $before["point"];
+				}
+
+				unset($totalQuestionDatas[$after["point"]][$after["index"]]);
+				$totalQuestionDatas[$before["point"]][$before["index"]] = $before["data"];
+			}
+
+			if ($i + 1 == $post["question_num"] && $totalPoint != 100) {
+				$record = [0, 1, 2, 3, 4, 5];
+				unset($record[0]);
+
+				unset($totalQuestionDatas[$after["point"]][$after["index"]]);
+				$totalQuestionDatas[$before["point"]][$before["index"]] = $before["data"];
+			}
+		}
+		die($this->PointQuestionsToJson($questionDatas));
 	}
 
 	/** Set Layout & Make ViewModel with datas and template 
@@ -179,5 +270,34 @@ class DiagnosisController extends AbstractActionController {
 		array_push($datas["optionDatas"]["level"], $optionTb->ReadByText("高級"));
 
 		return $datas;
+	}
+
+	/** Make QuestionDatas by Point
+	 * @param array $whereDatas array[class1st, class2nd, level]
+	 * @return mixed $questionDatas
+	*/
+	function ReadDataForDiagnosis($sqlWhere) {
+		$questionTb = $this->getServiceLocator()->get("QuestionTable");
+
+		$questionDatas = array();
+		for ($i = 1; $i <= 5; $i++) {
+			$sqlWhere["point"] = $i;
+			$questionDatas[$i] = $questionTb->ReadListByOption($sqlWhere);
+		}
+
+		return $questionDatas;
+	}
+
+	function PointQuestionsToJson($pointQuestionDatas) {
+		$questionDatas = array();
+
+		for ($i = 1; $i <= 5; $i++) {
+			if (!isset($pointQuestionDatas[$i])) { continue; }
+			foreach ($pointQuestionDatas[$i] as $data) {
+				array_push($questionDatas, $data);
+			}
+		}
+
+		return json_encode($questionDatas);
 	}
 }

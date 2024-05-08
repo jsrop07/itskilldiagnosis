@@ -28,21 +28,6 @@
 				dl.emegra.setting { grid-template-columns: 140px 1fr; }
 			</style>
 			<dl class="emegra setting">
-				<dt>固有番号</dt>
-				<dd><input class="form-control form-control-sm" name="tempIdx" style="width: 150px;" value="<?php echo ($isReturn) ? $adminData["tempIdx"] : $tempIdx; ?>"/></dd>
-
-				<dt>職別コード</dt>
-				<dd><input class="form-control form-control-sm" name="code" style="width: 150px;" value="<?php echo ($isReturn) ? $adminData["code"] : $code; ?>"/></dd>
-
-				<dt>権限</dt>
-				<dd>
-					<select class="form-select" name="level" style="width: 150px;">
-						<?php foreach ($levelTexts as $idx => $text): ?>
-							<option value="<?= $idx; ?>"<?php echo ($isReturn && $adminData["level"] == $idx) ? " selected" : ""; ?>><?= $text; ?></option>
-						<?php endforeach; ?>
-					</select>
-				</dd>
-
 				<dt>ログインID</dt>
 				<dd><input type="email" class="form-control" name="id" placeholder="IDを入力してください" value="<?php echo ($isReturn) ? $adminData["id"] : ""; ?>"/></dd>
 		
@@ -51,6 +36,15 @@
 				
 				<dt>名前</dt>
 				<dd><input class="form-control" name="name" placeholder="名前を入力してください" value="<?php echo ($isReturn) ? $adminData["name"] : ""; ?>"/></dd>
+				
+				<dt>権限</dt>
+				<dd>
+					<select class="form-select" name="level" style="width: 150px;">
+						<?php foreach ($levelTexts as $idx => $text): ?>
+							<option value="<?= $idx; ?>"<?php echo ($isReturn && $adminData["level"] == $idx) ? " selected" : ""; ?>><?= $text; ?></option>
+						<?php endforeach; ?>
+					</select>
+				</dd>
 				
 				<dt>担当者</dt>
 				<dd>
@@ -84,12 +78,6 @@
 	}
 
 	function Regist() {
-		if (form.code.value == "") {
-			alert("職別コードを入力してください");
-			setTimeout("form.code.focus();", 100);
-			return false;
-		}
-		
 		if (form.id.value == "") {
 			alert("IDを入力してください");
 			setTimeout("form.id.focus()", 100);

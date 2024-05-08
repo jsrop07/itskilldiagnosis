@@ -31,11 +31,8 @@
 			<dt>レベル</dt>
 			<dd><?php echo $optionDatas[$questionData["level"]]; ?></dd>
 
-			<dt>登録日</dt>
-			<dd><?php echo date("y/m/d", strtotime($questionData["date_regist"])); ?></dd>
-
 			<dt>問題タイプ</dt>
-			<dd><?php echo $optionDatas[$questionData["type"]]; ?></dd>
+			<dd style="grid-column: 2 / 5;"><?php echo $optionDatas[$questionData["type"]]; ?></dd>
 
 			<dt>タイトル</dt>
 			<dd style="grid-column: 2 / 5;"><?php echo $questionData["title"]; ?></dd>
@@ -92,7 +89,7 @@
 			<dd><?php echo isset($questionData["date_approve"]) ? date("y/m/d", strtotime($questionData["date_approve"])) : "未承認"; ?></dd>
 
 			<dt>備考</dt>
-			<dd class="expand" style="grid-column: 2 / 5;"><?php echo $questionData["note"]; ?></dd>
+			<dd class="expand" style="grid-column: 2 / 5;"><?php echo $note; ?></dd>
 		</dl>
 	</div>
 </div>

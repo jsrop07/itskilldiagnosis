@@ -8,18 +8,17 @@ use Zend\Db\Sql\Where;
 use Zend\Paginator\Adapter\DbSelect;
 use Zend\Paginator\Paginator;
 
-class AdminTable
-{
-	public function __construct()
-	{
+class AdminTable {
+	public function __construct() {
 		//Local設定ファイルがある場合、Local設定を優先する
-		if (is_file($_SERVER['DOCUMENT_ROOT'] . '/../config/autoload/local.php')) {
-			$this->config = require $_SERVER['DOCUMENT_ROOT'] . '/../config/autoload/local.php';
+		if (is_file($_SERVER["DOCUMENT_ROOT"] . "/../config/autoload/local.php")) {
+			$this->config = require $_SERVER["DOCUMENT_ROOT"] . "/../config/autoload/local.php";
 		} else {
-			$this->config = require $_SERVER['DOCUMENT_ROOT'] . '/../config/autoload/global.php';
+			$this->config = require $_SERVER["DOCUMENT_ROOT"] . "/../config/autoload/global.php";
 		}
+
 		//指定DB設定情報通り接続
-		$dbArr = $this->config['db'];
+		$dbArr = $this->config["db"];
 		$adapter = new Adapter($dbArr);
 		//Adapter設定
 		$this->adapter = $adapter;
@@ -46,7 +45,7 @@ class AdminTable
 	 * @return mixed Records
 	*/
 	public function ReadAllList() {
-		$qry = $this->sql->select("admin")->where(["date_end" => null]);
+		$qry = $this->sql->select("admin")->where(["date_end" => null])->order(["level" => "DESC", "date_start" => "ASC"]);
 		try { return iterator_to_array($this->sql->prepareStatementForSqlObject($qry)->execute());
 		} catch (\Exception $e) {
 			return $e->getMessage();

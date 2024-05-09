@@ -26,6 +26,14 @@ class DiagnosisTable {
 		$this->sql = new Sql($this->adapter);
 	}
 
+	/** Insert Record
+	 * @return array $valueData
+	*/
+	public function CreateDiagnosis($valueData) {
+		$qry = $this->sql->insert("diagnosis")->values($valueData);
+		return $this->sql->prepareStatementForSqlObject($qry)->execute();
+	}
+
 	/** Read Table records for List
 	 * @return mixed Records
 	*/

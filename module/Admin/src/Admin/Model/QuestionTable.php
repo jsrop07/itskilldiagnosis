@@ -185,6 +185,14 @@ class QuestionTable {
 		return $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
 	}
 
+	/** Read Table records for Diagnosis
+	 * @param array $whereDatas array[class1st, class2nd, level, point]
+	 * @return mixed data
+	 */
+	public function ReadForDiagnosis($whereDatas) {
+
+	}
+
 	/** Update data by index
 	 * @param int $idx index
 	 * @param mixed $setDatas

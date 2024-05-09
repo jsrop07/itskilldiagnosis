@@ -12,9 +12,9 @@
 <h1 class="title"><?php echo $title; ?></h1>
 
 <form id="form" method="post" action="./confirm">
-	<?php if ($isReturn): ?>
-		<input name="idx" value="<?php echo $questionData["idx"]; ?>" hidden/>
-	<?php endif; ?>
+	<input name="questionDatas" value="" hidden/>
+	<input name="totalPoint" value="" hidden/>
+
 	<style type="text/css">
 		option { color: black; }
 		input::placeholder { font-style: italic; }
@@ -29,7 +29,7 @@
 			</style>
 			<dl class="emegra setting">
 				<dt>ID</dt>
-				<dd><input class="form-control form-control-sm" style="width: 150px;" readonly value="<?php echo $code; ?>"/></dd>
+				<dd><input class="form-control form-control-sm" name="code" style="width: 150px;" readonly value="<?php echo $code; ?>"/></dd>
 
 				<dt class="essential">大分類</dt>
 				<dd>
@@ -103,34 +103,6 @@
 							</tr>
 						</thead>
 						<tbody id="tbody-list">
-							<tr>
-								<td>1</td>
-								<td style="text-align: start;">title1</td>
-								<td>4項選択</td>
-								<td>1</td>
-							</tr>
-							<tr>
-								<td>2</td>
-								<td style="text-align: start;">title2</td>
-								<td>3項選択</td>
-								<td>3</td>
-							</tr>
-							<tr>
-								<td>3</td>
-								<td style="text-align: start;">title3</td>
-								<td>4項選択</td>
-								<td>4</td>
-							</tr>
-							<tr>
-								<td>4</td>
-								<td style="text-align: start;">title4</td>
-								<td>5項選択</td>
-								<td>5</td>
-							</tr>
-							<tr>
-								<td style="grid-column: 1 / 4;"></td>
-								<td>100点</td>
-							</tr>
 						</tbody>
 					</table>
 					<button type="button" class="emegra" onclick="CreateList()" style="margin-left: 8px;">問題作成</button>
@@ -174,58 +146,42 @@
 							<tr>
 								<td>A</td>
 								<td style="display: flex; justify-content:space-between">
-									<input class="form-control form-control-sm" style="width: 50px;"/>
+									<input class="form-control form-control-sm" style="width: 50px;" readonly value="100"/>
 									~
-									<input class="form-control form-control-sm" style="width: 50px;"/>
+									<input class="form-control form-control-sm" name="point1" style="width: 50px;" oninput="ChangePoint(this)"/>
 								</td>
-								<th>
-									<input class="form-control form-control-sm"/>
-								</th>
-								<th>
-									<input class="form-control form-control-sm"/>
-								</th>
+								<th><input class="form-control form-control-sm" name="text1"/></th>
+								<th><input class="form-control form-control-sm" name="comment1"/></th>
 							</tr>
 							<tr>
 								<td>B</td>
 								<td style="display: flex; justify-content:space-between">
-									<input class="form-control form-control-sm" style="width: 50px;"/>
+									<input class="form-control form-control-sm" id="point1Child" readonly style="width: 50px;"/>
 									~
-									<input class="form-control form-control-sm" style="width: 50px;"/>
+									<input class="form-control form-control-sm" name="point2" style="width: 50px;" oninput="ChangePoint(this)"/>
 								</td>
-								<th>
-									<input class="form-control form-control-sm"/>
-								</th>
-								<th>
-									<input class="form-control form-control-sm"/>
-								</th>
+								<th><input class="form-control form-control-sm" name="text2"/></th>
+								<th><input class="form-control form-control-sm" name="comment2"/></th>
 							</tr>
 							<tr>
 								<td>C</td>
 								<td style="display: flex; justify-content:space-between">
-									<input class="form-control form-control-sm" style="width: 50px;"/>
+									<input class="form-control form-control-sm" id="point2Child" readonly style="width: 50px;"/>
 									~
-									<input class="form-control form-control-sm" style="width: 50px;"/>
+									<input class="form-control form-control-sm" name="point3" style="width: 50px;" oninput="ChangePoint(this)"/>
 								</td>
-								<th>
-									<input class="form-control form-control-sm"/>
-								</th>
-								<th>
-									<input class="form-control form-control-sm"/>
-								</th>
+								<th><input class="form-control form-control-sm" name="text3"/></th>
+								<th><input class="form-control form-control-sm" name="comment3"/></th>
 							</tr>
 							<tr>
 								<td>D</td>
 								<td style="display: flex; justify-content:space-between">
-									<input class="form-control form-control-sm" style="width: 50px;"/>
+									<input class="form-control form-control-sm" id="point3Child" readonly style="width: 50px;"/>
 									~
-									<input class="form-control form-control-sm" style="width: 50px;"/>
+									<input class="form-control form-control-sm" name="point4" readonly style="width: 50px;" value="0"/>
 								</td>
-								<th>
-									<input class="form-control form-control-sm"/>
-								</th>
-								<th>
-									<input class="form-control form-control-sm"/>
-								</th>
+								<th><input class="form-control form-control-sm" name="text4"/></th>
+								<th><input class="form-control form-control-sm" name="comment4"/></th>
 							</tr>
 						</thead>
 					</table>
@@ -237,20 +193,13 @@
 
 <div class="btn-place" style="margin-top: 32px;">
 	<button class="emegra cancel" onclick="history.back();">戻る</button>
-	<?php if (isset($questionData)): ?>
-		<button class="emegra" onclick="Update();">修正</button>
-	<?php else: ?>
-		<button class="emegra" onclick="Regist();">登録</button>
-	<?php endif; ?>
+	<button class="emegra" onclick="Regist();">登録</button>
 </div>
 
 <script type="text/javascript">
 	const numTexts = ["①", "②", "③", "④", "⑤"];
 
 	const listBody = document.getElementById("tbody-list");
-	const answers = document.getElementById("answers");
-	const correct = document.getElementById("correct");
-	const dateRegist = document.getElementById("date_regist");
 
 	const form = document.getElementById("form");
 
@@ -268,6 +217,21 @@
 	}
 
 	function CreateList(element) {
+		if (form.class1st.value == "") {
+			RequestSelect(form.class1st, "大分類");
+			return false;
+		}
+
+		if (form.class2nd.value == "") {
+			RequestSelect(form.class2nd, "小分類");
+			return false;
+		}
+
+		if (form.level.value == "") {
+			RequestSelect(form.level, "レベル");
+			return false;
+		}
+
 		const postForm = new FormData();
 		postForm.append("class1st", form.class1st.value);
 		postForm.append("class2nd", form.class2nd.value);
@@ -331,6 +295,9 @@
 				resultTd.innerText = point + "点";
 				resultTr.appendChild(resultTd);
 				listBody.appendChild(resultTr);
+				form.totalPoint.value = point;
+				
+				form.questionDatas.value = result;
 
 				questionTdxs = questionTdxs.slice(0, -1);
 				console.log(questionTdxs);
@@ -338,7 +305,11 @@
 		}
 	}
 
-	<?php if (!(isset($mode) && ($mode == "edit"))): ?>
+	function ChangePoint(element) {
+		let pointElement = document.getElementById(element.name + "Child");
+		pointElement.value = element.value - 1;
+	}
+
 		function Regist() {
 			if (form.class1st.value == "") {
 				RequestSelect(form.class1st, "大分類");
@@ -355,93 +326,39 @@
 				return false;
 			}
 
-			if (form.type.value == "") {
-				RequestSelect(form.type, "問題タイプ");
-				return false;
-			}
-
-			if (form.title.value.trim() == "") {
-				alert("タイトルを入力してください");
-				setTimeout("form.title.focus()", 100);
-				return false;
-			}
-
-			if (form.question.value.trim() == "") {
-				alert("問題を入力してください");
-				setTimeout("form.question.focus()", 100);
+			if (form.title.value == "") {
+				RequestSelect(form.title, "タイトル");
 				return false;
 			}
 			
-			for (let i = 1; i <= answerCount; i++) {
-				var element = document.getElementsByName("answer" + i)[0];
+			if (form.questionDatas.value == "") {
+				alert("問題を作成してください。");
+				listBody.focus();
+				return false;
+			}
 
-				if (element.value.trim() == "") {
-					alert("答え" + (Number(i) + 1) + "を入力してください");
-					setTimeout("form.answer" + i + ".focus()", 100);
+			<?php for ($i = 1; $i <= 4; $i++): ?>
+				if (form.point<?= $i ?>.value == "") {
+					alert("評価点数を入力してください。");
+					setTimeout("form.point<?= $i ?>.focus()", 100);
 					return false;
 				}
-			}
+				
+				if (form.text<?= $i ?>.value == "") {
+					alert("評価を入力してください。");
+					setTimeout("form.text<?= $i ?>.focus()", 100);
+					return false;
+				}
+				
+				if (form.comment<?= $i ?>.value == "") {
+					alert("評価コメントを入力してください。");
+					setTimeout("form.comment<?= $i ?>.focus()", 100);
+					return false;
+				}
+			<?php endfor; ?>
 
-			if (form.correct.value == "") {
-				RequestSelect(form.correct, "正解番号");
-				return false;
-			}
-
-			if (form.point.value == "") {
-				RequestSelect(form.point, "点数");
-				return false;
-			}
-
-			dateRegist.disabled = false;
-			dateRegist.type = "text";
-			dateRegist.value = datetime;
-			
 			form.submit();
 		}
-	<?php endif; ?>
-
-function Update() {
-	const postForm = new FormData();
-
-	const xhr = new XMLHttpRequest();
-	xhr.open("POST", "../update", true);
-	
-	postForm.append("idx", form.idx.value);
-	postForm.append("class1st", form.class1st.value);
-	postForm.append("class2nd", form.class2nd.value);
-	postForm.append("level", form.level.value);
-	postForm.append("type", form.type.value);
-	postForm.append("title", form.title.value);
-	postForm.append("question", form.question.value);
-	
-	let answerList = document.querySelectorAll("input[name*='answer']");
-	let answers = "";
-	answerList.forEach(element => { answers += element.value + ","; });
-	postForm.append("answers", answers.slice(0, -1));
-
-	postForm.append("level", form.level.value);
-	postForm.append("correct", form.correct.value);
-	postForm.append("point", form.point.value);
-	postForm.append("admin_regist", form.admin_regist.value);
-	postForm.append("admin_regist", form.admin_regist.value);
-	postForm.append("note", form.note.value);
-
-	xhr.send(postForm);
-	
-	xhr.onload = () => {
-		if (xhr.status == 200) {
-			const result = xhr.responseText;
-			if (result == "success") {
-				alert("修正しました。");
-				self.location.href = "../detail/<?php echo isset($questionData["idx"]) ? $questionData["idx"] : ""; ?>";
-			}
-			else {
-				alert("Error");
-				console.log(result);
-			}
-		}
-	}
-}
 
 	function RequestSelect(element, text) {
 		alert(text + "を選択してください");

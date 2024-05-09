@@ -34,6 +34,11 @@ class OptionTable
 		return $this->sql->prepareStatementForSqlObject($qry)->execute();
 	}
 
+	public function ReadByIdx($idx) {
+		$qry = $this->sql->select("option")->where(["idx" => $idx]);
+		return $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
+	}
+
 	public function ReadByText($text) {
 		$qry = $this->sql->select("option")->where(["text" => $text]);
 		return $this->sql->prepareStatementForSqlObject($qry)->execute()->current();

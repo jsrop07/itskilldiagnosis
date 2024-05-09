@@ -28,6 +28,7 @@ class DiagnosisController extends AbstractActionController {
 	public function listAction() {
 		$this->ChkLogin();
 		$datas["breadcrumbData"] = ["ITスキル診断書管理"];
+		$datas = $this->GetOptionDatasForInput($datas);
 
 		$page = $this->params()->fromQuery("page", 1);
 		$printDataNum = 10;	// Number of data to output on one page
@@ -97,6 +98,18 @@ class DiagnosisController extends AbstractActionController {
 		return $this->SetViewModel($datas, "/diagnosis/diagnosis_input.phtml");
 	}
 
+	/** When you click 登録 button on 診断書登録 page */
+	public function confirmAction() {
+		$this->ChkLogin();
+		$datas["breadcrumbData"] = ["ITスキル診断問項管理", "診断書登録" ,"登録確認"];
+		$datas["title"] = "診断書確認";
+
+		$datas["diagnosisData"] = $this->params()->fromPost();
+		$datas = $this->GetOptionDatas($datas);
+
+		return $this->SetViewModel($datas, "/diagnosis/diagnosis_confirm.phtml");
+	}
+
 	/** When you choose list data on 問題一覧 page */
 	public function detailAction() {
 		$this->ChkLogin();
@@ -133,11 +146,6 @@ class DiagnosisController extends AbstractActionController {
 		unset($sqlWhere["question_num"]);
 		unset($sqlWhere["time_limit"]);
 
-		$post["question_num"] = 30;
-		$sqlWhere["class1st"] = 7;
-		$sqlWhere["class2nd"] = 2;
-		$sqlWhere["level"] = 3;
-
 		$totalQuestionDatas = $this->ReadDataForDiagnosis($sqlWhere);
 
 		$totalPoint = 0;
@@ -153,6 +161,7 @@ class DiagnosisController extends AbstractActionController {
 		for ($i = 1; $i <= 5; $i++) {
 			$questionDatas[$i] = array();
 		}
+
 		$totalPoint = 0;
 		for ($i = 0; $i < $post["question_num"]; $i++) {
 			do { $point = rand(1, 5); }
@@ -201,15 +210,54 @@ class DiagnosisController extends AbstractActionController {
 				$totalQuestionDatas[$before["point"]][$before["index"]] = $before["data"];
 			}
 
-			if ($i + 1 == $post["question_num"] && $totalPoint != 100) {
-				$record = [0, 1, 2, 3, 4, 5];
-				unset($record[0]);
+			// if ($i + 1 == $post["question_num"] && $totalPoint != 100) {
+			// 	$record = [0, 1, 2, 3, 4, 5];
+			// 	unset($record[0]);
 
-				unset($totalQuestionDatas[$after["point"]][$after["index"]]);
-				$totalQuestionDatas[$before["point"]][$before["index"]] = $before["data"];
-			}
+				
+
+			// 	unset($totalQuestionDatas[$after["point"]][$after["index"]]);
+			// 	$totalQuestionDatas[$before["point"]][$before["index"]] = $before["data"];
+			// }
 		}
 		die($this->PointQuestionsToJson($questionDatas));
+	}
+
+	function createAction() {
+		$post = $this->params()->fromPost();
+
+		$sqlValue["code"] = $post["code"];
+		$sqlValue["class1st"] = $post["class1st"];
+		$sqlValue["class2nd"] = $post["class2nd"];
+		$sqlValue["level"] = $post["level"];
+		$sqlValue["title"] = $post["title"];
+		$sqlValue["question_num"] = $post["question_num"];
+		$sqlValue["time_limit"] = $post["time_limit"];
+		$sqlValue["question_idxs"] = $post["question_idxs"];
+		
+		$sqlValue["result_points"] = array();
+		$sqlValue["result_texts"] = array();
+		$sqlValue["result_comments"] = array();
+		for ($i = 1; $i <= 4; $i++) {
+			array_push($sqlValue["result_points"], $post["point" . $i]);
+			array_push($sqlValue["result_texts"], $post["text" . $i]);
+			array_push($sqlValue["result_comments"], $post["comment" . $i]);
+		}
+		$sqlValue["result_points"] = implode(",", $sqlValue["result_points"]);
+		$sqlValue["result_texts"] = implode(",", $sqlValue["result_texts"]);
+		$sqlValue["result_comments"] = implode(",", $sqlValue["result_comments"]);
+		
+		$session = new Container("user");
+		$sqlValue["admin_create"] = $session["code"];
+		$sqlValue["date_create"] = date("Y-m-d H:i:s");
+		$sqlValue["status"] = "保存";
+		$sqlValue["case"] = 22;
+
+		$diagnosisTb = $this->getServiceLocator()->get("DiagnosisTable-Admin");
+		try { $diagnosisTb->createDiagnosis($sqlValue); }
+		catch (\Exception $e) { die($e->getMessage()); }
+
+		die ("success");
 	}
 
 	/** Set Layout & Make ViewModel with datas and template 
@@ -247,7 +295,7 @@ class DiagnosisController extends AbstractActionController {
 		$optionTb = $this->getServiceLocator()->get("OptionTable");
 		$optionDatas = iterator_to_array($optionTb->ReadValid());
 
-		$datas["optionDatas"] = array();
+		if (!isset($datas["optionDatas"])) { $data["optionDatas"] = array(); }
 		$other = array();
 		foreach ($optionDatas as $data) {
 			if ($data["type"] == "status") { continue; }
@@ -296,6 +344,11 @@ class DiagnosisController extends AbstractActionController {
 			foreach ($pointQuestionDatas[$i] as $data) {
 				array_push($questionDatas, $data);
 			}
+		}
+
+		$optionTb = $this->getServiceLocator()->get("OptionTable");
+		foreach ($questionDatas as $index => $data) {
+			$questionDatas[$index]["type"] = $optionTb->ReadByIdx($data["type"])["text"];
 		}
 
 		return json_encode($questionDatas);

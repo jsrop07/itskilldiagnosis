@@ -9,9 +9,6 @@
         <form id="form" name="input_form" enctype="multipart/form-data" action="/applicant/application" method="post">
             <div class="diagnosis_main">
 
-                    <input class="form-control" name="password" type="password" hidden value="123">
-
-
                     <span for="email">メール </span>
                     <input class="form-control" name="email" type="email" placeholder="Emailを入力ください。" style="width:80%" maxlength='50'>
                     
@@ -387,20 +384,36 @@ selectElements.forEach(function(selectElement) {
     });
 });
 </script>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.0/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/locales/bootstrap-datepicker.ja.min.js"></script>
+<!-- <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.3/themes/base/jquery-ui.css">
+  <link rel="stylesheet" href="/resources/demos/style.css">
+  <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+  <script src="https://code.jquery.com/ui/1.13.3/jquery-ui.js"></script>
   <script>
 $(document).ready(function(){
     var birth = document.getElementById("birth");
     $(birth).datepicker({
+        changeMonth: true,
+      changeYear: true,
       format: 'yyyy-mm-dd',
       autohide: true,
       language: 'ja'
     });
   });
-  </script>
+  </script> -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.0/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/locales/bootstrap-datepicker.ja.min.js"></script>
 <script>
-
+  $(document).ready(function(){
+    var birth = document.getElementById("birth");
+    $(birth).datepicker({
+      format: 'yyyy-mm-dd',
+      autohide: true,
+      language: 'ja',
+      startDate: '1980-01-01',
+      endDate: '2010-12-31'
+    });
+  });
 </script>
+

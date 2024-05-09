@@ -21,7 +21,6 @@ if ($ses_id) {
     <button class=" btn btn-sm" id="stopBtn" style=" display:flex; align-items:center; text-align:center;color:yellow; border:none;"  data-bs-toggle="modal" data-bs-target="#staticBackdrop2">一時停止</button>
 </div>
 </header>	     
-
 <div class="container-fluid">
   <div class="card emegra" >
     <div class="card-body"style="margin-top:70px;">
@@ -55,6 +54,7 @@ if ($ses_id) {
         <div class="comment">
           <p style="margin-top:50px;font-weight:bold;">コメント　　　　　　　　 <input class="w-75" type="text" name="comment" id="comment" placeholder="自由に記載"></p>
         </div>
+        <span name="password" type="password" hidden value=<?php echo $password ?>>
       </div>
         
        
@@ -64,8 +64,8 @@ if ($ses_id) {
       
     </div>
     <div class="button_box" style="margin-bottom: 32px; gap:30px">
-      <button  class="applicant_cancel" id="cancel" name="mode"  value="cancel" onclick="window.location.href='../applicant/login';">キャンセル</button>
-      <button type="button" class="exam_submit" id='btn_submit' name="mode"  value="submit">提出</button>
+      <button  class="applicant_cancel" id="cancel" name="submit_post"  value="cancel" onclick="window.location.href='../applicant/login';">キャンセル</button>
+      <button type="button" class="exam_submit" id='btn_submit' name="submit_post"  value="submit">提出</button>
 
     </div>
     <input type="hidden" id="answer_data" name="answer_data" value="">
@@ -90,7 +90,7 @@ if ($ses_id) {
       </div>
       <div class="modal-footer">
   <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-  <button type="submit" class="exam_submit" name="mode" value="btn_submit">登録</button>
+  <button type="submit" class="exam_submit" name="submit_post" value="btn_submit">登録</button>
 
 </div>
 
@@ -189,13 +189,12 @@ window.onload = function() {
 
     var timerDisplay = document.getElementById("timerDisplay");
     
-    var examTime = parseInt(<?php echo $time_limit; ?>); 
-
+    var examTime  = parseInt(<?php echo $time_limit; ?>); 
     var stopTime = parseInt(10); 
-    let now_time = 0;
 
     var minuteToSecond = examTime * 60;
     var stopMinuteToSecond = stopTime * 60;
+
 
     var firstAlert= false;
     var secondAlert= false;
@@ -291,14 +290,16 @@ document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById('myForm');
   btn_submit.addEventListener("click", () => {
     const matchedData = <?php echo json_encode($matchedData); ?>;
-    
+    console.log(matchedData)
     <?php foreach ($matchedData as $questionIdx => $data) : ?>
-        console.log(form.answer<?= $questionIdx + 1 ?>.value);
-          var selected = Array.from(form.answer<?= $questionIdx + 1 ?>).find(radio => radio.value);
+        console.log(form.answer<?= $questionIdx + 1 ?>.checked);
+          var selected = Array.from(form.answer<?= $questionIdx + 1 ?>).find(radio => radio.checked);
           if (selected == null) {
             alert("問題を全部入力してください。");
             event.preventDefault(); // Form submit prevent
             form.question<?= $questionIdx ?>[0].focus();
+            // setTimeout("form.developSelect.focus()",100);
+
             return false; 
           } 
         <?php endforeach; ?>
@@ -347,7 +348,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     confirmComment.innerHTML=comment;
     var combinedAnswers = radioIdsArray.join(',');
-      console.log(radioIdsArray);
       document.getElementById('answer_data').value = combinedAnswers;
 
       

@@ -24,6 +24,19 @@ return array(
                         'Zend\Authentication\AuthenticationService' => 'Zend\Authentication\AuthenticationService',
                 ),
         ),
-       
+		// 'smtp' => array(
+		// 	'name'              => 'gngs.co.jp',
+		// 	'host'              => 'smtp.mail.us-east-1.awsapps.com',
+		// 	'port' => 465,
+		// 	'fromemail' => 'jsrop07@gmail.co.com',
+		// 	'fromname' => 'sw',
+		// 	'connection_class' => 'login',
+		// 	'connection_config' => array(
+		// 			'username' => 'spredempt@gngs.co.jp',
+		// 			'password' => '1Corinthians13:13',
+		// 			'ssl'=> 'ssl',
+		// 	),
+		// ),
+
 
 );

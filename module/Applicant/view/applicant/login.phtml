@@ -60,8 +60,8 @@ if ($ses_id) {
 		xhr.onload = () => {
 			if (xhr.status == 200) {
 				const result = xhr.responseText;
-				if (result == "wrong id") {
-					alert("有効ではないIDです");
+				if (result == "wrong info") {
+					alert("有効ではないIDまたはパスワードです");
 					id.focus();
 				} else if (result == "wrong password") {
 					alert("パスワードを確認してください");

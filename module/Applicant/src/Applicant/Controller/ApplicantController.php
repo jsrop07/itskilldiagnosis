@@ -22,12 +22,10 @@ class ApplicantController extends AbstractActionController
 	$develop=$tbl->getDevelop();
 	$p = $this->params()->fromPost();
 	$mode =(isset($p['mode'])    &&   $p['mode'] !='')? $p['mode']:'';
-	// print_r($p);
 	$viewModel = new ViewModel(['questionType' => $questionType,'develop' => $develop,'p' => $p]);
 	$viewModel->setTemplate("/applicant/application.phtml");
 
 	if ($mode == 'btn_submit') {
-		$password = $this->params()->fromPost('password');
 		$email = $this->params()->fromPost('email');
 		$name = $this->params()->fromPost('name');
 		$kana = $this->params()->fromPost('kana');
@@ -43,7 +41,6 @@ class ApplicantController extends AbstractActionController
 		$certificates = $this->params()->fromPost('certificates');
 		$other = $this->params()->fromPost('other');
 		$arr = [
-			'password' => $password,
 			'email' => $email,
 			'name' => $name,
 			'kana' => $kana,
@@ -60,7 +57,6 @@ class ApplicantController extends AbstractActionController
 			'other' => $other,
 		];
 	   $tbl->insertAndUpdateApplication($arr);
-
 	   echo "
 	   <script>
 	   self.location.href='/applicant/applicationclear';
@@ -86,11 +82,10 @@ class ApplicantController extends AbstractActionController
 			if ($result == "success") {
 				$session = new Container("applicant");
 				$session["id"] = $p["id"];
-				$session["token"] = 1;
 			}
 			die($result);
     }
-	
+
 	$session = new Container("applicant");
 	if(isset($session['id']) && $session['id'] != '') {
 		return $this->redirect()->toUrl("../applicant/exam");
@@ -106,61 +101,67 @@ class ApplicantController extends AbstractActionController
   {
 	 // Set layout
 	  $this->layout("layout/applicant/exam_layout");
-	  $p = $this->params()->fromPost();
-	  $mode =(isset($p['mode'])    &&   $p['mode'] !='')? $p['mode']:'';
-	  $answer_data = (isset($p['answer_data'])  &&   $p['answer_data'    ] !='')  ? $p['answer_data']    : '';
-	  $comment = (isset($p['comment'])  &&   $p['comment'    ] !='')  ? $p['comment']    : '';
+	  $post = $this->params()->fromPost();
+	  $submit_post        = (isset($post['submit_post'])         &&   $post['submit_post'] !='')         ? $post['submit_post']         : '';
+	  $answer_data = (isset($post['answer_data'])  &&   $post['answer_data'] !='')  ? $post['answer_data']  : '';
+	  $comment     = (isset($post['comment'])      &&   $post['comment'] !='')      ? $post['comment']      : '';
 
 
 	  $session = new Container("applicant");
 	  if (isset($session->id)) {
-		  $id = $session->id;
+		  $emailId = $session->id;
 		} else {
 		$this->RedirectToLogin();		  
 	  }
 
-	  if($mode=='cancel'){
+	  if($submit_post=='cancel'){
 		if (isset($session->id)) {
-            $id = $session->id;
-            unset($id);
+            $emailId = $session->id;
+            unset($emailId);
             session_unset(); 
 			$this->RedirectToLogin();	
         }
 	  }
 
 	  // 아이디 값 불러오기
-
-	  $examTb = $this->getServiceLocator()->get("ApplicantExamTable");
-	  $examId = $examTb->readById($id);
-	  $idx = $examId["idx"];
+	  $applicantExamTbl = $this->getServiceLocator()->get("ApplicantExamTable");
+	  $applicantInfo    = $applicantExamTbl->readById($emailId);
+	  $applicantIdx     = $applicantInfo["idx"];	  
 
 	  // applicant의 id값과 record의 idx값 비교해서 불러오기
-	  $examRecordIdx = $examTb->readByApplicantIdx($idx);
-	  $name = $examId["name"];
-	  $recordIdx=$examRecordIdx['idx'];
-	  $applicantIdx = $examRecordIdx["applicant_idx"];
-
+	  $examRecordInfo =  $applicantExamTbl->readByApplicantIdx($applicantInfo);
+	  $datas["name"]  =  $applicantInfo["name"];
+	  
+	  
+	  $applicantIdx   =  $examRecordInfo["applicant_idx"];
+	  
 	  // code diagnosis테이블의 code와 question_num, time_limit값 불러오기
-	  $code = $examRecordIdx["code"];
-	  $diagnosisCode = $examTb->readByDiagnosisCode($code);
-	  $question_num=$diagnosisCode["question_num"];
-	  $time_limit=$diagnosisCode["time_limit"];
+	  $recordCode    = $examRecordInfo["code"];
+	  $diagnosisInfo = $applicantExamTbl->readByDiagnosisCode($recordCode);
+
+	  $datas["question_num"] = $diagnosisInfo["question_num"];
+	  $datas["time_limit"]   = $diagnosisInfo["time_limit"];
 
 	  // 정답값 비교하기
-	  $findData=$examTb->findCompareIdx($p);
-	  $findselectedData=['question_idxs'=>isset($diagnosisCode['question_idxs'])? $diagnosisCode['question_idxs']:null];
-	  $selectedQnA=[['question_idxs'=> $diagnosisCode['question_idxs'],'answer_data'=>$examRecordIdx['answer_data']]];
+	  $findQuestionData      = $applicantExamTbl->findCompareIdx($post);
+	  $selectedQuestion_idxs = ['question_idxs'=>isset($diagnosisInfo['question_idxs'])? $diagnosisInfo['question_idxs']:null];
+
+	  $selectedQnA=[['question_idxs'=> $diagnosisInfo['question_idxs'],'answer_data'=>$examRecordInfo['answer_data']]];
+	//   print_r($selectedQnA);
+
 	  $matchedData=[];
-	  foreach(explode(',',$findselectedData["question_idxs"]) as $value)
+	  foreach(explode(',',$selectedQuestion_idxs["question_idxs"]) as $value)
 	  {
-		foreach($findData as $data)
+		foreach($findQuestionData as $data)
 		{
 			if($data['idx']==$value)
 			{
-				$matchedData[]=$data;
+				$matchedData[] = $data;
 			}
 		}
 	  }
+	  $datas["matchedData"]=$matchedData;
+
 
 	  $output = [];
 		foreach ($matchedData as $item) {
@@ -177,15 +178,18 @@ class ApplicantController extends AbstractActionController
 				$get_point++;
 			}
 		}
-		if($mode=='btn_submit'){
 
-			$arr=[
-				'id' => $recordIdx,
-				'answer_data' => $answer_data,
-				'get_point'=>$get_point,
-				'comment'=>$comment
-			];
-			$examTb->updateExam($arr);
+		//제출하기
+		if($submit_post=='btn_submit'){
+
+			$sqlWhere["idx"] = $examRecordInfo['idx'];
+			$sqlSet["answer_data"] = $answer_data;
+			$sqlSet["get_point"] = $get_point;
+			$sqlSet["comment"] = $comment;
+
+			$applicantExamTbl->updateExam($sqlWhere, $sqlSet);			
+			$applicantExamTbl->deletePasswordByIdx($applicantInfo["idx"]);
+			session_unset(); 
 			echo "
 			<script>
 			self.location.href='/applicant/examclear';
@@ -193,7 +197,7 @@ class ApplicantController extends AbstractActionController
 			";	
 		  }
 	  // Set variables to be passed to the layout
-	  $viewModel = new ViewModel(["name" => $name, "question_num" => $question_num, "time_limit" => $time_limit, "matchedData"=>$matchedData]);
+	  $viewModel = new ViewModel($datas);
   
 	  // Set view template
 	  $viewModel->setTemplate("applicant/exam.phtml");
@@ -341,40 +345,12 @@ class ApplicantController extends AbstractActionController
 	}
 
 	    /** Make ViewModel with datas and template */
-	function SetViewModel($datas, $template) {
-		$this->layout("layout/admin/layout_default");
-		$vm = new ViewModel($datas);
-		$vm->setTemplate($template);
-		return $vm;
-	}
+	// function SetViewModel($datas, $template) {
+	// 	$this->layout("layout/admin/layout_default");
+	// 	$vm = new ViewModel($datas);
+	// 	$vm->setTemplate($template);
+	// 	return $vm;
+	// }
 
-	
-	/** Read examTable for Testing page (user/exam.phtml) */
-	public function Setting($examData) {		// 問題設定ページに移動
-		$datas["examData"] = $examData;
-
-		$typeTb = $this->getServiceLocator()->get("QuestionTypeTable");
-		$datas["typeDatas"] = $typeTb->readAll();
 		
-		return $this->SetViewModel($datas, "user/setting.phtml");
-	}
-
-	/** Save question_data in examTable */
-	public function MakeExam($url, $question_nums, $post) {		// 試験の問題を登録
-		if (isset($post["major"])) { $post["academic"] += 1; }
-
-		$questionTb = $this->getServiceLocator()->get("QuestionPoolTable");
-		$examTb = $this->getServiceLocator()->get("ExamTable");
-		
-		$post["num"] = $question_nums;
-		$questionDatas = iterator_to_array($questionTb->ReadRandForExam($post));
-		
-		$question_data = "";
-		foreach ($questionDatas as $data) {		// 選択した問題のidxを保存
-			$question_data .= $data["idx"] . ",";
-		}
-		$post["question_data"] = substr($question_data , 0, -1);
-
-		$examTb->updateExamSetting($url, $post);
-	}
 }

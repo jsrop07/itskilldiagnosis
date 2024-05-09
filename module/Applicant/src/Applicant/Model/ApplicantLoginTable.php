@@ -45,14 +45,14 @@ class ApplicantLoginTable
 
     $result = $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
     if (empty($result)) {
-      return "wrong id";
+      return "wrong info";
     }
 
     if ($result["password"] == $password) {
       return "success";
       exit;
     }
-    return "wrong password";
+    // return "wrong password";
   }
 
 }

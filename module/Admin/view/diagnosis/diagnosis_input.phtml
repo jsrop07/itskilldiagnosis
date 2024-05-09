@@ -4,7 +4,8 @@
 	if (!isset($_SESSION)) { session_start(); }
 
 	$isReturn = false;
-	if (isset($adminData)) { $isReturn = true; }
+	if (isset($diagnosisData)) { $isReturn = true;
+	print_r($diagnosisData); }
 ?>
 
 <?php echo $this->partial("breadcrumb", ["datas" => $breadcrumbData]); ?>
@@ -66,7 +67,7 @@
 						<?php endforeach; ?>
 					</select>
 				</dd>	
-		
+
 				<dt class="essential">タイトル</dt>
 				<dd><input class="form-control" name="title" type="text" placeholder="タイトルを入力してください" value="<?php echo ($isReturn) ? $questionData["title"] : ""; ?>"/></dd>
 			</dl>

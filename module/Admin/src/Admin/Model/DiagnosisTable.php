@@ -52,6 +52,20 @@ class DiagnosisTable {
 		$paginatorAdapter = new DbSelect($qry, $this->adapter);
 		return new Paginator($paginatorAdapter);
 	}
+	
+	/** Read for List by Search data 
+	 * @param array $whereDatas [key => data]
+	 * @return mixed Records Array
+	*/
+	public function ReadListByOption($whereData) {
+		$qry = $this->sql->select("diagnosis")->where($whereData)->order("date_create DESC");
+		return iterator_to_array($this->sql->prepareStatementForSqlObject($qry)->execute());
+	}
+	public function GetListByOption($whereData) {
+		$qry = $this->sql->select("diagnosis")->where($whereData)->order("date_create DESC");
+		$paginatorAdapter = new DbSelect($qry, $this->adapter);
+		return new Paginator($paginatorAdapter);
+	}
 
 	/** Read Table record By Code
 	 * @param string $code

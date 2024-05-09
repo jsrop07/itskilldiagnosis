@@ -31,15 +31,32 @@ class DiagnosisController extends AbstractActionController {
 		$datas = $this->GetOptionDatasForInput($datas);
 
 		$page = $this->params()->fromQuery("page", 1);
+		$query  = $this->params()->fromQuery();
+		unset($query["page"]);
 		$printDataNum = 10;	// Number of data to output on one page
 
 		$diagnosisTb = $this->getServiceLocator()->get("DiagnosisTable-Admin");
 
-		try {
-			$totalDiagnosisDatas = $diagnosisTb->ReadAllList();
-			$paginationData = $diagnosisTb->GetAllList();
-		} catch (\Exception $e) {
-			die($e->getMessage());
+		$totalDiagnosisDatas = "";
+		$paginationData = "";
+		if (!empty($query)) {
+			try {
+				$totalDiagnosisDatas = $diagnosisTb->ReadListByOption($query);
+				$paginationData = $diagnosisTb->GetListByOption($query);
+			} catch (\Exception $e) {
+				print_r($e->getMessage());
+				exit;
+			}
+			$datas["searchData"] = $query;
+		}
+		else {
+			try {
+				$totalDiagnosisDatas = $diagnosisTb->ReadAllList();
+				$paginationData = $diagnosisTb->GetAllList();
+			} catch (\Exception $e) {
+				print_r($e->getMessage());
+				exit;
+			}
 		}
 
 		$datas["totalData"] = count($totalDiagnosisDatas);

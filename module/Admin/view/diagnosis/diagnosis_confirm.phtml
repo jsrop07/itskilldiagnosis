@@ -158,7 +158,7 @@
 
 <form id="form" method="post" action="./input">
 	<?php foreach ($diagnosisData as $key => $data): ?>
-		<input name="<?php echo $key; ?>" value="<?php echo $data; ?>" hidden/>
+		<input name="<?php echo $key; ?>" value='<?php echo $data; ?>' hidden/>
 	<?php endforeach; ?>
 	<input name="question_idxs" value="<?php echo $questionIdxs; ?>" hidden/>
 </form>

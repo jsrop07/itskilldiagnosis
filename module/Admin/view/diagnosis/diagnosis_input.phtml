@@ -4,8 +4,10 @@
 	if (!isset($_SESSION)) { session_start(); }
 
 	$isReturn = false;
-	if (isset($diagnosisData)) { $isReturn = true;
-	print_r($diagnosisData); }
+	if (isset($diagnosisData)) {
+		$isReturn = true;
+		$questionDatas = json_decode($diagnosisData["questionDatas"]);
+	}
 ?>
 
 <?php echo $this->partial("breadcrumb", ["datas" => $breadcrumbData]); ?>
@@ -13,8 +15,8 @@
 <h1 class="title"><?php echo $title; ?></h1>
 
 <form id="form" method="post" action="./confirm">
-	<input name="questionDatas" value="" hidden/>
-	<input name="totalPoint" value="" hidden/>
+	<input name="questionDatas" value='<?php echo ($isReturn) ? $diagnosisData["questionDatas"] : ""; ?>' hidden/>
+	<input name="totalPoint" value="<?php echo ($isReturn) ? $diagnosisData["totalPoint"] : ""; ?>" hidden/>
 
 	<style type="text/css">
 		option { color: black; }
@@ -30,14 +32,14 @@
 			</style>
 			<dl class="emegra setting">
 				<dt>ID</dt>
-				<dd><input class="form-control form-control-sm" name="code" style="width: 150px;" readonly value="<?php echo $code; ?>"/></dd>
+				<dd><input class="form-control form-control-sm" name="code" style="width: 150px;" readonly value="<?php echo ($isReturn) ? $diagnosisData["code"] : $code; ?>"/></dd>
 
 				<dt class="essential">大分類</dt>
 				<dd>
 					<select class="form-select" name="class1st" onchange="ChangeInputStyle(this)" style="width: 150px;<?php echo ($isReturn) ? "" : InitStyle(); ?>">
 						<option value="" hidden>選択</option>
 						<?php foreach($optionDatas["class1st"] as $data): ?>
-							<option value="<?php echo $data["idx"]; ?>"<?php echo ($isReturn && $questionData["class1st"] == $data["idx"]) ? " selected" : ""; ?>>
+							<option value="<?php echo $data["idx"]; ?>"<?php echo ($isReturn && $diagnosisData["class1st"] == $data["idx"]) ? " selected" : ""; ?>>
 								<?php echo $data["text"]; ?>
 							</option>
 						<?php endforeach; ?>
@@ -49,19 +51,19 @@
 					<select class="form-select" name="class2nd" onchange="ChangeInputStyle(this)" style="width: 150px;<?php echo ($isReturn) ? "" : InitStyle(); ?>">
 						<option value="" hidden>選択</option>
 						<?php foreach($optionDatas["class2nd"] as $idx => $data): ?>
-							<option value="<?php echo $data["idx"]; ?>"<?php echo ($isReturn && $questionData["class2nd"] == $data["idx"]) ? " selected" : ""; ?>>
+							<option value="<?php echo $data["idx"]; ?>"<?php echo ($isReturn && $diagnosisData["class2nd"] == $data["idx"]) ? " selected" : ""; ?>>
 								<?php echo $data["text"]; ?>
 							</option>
 						<?php endforeach; ?>
 					</select>
 				</dd>
-		
+
 				<dt class="essential">レベル</dt>
 				<dd>
 					<select class="form-select" name="level" onchange="ChangeInputStyle(this)" style="width: 100px;<?php echo ($isReturn) ? "" : InitStyle(); ?>">
 						<option value="" hidden>選択</option>
 						<?php foreach($optionDatas["level"] as $data): ?>
-							<option value="<?php echo $data["idx"]; ?>"<?php echo ($isReturn && $questionData["level"] == $data["idx"]) ? " selected" : ""; ?>>
+							<option value="<?php echo $data["idx"]; ?>"<?php echo ($isReturn && $diagnosisData["level"] == $data["idx"]) ? " selected" : ""; ?>>
 								<?php echo $data["text"]; ?>
 							</option>
 						<?php endforeach; ?>
@@ -69,7 +71,7 @@
 				</dd>	
 
 				<dt class="essential">タイトル</dt>
-				<dd><input class="form-control" name="title" type="text" placeholder="タイトルを入力してください" value="<?php echo ($isReturn) ? $questionData["title"] : ""; ?>"/></dd>
+				<dd><input class="form-control" name="title" type="text" placeholder="タイトルを入力してください" value="<?php echo ($isReturn) ? $diagnosisData["title"] : ""; ?>"/></dd>
 			</dl>
 		</div>
 	</div>
@@ -83,10 +85,10 @@
 			</style>
 			<dl class="emegra question">
 				<dt class="essential">問項数</dt>
-				<dd><input type="number" class="form-control" name="question_num" style="width: 80px;" value="30"/></dd>
+				<dd><input type="number" class="form-control" name="question_num" style="width: 80px;" value="<?php echo ($isReturn) ? $diagnosisData["question_num"] : "30"; ?>"/></dd>
 
 				<dt class="essential">診断時間</dt>
-				<dd><input type="number" class="form-control" name="time_limit" style="width: 80px;" value="120"/>分</dd>
+				<dd><input type="number" class="form-control" name="time_limit" style="width: 80px;" value="<?php echo ($isReturn) ? $diagnosisData["time_limit"] : "120"; ?>"/>分</dd>
 
 				<dt class="essential" id="correct-title">問項一覧</dt>
 				<div style="width: 100%; display: flex;">
@@ -104,6 +106,20 @@
 							</tr>
 						</thead>
 						<tbody id="tbody-list">
+							<?php if ($isReturn): ?>
+								<?php foreach ($questionDatas as $index => $data): ?>
+									<tr>
+										<td><?= $index + 1; ?></td>
+										<td style="text-align: left;"><?php echo $data->title; ?></td>
+										<td><?php echo $data->type; ?></td>
+										<td><?php echo $data->point; ?></td>
+									</tr>
+								<?php endforeach; ?>
+								<tr>
+									<td style="grid-column: 1 / 4;"></td>
+									<td><?php echo $diagnosisData["totalPoint"]; ?>点</td>
+								</tr>
+							<?php endif; ?>
 						</tbody>
 					</table>
 					<button type="button" class="emegra" onclick="CreateList()" style="margin-left: 8px;">問題作成</button>
@@ -149,40 +165,40 @@
 								<td style="display: flex; justify-content:space-between">
 									<input class="form-control form-control-sm" style="width: 50px;" readonly value="100"/>
 									~
-									<input class="form-control form-control-sm" name="point1" style="width: 50px;" oninput="ChangePoint(this)"/>
+									<input class="form-control form-control-sm" name="point1" style="width: 50px;" oninput="ChangePoint(this)" value="<?php echo ($isReturn) ? $diagnosisData["point1"] : ""; ?>"/>
 								</td>
-								<th><input class="form-control form-control-sm" name="text1"/></th>
-								<th><input class="form-control form-control-sm" name="comment1"/></th>
+								<th><input class="form-control form-control-sm" name="text1" value="<?php echo ($isReturn) ? $diagnosisData["text1"] : ""; ?>"/></th>
+								<th><input class="form-control form-control-sm" name="comment1" value="<?php echo ($isReturn) ? $diagnosisData["comment1"] : ""; ?>"/></th>
 							</tr>
 							<tr>
 								<td>B</td>
 								<td style="display: flex; justify-content:space-between">
-									<input class="form-control form-control-sm" id="point1Child" readonly style="width: 50px;"/>
+									<input class="form-control form-control-sm" id="point1Child" readonly style="width: 50px;" value="<?php echo ($isReturn) ? $diagnosisData["point1"] - 1: ""; ?>"/>
 									~
-									<input class="form-control form-control-sm" name="point2" style="width: 50px;" oninput="ChangePoint(this)"/>
+									<input class="form-control form-control-sm" name="point2" style="width: 50px;" oninput="ChangePoint(this)" value="<?php echo ($isReturn) ? $diagnosisData["point2"] : ""; ?>"/>
 								</td>
-								<th><input class="form-control form-control-sm" name="text2"/></th>
-								<th><input class="form-control form-control-sm" name="comment2"/></th>
+								<th><input class="form-control form-control-sm" name="text2" value="<?php echo ($isReturn) ? $diagnosisData["text2"] : ""; ?>"/></th>
+								<th><input class="form-control form-control-sm" name="comment2" value="<?php echo ($isReturn) ? $diagnosisData["comment2"] : ""; ?>"/></th>
 							</tr>
 							<tr>
 								<td>C</td>
 								<td style="display: flex; justify-content:space-between">
-									<input class="form-control form-control-sm" id="point2Child" readonly style="width: 50px;"/>
+									<input class="form-control form-control-sm" id="point2Child" readonly style="width: 50px;"  value="<?php echo ($isReturn) ? $diagnosisData["point2"] - 1: ""; ?>"/>
 									~
-									<input class="form-control form-control-sm" name="point3" style="width: 50px;" oninput="ChangePoint(this)"/>
+									<input class="form-control form-control-sm" name="point3" style="width: 50px;" oninput="ChangePoint(this)" value="<?php echo ($isReturn) ? $diagnosisData["point3"] : ""; ?>"/>
 								</td>
-								<th><input class="form-control form-control-sm" name="text3"/></th>
-								<th><input class="form-control form-control-sm" name="comment3"/></th>
+								<th><input class="form-control form-control-sm" name="text3" value="<?php echo ($isReturn) ? $diagnosisData["text3"] : ""; ?>"/></th>
+								<th><input class="form-control form-control-sm" name="comment3" value="<?php echo ($isReturn) ? $diagnosisData["comment3"] : ""; ?>"/></th>
 							</tr>
 							<tr>
 								<td>D</td>
 								<td style="display: flex; justify-content:space-between">
-									<input class="form-control form-control-sm" id="point3Child" readonly style="width: 50px;"/>
+									<input class="form-control form-control-sm" id="point3Child" readonly style="width: 50px;"  value="<?php echo ($isReturn) ? $diagnosisData["point3"] - 1: ""; ?>"/>
 									~
 									<input class="form-control form-control-sm" name="point4" readonly style="width: 50px;" value="0"/>
 								</td>
-								<th><input class="form-control form-control-sm" name="text4"/></th>
-								<th><input class="form-control form-control-sm" name="comment4"/></th>
+								<th><input class="form-control form-control-sm" name="text4" value="<?php echo ($isReturn) ? $diagnosisData["text4"] : ""; ?>"/></th>
+								<th><input class="form-control form-control-sm" name="comment4" value="<?php echo ($isReturn) ? $diagnosisData["comment4"] : ""; ?>"/></th>
 							</tr>
 						</thead>
 					</table>
@@ -301,7 +317,6 @@
 				form.questionDatas.value = result;
 
 				questionTdxs = questionTdxs.slice(0, -1);
-				console.log(questionTdxs);
 			}
 		}
 	}

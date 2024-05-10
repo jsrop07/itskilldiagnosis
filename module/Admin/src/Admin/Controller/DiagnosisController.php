@@ -1,7 +1,9 @@
 <?php
 namespace Admin\Controller;
 
+use Zend\Di\ServiceLocator;
 use Zend\Mvc\Controller\AbstractActionController;
+use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\View\Model\ViewModel;
 use Zend\Session\Container;
 
@@ -28,18 +30,40 @@ class DiagnosisController extends AbstractActionController {
 	public function listAction() {
 		$this->ChkLogin();
 		$datas["breadcrumbData"] = ["ITスキル診断書管理"];
+
+		// Number of data to output on one page
+		$printDataNum = 10;
 		$datas = $this->GetOptionDatasForInput($datas);
 
+		// Get Current Page
 		$page = $this->params()->fromQuery("page", 1);
-		$printDataNum = 10;	// Number of data to output on one page
+
+		// Get Query Except page
+		$query  = $this->params()->fromQuery();
+		unset($query["page"]);
 
 		$diagnosisTb = $this->getServiceLocator()->get("DiagnosisTable-Admin");
 
-		try {
-			$totalDiagnosisDatas = $diagnosisTb->ReadAllList();
-			$paginationData = $diagnosisTb->GetAllList();
-		} catch (\Exception $e) {
-			die($e->getMessage());
+		$totalDiagnosisDatas = "";
+		$paginationData = "";
+		if (!empty($query)) {
+			try {
+				$totalDiagnosisDatas = $diagnosisTb->ReadListByOption($query);
+				$paginationData = $diagnosisTb->GetListByOption($query);
+			} catch (\Exception $e) {
+				print_r($e->getMessage());
+				exit;
+			}
+			$datas["searchData"] = $query;
+		}
+		else {
+			try {
+				$totalDiagnosisDatas = $diagnosisTb->ReadAllList();
+				$paginationData = $diagnosisTb->GetAllList();
+			} catch (\Exception $e) {
+				print_r($e->getMessage());
+				exit;
+			}
 		}
 
 		$datas["totalData"] = count($totalDiagnosisDatas);
@@ -331,6 +355,17 @@ class DiagnosisController extends AbstractActionController {
 		for ($i = 1; $i <= 5; $i++) {
 			$sqlWhere["point"] = $i;
 			$questionDatas[$i] = $questionTb->ReadListByOption($sqlWhere);
+
+			foreach ($questionDatas[$i] as $idx => $data) {
+				foreach ($data as $index => $value) {
+					if ($index == "idx") { continue; }
+					if ($index == "title") { continue; }
+					if ($index == "type") { continue; }
+					if ($index == "point") { continue; }
+					unset($data[$index]);
+				}
+				$questionDatas[$i][$idx] = $data;
+			}
 		}
 
 		return $questionDatas;

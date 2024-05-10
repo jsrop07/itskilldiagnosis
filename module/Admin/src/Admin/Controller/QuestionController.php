@@ -41,7 +41,7 @@ class QuestionController extends AbstractActionController
 
 		$query = $this->params()->fromQuery();
 
-		// Get Current Pagew
+		// Get Current Page
 		$page = 1;
 		if (isset($query["page"])) {
 			$page = $query["page"];

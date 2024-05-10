@@ -58,6 +58,8 @@ class ApplicantController extends AbstractActionController
 			'other' => $other,
 		];
 	   $tbl->insertAndUpdateApplication($arr);
+	//    $this->SendMail($arr);
+	//    print_r();
 
 	   echo "
 	   <script>
@@ -208,8 +210,7 @@ class ApplicantController extends AbstractActionController
   }
   
   function applicationclearAction() {
-	// $this->layout("/applicant/applicationclear");
-
+			$post = $this->params()->fromPost();
 			$mail = new MailSender();
 
 			$this->layout("/applicant/applicationclear");
@@ -218,20 +219,20 @@ class ApplicantController extends AbstractActionController
 
 			// 메일 제목 지정 (일반적으로 DB에 메일폼 테이블을 만들어서 그것을 가져와서 아래의 title contents에 넣지만, 이건 샘플이므로 간단히.)
 			// 사람마다 변환해야 할 부분은 {{이렇게}} 메일폼에 넣어놓는다.
-			$param['title']="{{user_name}}様、株式会社ジエンジサービスでございます。";
+			$param['title']="{{user_name}}様、新しい試験診断の申し込みがあります。";
 
-			$param['content']="送信する内容\n\n以下のURLから情報を登録してください。\n\n{{URL}}";
+			$param['content']="テスト";
 
 			// 사람이름이나, URL등 고유하게 변경해야 하는 것은 이렇게 처리한다.
 			// 메일 제목과 내용 부분 모두 변환처리.
-			$param['title']=str_replace("{{user_name}}","testTitle",$param['title']);
-
+			$param['title']=str_replace("{{user_name}}","担当者",$param['title']);
+			// print_r($param['title']);
 			// $param['content']=str_replace("{{user_name}}","変換する試験受け者名",$param['content']);
-			$param['content']=str_replace("{{URL}}","個人の試験URL",$param['content']);
+			$param['content']=str_replace("{{URL}}","テスト",$param['content']);
 
 
 			// 수신자 이메일과 이름 설정
-			$param['email']='jsrop07@gmail.com';
+			$param['email']='spredempt@gmail.com';
 			$param['name']="temp";
 
 			// 전송
@@ -285,7 +286,6 @@ class ApplicantController extends AbstractActionController
 		exit;
 	}
 
-
 	//adminpage screen
 	function listAction() {
 		$this->layout("layout/admin/layout_default");
@@ -303,6 +303,7 @@ class ApplicantController extends AbstractActionController
 		$datas["totalData"] = count($totalQuestionDatas);
 
 		$vm = $this->SetViewModel($datas, "/admin/diagnosis_list.phtml");
+	
 
 		$vm->noticelist = $paginationData;
 		$vm->noticelist->setCurrentPageNumber($page);
@@ -406,12 +407,12 @@ class ApplicantController extends AbstractActionController
 
 
 	    /** Make ViewModel with datas and template */
-	// function SetViewModel($datas, $template) {
-	// 	$this->layout("layout/admin/layout_default");
-	// 	$vm = new ViewModel($datas);
-	// 	$vm->setTemplate($template);
-	// 	return $vm;
-	// }
+	function SetViewModel($datas, $template) {
+		$this->layout("layout/admin/layout_default");
+		$vm = new ViewModel($datas);
+		$vm->setTemplate($template);
+		return $vm;
+	}
 
 		
 }

@@ -79,17 +79,17 @@ if ($ses_id) {
 
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
+    <div class="modal-content rounded-4">
+      <div class="modal-header" style="background:linear-gradient(111deg, #87D782 0%, #22BC8E 100%);color:white; height: 40px;border-top-left-radius:13px;border-top-right-radius:13px">
         <h5 class="modal-title" id="exampleModalLabel">正答確認</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(100%);"></button>
       </div>
-      <div class="modal-body">
+      <div class="modal-body fs-5">
       <div id="confirmContent"></div>
       <div id="confirmComment"></div>
       </div>
-      <div class="modal-footer">
-  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      <div class="modal-footer  border-top-0" style="margin-bottom:8px; justify-content:center;">
+  <button type="button" class="applicant_cancel" data-bs-dismiss="modal">キャンセル</button>
   <button type="submit" class="exam_submit" name="submit_post" value="btn_submit">登録</button>
 
 </div>

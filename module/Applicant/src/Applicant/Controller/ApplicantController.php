@@ -8,6 +8,7 @@ use Zend\View\Model\ViewModel;
 use Zend\View\Model\JsonModel;
 use Zend\Session\Container;
 use Zend\Crypt\Password\Bcrypt;
+use Applicant\Model\MailSender;
 
 
 class ApplicantController extends AbstractActionController
@@ -57,6 +58,7 @@ class ApplicantController extends AbstractActionController
 			'other' => $other,
 		];
 	   $tbl->insertAndUpdateApplication($arr);
+
 	   echo "
 	   <script>
 	   self.location.href='/applicant/applicationclear';
@@ -206,12 +208,67 @@ class ApplicantController extends AbstractActionController
   }
   
   function applicationclearAction() {
-	$this->layout("/applicant/applicationclear");
-	// $this->layout("layout/applicant/application_layout");
-	// $vm = new ViewModel();
-    // $vm->setTemplate("/applicant/applicationclear.phtml");
-    // return $vm;
+	// $this->layout("/applicant/applicationclear");
+
+			$mail = new MailSender();
+
+			$this->layout("/applicant/applicationclear");
+			// 기본 메일 전송 관련 설정 로드
+			$param['config']=$this->getConfig();
+
+			// 메일 제목 지정 (일반적으로 DB에 메일폼 테이블을 만들어서 그것을 가져와서 아래의 title contents에 넣지만, 이건 샘플이므로 간단히.)
+			// 사람마다 변환해야 할 부분은 {{이렇게}} 메일폼에 넣어놓는다.
+			$param['title']="{{user_name}}様、株式会社ジエンジサービスでございます。";
+
+			$param['content']="送信する内容\n\n以下のURLから情報を登録してください。\n\n{{URL}}";
+
+			// 사람이름이나, URL등 고유하게 변경해야 하는 것은 이렇게 처리한다.
+			// 메일 제목과 내용 부분 모두 변환처리.
+			$param['title']=str_replace("{{user_name}}","testTitle",$param['title']);
+
+			// $param['content']=str_replace("{{user_name}}","変換する試験受け者名",$param['content']);
+			$param['content']=str_replace("{{URL}}","個人の試験URL",$param['content']);
+
+
+			// 수신자 이메일과 이름 설정
+			$param['email']='jsrop07@gmail.com';
+			$param['name']="temp";
+
+			// 전송
+			$result = $mail->mailsender($param);
+			// $result = $this->getServiceLocator()->get("mailsender");
+
+			$result_row = $result['transport']->getConnection()->getResponse();
+
+			$results = str_replace("\r","",str_replace("\n","",str_replace(" ","",$result_row[0])));
+			switch(substr(strtolower($results),0,5)){
+				// 250ok 가 나오면 전송 의뢰 성공이다.
+					case "250ok":
+						$status = 'OK';
+							break;
+					// 그외의 것은 모두 실패로 처리한다.
+					default:
+						$status = 'FALSE';
+							break;
+			}
+
+
+			// return $vm;
 	}
+	
+	public function getConfig(){
+		if(isset($_SERVER['DOCUMENT_ROOT']) && $_SERVER['DOCUMENT_ROOT']!=''){
+				$droot = $_SERVER['DOCUMENT_ROOT'];
+		}else{
+				$droot = "abc";
+		}
+		if(is_file($droot.'/../config/autoload/local.php')){
+				$config = require $droot.'/../config/autoload/local.php';
+		}else{
+				$config = require $droot.'/../config/autoload/global.php';
+		}
+		return $config;
+}
 
 	function examclearAction() {
 		$this->layout("/applicant/examclear");
@@ -228,6 +285,8 @@ class ApplicantController extends AbstractActionController
 		exit;
 	}
 
+
+	//adminpage screen
 	function listAction() {
 		$this->layout("layout/admin/layout_default");
 		$datas["breadcrumbData"] = ["ITスキル診断状況管理"];
@@ -343,6 +402,8 @@ class ApplicantController extends AbstractActionController
 
 		return $vm;
 	}
+	//ここまで
+
 
 	    /** Make ViewModel with datas and template */
 	// function SetViewModel($datas, $template) {

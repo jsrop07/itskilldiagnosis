@@ -1,0 +1,262 @@
+<?php echo $this->partial("breadcrumb", ["datas" => $breadcrumbData]); ?>
+
+<style type="text/css">
+	.header {
+		height: 110px;
+		display: flex;
+		justify-content: space-between;
+	}
+
+	.info-num {
+		height: 100%;
+		display: flex;
+		justify-content: space-between ;
+	}
+
+	table.emegra tr { grid-template-columns: 30px 70px 55px 60px 1fr 50px 60px 60px 60px 50px 80px 55px 50px 40px 30px; }
+	table.emegra tr.index {
+		padding-top: 8px;
+		padding-bottom: 4px;
+		grid-template-areas:
+		"no  status  applicant_info applicant_info        applicant_info applicant_info applicant_info  applicant_info  dianosis_detail dianosis_detail dianosis_detail  dianosis_status  dianosis_status  dianosis_status check "
+		"no  status  applicant_date application_category  name           education      develop         career          request_date    level           test             execute_date     get_point        grade           check";
+	}
+
+	button.emegra.search.confirm {
+		height: 30px;
+		width: 100px;
+		
+		font-size: 15px;
+		font-weight: 400;
+	}
+
+	table.emegra tr.index > th {
+		padding: 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.list-title {
+		text-align: left;
+		
+		cursor: pointer;
+	}
+	.list-title:hover { text-decoration: underline; }
+
+	.button-place {
+		display: flex;
+		justify-content: space-between;
+	}
+
+</style>
+<content class="header">
+	<div class="title">ITスキル診断状況管理</div>
+</content>
+
+<content class="main">
+	<div style="width: 100%; display:grid; align-items:end; text-align: center;">
+		<div class="info-num">
+			<div style="display: flex;">
+				<div class="count">新規申込<div class="num"><?php echo $totalData; ?></div>名</div>
+				<div class="count" style="margin-left:50px;">診断中<div class="num">2</div>名</div>
+			</div>
+			<div class="count">診断状況<div class="num">128</div>名</div>
+		</div>
+
+		<div style="display: flex; justify-content: right;padding-top: 24px;">
+			<input class="form-control" type="text" style="width:15%; height:30px;margin-right:10px;" placeholder="診断者名">
+			<div id="div-search" style="width: 150px; margin-right: 8px;">
+			<select class="form-select form-select-sm" style="width: 150px; margin-right: 8px;" onchange="ChangeSearch(this.value)">
+					<option value="status">ステータス</option>
+					<option value="class1st">応募区分</option>
+					<option value="class2nd">最終学歴</option>
+					<option value="level">経験分野</option>
+					<option value="class2nd">試験結果</option>
+				</select>
+			</div>
+			<button class="emegra search confirm" onclick="SearchRegister()">検索</button>
+		</div>
+	</div>
+
+	<?php if (false): ?>
+		<div class="table-empty" style="margin-top: 16px;">
+			データがありません。
+		</div>
+		
+		<!-- 건드릴 부분 -->
+	<?php else: ?>
+		<table class="emegra" style="margin-top: 8px;">
+			<thead>
+				<tr class="index">
+					<th style="grid-area: no">no</th>
+					<th style="grid-area: status">ステータス</th>
+					<th style="grid-area: applicant_info">IT診断者情報</th>
+					<th style="grid-area: dianosis_detail ">診断問項詳細</th>
+					<th style="grid-area: dianosis_status  ">診断状況</th>
+					<th style="grid-area: check;">  <input class="form-check-input" type="checkbox" value="" id=""></th>
+
+					<th style="grid-area: applicant_date">申込日</th>
+					<th style="grid-area: application_category">応募区分</th>
+					<th style="grid-area: name">名前</th>
+					<th style="grid-area: education">学歴</th>
+					<th style="grid-area: develop">経験分野</th>
+					<th style="grid-area: career">経験年数</th>
+
+					<th style="grid-area: request_date">診断依頼</th>
+					<th style="grid-area: level">レベル</th>
+					<th style="grid-area: test">診断問題</th>
+
+					<th style="grid-area: execute_date">試験日</th>
+					<th style="grid-area: get_point">得点</th>
+					<th style="grid-area: grade ">等級</th>
+
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>1</td>
+					<td>新規</td>
+					<td>24.3.1</td>
+					<td>新卒</td>
+					<td class="list-title" onclick="self.location.href='./detail/temp'"  style="text-align:center;color:blue">田中 一郎</td>
+					<td >専門卒</td>
+					<td>ゲーム</td>
+					<td>1年</td>
+					<td>24.3.15</td>
+					<td>初級</td>
+					<td>B-50-T1</td>
+					<td>24.3.16</td>
+					<td>76/100</td>
+					<td>B</td>
+					<td>  <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"></td>
+				</tr>
+				<tr>
+					<td>2</td>
+					<td>新規</td>
+					<td>24.4.6</td>
+					<td>新卒</td>
+					<td class="list-title" onclick="self.location.href='./detail/temp'"  style="text-align:center;color:blue;">丁錫圓</td>
+					<td>専門卒</td>
+					<td>インフラ</td>
+					<td>5年</td>
+					<td>24.4.15</td>
+					<td>初級</td>
+					<td>A-50-T2</td>
+					<td>24.4.20</td>
+					<td>90/100</td>
+					<td>A</td>
+					<td>  <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"></td>
+				</tr>
+			</tbody>
+		</table>
+	<?php endif; ?>
+<!-- 여기가끼 -->
+
+
+	<div class="button-place" style="margin-top: 10px; justify-content:space-between;">
+	<div></div>
+		<div style="margin-left:250px;">
+			<?php echo $this->paginationControl($this->noticelist, "sliding", array("pagination2", "Notice"), array("url" => "")); ?>
+		</div>
+		<div>
+			<button class="emegra" style="width:150px; margin-right:10px;" onclick="self.window.location='./regist'">ITスキル診断依頼</button>
+			<button class="emegra" onclick="self.window.location='./input'">新規登録</button>
+		</div>	
+	</div>
+</content>
+
+<script type="text/javascript">
+	const divSearch = document.getElementById("div-search");
+
+	function ChangeSearch(value) {
+		searchChildren = Array.from(divSearch.children);
+		searchChildren.forEach(element => { element.remove(); });
+
+		if (value == "applicant") {
+			var input = document.createElement("input");
+			input.classList.add("form-control");
+			input.classList.add("form-control-sm");
+			divSearch.appendChild(input);
+		}
+		else {
+			var select = document.createElement("select");
+			select.classList.add("form-select");
+			select.classList.add("form-select-sm");
+			divSearch.appendChild(select);
+		}
+
+		var option = document.createElement("option");
+		option.value = "";
+		option.innerText = "選択";
+		option.hidden = true;
+		correct.appendChild(option);
+		for (let i = 0; i < answerCount; i++) {
+			let dt = document.createElement("dt");
+			dt.classList.add("essential");
+			dt.innerText = numTexts[i];
+			answers.appendChild(dt);
+
+			let dd = document.createElement("dd");
+			let input = document.createElement("input");
+			input.classList.add("form-control");
+			input.name = "answer" + Number(i + 1);
+			input.type = "text";
+			dd.appendChild(input);
+			answers.appendChild(dd);
+
+			var option = document.createElement("option");
+			option.value = Number(i) + 1;
+			option.innerText = numTexts[i];
+			correct.appendChild(option);
+}
+	}
+</script>
+
+
+<script type="text/javascript">
+	const divSearch = document.getElementById("div-search");
+
+	function ChangeSearch(value) {
+		searchChildren = Array.from(divSearch.children);
+		searchChildren.forEach(element => { element.remove(); });
+
+		if (value == "applicant") {
+			var input = document.createElement("input");
+			input.classList.add("form-control");
+			input.classList.add("form-control-sm");
+			divSearch.appendChild(input);
+		}
+		else {
+			var select = document.createElement("select");
+			select.classList.add("form-select");
+			select.classList.add("form-select-sm");
+			divSearch.appendChild(select);
+		}
+
+		var option = document.createElement("option");
+		option.value = "";
+		option.innerText = "選択";
+		option.hidden = true;
+		correct.appendChild(option);
+		for (let i = 0; i < answerCount; i++) {
+			let dt = document.createElement("dt");
+			dt.classList.add("essential");
+			dt.innerText = numTexts[i];
+			answers.appendChild(dt);
+
+			let dd = document.createElement("dd");
+			let input = document.createElement("input");
+			input.classList.add("form-control");
+			input.name = "answer" + Number(i + 1);
+			input.type = "text";
+			dd.appendChild(input);
+			answers.appendChild(dd);
+
+			var option = document.createElement("option");
+			option.value = Number(i) + 1;
+			option.innerText = numTexts[i];
+			correct.appendChild(option);
+}
+	}
+</script>

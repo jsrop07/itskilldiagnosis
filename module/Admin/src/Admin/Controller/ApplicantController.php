@@ -5,7 +5,7 @@ use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Zend\Session\Container;
 
-class DiagnosisController extends AbstractActionController {
+class ApplicantController extends AbstractActionController {
 	function ChkLogin() {
 		$session = new Container("user");
 
@@ -21,13 +21,13 @@ class DiagnosisController extends AbstractActionController {
 
 	public function indexAction() {
 		$this->ChkLogin();
-		print_r("Diagnosis Index");
+		print_r("Applicant Index");
 		exit;
 	}
 
 	public function listAction() {
 		$this->ChkLogin();
-		$datas["breadcrumbData"] = ["ITスキル診断書管理"];
+		$datas["breadcrumbData"] = ["ITスキル診断状況管理"];
 
 		// Number of data to output on one page
 		$printDataNum = 10;
@@ -84,7 +84,7 @@ class DiagnosisController extends AbstractActionController {
 
 		$datas = $this->GetOptionDatas($datas);
 
-		$vm = $this->SetViewModel($datas, "/diagnosis/diagnosis_list.phtml");
+		$vm = $this->SetViewModel($datas, "/applicant/applicant_list.phtml");
 		$vm->noticelist = $paginationData;
 		$vm->noticelist->setCurrentPageNumber($page);
 		$vm->noticelist->setItemCountPerPage($printDataNum);

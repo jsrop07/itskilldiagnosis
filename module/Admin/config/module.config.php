@@ -65,6 +65,17 @@ return array(
 					),
 				),
 			),
+			"applicant" => array(
+				"type" => "Zend\Mvc\Router\Http\Segment",
+				"options" => array(
+					"route" => "/admin/applicant[/:action][/:index]",
+					"constraints" => array(),
+					"defaults" => array(
+						"controller"	=> "Applicant",
+						"action"			=> "index",
+					),
+				),
+			),
 			"manager" => array(
 				"type" => "Zend\Mvc\Router\Http\Segment",
 				"options" => array(
@@ -102,6 +113,7 @@ return array(
 			"Account"		=> "Admin\Controller\AccountController",
 			"Question"	=> "Admin\Controller\QuestionController",
 			"Diagnosis"	=> "Admin\Controller\DiagnosisController",
+			"Applicant"		=> "Admin\Controller\ApplicantController",
 			"Manager"		=> "Admin\Controller\ManagerController",
 		),
 	),

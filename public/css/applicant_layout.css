@@ -157,6 +157,7 @@ select{
         /* font-style: italic;  */
   }
 
+  /* option value under */
   select option[value]:not([value=""]) {
     color: black;
     font-style: normal; 

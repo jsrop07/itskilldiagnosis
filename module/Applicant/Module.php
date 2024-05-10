@@ -10,12 +10,11 @@
 
 namespace Applicant;
 
-use Applicant\Model\AdminInfoTable;
-use Applicant\Model\QuestionTypeTable;
 use Applicant\Model\QuestionTable;
 use Applicant\Model\ApplicantLoginTable;
 use Applicant\Model\ApplicationTable;
 use Applicant\Model\ApplicantExamTable;
+use Applicant\Model\MailSender;
 use Zend\Mvc\ModuleRouteListener;
 use Zend\Mvc\MvcEvent;
 use Zend\Session\Container;
@@ -53,21 +52,6 @@ class Module
     {
         return array(
             'factories' => array(
-                'CommonTable' =>  function ($sm) {
-                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
-                    //$table = new CommonTable($dbAdapter);
-                    //return $table;
-                },
-                "AdminInfoTable" => function ($sm) {
-                    $dbAdapter = $sm->get("Zend\Db\Adapter\Adapter");
-                    $table = new AdminInfoTable($dbAdapter);
-                    return $table;
-                },
-                "QuestionTypeTable" => function ($sm) {
-                    $dbAdapter = $sm->get("Zend\Db\Adapter\Adapter");
-                    $table = new QuestionTypeTable($dbAdapter);
-                    return $table;
-                },
                 "AppQuestionTable" => function ($sm) {
                     $dbAdapter = $sm->get("Zend\Db\Adapter\Adapter");
                     $table = new QuestionTable($dbAdapter);
@@ -86,6 +70,11 @@ class Module
                 "ApplicantExamTable" => function ($sm) {
                     $dbAdapter = $sm->get("Zend\Db\Adapter\Adapter");
                     $table = new ApplicantExamTable($dbAdapter);
+                    return $table;
+                },
+                "ApplicantMailSenderTable" => function ($sm) {
+                    $dbAdapter = $sm->get("Zend\Db\Adapter\Adapter");
+                    $table = new MailSender($dbAdapter);
                     return $table;
                 },
             ),

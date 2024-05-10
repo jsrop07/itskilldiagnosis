@@ -1,6 +1,6 @@
 <?php
 
-namespace Test\Model;
+namespace Applicant\Model;
 
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\Db\Adapter\Adapter;
@@ -73,6 +73,7 @@ class MailSender extends AbstractActionController
 		$viewModel->setVariables(array(
 			'content'  => $params['content'],
 		));
+
 		$bodyPart = new \Zend\Mime\Message();
 		$bodyMessage    = new \Zend\Mime\Part(mb_convert_encoding($params['content'], 'ISO-2022-JP-MS','UTF-8'));
 		$bodyMessage->charset='ISO-2022-JP';
@@ -133,6 +134,7 @@ class MailSender extends AbstractActionController
 		$mail->setSubject("=?iso-2022-jp?B?".base64_encode(mb_convert_encoding($params['title'],"JIS","UTF-8"))."?=");
 
 		$transport = new SmtpTransport();
+
 		unset($params['config']['smtp']['fromname']);
 		unset($params['config']['smtp']['fromemail']);
 		$options   = new SmtpOptions($params['config']['smtp']);

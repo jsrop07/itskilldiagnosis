@@ -7,6 +7,9 @@ use Zend\Mvc\Controller\Plugin\Redirect;
 use Zend\View\Model\ViewModel;
 use Zend\View\Model\JsonModel;
 use Zend\Session\Container;
+use Zend\Crypt\Password\Bcrypt;
+use Applicant\Model\MailSender;
+
 
 class ApplicantController extends AbstractActionController
 {
@@ -20,12 +23,10 @@ class ApplicantController extends AbstractActionController
 	$develop=$tbl->getDevelop();
 	$p = $this->params()->fromPost();
 	$mode =(isset($p['mode'])    &&   $p['mode'] !='')? $p['mode']:'';
-	// print_r($p);
 	$viewModel = new ViewModel(['questionType' => $questionType,'develop' => $develop,'p' => $p]);
 	$viewModel->setTemplate("/applicant/application.phtml");
 
 	if ($mode == 'btn_submit') {
-		// exit;
 		$email = $this->params()->fromPost('email');
 		$name = $this->params()->fromPost('name');
 		$kana = $this->params()->fromPost('kana');
@@ -68,8 +69,8 @@ class ApplicantController extends AbstractActionController
 	}
 
 	return $viewModel;
-	
   }
+
 
   public function loginAction()
   {
@@ -79,14 +80,14 @@ class ApplicantController extends AbstractActionController
     if (isset($p["id"])) {
 			$loginTbl = $this->getServiceLocator()->get("ApplicantLoginTable");
 			$result = $loginTbl->login($p["id"], $p["password"]);
+
 			if ($result == "success") {
 				$session = new Container("applicant");
 				$session["id"] = $p["id"];
-				$session["token"] = 1;
 			}
 			die($result);
     }
-	
+
 	$session = new Container("applicant");
 	if(isset($session['id']) && $session['id'] != '') {
 		return $this->redirect()->toUrl("../applicant/exam");
@@ -97,46 +98,108 @@ class ApplicantController extends AbstractActionController
     return $vm;
   }
 
+
   public function examAction()
   {
 	 // Set layout
 	  $this->layout("layout/applicant/exam_layout");
-	  $p = $this->params()->fromPost();
-	  $mode =(isset($p['mode'])    &&   $p['mode'] !='')? $p['mode']:'';
+	  $post = $this->params()->fromPost();
+	  $submit_post        = (isset($post['submit_post'])         &&   $post['submit_post'] !='')         ? $post['submit_post']         : '';
+	  $answer_data = (isset($post['answer_data'])  &&   $post['answer_data'] !='')  ? $post['answer_data']  : '';
+	  $comment     = (isset($post['comment'])      &&   $post['comment'] !='')      ? $post['comment']      : '';
 
 
 	  $session = new Container("applicant");
 	  if (isset($session->id)) {
-		  $id = $session->id;
+		  $emailId = $session->id;
 		} else {
 		$this->RedirectToLogin();		  
 	  }
 
-	  if($mode=='cancel'){
+	  if($submit_post=='cancel'){
 		if (isset($session->id)) {
-            $id = $session->id;
-            unset($id);
+            $emailId = $session->id;
+            unset($emailId);
             session_unset(); 
 			$this->RedirectToLogin();	
         }
 	  }
-	  if($mode=='submit'){
-		echo "
-		<script>
-		self.location.href='/applicant/examclear';
-		</script>
-		";	
-	  }
-	  // Get exam name
-	  $examTb = $this->getServiceLocator()->get("ApplicantExamTable");
-	  $examData = $examTb->readByUrl($id);
-	  $name = $examData["name"];
+
+	  // 아이디 값 불러오기
+	  $applicantExamTbl = $this->getServiceLocator()->get("ApplicantExamTable");
+	  $applicantInfo    = $applicantExamTbl->readById($emailId);
+	  $applicantIdx     = $applicantInfo["idx"];	  
+
+	  // applicant의 id값과 record의 idx값 비교해서 불러오기
+	  $examRecordInfo =  $applicantExamTbl->readByApplicantIdx($applicantInfo);
+	  $datas["name"]  =  $applicantInfo["name"];
 	  
-	  //TIMELIMIT TEST
-	  $idx = $examData["idx"];
-  
+	  
+	  $applicantIdx   =  $examRecordInfo["applicant_idx"];
+	  
+	  // code diagnosis테이블의 code와 question_num, time_limit값 불러오기
+	  $recordCode    = $examRecordInfo["code"];
+	  $diagnosisInfo = $applicantExamTbl->readByDiagnosisCode($recordCode);
+
+	  $datas["question_num"] = $diagnosisInfo["question_num"];
+	  $datas["time_limit"]   = $diagnosisInfo["time_limit"];
+
+	  // 정답값 비교하기
+	  $findQuestionData      = $applicantExamTbl->findCompareIdx($post);
+	  $selectedQuestion_idxs = ['question_idxs'=>isset($diagnosisInfo['question_idxs'])? $diagnosisInfo['question_idxs']:null];
+
+	  $selectedQnA=[['question_idxs'=> $diagnosisInfo['question_idxs'],'answer_data'=>$examRecordInfo['answer_data']]];
+	//   print_r($selectedQnA);
+
+	  $matchedData=[];
+	  foreach(explode(',',$selectedQuestion_idxs["question_idxs"]) as $value)
+	  {
+		foreach($findQuestionData as $data)
+		{
+			if($data['idx']==$value)
+			{
+				$matchedData[] = $data;
+			}
+		}
+	  }
+	  $datas["matchedData"]=$matchedData;
+
+
+	  $output = [];
+		foreach ($matchedData as $item) {
+			$output[] = $item['correct'];
+		}
+		$result = implode(',', $output);
+		$answerDataArray = explode(',',$answer_data);
+		$resultArray = explode(',', $result);
+
+		$length = count($answerDataArray);
+		$get_point = 0;
+		for ($i = 0; $i < $length; $i++) {
+			if ($resultArray[$i] == $answerDataArray[$i]) {
+				$get_point++;
+			}
+		}
+
+		//제출하기
+		if($submit_post=='btn_submit'){
+
+			$sqlWhere["idx"] = $examRecordInfo['idx'];
+			$sqlSet["answer_data"] = $answer_data;
+			$sqlSet["get_point"] = $get_point;
+			$sqlSet["comment"] = $comment;
+
+			$applicantExamTbl->updateExam($sqlWhere, $sqlSet);			
+			$applicantExamTbl->deletePasswordByIdx($applicantInfo["idx"]);
+			session_unset(); 
+			echo "
+			<script>
+			self.location.href='/applicant/examclear';
+			</script>
+			";	
+		  }
 	  // Set variables to be passed to the layout
-	  $viewModel = new ViewModel(["name" => $name, "idx" => $idx]);
+	  $viewModel = new ViewModel($datas);
   
 	  // Set view template
 	  $viewModel->setTemplate("applicant/exam.phtml");
@@ -145,12 +208,67 @@ class ApplicantController extends AbstractActionController
   }
   
   function applicationclearAction() {
-	$this->layout("/applicant/applicationclear");
-	// $this->layout("layout/applicant/application_layout");
-	// $vm = new ViewModel();
-    // $vm->setTemplate("/applicant/applicationclear.phtml");
-    // return $vm;
+	// $this->layout("/applicant/applicationclear");
+
+			$mail = new MailSender();
+
+			$this->layout("/applicant/applicationclear");
+			// 기본 메일 전송 관련 설정 로드
+			$param['config']=$this->getConfig();
+
+			// 메일 제목 지정 (일반적으로 DB에 메일폼 테이블을 만들어서 그것을 가져와서 아래의 title contents에 넣지만, 이건 샘플이므로 간단히.)
+			// 사람마다 변환해야 할 부분은 {{이렇게}} 메일폼에 넣어놓는다.
+			$param['title']="{{user_name}}様、株式会社ジエンジサービスでございます。";
+
+			$param['content']="送信する内容\n\n以下のURLから情報を登録してください。\n\n{{URL}}";
+
+			// 사람이름이나, URL등 고유하게 변경해야 하는 것은 이렇게 처리한다.
+			// 메일 제목과 내용 부분 모두 변환처리.
+			$param['title']=str_replace("{{user_name}}","testTitle",$param['title']);
+
+			// $param['content']=str_replace("{{user_name}}","変換する試験受け者名",$param['content']);
+			$param['content']=str_replace("{{URL}}","個人の試験URL",$param['content']);
+
+
+			// 수신자 이메일과 이름 설정
+			$param['email']='jsrop07@gmail.com';
+			$param['name']="temp";
+
+			// 전송
+			$result = $mail->mailsender($param);
+			// $result = $this->getServiceLocator()->get("mailsender");
+
+			$result_row = $result['transport']->getConnection()->getResponse();
+
+			$results = str_replace("\r","",str_replace("\n","",str_replace(" ","",$result_row[0])));
+			switch(substr(strtolower($results),0,5)){
+				// 250ok 가 나오면 전송 의뢰 성공이다.
+					case "250ok":
+						$status = 'OK';
+							break;
+					// 그외의 것은 모두 실패로 처리한다.
+					default:
+						$status = 'FALSE';
+							break;
+			}
+
+
+			// return $vm;
 	}
+	
+	public function getConfig(){
+		if(isset($_SERVER['DOCUMENT_ROOT']) && $_SERVER['DOCUMENT_ROOT']!=''){
+				$droot = $_SERVER['DOCUMENT_ROOT'];
+		}else{
+				$droot = "abc";
+		}
+		if(is_file($droot.'/../config/autoload/local.php')){
+				$config = require $droot.'/../config/autoload/local.php';
+		}else{
+				$config = require $droot.'/../config/autoload/global.php';
+		}
+		return $config;
+}
 
 	function examclearAction() {
 		$this->layout("/applicant/examclear");
@@ -167,6 +285,8 @@ class ApplicantController extends AbstractActionController
 		exit;
 	}
 
+
+	//adminpage screen
 	function listAction() {
 		$this->layout("layout/admin/layout_default");
 		$datas["breadcrumbData"] = ["ITスキル診断状況管理"];
@@ -211,6 +331,24 @@ class ApplicantController extends AbstractActionController
 		return $vm;
 	}
 
+	function inputconfirmAction(){
+		$this->layout("layout/admin/layout_default");
+		$datas["breadcrumbData"] = ["ITスキル診断状況管理"];
+
+		$query = $this->params()->fromQuery();
+		unset($query["page"]);
+
+
+		$applicantTb = $this->getServiceLocator()->get("AppQuestionTable");
+		// $applicantData = $applicantTb->readByUrl($id);
+
+		// $name = $applicantData["name"];
+
+		$vm = $this->SetViewModel($datas, "/admin/inputconfirm.phtml");
+
+		return $vm;
+	}
+
 	function detailAction(){
 		$this->layout("layout/admin/layout_default");
 		$datas["breadcrumbData"] = ["ITスキル診断状況管理"];
@@ -229,41 +367,51 @@ class ApplicantController extends AbstractActionController
 		return $vm;
 	}
 
-	    /** Make ViewModel with datas and template */
-	function SetViewModel($datas, $template) {
+	function detaileditAction(){
 		$this->layout("layout/admin/layout_default");
-		$vm = new ViewModel($datas);
-		$vm->setTemplate($template);
+		$datas["breadcrumbData"] = ["ITスキル診断状況管理"];
+
+		$query = $this->params()->fromQuery();
+		unset($query["page"]);
+
+
+		$applicantTb = $this->getServiceLocator()->get("AppQuestionTable");
+		// $applicantData = $applicantTb->readByUrl($id);
+
+		// $name = $applicantData["name"];
+
+		$vm = $this->SetViewModel($datas, "/admin/detailedit.phtml");
+
 		return $vm;
 	}
 
-	
-	/** Read examTable for Testing page (user/exam.phtml) */
-	public function Setting($examData) {		// 問題設定ページに移動
-		$datas["examData"] = $examData;
+	function editconfirmAction(){
+		$this->layout("layout/admin/layout_default");
+		$datas["breadcrumbData"] = ["ITスキル診断状況管理"];
 
-		$typeTb = $this->getServiceLocator()->get("QuestionTypeTable");
-		$datas["typeDatas"] = $typeTb->readAll();
-		
-		return $this->SetViewModel($datas, "user/setting.phtml");
+		$query = $this->params()->fromQuery();
+		unset($query["page"]);
+
+
+		$applicantTb = $this->getServiceLocator()->get("AppQuestionTable");
+		// $applicantData = $applicantTb->readByUrl($id);
+
+		// $name = $applicantData["name"];
+
+		$vm = $this->SetViewModel($datas, "/admin/editconfirm.phtml");
+
+		return $vm;
 	}
+	//ここまで
 
-	/** Save question_data in examTable */
-	public function MakeExam($url, $question_nums, $post) {		// 試験の問題を登録
-		if (isset($post["major"])) { $post["academic"] += 1; }
 
-		$questionTb = $this->getServiceLocator()->get("QuestionPoolTable");
-		$examTb = $this->getServiceLocator()->get("ExamTable");
+	    /** Make ViewModel with datas and template */
+	// function SetViewModel($datas, $template) {
+	// 	$this->layout("layout/admin/layout_default");
+	// 	$vm = new ViewModel($datas);
+	// 	$vm->setTemplate($template);
+	// 	return $vm;
+	// }
+
 		
-		$post["num"] = $question_nums;
-		$questionDatas = iterator_to_array($questionTb->ReadRandForExam($post));
-		
-		$question_data = "";
-		foreach ($questionDatas as $data) {		// 選択した問題のidxを保存
-			$question_data .= $data["idx"] . ",";
-		}
-		$post["question_data"] = substr($question_data , 0, -1);
-
-		$examTb->updateExamSetting($url, $post);
-	}
 }

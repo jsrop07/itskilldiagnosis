@@ -34,25 +34,25 @@ class ApplicantLoginTable
     $this->sql = new Sql($this->adapter);
   }
 
-  public function login($id, $password)
+  public function login($email, $password)
   {
     $qry = $this->sql->select("applicant")->where(
       array(
-        "id" => $id,
+        "email" => $email,
         "password" => $password,
       )
     );
 
     $result = $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
     if (empty($result)) {
-      return "wrong id";
+      return "wrong info";
     }
 
     if ($result["password"] == $password) {
       return "success";
       exit;
     }
-    return "wrong password";
+    // return "wrong password";
   }
 
 }

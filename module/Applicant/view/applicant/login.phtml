@@ -22,7 +22,7 @@ if ($ses_id) {
 
 	<div class="card-body">
 		<span>ログインID</span>
-		<input class="form-control" name='id' id="id" type="text" placeholder="IDを入力ください">
+		<input class="form-control" name='email' id="id" type="text" placeholder="IDを入力ください">
 
 		<span style="margin-top: 24px">パスワード</span>
 		<input class="form-control" name='password' id="password" type="password" placeholder="パスワードを入力ください">
@@ -60,8 +60,8 @@ if ($ses_id) {
 		xhr.onload = () => {
 			if (xhr.status == 200) {
 				const result = xhr.responseText;
-				if (result == "wrong id") {
-					alert("有効ではないIDです");
+				if (result == "wrong info") {
+					alert("有効ではないIDまたはパスワードです");
 					id.focus();
 				} else if (result == "wrong password") {
 					alert("パスワードを確認してください");

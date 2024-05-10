@@ -34,142 +34,75 @@ class ApplicantExamTable
     $this->sql = new Sql($this->adapter);
   }
 
-  public function createExam($post)
+  // SEOKWON CODE
+  public function readById($email)
   {
-		/* データの変更
-			作成：朴夏成
-			修正：朴夏成
-			修正日：2024/02/22
-		*/
-
-		/* 修正前：
-    $data = array(
-      "url" => $post["url"],
-      "user_id" => $post["id"],
-      "user_pw" => $post["password"],
-      "name" => $post["name"],
-      "write_date" => date("Y-m-d H:i:s"),
-      "question_level" => $post["level"],
-      "question_nums" => $post["num"],
-      "question_data" => $post["question_data"],
-    );
-		*/
-
-		/* 修正後： */
-		$data = array(
-			"url" => $post["url"],
-			"user_id" => $post["id"],
-			"user_pw" => $post["password"],
-			"name" => $post["name"],
-			"write_date" => date("Y-m-d H:i:s"),
-			"question_nums" => $post["num"],
-		);
-		
-		if (isset($post["academic"]) && $post["academic"] != "") { $data["academic"] = $post["academic"]; }
-		if (isset($post["career"]) && $post["career"] != "") { $data["career"] = $post["career"]; }
-		if (isset($post["certificates"]) && $post["certificates"] != "") { $data["certificates"] = $post["certificates"]; }
-		if (isset($post["question_data"])) { $data["question_data"] = $post["question_data"]; }
-		/* ここまで */
-
-    $qry = $this->sql->insert("exam")->values($data);
-    return $this->sql->prepareStatementForSqlObject($qry)->execute();
-  }
-
-  public function readByUrl($id)
-  {
-    $qry = $this->sql->select("applicant")->where(["id" => $id]);
+    $qry = $this->sql->select("applicant")->where(["email" => $email]);
     return $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
   }
 
-  public function readTenByPage($page)
+  public function readByApplicantIdx($applicant_idx)
   {
-    $index = ($page - 1) * 10;
-    $qry = $this->sql->select("exam")->order("write_date DESC")->limit(10)->offset($index);
-    return $this->sql->prepareStatementForSqlObject($qry)->execute();
-  }
-
-  public function readCount()
-  {
-    $qry = $this->sql->select("exam");
-    return count($this->sql->prepareStatementForSqlObject($qry)->execute());
-  }
-
-  public function readByIdx($idx)
-  {
-    $qry = $this->sql->select("exam")->where(["idx" => $idx]);
+    $qry = $this->sql->select("record")->where(["applicant_idx" => $applicant_idx])->order("write_date DESC");
     return $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
   }
 
-  public function login($id, $password)
+  public function readByDiagnosisCode($code)
   {
-    $qry = $this->sql->select("applicant")->where(
-      array(
-        "id" => $id,
-        "password" => $password,
-      )
-    );
-
-    $result = $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
-    if (empty($result)) {
-      return "wrong id";
-    }
-
-    if ($result["password"] == $password) {
-      return "success";
-    }
-    return "wrong password";
+    $qry = $this->sql->select("diagnosis")->where(["code" => $code]);
+    return $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
   }
 
-	/* 機能の追加
-		作成：朴昰成
-		作成日：2024/03/05
-	*/
-	public function updateExamSetting($url, $post) {
-		$datas = array(
-			"academic" => $post["academic"],
-			"question_type" => $post["type"],
-			"career" => $post["career"],
-			"certificates" => $post["certificates"],
-			"question_data" => $post["question_data"]	
-		);
-		
-		$qry = $this->sql->update("exam")->where(["url" => $url])->set($datas);
-		$this->sql->prepareStatementForSqlObject($qry)->execute();
-	}
-	/* ここまで */
-
-	/* 機能の追加変更
-		作成：朴昰成
-		修正：朴昰成
-		修正日：2024/03/18
-	*/
-
-	/*　修正前：
-  public function updateSubmit($url, $answers, $point)
+  public function findCompareIdx($p)
   {
-    $qry = $this->sql->update("exam")->where(["url" => $url])->set(
-      array(
-        "answer_data" => $answers,
-        "get_point" => $point,
-        "execute_date" => date("Y-m-d H:i:s"),
-      )
-    );
-    return $this->sql->prepareStatementForSqlObject($qry)->execute();
+      $select = $this->sql->select('question');
+      $select->columns([
+          'idx',
+          'question',
+          'answers',
+          'correct'
+          // 'wdate' => new Expression("DATE_FORMAT(wdate, '%Y-%m-%d %H:%i')")
+      ]);
+  
+      if (!empty($p['idx'])) {
+          $select->where(['idx' => $p['idx']]);
+      }
+  
+      $statement = $this->sql->prepareStatementForSqlObject($select);
+      $result = $statement->execute();
+  
+      $resultSet = new ResultSet();
+      $resultSet->initialize($result);
+      $resultSet->buffer(); 
+      
+      return $resultSet;
   }
-	*/
 
-	/* 修正後： */
-	/** Update exam data */
-  public function updateSubmit($url, $answers, $point)
-  {
-		$datas = array(
-			"execute_date" => date("Y-m-d H:i:s"),
-			"get_point" => $point,
-		);
-		if (!is_null($answers)) { $datas["answer_data"] = $answers; }
+  public function updateExam($sqlWhere, $sqlSet){
+    $qry=new sql($this->adapter);
+    $update=$qry->update('record');
 
-		$qry = $this->sql->update("exam")->where(["url" => $url])->set($datas);
-    return $this->sql->prepareStatementForSqlObject($qry)->execute();
+    $sqlSet["execute_date"] = date("Y-m-d H:i:s");
+
+    $update->set($sqlSet);
+    $update->where($sqlWhere);
+
+    $sqlString = $qry->getSqlStringForSqlObject($update);
+    $result = $this->adapter->query($sqlString, Adapter::QUERY_MODE_EXECUTE);
+
+    return $result;   
   }
-	/* ここまで */
+
+  public function deletePasswordByIdx($idx){
+    $qry = new sql($this->adapter);
+    $query = $qry->update('applicant');
+    $query->set(['password' => NULL]);
+    $query->where(['idx' => $idx]);
+
+    
+    $sqlString = $qry->getSqlStringForSqlObject($query);
+    $result = $this->adapter->query($sqlString, Adapter::QUERY_MODE_EXECUTE);
+
+    return $result;   
+}
 }

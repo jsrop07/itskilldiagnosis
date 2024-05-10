@@ -15,7 +15,7 @@ use Zend\Paginator\Adapter\DbSelect;
 use Zend\Paginator\Paginator;
 use Zend\Session\Container;
 
-class ApplicationTable
+class ApplicationTable 
 {
     public function __construct()
     {

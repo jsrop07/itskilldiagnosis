@@ -13,7 +13,7 @@
 		justify-content: space-between ;
 	}
 
-	table.emegra tr { grid-template-columns: 30px 70px 55px 60px 1fr 50px 60px 60px 60px 50px 80px 55px 50px 40px 30px; }
+	table.emegra tr { grid-template-columns: 30px 70px 55px 60px 1fr 100px 60px 60px 60px 50px 80px 55px 50px 40px 30px; }
 	table.emegra tr.index {
 		padding-top: 8px;
 		padding-bottom: 4px;
@@ -48,8 +48,8 @@
 		display: flex;
 		justify-content: space-between;
 	}
-
 </style>
+
 <content class="header">
 	<div class="title">ITスキル診断状況管理</div>
 </content>
@@ -89,7 +89,7 @@
 		<table class="emegra" style="margin-top: 8px;">
 			<thead>
 				<tr class="index">
-					<th style="grid-area: no">no</th>
+					<th style="grid-area: no">No</th>
 					<th style="grid-area: status">ステータス</th>
 					<th style="grid-area: applicant_info">IT診断者情報</th>
 					<th style="grid-area: dianosis_detail ">診断問項詳細</th>
@@ -114,6 +114,25 @@
 				</tr>
 			</thead>
 			<tbody>
+				<?php foreach ($recordDatas as $data): ?>
+					<tr>
+						<td><?php echo $data["num"]; ?></td>
+						<td>新規</td>
+						<td><?php echo date("y.m.d", strtotime($data["write_date"])); ?></td>
+						<td><?php echo $data["application_category"]; ?></td>
+						<td class="list-title" onclick="self.location.href='./detail/<?php echo $data['idx']; ?>';" style="text-align: center; color: blue"><?php echo $data["name"]; ?></td>
+						<td><?php echo $data["education"]; ?></td>
+						<td><?php echo $data["major"]; ?></td>
+						<td><?php echo $data["career"]; ?>年</td>
+						<td><?php echo date("y.m.d", strtotime($data["write_date"])); ?></td>
+						<td><?php echo $data["level"]; ?></td>
+						<td><?php echo $data["code"]; ?></td>
+						<td><?php echo $data["execute_date"]; ?></td>
+						<td><?php echo $data["get_point"]; ?></td>
+						<td><?php echo $data["rank"]; ?></td>
+						<td><input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"></td>
+					</tr>
+				<?php endforeach; ?>
 				<tr>
 					<td>1</td>
 					<td>新規</td>

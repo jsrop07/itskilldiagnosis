@@ -40,14 +40,16 @@ class ApplicantController extends AbstractActionController {
 		$query  = $this->params()->fromQuery();
 		unset($query["page"]);
 
-		$diagnosisTb = $this->getServiceLocator()->get("DiagnosisTable-Admin");
+		$recordTb = $this->getServiceLocator()->get("RecordTable-Admin");
 
-		$totalDiagnosisDatas = "";
+		$totalRecordDatas = "";
 		$paginationData = "";
 		if (!empty($query)) {
 			try {
-				$totalDiagnosisDatas = $diagnosisTb->ReadListByOption($query);
-				$paginationData = $diagnosisTb->GetListByOption($query);
+				$totalNewRecordDatas = $recordTb->ReadAllNewList();
+				$totalRestRecordDatas = $recordTb->ReadAllRestList();
+				$totalRecordDatas = array_merge($totalNewRecordDatas, $totalRestRecordDatas);
+				$paginationData = $recordTb->GetAllList();
 			} catch (\Exception $e) {
 				print_r($e->getMessage());
 				exit;
@@ -56,30 +58,44 @@ class ApplicantController extends AbstractActionController {
 		}
 		else {
 			try {
-				$totalDiagnosisDatas = $diagnosisTb->ReadAllList();
-				$paginationData = $diagnosisTb->GetAllList();
+				$totalNewRecordDatas = $recordTb->ReadAllNewList();
+				$totalRestRecordDatas = $recordTb->ReadAllRestList();
+				$totalRecordDatas = array_merge($totalNewRecordDatas, $totalRestRecordDatas);
+				$paginationData = $recordTb->GetAllList();
 			} catch (\Exception $e) {
 				print_r($e->getMessage());
 				exit;
 			}
 		}
 
-		$datas["totalData"] = count($totalDiagnosisDatas);
+		$datas["totalData"] = count($totalRecordDatas);
 
+		$applicantTb = $this->getServiceLocator()->get("ApplicantTable-Admin");
+		$diagnosisTb = $this->getServiceLocator()->get("DiagnosisTable-Admin");
 		// Extract output datas and Add numbering
-		if (!empty($totalDiagnosisDatas)) {
-			$diagnosisDatas = array();
+		if (!empty($totalRecordDatas)) {
+			$recordDatas = array();
 			$startIdx = ($page - 1) * $printDataNum;
 			$endIdx = ($page * $printDataNum);
-			
-			for ($i = 0; $startIdx + $i < $endIdx; $i++) {
-				if (!isset($totalDiagnosisDatas[$startIdx + $i])) break;
 
-				$diagnosisDatas[$i] = $totalDiagnosisDatas[$startIdx + $i];
-				$diagnosisDatas[$i]["num"] = count($totalDiagnosisDatas) - ($startIdx + $i);
+			for ($i = 0; $startIdx + $i < $endIdx; $i++) {
+				if (!isset($totalRecordDatas[$startIdx + $i])) { break; }
+
+				$recordData = $totalRecordDatas[$startIdx + $i];
+
+				$applicantData = $applicantTb->ReadByIdx($recordData["applicant_idx"]);
+				$recordData = array_merge($applicantData, $recordData);
+
+				if (($recordData["code"]) != null) {
+					$diagnosisData = $diagnosisTb->ReadByCode($recordData["code"]);
+					$recordData = array_merge($diagnosisData, $recordData);
+				}
+
+				$recordDatas[$i] = $recordData;
+				$recordDatas[$i]["num"] = count($totalRecordDatas) - ($startIdx + $i);
 			}
 
-			$datas["diagnosisDatas"] = $diagnosisDatas;
+			$datas["recordDatas"] = $recordDatas;
 		}
 
 		$datas = $this->GetOptionDatas($datas);

@@ -21,7 +21,7 @@ class ApplicantController extends AbstractActionController {
 
 	public function indexAction() {
 		$this->ChkLogin();
-		print_r("Applicant Index");
+		header("Location: ./applicant/list");
 		exit;
 	}
 

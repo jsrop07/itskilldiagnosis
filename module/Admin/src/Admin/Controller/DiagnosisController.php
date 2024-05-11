@@ -21,7 +21,7 @@ class DiagnosisController extends AbstractActionController {
 
 	public function indexAction() {
 		$this->ChkLogin();
-		print_r("Diagnosis Index");
+		header("Location: ./diagnosis/list");
 		exit;
 	}
 

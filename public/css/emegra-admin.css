@@ -309,7 +309,7 @@ ul.emegra.pagination li.item:hover a { color: white; }
 
 dl.emegra {
 	display: grid;
-	grid-gap: 24px 8px;
+	grid-gap: 24px 16px;
 }
 dl.emegra dt, dl.emegra dd {
 	height: 38px;

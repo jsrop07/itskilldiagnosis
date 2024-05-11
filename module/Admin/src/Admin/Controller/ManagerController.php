@@ -23,10 +23,10 @@ class ManagerController extends AbstractActionController
 
 	public function indexAction() {
 		$this->ChkLogin();
-		print_r("Manager Index");
+		header("Location: ./manager/list");
 		exit;
 	}
-	
+
 	public function listAction() {
 		$this->ChkLogin();
 		$datas["breadcrumbData"] = ["ITスキル診断問項管理"];

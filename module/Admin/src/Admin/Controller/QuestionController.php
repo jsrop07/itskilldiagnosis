@@ -21,7 +21,7 @@ class QuestionController extends AbstractActionController
 
 	public function indexAction() {
 		$this->ChkLogin();
-		print_r("Question Index");
+		header("Location: ./question/list");
 		exit;
 	}
 

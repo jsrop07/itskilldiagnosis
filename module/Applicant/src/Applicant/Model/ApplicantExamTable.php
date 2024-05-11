@@ -43,7 +43,7 @@ class ApplicantExamTable
 
   public function readByApplicantIdx($applicant_idx)
   {
-    $qry = $this->sql->select("record")->where(["applicant_idx" => $applicant_idx])->order("write_date DESC");
+    $qry = $this->sql->select("record")->where(["applicant_idx" => $applicant_idx])->order("apply_date DESC");
     return $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
   }
 

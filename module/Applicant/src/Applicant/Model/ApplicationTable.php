@@ -83,7 +83,7 @@ class ApplicationTable
                 'career' => $dataArray['career'],
                 'certificates' => $dataArray['certificates'],
                 'other' => $dataArray['other'],
-                'write_date' => date("Y-m-d H:i:s")
+                'apply_date' => date("Y-m-d H:i:s")
             ]);
             $applicantUpdate->where(['email' => $dataArray['email']]);
             $applicantSqlString = $qry->getSqlStringForSqlObject($applicantUpdate);
@@ -101,7 +101,7 @@ class ApplicationTable
                 'career' => $dataArray['career'],
                 'certificates' => $dataArray['certificates'],
                 'other' => $dataArray['other'],
-                'write_date' => date("Y-m-d H:i:s")
+                'apply_date' => date("Y-m-d H:i:s")
             ]);
             $applicantSqlString = $qry->getSqlStringForSqlObject($applicantInsert);
             $this->adapter->query($applicantSqlString, Adapter::QUERY_MODE_EXECUTE);
@@ -111,7 +111,7 @@ class ApplicationTable
         
         $recordInsert = $qry->insert('record');
         $recordInsert->values([
-            'write_date' => date("Y-m-d H:i:s"),
+            'apply_date' => date("Y-m-d H:i:s"),
             'application_category' => $dataArray['application_category'],
             'education' => $dataArray['education'],
             'major' => $dataArray['major'],

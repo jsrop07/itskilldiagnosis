@@ -87,8 +87,9 @@
                     <option value="" selected  >選択してください。</option>
                     <?php foreach ($this->questionType as $row): ?>
                         <?php $texts = explode(',', $row['text']); ?>
-                        <?php foreach ($texts as $text): ?>
-                            <option value="<?php echo $text; ?>"><?php echo $text; ?></option>
+                        <?php $idxs = explode(',', $row['idx']); ?>
+                        <?php foreach ($texts as $index=> $text): ?>
+                            <option value="<?php echo $idxs[$index]; ?>"><?php echo $text; ?></option>
                         <?php endforeach; ?>
                     <?php endforeach; ?>
                     </select>

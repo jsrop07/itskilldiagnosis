@@ -7,7 +7,6 @@ use Zend\Mvc\Controller\Plugin\Redirect;
 use Zend\View\Model\ViewModel;
 use Zend\View\Model\JsonModel;
 use Zend\Session\Container;
-use Zend\Crypt\Password\Bcrypt;
 use Applicant\Model\MailSender;
 
 
@@ -199,7 +198,7 @@ class ApplicantController extends AbstractActionController
 	  $applicantIdx   =  $examRecordInfo["applicant_idx"];
 	  
 	  // code diagnosis테이블의 code와 question_num, time_limit값 불러오기
-	  $recordCode    = $examRecordInfo["code"];
+	  $recordCode    = $examRecordInfo["diagnosis_code"];
 	  $diagnosisInfo = $applicantExamTbl->readByDiagnosisCode($recordCode);
 
 	  $datas["question_num"] = $diagnosisInfo["question_num"];
@@ -244,9 +243,29 @@ class ApplicantController extends AbstractActionController
 		for ($i = 0; $i < $length; $i++) {
 			if ($resultArray[$i] == $answerDataArray[$i]) { //정답데이터와 답이 맞으면
 				$get_point+=$outputPoint[$i];// 포인트를 더한다 
+
 			}
 
 		}
+		$selectedRank = [];
+		$resultPoints = explode(',', $diagnosisInfo["result_points"]);
+		$resultTexts = explode(',', $diagnosisInfo["result_texts"]);
+
+		foreach ($resultPoints as $index => $points) {
+			// $resultPoints와 $resultTexts의 각 인덱스에 해당하는 값을 가져와서 배열에 추가합니다.
+			$selectedRank[] = [
+				'result_points' => $points,
+				'result_texts' => $resultTexts[$index]
+			];
+		}
+		foreach ($selectedRank as $item) {
+			if ($item['result_points'] == $get_point) {
+
+				// echo $item['result_points'];
+				
+			}
+		}
+		
 
 		//제출하기
 		if($submit_post=='btn_submit'){
@@ -255,8 +274,11 @@ class ApplicantController extends AbstractActionController
 			$sqlSet["answer_data"] = $answer_data;
 			$sqlSet["get_point"] = $get_point;
 			$sqlSet["comment"] = $comment;
-
+			// $sqlSet['selectedRank']=$selectedRank;
+			// print_r($item['result_texts']);
+			// exit;
 			$applicantExamTbl->updateExam($sqlWhere, $sqlSet);			
+
 			// $applicantExamTbl->deletePasswordByIdx($applicantInfo["idx"]);
 			// $this->examApplicantMail($applicantInfo,$examRecordInfo);
 			// session_unset(); 

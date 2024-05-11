@@ -14,6 +14,8 @@ use Admin\Model\AdminTable;
 use Admin\Model\QuestionTable;
 use Admin\Model\OptionTable;
 use Admin\Model\DiagnosisTable;
+use Admin\Model\ApplicantTable;
+use Admin\Model\RecordTable;
 use Zend\Mvc\ModuleRouteListener;
 use Zend\Mvc\MvcEvent;
 
@@ -62,6 +64,16 @@ class Module {
 				"DiagnosisTable-Admin" => function($sm) {
 					$dbAdapter = $sm->get("Zend\Db\Adapter\Adapter");
 					$table = new DiagnosisTable($dbAdapter);
+					return $table;
+				},
+				"ApplicantTable-Admin" => function($sm) {
+					$dbAdapter = $sm->get("Zend\Db\Adapter\Adapter");
+					$table = new ApplicantTable($dbAdapter);
+					return $table;
+				},
+				"RecordTable-Admin" => function($sm) {
+					$dbAdapter = $sm->get("Zend\Db\Adapter\Adapter");
+					$table = new RecordTable($dbAdapter);
 					return $table;
 				},
 			),

@@ -58,10 +58,12 @@
 	}
 	.list-title:hover { text-decoration: underline; }
 
-	.button-place {
+	.pagination-place, .button-place {
+		margin-top: 10px;
 		display: flex;
-		justify-content: space-between;
+		justify-content: center;
 	}
+	.button-place { justify-content: space-between; }
 </style>
 <content class="header">
 	<div class="title">ITスキル診断書管理</div>
@@ -138,10 +140,13 @@
 		</table>
 	<?php endif; ?>
 
+	<div class="pagination-place" style="margin-top: 10px;">
+		<?php echo $this->paginationControl($this->noticelist, "sliding", array("pagination", "Notice"), array("url" => "")); ?>
+	</div>
+
 	<div class="button-place" style="margin-top: 10px;">
-		<div>
-			<?php echo $this->paginationControl($this->noticelist, "sliding", array("pagination", "Notice"), array("url" => "")); ?>
-		</div>
+		<div></div>
+
 		<div>
 			<button class="emegra" onclick="self.window.location='./input'">新規登録</button>
 		</div>	

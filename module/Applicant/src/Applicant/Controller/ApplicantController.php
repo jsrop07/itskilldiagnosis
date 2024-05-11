@@ -41,6 +41,19 @@ class ApplicantController extends AbstractActionController
 		$career = $this->params()->fromPost('career');
 		$certificates = $this->params()->fromPost('certificates');
 		$other = $this->params()->fromPost('other');
+
+		if ($skill == 0) {
+			$skillResult = '有';
+		} else {
+			$skillResult = '無';
+		}
+
+		if($application_category == 0){
+			$application_categoryResult = "新卒";
+		}else{
+			$application_categoryResult = "中途（経歴職）";
+		}
+
 		$arr = [
 			'email' => $email,
 			'name' => $name,
@@ -57,9 +70,10 @@ class ApplicantController extends AbstractActionController
 			'certificates' => $certificates,
 			'other' => $other,
 		];
+
 	   $tbl->insertAndUpdateApplication($arr);
-	//    $this->SendMail($arr);
-	//    print_r();
+
+	   $this->infoApplicantMail($arr,$skillResult,$application_categoryResult);
 
 	   echo "
 	   <script>
@@ -71,6 +85,51 @@ class ApplicantController extends AbstractActionController
 	}
 
 	return $viewModel;
+  }
+
+  function applicationclearAction() {
+	$this->layout("/applicant/applicationclear");
+	}
+
+  function infoApplicantMail($arr,$skillResult,$application_categoryResult){
+	$mail = new MailSender();
+
+	// 기본 메일 전송 관련 설정 로드
+	$param['config']=$this->getConfig();
+	// 메일 제목 지정 (일반적으로 DB에 메일폼 테이블을 만들어서 그것을 가져와서 아래의 title contents에 넣지만, 이건 샘플이므로 간단히.)
+	// 사람마다 변환해야 할 부분은 {{이렇게}} 메일폼에 넣어놓는다.
+	$param['title']="{{user_name}}様、新しい試験診断の申し込みがあります。";
+	$param["content"] = "以下の申込者の情報をご参照ください。\n\nお名前（漢字）：{$arr["name"]}\nお名前（カナ）：{$arr["kana"]}\n応募区分：{$application_categoryResult}\nITスキル：{$skillResult}\n\n診断者ページ：http://gngitskill:84/admin/applicant/list";
+
+	// 사람이름이나, URL등 고유하게 변경해야 하는 것은 이렇게 처리한다.
+	// 메일 제목과 내용 부분 모두 변환처리.
+	$param['title']=str_replace("{{user_name}}","担当者",$param['title']);
+	// print_r($param['title']);
+	// $param['content']=str_replace("{{user_name}}","変換する試験受け者名",$param['content']);
+	$param['content']=str_replace("{{URL}}","テスト",$param['content']);
+
+
+	// 수신자 이메일과 이름 설정
+	$param['email']='jsrop07@gmail.com';
+	$param['name']="temp";
+
+	// 전송
+	$result = $mail->mailsender($param);
+	// $result = $this->getServiceLocator()->get("mailsender");
+
+	$result_row = $result['transport']->getConnection()->getResponse();
+
+	$results = str_replace("\r","",str_replace("\n","",str_replace(" ","",$result_row[0])));
+	switch(substr(strtolower($results),0,5)){
+		// 250ok 가 나오면 전송 의뢰 성공이다.
+			case "250ok":
+				$status = 'OK';
+					break;
+			// 그외의 것은 모두 실패로 처리한다.
+			default:
+				$status = 'FALSE';
+					break;
+	}
   }
 
 
@@ -151,8 +210,7 @@ class ApplicantController extends AbstractActionController
 	  $selectedQuestion_idxs = ['question_idxs'=>isset($diagnosisInfo['question_idxs'])? $diagnosisInfo['question_idxs']:null];
 
 	  $selectedQnA=[['question_idxs'=> $diagnosisInfo['question_idxs'],'answer_data'=>$examRecordInfo['answer_data']]];
-	//   print_r($selectedQnA);
-
+	  
 	  $matchedData=[];
 	  foreach(explode(',',$selectedQuestion_idxs["question_idxs"]) as $value)
 	  {
@@ -170,6 +228,12 @@ class ApplicantController extends AbstractActionController
 	  $output = [];
 		foreach ($matchedData as $item) {
 			$output[] = $item['correct'];
+
+		}
+	  $outputPoint=[];
+		foreach ($matchedData as $item) {
+			$outputPoint[] = $item['point'];
+
 		}
 		$result = implode(',', $output);
 		$answerDataArray = explode(',',$answer_data);
@@ -178,9 +242,10 @@ class ApplicantController extends AbstractActionController
 		$length = count($answerDataArray);
 		$get_point = 0;
 		for ($i = 0; $i < $length; $i++) {
-			if ($resultArray[$i] == $answerDataArray[$i]) {
-				$get_point++;
+			if ($resultArray[$i] == $answerDataArray[$i]) { //정답데이터와 답이 맞으면
+				$get_point+=$outputPoint[$i];// 포인트를 더한다 
 			}
+
 		}
 
 		//제출하기
@@ -192,8 +257,9 @@ class ApplicantController extends AbstractActionController
 			$sqlSet["comment"] = $comment;
 
 			$applicantExamTbl->updateExam($sqlWhere, $sqlSet);			
-			$applicantExamTbl->deletePasswordByIdx($applicantInfo["idx"]);
-			session_unset(); 
+			// $applicantExamTbl->deletePasswordByIdx($applicantInfo["idx"]);
+			// $this->examApplicantMail($applicantInfo,$examRecordInfo);
+			// session_unset(); 
 			echo "
 			<script>
 			self.location.href='/applicant/examclear';
@@ -208,55 +274,48 @@ class ApplicantController extends AbstractActionController
 
 	  return $viewModel;
   }
-  
-  function applicationclearAction() {
-			$post = $this->params()->fromPost();
-			$mail = new MailSender();
 
-			$this->layout("/applicant/applicationclear");
-			// 기본 메일 전송 관련 설정 로드
-			$param['config']=$this->getConfig();
+function examApplicantMail($applicantInfo,$examRecordInfo){
+	$mail = new MailSender();
 
-			// 메일 제목 지정 (일반적으로 DB에 메일폼 테이블을 만들어서 그것을 가져와서 아래의 title contents에 넣지만, 이건 샘플이므로 간단히.)
-			// 사람마다 변환해야 할 부분은 {{이렇게}} 메일폼에 넣어놓는다.
-			$param['title']="{{user_name}}様、新しい試験診断の申し込みがあります。";
+	// 기본 메일 전송 관련 설정 로드
+	$param['config']=$this->getConfig();
+	// 메일 제목 지정 (일반적으로 DB에 메일폼 테이블을 만들어서 그것을 가져와서 아래의 title contents에 넣지만, 이건 샘플이므로 간단히.)
+	// 사람마다 변환해야 할 부분은 {{이렇게}} 메일폼에 넣어놓는다.
+	$param['title']="{{user_name}}様、{$applicantInfo["name"]}診断者の試験結果が出ました。";
+	$param["content"] = "以下の診断者の試験結果をご参照ください。\n\nお名前（漢字）：{$applicantInfo["name"]}\nお名前（カナ）：{$applicantInfo["kana"]}\nメールアドレス：{$applicantInfo["email"]}\n試験日：{$examRecordInfo["execute_date"]}\n問題種別：{$examRecordInfo["question_type"]}\n診断問題：{$examRecordInfo["code"]}\n得点：{$examRecordInfo["get_point"]}\nランク：{$examRecordInfo["rank"]}\n\n診断者ページ：http://gngitskill:84/admin/applicant/list";
 
-			$param['content']="テスト";
-
-			// 사람이름이나, URL등 고유하게 변경해야 하는 것은 이렇게 처리한다.
-			// 메일 제목과 내용 부분 모두 변환처리.
-			$param['title']=str_replace("{{user_name}}","担当者",$param['title']);
-			// print_r($param['title']);
-			// $param['content']=str_replace("{{user_name}}","変換する試験受け者名",$param['content']);
-			$param['content']=str_replace("{{URL}}","テスト",$param['content']);
+	// 사람이름이나, URL등 고유하게 변경해야 하는 것은 이렇게 처리한다.
+	// 메일 제목과 내용 부분 모두 변환처리.
+	$param['title']=str_replace("{{user_name}}","担当者",$param['title']);
+	// print_r($param['title']);
+	// $param['content']=str_replace("{{user_name}}","変換する試験受け者名",$param['content']);
+	$param['content']=str_replace("{{URL}}","テスト",$param['content']);
 
 
-			// 수신자 이메일과 이름 설정
-			$param['email']='spredempt@gmail.com';
-			$param['name']="temp";
+	// 수신자 이메일과 이름 설정
+	$param['email']='jsrop07@gmail.com';
+	$param['name']="temp";
 
-			// 전송
-			$result = $mail->mailsender($param);
-			// $result = $this->getServiceLocator()->get("mailsender");
+	// 전송
+	$result = $mail->mailsender($param);
+	// $result = $this->getServiceLocator()->get("mailsender");
 
-			$result_row = $result['transport']->getConnection()->getResponse();
+	$result_row = $result['transport']->getConnection()->getResponse();
 
-			$results = str_replace("\r","",str_replace("\n","",str_replace(" ","",$result_row[0])));
-			switch(substr(strtolower($results),0,5)){
-				// 250ok 가 나오면 전송 의뢰 성공이다.
-					case "250ok":
-						$status = 'OK';
-							break;
-					// 그외의 것은 모두 실패로 처리한다.
-					default:
-						$status = 'FALSE';
-							break;
-			}
-
-
-			// return $vm;
+	$results = str_replace("\r","",str_replace("\n","",str_replace(" ","",$result_row[0])));
+	switch(substr(strtolower($results),0,5)){
+		// 250ok 가 나오면 전송 의뢰 성공이다.
+			case "250ok":
+				$status = 'OK';
+					break;
+			// 그외의 것은 모두 실패로 처리한다.
+			default:
+				$status = 'FALSE';
+					break;
 	}
-	
+  }
+
 	public function getConfig(){
 		if(isset($_SERVER['DOCUMENT_ROOT']) && $_SERVER['DOCUMENT_ROOT']!=''){
 				$droot = $_SERVER['DOCUMENT_ROOT'];

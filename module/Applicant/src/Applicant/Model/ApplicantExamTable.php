@@ -58,6 +58,7 @@ class ApplicantExamTable
       $select = $this->sql->select('question');
       $select->columns([
           'idx',
+          'point',
           'question',
           'answers',
           'correct'

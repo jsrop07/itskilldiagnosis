@@ -57,7 +57,7 @@ return array(
 			"diagnosis" => array(
 				"type" => "Zend\Mvc\Router\Http\Segment",
 				"options" => array(
-					"route" => "/admin/diagnosis[/:action][/:index]",
+					"route" => "/admin/diagnosis[/:action][/:code]",
 					"constraints" => array(),
 					"defaults" => array(
 						"controller"	=> "Diagnosis",

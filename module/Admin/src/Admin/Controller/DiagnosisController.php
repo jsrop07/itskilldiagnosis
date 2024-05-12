@@ -141,7 +141,7 @@ class DiagnosisController extends AbstractActionController {
 		$datas = $this->GetOptionDatas($datas);
 
 		// Get Code
-		$code = $this->params()->fromRoute("index");
+		$code = $this->params()->fromRoute("code");
 
 		$diagnosisTb = $this->getServiceLocator()->get("DiagnosisTable-Admin");
 		try { $datas["diagnosisData"] = $diagnosisTb->ReadByCode($code); }
@@ -243,6 +243,12 @@ class DiagnosisController extends AbstractActionController {
 			// }
 		}
 		die($this->PointQuestionsToJson($questionDatas));
+	}
+
+	/** When you click 修正 button on 診断書詳細 page */
+	public function editAction() {
+		// Get Code
+		$code = $this->params()->fromRoute("code");
 	}
 
 	function createAction() {

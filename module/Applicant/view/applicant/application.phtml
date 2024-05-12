@@ -29,15 +29,15 @@
                     <input class="form-control" id="birth" name="birth" type="text" placeholder="YYYY-MM-DD" autocomplete="off"  style="width:30%">   
 
                     <span >応募区分</span>
-                    <select class="" name="application_category" style="width:40%" >
-                        <option value="" selected disabled hidden>選択してください。</option>
+                    <select class="" name="case" style="width:40%" >
+                        <option value="" selected>選択してください。</option>
                         <option value="0">新卒</option>
                         <option value="1">中途（経歴職）</option>
                     </select>
 
                     <span>学歴</span>
                     <select class="" name="education" style="width:40%" id="educationSelect" >
-                        <option value=""selected disabled hidden>選択してください。</option>
+                        <option value=""selected>選択してください。</option>
                         <option value="高卒">高卒</option>
                         <option value="専門卒">専門卒</option>
                         <option value="大卒">大卒</option>
@@ -50,7 +50,7 @@
 
                     <span class="no_after_style">専攻</span>
                     <select class="" name="major" style="width:40%" id="majorSelect" >
-                        <option value=""selected disabled hidden>選択してください。</option>
+                        <option selected disabled hidden>選択してください。</option>
                         <option value="IT・ソフトウェア専攻">IT・ソフトウェア専攻</option>
                         <option value="IT・ソフトウェア以外">IT・ソフトウェア以外</option>
                     </select>
@@ -60,35 +60,36 @@
 
                     <span>ITスキル有無</span>
                     <select class="" name="skill" style="width:20%" >
-                        <option value="" selected disabled hidden>選択</option>
+                        <option value="" selected>選択</option>
                         <option value="0">有</option>
                         <option value="1">無</option>
                     </select>
 
-                    <span id="spanDevelopSelect">経験分野</span>
-                    <select class="" name="develop" style="width:40%" id="developSelect" >
+                    <span id="spanclass1stSelect">経験分野</span>
+                    <select class="" name="class1st" style="width:40%" id="class1stSelect" >
                     <option value="" selected  >選択してください。</option>
-                        <?php foreach ($this->develop as $row): ?>
+                        <?php foreach ($this->class1st as $row): ?>
                             <?php $texts = explode(',', $row['text']); ?>
                             <?php foreach ($texts as $text): ?>
                                 <option value="<?php echo $text; ?>"><?php echo $text; ?></option>
                             <?php endforeach; ?>
                         <?php endforeach; ?>
                     </select>
-                    <div id="otherDevelopInput" style="margin-top:-15px; display:none;">
-                        <input class="form-control" type="text" placeholder="その他の場合の、記入" id="otherDevelop" name="develop" maxlength='20'>
+                    <div id="otherclass1stInput" style="margin-top:-15px; display:none;">
+                        <input class="form-control" type="text" placeholder="その他の場合の、記入" id="otherclass1st" name="class1st" maxlength='20'>
                     </div>
 
                     <span id='spanCareer'>IT経験年数</span>
                     <input class="form-control" id="career" name="career" type="text" placeholder="経歴を記入してください。" style="font-size:15px; width:40%" maxlength='2'>
 
                     <span  id="spanTypeSelect">問題種別</span>
-                    <select class="" name="question_type" style="width:40%" id="typeSelect">
+                    <select class="" name="class2nd" style="width:40%" id="typeSelect">
                     <option value="" selected  >選択してください。</option>
-                    <?php foreach ($this->questionType as $row): ?>
+                    <?php foreach ($this->class2nd as $row): ?>
                         <?php $texts = explode(',', $row['text']); ?>
-                        <?php foreach ($texts as $text): ?>
-                            <option value="<?php echo $text; ?>"><?php echo $text; ?></option>
+                        <?php $idxs = explode(',', $row['idx']); ?>
+                        <?php foreach ($texts as $index=> $text): ?>
+                            <option value="<?php echo $idxs[$index]; ?>"><?php echo $text; ?></option>
                         <?php endforeach; ?>
                     <?php endforeach; ?>
                     </select>
@@ -116,13 +117,13 @@
 <script>
 var skillSelect = document.querySelector('select[name="skill"]');
 
-var questionTypeSelect = document.getElementById('typeSelect');
-var questionTypeSpanSelect = document.getElementById('spanTypeSelect');
+var class2ndSelect = document.getElementById('typeSelect');
+var class2ndSpanSelect = document.getElementById('spanTypeSelect');
 
-var ApplicantDevelopSelect = document.getElementById('developSelect');
-var ApplicantDevelopSpanSelect=document.getElementById('spanDevelopSelect');
+var Applicantclass1stSelect = document.getElementById('class1stSelect');
+var Applicantclass1stSpanSelect=document.getElementById('spanclass1stSelect');
 
-var otherDevelopInput = document.getElementById('otherDevelopInput');
+var otherclass1stInput = document.getElementById('otherclass1stInput');
 
 var careerInput = document.getElementById('career');
 var ApplicantCareerInput = document.getElementById('spanCareer');
@@ -138,12 +139,12 @@ var ApplicantOtherTextarea = document.getElementById('spanOther');
 skillSelect.addEventListener('change', function() {
     var selectedValue = this.value;
     if (selectedValue === '1') {
-        questionTypeSelect.style.display='none';        
-        questionTypeSpanSelect.style.display='none';
+        class2ndSelect.style.display='none';        
+        class2ndSpanSelect.style.display='none';
 
-        ApplicantDevelopSelect.style.display='none';
-        ApplicantDevelopSpanSelect.style.display='none';
-        otherDevelopInput.style.display='none';
+        Applicantclass1stSelect.style.display='none';
+        Applicantclass1stSpanSelect.style.display='none';
+        otherclass1stInput.style.display='none';
 
         careerInput.style.display='none';
         ApplicantCareerInput.style.display='none';
@@ -152,19 +153,19 @@ skillSelect.addEventListener('change', function() {
         ApplicantCertificatesInput.style.display='none';
 
 
-        questionTypeSelect.disabled=true;
-        developSelect.disabled = true;
-        otherDevelopInput.querySelector('input').disabled = true;
+        class2ndSelect.disabled=true;
+        class1stSelect.disabled = true;
+        otherclass1stInput.querySelector('input').disabled = true;
         careerInput.disabled = true;
         certificatesInput.disabled = true;
     } else {
-        questionTypeSelect.style.display='block';    
-        questionTypeSpanSelect.style.display='block'; 
+        class2ndSelect.style.display='block';    
+        class2ndSpanSelect.style.display='block'; 
 
-        ApplicantDevelopSelect.style.display='block';
-        ApplicantDevelopSpanSelect.style.display='block';
-        otherDevelopInput.style.display='block';
-        otherDevelopInput.style.display='none';
+        Applicantclass1stSelect.style.display='block';
+        Applicantclass1stSpanSelect.style.display='block';
+        otherclass1stInput.style.display='block';
+        otherclass1stInput.style.display='none';
 
         careerInput.style.display='block';
         ApplicantCareerInput.style.display='block';
@@ -173,9 +174,9 @@ skillSelect.addEventListener('change', function() {
         ApplicantCertificatesInput.style.display='block';
 
 
-        questionTypeSelect.disabled=false;
-        developSelect.disabled = false;
-        otherDevelopInput.querySelector('input').disabled = false;
+        class2ndSelect.disabled=false;
+        class1stSelect.disabled = false;
+        otherclass1stInput.querySelector('input').disabled = false;
         careerInput.disabled = false;
         certificatesInput.disabled = false;
     }
@@ -183,7 +184,7 @@ skillSelect.addEventListener('change', function() {
 });
 </script>
 
-<!-- educationとdevelopのその他項目画面変化 -->
+<!-- educationとclass1stのその他項目画面変化 -->
 <script>
     document.getElementById('educationSelect').addEventListener('change', function(event) {
     var selectedOption = event.target.value;
@@ -203,21 +204,21 @@ skillSelect.addEventListener('change', function() {
     }
 });
 
-    document.getElementById('developSelect').addEventListener('change', function(event) {
+    document.getElementById('class1stSelect').addEventListener('change', function(event) {
     var selectedOption = event.target.value;
-    var otherDevelopInput = document.getElementById('otherDevelopInput');
+    var otherclass1stInput = document.getElementById('otherclass1stInput');
 
     if (selectedOption === "その他") {
-        otherDevelopInput.style.display = 'block';
+        otherclass1stInput.style.display = 'block';
     } else {
-        otherDevelopInput.style.display = 'none';
+        otherclass1stInput.style.display = 'none';
     }
 
-    var otherDevelop = document.getElementById('otherDevelop');
+    var otherclass1st = document.getElementById('otherclass1st');
     if (selectedOption === "その他") {
-        otherDevelop.removeAttribute('disabled');
+        otherclass1st.removeAttribute('disabled');
     } else {
-        otherDevelop.setAttribute('disabled', 'disabled');
+        otherclass1st.setAttribute('disabled', 'disabled');
     }
 });
 
@@ -300,9 +301,9 @@ function checkKana(input) {
 			return false;
 		}
     
-        if (form.application_category.value == "") {
+        if (form.case.value == "") {
 			alert("応募区分を入力してください。");
-            setTimeout("form.application_category.focus()",100);
+            setTimeout("form.case.focus()",100);
             event.preventDefault();
 			return false;
 		}
@@ -329,17 +330,17 @@ function checkKana(input) {
 		}
 
      
-        if (!developSelect.disabled && form.developSelect.value === "") {
+        if (!class1stSelect.disabled && form.class1stSelect.value === "") {
             alert("経験分野を入力してくださいsd。");
-            setTimeout("form.developSelect.focus()",100);
+            setTimeout("form.class1stSelect.focus()",100);
             event.preventDefault(); 
             return false;
         }
 
 
-        if (form.developSelect.value == "その他" && form.otherDevelop.value=="") {
+        if (form.class1stSelect.value == "その他" && form.otherclass1st.value=="") {
 			alert("その他の場合の、記入してください");
-            setTimeout("form.developSelect.focus()",100);
+            setTimeout("form.class1stSelect.focus()",100);
             event.preventDefault();
 			return false;
 		}
@@ -369,7 +370,7 @@ function checkKana(input) {
 
 <!-- selectbox 選択時の　色 -->
 <script>
-var selectElements = document.querySelectorAll('[name="gender"],[name="application_category"],[name="education"],[name="skill"],[name="question_type"],[name="develop"],[name="major"]');
+var selectElements = document.querySelectorAll('[name="gender"],[name="case"],[name="education"],[name="skill"],[name="class2nd"],[name="class1st"],[name="major"]');
 
 selectElements.forEach(function(selectElement) {
     selectElement.addEventListener('change', function() {

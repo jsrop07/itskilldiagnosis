@@ -78,18 +78,18 @@ if ($ses_id) {
 
 
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
+  <div class="modal-dialog" style="margin-top:150px">
+    <div class="modal-content rounded-4">
+      <div class="modal-header" style="background:linear-gradient(111deg, #87D782 0%, #22BC8E 100%);color:white; height: 40px;border-top-left-radius:13px;border-top-right-radius:13px">
         <h5 class="modal-title" id="exampleModalLabel">正答確認</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(100%);"></button>
       </div>
-      <div class="modal-body">
-      <div id="confirmContent"></div>
-      <div id="confirmComment"></div>
+      <div class="modal-body fs-5" style="padding-bottom:0">
+      <div id="confirmContent" style="text-align:center;"></div>
+      <!-- <div id="confirmComment"></div> -->
       </div>
-      <div class="modal-footer">
-  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      <div class="modal-footer  border-top-0" style="margin-bottom:8px; justify-content:center;">
+  <button type="button" class="applicant_cancel" data-bs-dismiss="modal">キャンセル</button>
   <button type="submit" class="exam_submit" name="submit_post" value="btn_submit">登録</button>
 
 </div>
@@ -185,7 +185,7 @@ window.onload = function() {
 <script>
   document.getElementById("startBtn").addEventListener("click", function() {
     var lock = 'n';
-    var stopBtns = document.getElementById('stopBtn');
+    var stopBtn = document.getElementById('stopBtn');
 
     var timerDisplay = document.getElementById("timerDisplay");
     
@@ -233,8 +233,8 @@ window.onload = function() {
     if(lock == 'n'){
       lock='y';
       updateTimer2(); 
-      stopBtns.disabled='false';
-      stopBtns.style.color = "gray";
+      stopBtn.disabled='false';
+      stopBtn.style.color = "gray";
     }
     });
 
@@ -255,8 +255,8 @@ window.onload = function() {
               lock = 'y';
               document.getElementById("lock_time").click(); 
 
-              stopBtns.disabled=false; 
-              stopBtns.style.color = "gray";
+              stopBtn.disabled=false; 
+              stopBtn.style.color = "gray";
           }
       }
   }
@@ -287,17 +287,15 @@ document.addEventListener('keydown', notReload);
 <script>
 document.addEventListener("DOMContentLoaded", () => {
   const btn_submit = document.querySelector("#btn_submit");
-  const form = document.getElementById('myForm');
+  var form = document.getElementById('myForm');
   btn_submit.addEventListener("click", () => {
     const matchedData = <?php echo json_encode($matchedData); ?>;
-    console.log(matchedData)
     <?php foreach ($matchedData as $questionIdx => $data) : ?>
-        console.log(form.answer<?= $questionIdx + 1 ?>.checked);
           var selected = Array.from(form.answer<?= $questionIdx + 1 ?>).find(radio => radio.checked);
           if (selected == null) {
             alert("問題を全部入力してください。");
             event.preventDefault(); // Form submit prevent
-            form.question<?= $questionIdx ?>[0].focus();
+            form.answer<?= $questionIdx +1 ?>[0].focus();
             // setTimeout("form.developSelect.focus()",100);
 
             return false; 
@@ -329,6 +327,35 @@ document.addEventListener("DOMContentLoaded", () => {
  function confirmExam() {
     var formData = new FormData(document.getElementById('myForm'));
     var radioIdsArray= [];
+    var confirmContent = document.getElementById('confirmContent');
+    confirmContent.innerHTML = '';
+    for (var pair of formData.entries()) {
+      var questionIdx = pair[0];
+      var selectedRadio = document.querySelector('input[name="' + questionIdx + '"]:checked');
+      if (selectedRadio) {
+        var radioId = selectedRadio.value;
+        confirmContent.innerHTML = '試験を提出しますか？';
+        formData.append('answer_data', radioId);
+        radioIdsArray.push(radioId);
+      }      
+
+    }
+
+    var combinedAnswers = radioIdsArray.join(',');
+    console.log(combinedAnswers);
+
+    document.getElementById('answer_data').value = combinedAnswers;
+    
+
+      
+    // var confirmData= confirmContent.innerHTML;
+}
+</script>
+
+<!-- <script>
+ function confirmExam() {
+    var formData = new FormData(document.getElementById('myForm'));
+    var radioIdsArray= [];
     var comment = document.getElementById('comment').value;
     var confirmContent = document.getElementById('confirmContent');
     confirmContent.innerHTML = '';
@@ -353,6 +380,6 @@ document.addEventListener("DOMContentLoaded", () => {
       
     var confirmData= confirmContent.innerHTML+comment;
 }
-</script>
+</script> -->
 
 <?php endif; ?>

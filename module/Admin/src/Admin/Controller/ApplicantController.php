@@ -68,6 +68,8 @@ class ApplicantController extends AbstractActionController {
 			}
 		}
 
+		$datas["totalApply"] = count($recordTb->ReadApplyData());
+		$datas["totalRequest"] = count($recordTb->ReadApplyData());
 		$datas["totalData"] = count($totalRecordDatas);
 
 		$applicantTb = $this->getServiceLocator()->get("ApplicantTable-Admin");
@@ -86,13 +88,18 @@ class ApplicantController extends AbstractActionController {
 				$applicantData = $applicantTb->ReadByIdx($recordData["applicant_idx"]);
 				$recordData = array_merge($applicantData, $recordData);
 
-				if (($recordData["code"]) != null) {
-					$diagnosisData = $diagnosisTb->ReadByCode($recordData["code"]);
+				if (($recordData["diagnosis_code"]) != null) {
+					$diagnosisData = $diagnosisTb->ReadByCode($recordData["diagnosis_code"]);
 					$recordData = array_merge($diagnosisData, $recordData);
 				}
 
+				if ($recordData["request_date"] == null) { $recordData["status"] = "新規"; }
+				else if ($recordData["execute_date"] == null) { $recordData["status"] = "診断"; }
+				else { $recordData["status"] = "終了"; }
+
+				$recordData["num"] = count($totalRecordDatas) - ($startIdx + $i);
+
 				$recordDatas[$i] = $recordData;
-				$recordDatas[$i]["num"] = count($totalRecordDatas) - ($startIdx + $i);
 			}
 
 			$datas["recordDatas"] = $recordDatas;

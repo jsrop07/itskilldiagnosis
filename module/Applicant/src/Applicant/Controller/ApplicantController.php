@@ -193,6 +193,7 @@ class ApplicantController extends AbstractActionController
 	  // applicant의 id값과 record의 idx값 비교해서 불러오기
 	  $examRecordInfo =  $applicantExamTbl->readByApplicantIdx($applicantInfo);
 	  $datas["name"]  =  $applicantInfo["name"];
+	//   print_r($examRecordInfo);
 	  
 	  
 	  $applicantIdx   =  $examRecordInfo["applicant_idx"];
@@ -250,23 +251,42 @@ class ApplicantController extends AbstractActionController
 		$selectedRank = [];
 		$resultPoints = explode(',', $diagnosisInfo["result_points"]);
 		$resultTexts = explode(',', $diagnosisInfo["result_texts"]);
+		$recordResults = explode(',', $diagnosisInfo["result_comments"]);
 
 		foreach ($resultPoints as $index => $points) {
 			// $resultPoints와 $resultTexts의 각 인덱스에 해당하는 값을 가져와서 배열에 추가합니다.
 			$selectedRank[] = [
 				'result_points' => $points,
-				'result_texts' => $resultTexts[$index]
+				'result_texts' => $resultTexts[$index],
+				'result_comments' => $recordResults[$index]
 			];
 		}
 		foreach ($selectedRank as $item) {
-			if ($item['result_points'] == $get_point) {
+			if ($get_point > $selectedRank[1]['result_points']) {
+				 $recordRank=$selectedRank[0]['result_texts'];
+				 $recordExamResult=$selectedRank[0]['result_comments'];
+			}
+			elseif($get_point <= $selectedRank[1]['result_points'] && $get_point > $selectedRank[2]['result_points']){
+				$recordRank=$selectedRank[1]['result_texts'];
+				$recordExamResult=$selectedRank[1]['result_comments'];
 
-				// echo $item['result_points'];
-				
+			}
+			elseif($get_point <= $selectedRank[2]['result_points'] && $get_point > $selectedRank[3]['result_points']){
+				$recordRank=$selectedRank[2]['result_texts'];
+				$recordExamResult=$selectedRank[2]['result_comments'];
+
+			}
+			else{
+				$recordRank=$selectedRank[3]['result_texts'];
+				$recordExamResult=$selectedRank[3]['result_comments'];
+
 			}
 		}
-		
 
+		// print_r($selectedRank);
+		// print_r("<br>");
+		// // print_r($item['result_texts']);
+		// exit;
 		//제출하기
 		if($submit_post=='btn_submit'){
 
@@ -274,14 +294,18 @@ class ApplicantController extends AbstractActionController
 			$sqlSet["answer_data"] = $answer_data;
 			$sqlSet["get_point"] = $get_point;
 			$sqlSet["comment"] = $comment;
-			// $sqlSet['selectedRank']=$selectedRank;
-			// print_r($item['result_texts']);
-			// exit;
-			$applicantExamTbl->updateExam($sqlWhere, $sqlSet);			
+			$sqlSet['rank']=$recordRank;
+			$sqlSet['exam_result']=$recordExamResult;
 
-			// $applicantExamTbl->deletePasswordByIdx($applicantInfo["idx"]);
-			// $this->examApplicantMail($applicantInfo,$examRecordInfo);
-			// session_unset(); 
+
+	
+			$applicantExamTbl->updateExam($sqlWhere, $sqlSet);			
+			$examRecordRecent =  $applicantExamTbl->readByApplicantIdx($applicantInfo);
+
+			$applicantExamTbl->deletePasswordByIdx($applicantInfo["idx"]);
+			$this->mailByApplicantExam($applicantInfo,$sqlSet);
+			$this->mailByAdminToApplicant($applicantInfo,$examRecordRecent);
+			session_unset(); 
 			echo "
 			<script>
 			self.location.href='/applicant/examclear';
@@ -297,7 +321,7 @@ class ApplicantController extends AbstractActionController
 	  return $viewModel;
   }
 
-function examApplicantMail($applicantInfo,$examRecordInfo){
+function mailByApplicantExam($applicantInfo,$sqlSet){
 	$mail = new MailSender();
 
 	// 기본 메일 전송 관련 설정 로드
@@ -305,7 +329,7 @@ function examApplicantMail($applicantInfo,$examRecordInfo){
 	// 메일 제목 지정 (일반적으로 DB에 메일폼 테이블을 만들어서 그것을 가져와서 아래의 title contents에 넣지만, 이건 샘플이므로 간단히.)
 	// 사람마다 변환해야 할 부분은 {{이렇게}} 메일폼에 넣어놓는다.
 	$param['title']="{{user_name}}様、{$applicantInfo["name"]}診断者の試験結果が出ました。";
-	$param["content"] = "以下の診断者の試験結果をご参照ください。\n\nお名前（漢字）：{$applicantInfo["name"]}\nお名前（カナ）：{$applicantInfo["kana"]}\nメールアドレス：{$applicantInfo["email"]}\n試験日：{$examRecordInfo["execute_date"]}\n問題種別：{$examRecordInfo["question_type"]}\n診断問題：{$examRecordInfo["code"]}\n得点：{$examRecordInfo["get_point"]}\nランク：{$examRecordInfo["rank"]}\n\n診断者ページ：http://gngitskill:84/admin/applicant/list";
+	$param["content"] = "以下の診断者の試験結果をご参照ください。\n\nお名前（漢字）：{$applicantInfo["name"]}\nお名前（カナ）：{$applicantInfo["kana"]}\nメールアドレス：{$applicantInfo["email"]}\n得点：{$sqlSet["get_point"]}\n評価：{$sqlSet["rank"]}\n評価結果：{$sqlSet["exam_result"]}\n\n診断者ページ：http://gngitskill:84/admin/applicant/list";
 
 	// 사람이름이나, URL등 고유하게 변경해야 하는 것은 이렇게 처리한다.
 	// 메일 제목과 내용 부분 모두 변환처리.
@@ -337,6 +361,51 @@ function examApplicantMail($applicantInfo,$examRecordInfo){
 					break;
 	}
   }
+
+  function mailByAdminToApplicant($applicantInfo,$examRecordRecent){
+	$mail = new MailSender();
+	// print_r($applicantInfo);
+	// print_r("<br>");
+
+
+	// 기본 메일 전송 관련 설정 로드
+	$param['config']=$this->getConfig();
+	// 메일 제목 지정 (일반적으로 DB에 메일폼 테이블을 만들어서 그것을 가져와서 아래의 title contents에 넣지만, 이건 샘플이므로 간단히.)
+	// 사람마다 변환해야 할 부분은 {{이렇게}} 메일폼에 넣어놓는다.
+	$param['title']="{$applicantInfo["name"]}様、診断試験結果が出ました。";
+	$param["content"] = "株式会社ジエンジサービスから、ITスキル診断結果が到着しましたのでご確認をお願いいたします。\n\n申請者：{$applicantInfo["name"]}\nお名前（カナ）：{$applicantInfo["kana"]}\nメールアドレス：{$applicantInfo["email"]}\n試験日：{$examRecordRecent["application_category"]}\n試験日：{$examRecordRecent["education"]}\n試験日：{$examRecordRecent["major"]}\n試験日：{$examRecordRecent["skill"]}\n試験日：{$examRecordRecent["execute_date"]}\n\n得点：{$examRecordRecent["get_point"]}\n評価：{$examRecordRecent["rank"]}\n評価結果：{$examRecordRecent["exam_result"]}\n\n※ITスキル診断に不明点などありましたら下記の問い合わせ先にご連絡ください。\nお問い合わせ先\n担当者：市島 茉里\n連絡先：\n\n※このメールに返信しないでください。";
+
+	// 사람이름이나, URL등 고유하게 변경해야 하는 것은 이렇게 처리한다.
+	// 메일 제목과 내용 부분 모두 변환처리.
+	$param['title']=str_replace("{{user_name}}","担当者",$param['title']);
+	// print_r($param['title']);
+	// $param['content']=str_replace("{{user_name}}","変換する試験受け者名",$param['content']);
+	$param['content']=str_replace("{{URL}}","テスト",$param['content']);
+
+
+	// 수신자 이메일과 이름 설정
+	$param['email']=$applicantInfo["email"];
+	$param['name']="temp";
+
+	// 전송
+	$result = $mail->mailsender($param);
+	// $result = $this->getServiceLocator()->get("mailsender");
+
+	$result_row = $result['transport']->getConnection()->getResponse();
+
+	$results = str_replace("\r","",str_replace("\n","",str_replace(" ","",$result_row[0])));
+	switch(substr(strtolower($results),0,5)){
+		// 250ok 가 나오면 전송 의뢰 성공이다.
+			case "250ok":
+				$status = 'OK';
+					break;
+			// 그외의 것은 모두 실패로 처리한다.
+			default:
+				$status = 'FALSE';
+					break;
+	}
+  }
+
 
 	public function getConfig(){
 		if(isset($_SERVER['DOCUMENT_ROOT']) && $_SERVER['DOCUMENT_ROOT']!=''){

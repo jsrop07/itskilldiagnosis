@@ -131,7 +131,7 @@
 						<td><?php echo $optionDatas[$data["class2nd"]]; ?></td>
 						<td><?php echo $data["question_num"]; ?></td>
 						<td>100点</td>
-						<td><?php echo date("y.m.d", strtotime($data["date_update"])); ?></td>
+						<td><?php echo ($data["date_update"] == null) ? "未変更" : date("y.m.d", strtotime($data["date_update"])); ?></td>
 					</tr>
 				<?php endforeach; ?>
 			</tbody>

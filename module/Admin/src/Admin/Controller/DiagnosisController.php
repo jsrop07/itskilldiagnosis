@@ -233,13 +233,13 @@ class DiagnosisController extends AbstractActionController {
 			}
 
 			// if ($i + 1 == $post["question_num"] && $totalPoint != 100) {
-			// 	$record = [0, 1, 2, 3, 4, 5];
-			// 	unset($record[0]);
+			// 	$point = 100 - $totalPoint + 1;
 
-				
+			// 	$index = array_rand($questionDatas[1]);
+			// 	unset($questionDatas[1][$index]);
 
-			// 	unset($totalQuestionDatas[$after["point"]][$after["index"]]);
-			// 	$totalQuestionDatas[$before["point"]][$before["index"]] = $before["data"];
+			// 	$index = array_rand($tempQuestionDatas[$point]);
+			// 	$questionDatas[$point][$index] = $tempQuestionDatas[$point][$index];
 			// }
 		}
 		die($this->PointQuestionsToJson($questionDatas));
@@ -353,17 +353,6 @@ class DiagnosisController extends AbstractActionController {
 		for ($i = 1; $i <= 5; $i++) {
 			$sqlWhere["point"] = $i;
 			$questionDatas[$i] = $questionTb->ReadListByOption($sqlWhere);
-
-			foreach ($questionDatas[$i] as $idx => $data) {
-				foreach ($data as $index => $value) {
-					if ($index == "idx") { continue; }
-					if ($index == "title") { continue; }
-					if ($index == "type") { continue; }
-					if ($index == "point") { continue; }
-					unset($data[$index]);
-				}
-				$questionDatas[$i][$idx] = $data;
-			}
 		}
 
 		return $questionDatas;

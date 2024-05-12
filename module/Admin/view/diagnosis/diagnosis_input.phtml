@@ -85,7 +85,7 @@
 			</style>
 			<dl class="emegra question">
 				<dt class="essential">問項数</dt>
-				<dd><input type="number" class="form-control" name="question_num" style="width: 80px;" value="<?php echo ($isReturn) ? $diagnosisData["question_num"] : "30"; ?>"/></dd>
+				<dd><input type="number" class="form-control" name="question_num" style="width: 80px;" value="<?php echo ($isReturn) ? $diagnosisData["question_num"] : "30"; ?>"/>項目</dd>
 
 				<dt class="essential">診断時間</dt>
 				<dd><input type="number" class="form-control" name="time_limit" style="width: 80px;" value="<?php echo ($isReturn) ? $diagnosisData["time_limit"] : "120"; ?>"/>分</dd>
@@ -110,7 +110,7 @@
 								<?php foreach ($questionDatas as $index => $data): ?>
 									<tr>
 										<td><?= $index + 1; ?></td>
-										<td style="text-align: left;"><?php echo $data->title; ?></td>
+										<td style="text-align: left" data-bs-toggle="popover" data-bs-placement="bottom" data-bs-title="<?php echo $data->question; ?>" data-bs-content=""><div><?php echo $data->title; ?></div></td>
 										<td><?php echo $data->type; ?></td>
 										<td><?php echo $data->point; ?></td>
 									</tr>
@@ -118,6 +118,10 @@
 								<tr>
 									<td style="grid-column: 1 / 4;"></td>
 									<td><?php echo $diagnosisData["totalPoint"]; ?>点</td>
+								</tr>
+							<?php else: ?>
+								<tr>
+									<td style="grid-column: 1 / 5;">設定で大分類、小分類、レベルを選択し、左側のボタンを押してください。</td>
 								</tr>
 							<?php endif; ?>
 						</tbody>
@@ -133,84 +137,81 @@
 
 		<div class="card-body">
 			<style type="text/css">
-				dl.emegra.info { grid-template-columns: 140px 1fr; }
+				table.evaluation {
+					width: 100%;
+					text-align: center;
+				}
+				table.evaluation tr {
+					display: grid;
+					grid-template-columns: 100px 150px 150px 1fr;
+					gap: 10px 8px;
+				}
+				table.evaluation td {
+					padding: 4px 0;
+					display: flex;
+					align-items: center;
+					justify-content: center;
+				}
 			</style>
-			<dl class="emegra info">
-				<dt class="essential">評価等級</dt>
-				<dd class="expand">
-					<style type="text/css">
-						table.evaluation {
-							width: 100%;
-							text-align: center;
-						}
-						table.evaluation tr {
-							display: grid;
-							grid-template-columns: 50px 150px 150px 1fr;
-							grid-template-areas: 
-							"grade point evaluation comment";
-							gap: 0 8px;
-						}
-					</style>
-					<table class="evaluation">
-						<thead>
-							<tr>
-								<th style="grid-area: point;">評価点数</th>
-								<th style="grid-area: evaluation;">評価</th>
-								<th style="grid-area: comment;">評価コメント</th>
-							</tr>
-						</thead>
-						<thead>
-							<tr>
-								<td>A</td>
-								<td style="display: flex; justify-content:space-between">
-									<input class="form-control form-control-sm" style="width: 50px;" readonly value="100"/>
-									~
-									<input class="form-control form-control-sm" name="point1" style="width: 50px;" oninput="ChangePoint(this)" value="<?php echo ($isReturn) ? $diagnosisData["point1"] : ""; ?>"/>
-								</td>
-								<th><input class="form-control form-control-sm" name="text1" value="<?php echo ($isReturn) ? $diagnosisData["text1"] : ""; ?>"/></th>
-								<th><input class="form-control form-control-sm" name="comment1" value="<?php echo ($isReturn) ? $diagnosisData["comment1"] : ""; ?>"/></th>
-							</tr>
-							<tr>
-								<td>B</td>
-								<td style="display: flex; justify-content:space-between">
-									<input class="form-control form-control-sm" id="point1Child" readonly style="width: 50px;" value="<?php echo ($isReturn) ? $diagnosisData["point1"] - 1: ""; ?>"/>
-									~
-									<input class="form-control form-control-sm" name="point2" style="width: 50px;" oninput="ChangePoint(this)" value="<?php echo ($isReturn) ? $diagnosisData["point2"] : ""; ?>"/>
-								</td>
-								<th><input class="form-control form-control-sm" name="text2" value="<?php echo ($isReturn) ? $diagnosisData["text2"] : ""; ?>"/></th>
-								<th><input class="form-control form-control-sm" name="comment2" value="<?php echo ($isReturn) ? $diagnosisData["comment2"] : ""; ?>"/></th>
-							</tr>
-							<tr>
-								<td>C</td>
-								<td style="display: flex; justify-content:space-between">
-									<input class="form-control form-control-sm" id="point2Child" readonly style="width: 50px;"  value="<?php echo ($isReturn) ? $diagnosisData["point2"] - 1: ""; ?>"/>
-									~
-									<input class="form-control form-control-sm" name="point3" style="width: 50px;" oninput="ChangePoint(this)" value="<?php echo ($isReturn) ? $diagnosisData["point3"] : ""; ?>"/>
-								</td>
-								<th><input class="form-control form-control-sm" name="text3" value="<?php echo ($isReturn) ? $diagnosisData["text3"] : ""; ?>"/></th>
-								<th><input class="form-control form-control-sm" name="comment3" value="<?php echo ($isReturn) ? $diagnosisData["comment3"] : ""; ?>"/></th>
-							</tr>
-							<tr>
-								<td>D</td>
-								<td style="display: flex; justify-content:space-between">
-									<input class="form-control form-control-sm" id="point3Child" readonly style="width: 50px;"  value="<?php echo ($isReturn) ? $diagnosisData["point3"] - 1: ""; ?>"/>
-									~
-									<input class="form-control form-control-sm" name="point4" readonly style="width: 50px;" value="0"/>
-								</td>
-								<th><input class="form-control form-control-sm" name="text4" value="<?php echo ($isReturn) ? $diagnosisData["text4"] : ""; ?>"/></th>
-								<th><input class="form-control form-control-sm" name="comment4" value="<?php echo ($isReturn) ? $diagnosisData["comment4"] : ""; ?>"/></th>
-							</tr>
-						</thead>
-					</table>
-				</dd>
-			</dl>
+			<table class="evaluation">
+				<thead>
+					<tr>
+						<th>評価等級</th>
+						<th>評価点数</th>
+						<th>評価</th>
+						<th>評価コメント</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>A</td>
+						<td style="display: flex; justify-content:space-between">
+							<input class="form-control form-control-sm" name="point1" style="width: 50px;" oninput="ChangePoint(this)" value="<?php echo ($isReturn) ? $diagnosisData["point1"] : "91"; ?>"/>
+							~
+							<input class="form-control form-control-sm" style="width: 50px;" readonly value="100"/>
+						</td>
+						<td><input class="form-control form-control-sm" name="text1" value="<?php echo ($isReturn) ? $diagnosisData["text1"] : ""; ?>"/></td>
+						<td><input class="form-control form-control-sm" name="comment1" value="<?php echo ($isReturn) ? $diagnosisData["comment1"] : ""; ?>"/></td>
+					</tr>
+					<tr>
+						<td>B</td>
+						<td style="display: flex; justify-content:space-between">
+							<input class="form-control form-control-sm" name="point2" style="width: 50px;" oninput="ChangePoint(this)" value="<?php echo ($isReturn) ? $diagnosisData["point2"] : "78"; ?>"/>
+							~
+							<input class="form-control form-control-sm" id="point1Child" readonly style="width: 50px;" value="<?php echo ($isReturn) ? $diagnosisData["point1"] - 1 : "90"; ?>"/>
+						</td>
+						<td><input class="form-control form-control-sm" name="text2" value="<?php echo ($isReturn) ? $diagnosisData["text2"] : ""; ?>"/></td>
+						<td><input class="form-control form-control-sm" name="comment2" value="<?php echo ($isReturn) ? $diagnosisData["comment2"] : ""; ?>"/></td>
+					</tr>
+					<tr>
+						<td>C</td>
+						<td style="display: flex; justify-content:space-between">
+							<input class="form-control form-control-sm" name="point3" style="width: 50px;" oninput="ChangePoint(this)" value="<?php echo ($isReturn) ? $diagnosisData["point3"] : "60"; ?>"/>
+							~
+							<input class="form-control form-control-sm" id="point2Child" readonly style="width: 50px;"  value="<?php echo ($isReturn) ? $diagnosisData["point2"] - 1 : "77"; ?>"/>
+						</td>
+						<td><input class="form-control form-control-sm" name="text3" value="<?php echo ($isReturn) ? $diagnosisData["text3"] : ""; ?>"/></td>
+						<td><input class="form-control form-control-sm" name="comment3" value="<?php echo ($isReturn) ? $diagnosisData["comment3"] : ""; ?>"/></td>
+					</tr>
+					<tr>
+						<td>D</td>
+						<td style="display: flex; justify-content:space-between">
+							<input class="form-control form-control-sm" name="point4" readonly style="width: 50px;" value="0"/>
+							~
+							<input class="form-control form-control-sm" id="point3Child" readonly style="width: 50px;"  value="<?php echo ($isReturn) ? $diagnosisData["point3"] - 1 : "59"; ?>"/>
+						</td>
+						<td><input class="form-control form-control-sm" name="text4" value="<?php echo ($isReturn) ? $diagnosisData["text4"] : ""; ?>"/></td>
+						<td><input class="form-control form-control-sm" name="comment4" value="<?php echo ($isReturn) ? $diagnosisData["comment4"] : ""; ?>"/></td>
+					</tr>
+				</tbody>
+			</table>
 		</div>
 	</div>
 </form>
 
 <div class="btn-place" style="margin-top: 32px;">
-	<button class="emegra cancel" onclick="history.back();">戻る</button>
-	<button class="emegra" onclick="Regist();">登録</button>
+	<button class="emegra cancel" onclick="self.location.href='./list'">戻る</button>
+	<button class="emegra" onclick="Regist();">確認画面へ</button>
 </div>
 
 <script type="text/javascript">
@@ -287,6 +288,10 @@
 
 					let titleTd = document.createElement("td");
 					titleTd.style.textAlign = "start";
+					titleTd.setAttribute("data-bs-toggle", "popover");
+					titleTd.setAttribute("data-bs-placement", "bottom");
+					titleTd.setAttribute("data-bs-title", questionDatas[i]["question"]);
+					titleTd.setAttribute("data-bs-content", questionDatas[i]["answers"]);
 					titleTd.innerHTML = questionDatas[i]["title"];
 					tr.appendChild(titleTd);
 
@@ -302,6 +307,9 @@
 					point += Number(questionDatas[i]["point"]);
 					questionTdxs += questionDatas[i]["idx"] + ",";
 				}
+
+				const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
+				const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
 				
 				let resultTr = document.createElement("tr");
 				let emptyTd = document.createElement("td");

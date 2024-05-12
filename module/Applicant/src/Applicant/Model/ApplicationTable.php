@@ -34,7 +34,7 @@ class ApplicationTable
       $this->sql = new Sql($this->adapter);
     }
 
-    public function getQuestionType(){
+    public function getclass2nd(){
         $qry = $this->sql->select("option");
         $qry->columns([
             'idx','type','text'
@@ -46,7 +46,7 @@ class ApplicationTable
         return $result;
     }
 
-    public function getDevelop(){
+    public function getclass1st(){
         $qry = $this->sql->select("option");
         $qry->columns([
             'type','text'
@@ -112,12 +112,12 @@ class ApplicationTable
         $recordInsert = $qry->insert('record');
         $recordInsert->values([
             'apply_date' => date("Y-m-d H:i:s"),
-            'application_category' => $dataArray['application_category'],
+            'case' => $dataArray['case'],
             'education' => $dataArray['education'],
             'major' => $dataArray['major'],
             'skill' => $dataArray['skill'],
-            'develop' => $dataArray['develop'],
-            'question_type' => $dataArray['question_type'],
+            'class1st' => $dataArray['class1st'],
+            'class2nd' => $dataArray['class2nd'],
             'applicant_idx' => $applicant_idx 
         ]);
         $recordSqlString = $qry->getSqlStringForSqlObject($recordInsert);

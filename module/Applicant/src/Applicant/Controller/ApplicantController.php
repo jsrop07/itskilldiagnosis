@@ -18,11 +18,11 @@ class ApplicantController extends AbstractActionController
 	$config=$this->getServiceLocator()->get('config');
 	//モデル連動
 	$tbl=$this->getServiceLocator()->get('ApplicationTable');
-	$questionType=$tbl->getQuestionType();
-	$develop=$tbl->getDevelop();
+	$class2nd=$tbl->getclass2nd();
+	$class1st=$tbl->getclass1st();
 	$p = $this->params()->fromPost();
 	$mode =(isset($p['mode'])    &&   $p['mode'] !='')? $p['mode']:'';
-	$viewModel = new ViewModel(['questionType' => $questionType,'develop' => $develop,'p' => $p]);
+	$viewModel = new ViewModel(['class2nd' => $class2nd,'class1st' => $class1st,'p' => $p]);
 	$viewModel->setTemplate("/applicant/application.phtml");
 
 	if ($mode == 'btn_submit') {
@@ -31,27 +31,28 @@ class ApplicantController extends AbstractActionController
 		$kana = $this->params()->fromPost('kana');
 		$gender = $this->params()->fromPost('gender');
 		$birth = $this->params()->fromPost('birth');
-		$application_category = $this->params()->fromPost('application_category');
+		$case = $this->params()->fromPost('case');
 		$education = $this->params()->fromPost('education');
 		$major = $this->params()->fromPost('major');
 		$skill = $this->params()->fromPost('skill');
-		$question_type = $this->params()->fromPost('question_type');
-		$develop = $this->params()->fromPost('develop');
+		$class2nd = $this->params()->fromPost('class2nd');
+		$class1st = $this->params()->fromPost('class1st');
 		$career = $this->params()->fromPost('career');
 		$certificates = $this->params()->fromPost('certificates');
 		$other = $this->params()->fromPost('other');
 
 		if ($skill == 0) {
-			$skillResult = '有';
+			$skillText = '有';
 		} else {
-			$skillResult = '無';
+			$skillText = '無';
 		}
 
-		if($application_category == 0){
-			$application_categoryResult = "新卒";
+		if($case == 0){
+			$caseText = "新卒";
 		}else{
-			$application_categoryResult = "中途（経歴職）";
+			$caseText = "中途（経歴職）";
 		}
+
 
 		$arr = [
 			'email' => $email,
@@ -59,20 +60,20 @@ class ApplicantController extends AbstractActionController
 			'kana' => $kana,
 			'gender' => $gender,
 			'birth' => $birth,
-			'application_category' => $application_category,
+			'case' => $case,
 			'education' => $education,
 			'major' => $major,
 			'skill' => $skill,
-			'question_type' => $question_type,
-			'develop' => $develop,
+			'class2nd' => $class2nd,
+			'class1st' => $class1st,
 			'career' => $career,
 			'certificates' => $certificates,
 			'other' => $other,
 		];
 
 	   $tbl->insertAndUpdateApplication($arr);
-
-	   $this->infoApplicantMail($arr,$skillResult,$application_categoryResult);
+		
+	   $this->mailByApplicantation($arr,$skillText,$caseText);
 
 	   echo "
 	   <script>
@@ -90,7 +91,7 @@ class ApplicantController extends AbstractActionController
 	$this->layout("/applicant/applicationclear");
 	}
 
-  function infoApplicantMail($arr,$skillResult,$application_categoryResult){
+  function mailByApplicantation($arr,$skillText,$caseText){
 	$mail = new MailSender();
 
 	// 기본 메일 전송 관련 설정 로드
@@ -98,7 +99,7 @@ class ApplicantController extends AbstractActionController
 	// 메일 제목 지정 (일반적으로 DB에 메일폼 테이블을 만들어서 그것을 가져와서 아래의 title contents에 넣지만, 이건 샘플이므로 간단히.)
 	// 사람마다 변환해야 할 부분은 {{이렇게}} 메일폼에 넣어놓는다.
 	$param['title']="{{user_name}}様、新しい試験診断の申し込みがあります。";
-	$param["content"] = "以下の申込者の情報をご参照ください。\n\nお名前（漢字）：{$arr["name"]}\nお名前（カナ）：{$arr["kana"]}\n応募区分：{$application_categoryResult}\nITスキル：{$skillResult}\n\n診断者ページ：http://gngitskill:84/admin/applicant/list";
+	$param["content"] = "以下の申込者の情報をご参照ください。\n\nお名前（漢字）：{$arr["name"]}\nお名前（カナ）：{$arr["kana"]}\n応募区分：{$caseText}\nITスキル：{$skillText}\n\n診断者ページ：http://gngitskill:84/admin/applicant/list";
 
 	// 사람이름이나, URL등 고유하게 변경해야 하는 것은 이렇게 처리한다.
 	// 메일 제목과 내용 부분 모두 변환처리.
@@ -193,7 +194,6 @@ class ApplicantController extends AbstractActionController
 	  // applicant의 id값과 record의 idx값 비교해서 불러오기
 	  $examRecordInfo =  $applicantExamTbl->readByApplicantIdx($applicantInfo);
 	  $datas["name"]  =  $applicantInfo["name"];
-	//   print_r($examRecordInfo);
 	  
 	  
 	  $applicantIdx   =  $examRecordInfo["applicant_idx"];
@@ -263,48 +263,55 @@ class ApplicantController extends AbstractActionController
 		}
 		foreach ($selectedRank as $item) {
 			if ($get_point > $selectedRank[1]['result_points']) {
-				 $recordRank=$selectedRank[0]['result_texts'];
+				 $recordRank="A";
 				 $recordExamResult=$selectedRank[0]['result_comments'];
 			}
 			elseif($get_point <= $selectedRank[1]['result_points'] && $get_point > $selectedRank[2]['result_points']){
-				$recordRank=$selectedRank[1]['result_texts'];
+				$recordRank="B";
 				$recordExamResult=$selectedRank[1]['result_comments'];
 
 			}
 			elseif($get_point <= $selectedRank[2]['result_points'] && $get_point > $selectedRank[3]['result_points']){
-				$recordRank=$selectedRank[2]['result_texts'];
+				$recordRank="C";
 				$recordExamResult=$selectedRank[2]['result_comments'];
 
 			}
 			else{
-				$recordRank=$selectedRank[3]['result_texts'];
+				$recordRank="D";
 				$recordExamResult=$selectedRank[3]['result_comments'];
 
 			}
 		}
 
-		// print_r($selectedRank);
-		// print_r("<br>");
-		// // print_r($item['result_texts']);
-		// exit;
+		$caseArray = array("新卒", "中途（経歴職）");
+		if($examRecordInfo['case']==0){
+			$caseText=$caseArray[0];
+		}
+		else{
+			$caseText=$caseArray[1];
+
+		}
+
+		if($examRecordInfo['major']==""){
+			$majorText="なし";
+		}
+
 		//제출하기
 		if($submit_post=='btn_submit'){
-
 			$sqlWhere["idx"] = $examRecordInfo['idx'];
 			$sqlSet["answer_data"] = $answer_data;
 			$sqlSet["get_point"] = $get_point;
 			$sqlSet["comment"] = $comment;
 			$sqlSet['rank']=$recordRank;
-			$sqlSet['exam_result']=$recordExamResult;
+			$sqlSet['diagnosis_comment']=$recordExamResult;
 
 
-	
 			$applicantExamTbl->updateExam($sqlWhere, $sqlSet);			
 			$examRecordRecent =  $applicantExamTbl->readByApplicantIdx($applicantInfo);
 
 			$applicantExamTbl->deletePasswordByIdx($applicantInfo["idx"]);
 			$this->mailByApplicantExam($applicantInfo,$sqlSet);
-			$this->mailByAdminToApplicant($applicantInfo,$examRecordRecent);
+			$this->mailByAdminToApplicant($applicantInfo,$examRecordRecent,$caseText,$majorText);
 			session_unset(); 
 			echo "
 			<script>
@@ -329,7 +336,7 @@ function mailByApplicantExam($applicantInfo,$sqlSet){
 	// 메일 제목 지정 (일반적으로 DB에 메일폼 테이블을 만들어서 그것을 가져와서 아래의 title contents에 넣지만, 이건 샘플이므로 간단히.)
 	// 사람마다 변환해야 할 부분은 {{이렇게}} 메일폼에 넣어놓는다.
 	$param['title']="{{user_name}}様、{$applicantInfo["name"]}診断者の試験結果が出ました。";
-	$param["content"] = "以下の診断者の試験結果をご参照ください。\n\nお名前（漢字）：{$applicantInfo["name"]}\nお名前（カナ）：{$applicantInfo["kana"]}\nメールアドレス：{$applicantInfo["email"]}\n得点：{$sqlSet["get_point"]}\n評価：{$sqlSet["rank"]}\n評価結果：{$sqlSet["exam_result"]}\n\n診断者ページ：http://gngitskill:84/admin/applicant/list";
+	$param["content"] = "以下の診断者の試験結果をご参照ください。\n\nお名前（漢字）：{$applicantInfo["name"]}\nお名前（カナ）：{$applicantInfo["kana"]}\nメールアドレス：{$applicantInfo["email"]}\n得点：{$sqlSet["get_point"]}\n評価：{$sqlSet["rank"]}\n評価結果：{$sqlSet["diagnosis_comment"]}\n\n診断者ページ：http://gngitskill:84/admin/applicant/list";
 
 	// 사람이름이나, URL등 고유하게 변경해야 하는 것은 이렇게 처리한다.
 	// 메일 제목과 내용 부분 모두 변환처리.
@@ -362,10 +369,9 @@ function mailByApplicantExam($applicantInfo,$sqlSet){
 	}
   }
 
-  function mailByAdminToApplicant($applicantInfo,$examRecordRecent){
+  function mailByAdminToApplicant($applicantInfo,$examRecordRecent,$caseText,$majorText){
 	$mail = new MailSender();
-	// print_r($applicantInfo);
-	// print_r("<br>");
+
 
 
 	// 기본 메일 전송 관련 설정 로드
@@ -373,7 +379,7 @@ function mailByApplicantExam($applicantInfo,$sqlSet){
 	// 메일 제목 지정 (일반적으로 DB에 메일폼 테이블을 만들어서 그것을 가져와서 아래의 title contents에 넣지만, 이건 샘플이므로 간단히.)
 	// 사람마다 변환해야 할 부분은 {{이렇게}} 메일폼에 넣어놓는다.
 	$param['title']="{$applicantInfo["name"]}様、診断試験結果が出ました。";
-	$param["content"] = "株式会社ジエンジサービスから、ITスキル診断結果が到着しましたのでご確認をお願いいたします。\n\n申請者：{$applicantInfo["name"]}\nお名前（カナ）：{$applicantInfo["kana"]}\nメールアドレス：{$applicantInfo["email"]}\n試験日：{$examRecordRecent["application_category"]}\n試験日：{$examRecordRecent["education"]}\n試験日：{$examRecordRecent["major"]}\n試験日：{$examRecordRecent["skill"]}\n試験日：{$examRecordRecent["execute_date"]}\n\n得点：{$examRecordRecent["get_point"]}\n評価：{$examRecordRecent["rank"]}\n評価結果：{$examRecordRecent["exam_result"]}\n\n※ITスキル診断に不明点などありましたら下記の問い合わせ先にご連絡ください。\nお問い合わせ先\n担当者：市島 茉里\n連絡先：\n\n※このメールに返信しないでください。";
+	$param["content"] = "株式会社ジエンジサービスから、ITスキル診断結果が到着しましたのでご確認をお願いいたします。\n\n申請者：{$applicantInfo["name"]}\nお名前（カナ）：{$applicantInfo["kana"]}\n応募区分：{$caseText}\n学歴：{$examRecordRecent["education"]}\n専攻：{$majorText}\n試験日：{$examRecordRecent["execute_date"]}\n\n得点：{$examRecordRecent["get_point"]}\n評価：{$examRecordRecent["rank"]}\n評価結果：{$examRecordRecent["diagnosis_comment"]}\n\n※ITスキル診断に不明点などありましたら下記の問い合わせ先にご連絡ください。\nお問い合わせ先\n担当者：市島 茉里\n連絡先：\n\n※このメールに返信しないでください。";
 
 	// 사람이름이나, URL등 고유하게 변경해야 하는 것은 이렇게 처리한다.
 	// 메일 제목과 내용 부분 모두 변환처리.

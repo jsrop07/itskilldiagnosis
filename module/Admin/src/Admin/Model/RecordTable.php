@@ -24,19 +24,37 @@ class RecordTable {
 	}
 
 	public function ReadAllNewList() {
-		$qry = $this->sql->select("record")->where(["code" => null])->order(["write_date" => "ASC"]);
+		$qry = $this->sql->select("record")->where(["diagnosis_code" => null])->order(["apply_date" => "ASC"]);
 		return iterator_to_array($this->sql->prepareStatementForSqlObject($qry)->execute());
 	}
 	public function ReadAllRestList() {
 		$where = new Where();
-		$where->isNotNull("code");
+		$where->isNotNull("diagnosis_code");
 
-		$qry = $this->sql->select("record")->where($where)->order(["write_date" => "ASC"]);
+		$qry = $this->sql->select("record")->where($where)->order(["apply_date" => "ASC"]);
 		return iterator_to_array($this->sql->prepareStatementForSqlObject($qry)->execute());
 	}
 	public function GetAllList() {
 		$qry = $this->sql->select("record");
 		$paginatorAdapter = new DbSelect($qry, $this->adapter);
 		return new Paginator($paginatorAdapter);
+	}
+
+	public function ReadApplyData() {
+		$qry = $this->sql->select("record")->where(["request_date" => null]);
+		return iterator_to_array($this->sql->prepareStatementForSqlObject($qry)->execute());
+	}
+
+	public function ReadRequestData() {
+		$where = new Where();
+		$where->isNotNull("request_date")->isNull("execute_date");
+
+		$qry = $this->sql->select("record")->where($where);
+		return iterator_to_array($this->sql->prepareStatementForSqlObject($qry)->execute());
+	}
+
+	public function ReadByIdx($idx) {
+		$qry = $this->sql->select("record")->where(["idx" => $idx]);
+		return $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
 	}
 }

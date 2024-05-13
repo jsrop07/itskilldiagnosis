@@ -39,7 +39,6 @@
 	table.emegra tr.index {
 		padding-top: 8px;
 		padding-bottom: 4px;
-		grid-template-columns: 50px 100px repeat(2, 60px) 1fr repeat(2, 60px) 50px 60px 60px;
 		grid-template-areas:
 		"no question question question title  class    class   num criteria update"
 		"no    id      case     level  title class1st class2nd num criteria update";
@@ -70,14 +69,13 @@
 </content>
 
 <content class="main">
-	<div style="width: 100%; display:flex; align-items:end; justify-content:space-between; text-align: center;">
+	<div style="width: 100%; display: flex; align-items: end; justify-content: space-between;">
 		<div class="info-num">
 			<div class="count">診断書総計<div class="num"><?php echo $totalData; ?></div>部</div>
 		</div>
 
 		<div style="display: flex;">
 			<select class="form-select form-select-sm" style="width: 150px; margin-right: 8px;" onchange="ChangeSearch(this.value)">
-				<option value="status" <?php echo (isset($searchData) && $searchKey == "status") ? " selected" : ""; ?>>ステータス</option>
 				<option value="case" <?php echo (isset($searchData) && $searchKey == "case") ? " selected" : ""; ?>>対象</option>
 				<option value="level" <?php echo (isset($searchData) && $searchKey == "level") ? " selected" : ""; ?>>レベル</option>
 				<option value="class1st" <?php echo (isset($searchData) && $searchKey == "class1st") ? " selected" : ""; ?>>大分類</option>
@@ -133,7 +131,7 @@
 						<td><?php echo $optionDatas[$data["class2nd"]]; ?></td>
 						<td><?php echo $data["question_num"]; ?></td>
 						<td>100点</td>
-						<td><?php echo date("y.m.d", strtotime($data["date_update"])); ?></td>
+						<td><?php echo ($data["date_update"] == null) ? "未変更" : date("y.m.d", strtotime($data["date_update"])); ?></td>
 					</tr>
 				<?php endforeach; ?>
 			</tbody>

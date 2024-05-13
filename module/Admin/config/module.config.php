@@ -57,7 +57,7 @@ return array(
 			"diagnosis" => array(
 				"type" => "Zend\Mvc\Router\Http\Segment",
 				"options" => array(
-					"route" => "/admin/diagnosis[/:action][/:index]",
+					"route" => "/admin/diagnosis[/:action][/:code]",
 					"constraints" => array(),
 					"defaults" => array(
 						"controller"	=> "Diagnosis",
@@ -65,13 +65,13 @@ return array(
 					),
 				),
 			),
-			"applicant" => array(
+			"situation" => array(
 				"type" => "Zend\Mvc\Router\Http\Segment",
 				"options" => array(
-					"route" => "/admin/applicant[/:action][/:index]",
+					"route" => "/admin/situation[/:action][/:index]",
 					"constraints" => array(),
 					"defaults" => array(
-						"controller"	=> "Applicant",
+						"controller"	=> "Situation",
 						"action"			=> "index",
 					),
 				),
@@ -113,7 +113,7 @@ return array(
 			"Account"		=> "Admin\Controller\AccountController",
 			"Question"	=> "Admin\Controller\QuestionController",
 			"Diagnosis"	=> "Admin\Controller\DiagnosisController",
-			"Applicant"		=> "Admin\Controller\ApplicantController",
+			"Situation"		=> "Admin\Controller\SituationController",
 			"Manager"		=> "Admin\Controller\ManagerController",
 		),
 	),

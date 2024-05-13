@@ -48,7 +48,7 @@
 		</style>
 		<dl class="emegra question">
 			<dt>問項数</dt>
-			<dd><?php echo $diagnosisData["question_num"]; ?></dd>
+			<dd><?php echo $diagnosisData["question_num"]; ?>問項</dd>
 
 			<dt>診断時間</dt>
 			<dd><?php echo $diagnosisData["time_limit"]; ?>分</dd>
@@ -78,6 +78,10 @@
 								<td><?php echo $data["point"]; ?></td>
 							</tr>
 						<?php endforeach; ?>
+						<tr>
+							<td style="grid-column: 1 / 4;"></td>
+							<td>100点</td>
+						</tr>
 					</tbody>
 				</table>
 			</div>
@@ -89,54 +93,50 @@
 	<div class="card-header">情報</div>
 
 	<div class="card-body">
-		<style type="text/css">
-			dl.emegra.info { grid-template-columns: 140px 1fr; }
-		</style>
-		<dl class="emegra info">
-			<dt>評価等級</dt>
-				<dd class="expand">
-					<style type="text/css">
-						table.evaluation {
-							width: 100%;
-							text-align: center;
-						}
-						table.evaluation tr {
-							display: grid;
-							grid-template-columns: 50px 100px 150px 1fr;
-							grid-template-areas: 
-							"grade point evaluation comment";
-							gap: 0 8px;
-						}
-					</style>
-					<table class="evaluation">
-						<thead>
-							<tr>
-								<th style="grid-area: point;">評価点数</th>
-								<th style="grid-area: evaluation;">評価</th>
-								<th style="grid-area: comment;">評価コメント</th>
-							</tr>
-						</thead>
-						<tbody>
-							<?php foreach ($resultPoints as $index => $point): ?>
-								<tr>
-									<td><?php echo $pointTexts[$index]; ?></td>
-									<td><?php echo ($index == 0) ? "100" : $resultPoints[$index - 1] - 1; ?> ~ <?php echo $point; ?></td>
-									<td><?php echo $resultTexts[$index]; ?></td>
-									<td style="text-align: left;"><?php echo $resultComments[$index]; ?></td>
-								</tr>
-							<?php endforeach; ?>
-						</tbody>
-					</table>
-				</dd>
-			</dl>
-		</dl>
+			<style type="text/css">
+				table.evaluation {
+					width: 100%;
+					text-align: center;
+				}
+				table.evaluation tr {
+					display: grid;
+					grid-template-columns: 100px 150px 150px 1fr;
+					gap: 10px 8px;
+				}
+				table.evaluation td {
+					padding: 4px 0;
+					display: flex;
+					align-items: center;
+					justify-content: center;
+				}
+			</style>
+			<table class="evaluation">
+				<thead>
+					<tr>
+						<th>評価等級</th>
+						<th>評価点数</th>
+						<th>評価</th>
+						<th>評価コメント</th>
+					</tr>
+				</thead>
+				<tbody>
+					<?php foreach ($resultPoints as $index => $point): ?>
+						<tr>
+							<td><?php echo $pointTexts[$index]; ?></td>
+							<td><?php echo $point; ?> ~ <?php echo ($index == 0) ? "100" : $resultPoints[$index - 1] - 1; ?></td>
+							<td style="justify-content: start;"><?php echo $resultTexts[$index]; ?></td>
+							<td style="justify-content: start;"><?php echo $resultComments[$index]; ?></td>
+						</tr>
+					<?php endforeach; ?>
+				</tbody>
+			</table>
 	</div>
 </div>
 
 <div class="btn-place" style="margin-top: 32px;">
 	<button class="emegra cancel" onclick="history.back();">戻る</button>
-	<button class="emegra" onclick="Update();">修正</button>
-	<?php if ($isApprover || ($isRegister && $questionData["admin_approve"] == null)): ?>
+	<?php if ($isApprover): ?>
+		<button class="emegra" onclick="self.location.href='../edit/<?php echo $diagnosisData['code']; ?>';">修正</button>
 		<button class="emegra delete" onclick="Delete();">削除</button>
 	<?php endif; ?>
 </div>

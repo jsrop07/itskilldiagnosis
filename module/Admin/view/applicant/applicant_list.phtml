@@ -1,3 +1,6 @@
+<?php
+	$caseTexts = ["新卒", "中途"];
+?>
 <?php echo $this->partial("breadcrumb", ["datas" => $breadcrumbData]); ?>
 
 <style type="text/css">
@@ -13,7 +16,10 @@
 		justify-content: space-between ;
 	}
 
-	table.emegra tr { grid-template-columns: 30px 70px 55px 60px 1fr 100px 60px 60px 60px 50px 80px 55px 50px 40px 30px; }
+	table.emegra tr {
+		min-width: 950px;
+		grid-template-columns: 30px repeat(13, 1fr) 30px;
+	}
 	table.emegra tr.index {
 		padding-top: 8px;
 		padding-bottom: 4px;
@@ -58,10 +64,10 @@
 	<div style="width: 100%; display:grid; align-items:end; text-align: center;">
 		<div class="info-num">
 			<div style="display: flex;">
-				<div class="count">新規申込<div class="num"><?php echo $totalData; ?></div>名</div>
-				<div class="count" style="margin-left:50px;">診断中<div class="num">2</div>名</div>
+				<div class="count">新規申込<div class="num"><?php echo $totalApply; ?></div>名</div>
+				<div class="count" style="margin-left:50px;">診断中<div class="num"><?php echo $totalRequest; ?></div>名</div>
 			</div>
-			<div class="count">診断状況<div class="num">128</div>名</div>
+			<div class="count">診断状況<div class="num"><?php echo $totalData; ?></div>名</div>
 		</div>
 
 		<div style="display: flex; justify-content: right;padding-top: 24px;">
@@ -110,63 +116,32 @@
 					<th style="grid-area: execute_date">試験日</th>
 					<th style="grid-area: get_point">得点</th>
 					<th style="grid-area: grade ">等級</th>
-
 				</tr>
 			</thead>
 			<tbody>
 				<?php foreach ($recordDatas as $data): ?>
-					<tr>
+					<tr <?php echo ($data["diagnosis_code"] == null) ? "style='background: skyblue;'" : ""; ?>>
 						<td><?php echo $data["num"]; ?></td>
-						<td>新規</td>
-						<td><?php echo date("y.m.d", strtotime($data["write_date"])); ?></td>
-						<td><?php echo $data["application_category"]; ?></td>
+						<td><?php echo $data["status"]; ?></td>
+						<td><?php echo date("y.m.d", strtotime($data["apply_date"])); ?></td>
+						<td><?php echo $caseTexts[$data["case"]]; ?></td>
 						<td class="list-title" onclick="self.location.href='./detail/<?php echo $data['idx']; ?>';" style="text-align: center; color: blue"><?php echo $data["name"]; ?></td>
 						<td><?php echo $data["education"]; ?></td>
 						<td><?php echo $data["major"]; ?></td>
-						<td><?php echo $data["career"]; ?>年</td>
-						<td><?php echo date("y.m.d", strtotime($data["write_date"])); ?></td>
-						<td><?php echo $data["level"]; ?></td>
-						<td><?php echo $data["code"]; ?></td>
-						<td><?php echo $data["execute_date"]; ?></td>
-						<td><?php echo $data["get_point"]; ?></td>
-						<td><?php echo $data["rank"]; ?></td>
+						<td><?php echo ($data["career"] != null) ? $data["career"] . "年" : "無"; ?></td>
+						<td><?php echo ($data["request_date"] != null) ? date("y.m.d", strtotime($data["request_date"])) : "未実行"; ?></td>
+						<td><?php echo $optionDatas[$data["level"]]; ?></td>
+						<td><?php echo $data["diagnosis_code"]; ?></td>
+						<?php if ($data["execute_date"] != null): ?>
+							<td><?php echo date("y.m.d", strtotime($data["execute_date"])); ?></td>
+							<td><?php echo $data["get_point"]; ?>/100</td>
+							<td><?php echo $data["rank"]; ?></td>
+						<?php else: ?>
+							<td style="grid-column: 12 / 15">未実行</td>
+						<?php endif; ?>
 						<td><input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"></td>
 					</tr>
 				<?php endforeach; ?>
-				<tr>
-					<td>1</td>
-					<td>新規</td>
-					<td>24.3.1</td>
-					<td>新卒</td>
-					<td class="list-title" onclick="self.location.href='./detail/temp'"  style="text-align:center;color:blue">田中 一郎</td>
-					<td >専門卒</td>
-					<td>ゲーム</td>
-					<td>1年</td>
-					<td>24.3.15</td>
-					<td>初級</td>
-					<td>B-50-T1</td>
-					<td>24.3.16</td>
-					<td>76/100</td>
-					<td>B</td>
-					<td>  <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"></td>
-				</tr>
-				<tr>
-					<td>2</td>
-					<td>新規</td>
-					<td>24.4.6</td>
-					<td>新卒</td>
-					<td class="list-title" onclick="self.location.href='./detail/temp'"  style="text-align:center;color:blue;">丁錫圓</td>
-					<td>専門卒</td>
-					<td>インフラ</td>
-					<td>5年</td>
-					<td>24.4.15</td>
-					<td>初級</td>
-					<td>A-50-T2</td>
-					<td>24.4.20</td>
-					<td>90/100</td>
-					<td>A</td>
-					<td>  <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"></td>
-				</tr>
 			</tbody>
 		</table>
 	<?php endif; ?>
@@ -186,7 +161,6 @@
 </content>
 
 <script type="text/javascript">
-	const divSearch = document.getElementById("div-search");
 
 	function ChangeSearch(value) {
 		searchChildren = Array.from(divSearch.children);

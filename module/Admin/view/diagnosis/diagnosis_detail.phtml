@@ -73,7 +73,9 @@
 						<?php foreach ($questionDatas as $index => $data): ?>
 							<tr>
 								<td><?php echo $index + 1; ?></td>
-								<td style="text-align: left;"><?php echo $data["title"]; ?></td>
+								<td style="text-align: left" data-bs-toggle="popover" data-bs-placement="bottom" data-bs-title="<?php echo $data["question"]; ?>" data-bs-content="">
+									<?php echo $data["title"]; ?>
+								</td>
 								<td><?php echo $optionDatas[$data["type"]]; ?></td>
 								<td><?php echo $data["point"]; ?></td>
 							</tr>

@@ -76,7 +76,6 @@
 
 		<div style="display: flex;">
 			<select class="form-select form-select-sm" style="width: 150px; margin-right: 8px;" onchange="ChangeSearch(this.value)">
-				<option value="case" <?php echo (isset($searchData) && $searchKey == "case") ? " selected" : ""; ?>>対象</option>
 				<option value="level" <?php echo (isset($searchData) && $searchKey == "level") ? " selected" : ""; ?>>レベル</option>
 				<option value="class1st" <?php echo (isset($searchData) && $searchKey == "class1st") ? " selected" : ""; ?>>大分類</option>
 				<option value="class2nd" <?php echo (isset($searchData) && $searchKey == "class2nd") ? " selected" : ""; ?>>小分類</option>
@@ -90,6 +89,9 @@
 						<?php endforeach; ?>
 					<?php else: ?>
 						<option value="" hidden>選択</option>
+						<?php foreach ($optionDatas["level"] as $data): ?>
+							<option value="<?php echo $data["idx"]; ?>"><?php echo $data["text"]; ?></option>
+						<?php endforeach; ?>
 					<?php endif; ?>
 				</select>
 			</div>
@@ -126,7 +128,7 @@
 						<td><?php echo $data["code"]; ?></td>
 						<td><?php echo $optionDatas[$data["case"]]; ?></td>
 						<td><?php echo $optionDatas[$data["level"]]; ?></td>
-						<td class="list-title" onclick="self.location.href='./detail/<?php echo $data['code']; ?>'"><?php echo $data["title"]; ?></td>
+						<td class="link left" onclick="self.location.href='./detail/<?php echo $data['code']; ?>'"><?php echo $data["title"]; ?></td>
 						<td><?php echo $optionDatas[$data["class1st"]]; ?></td>
 						<td><?php echo $optionDatas[$data["class2nd"]]; ?></td>
 						<td><?php echo $data["question_num"]; ?></td>

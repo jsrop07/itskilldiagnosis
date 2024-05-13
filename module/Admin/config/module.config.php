@@ -76,6 +76,17 @@ return array(
 					),
 				),
 			),
+			"tempsitu" => array(
+				"type" => "Zend\Mvc\Router\Http\Segment",
+				"options" => array(
+					"route" => "/admin/situ[/:action][/:index]",
+					"constraints" => array(),
+					"defaults" => array(
+						"controller"	=> "Situ",
+						"action"			=> "index",
+					),
+				),
+			),
 			"manager" => array(
 				"type" => "Zend\Mvc\Router\Http\Segment",
 				"options" => array(
@@ -114,6 +125,7 @@ return array(
 			"Question"	=> "Admin\Controller\QuestionController",
 			"Diagnosis"	=> "Admin\Controller\DiagnosisController",
 			"Situation"		=> "Admin\Controller\SituationController",
+			"Situ"		=> "Admin\Controller\SituController",
 			"Manager"		=> "Admin\Controller\ManagerController",
 		),
 	),

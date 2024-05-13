@@ -24,14 +24,14 @@ class RecordTable {
 	}
 
 	public function ReadAllNewList() {
-		$qry = $this->sql->select("record")->where(["diagnosis_code" => null])->order(["apply_date" => "ASC"]);
+		$qry = $this->sql->select("record")->where(["diagnosis_code" => null])->order(["apply_date" => "DESC"]);
 		return iterator_to_array($this->sql->prepareStatementForSqlObject($qry)->execute());
 	}
 	public function ReadAllRestList() {
 		$where = new Where();
 		$where->isNotNull("diagnosis_code");
 
-		$qry = $this->sql->select("record")->where($where)->order(["apply_date" => "ASC"]);
+		$qry = $this->sql->select("record")->where($where)->order(["apply_date" => "DESC"]);
 		return iterator_to_array($this->sql->prepareStatementForSqlObject($qry)->execute());
 	}
 	public function GetAllList() {
@@ -47,7 +47,7 @@ class RecordTable {
 
 	public function ReadRequestData() {
 		$where = new Where();
-		$where->isNotNull("request_date")->isNull("execute_date");
+		$where->isNotNull("request_date")->and->isNull("execute_date");
 
 		$qry = $this->sql->select("record")->where($where);
 		return iterator_to_array($this->sql->prepareStatementForSqlObject($qry)->execute());

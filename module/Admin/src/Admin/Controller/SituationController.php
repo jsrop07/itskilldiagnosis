@@ -69,7 +69,7 @@ class SituationController extends AbstractActionController {
 		}
 
 		$datas["totalApply"] = count($recordTb->ReadApplyData());
-		$datas["totalRequest"] = count($recordTb->ReadApplyData());
+		$datas["totalRequest"] = count($recordTb->ReadRequestData());
 		$datas["totalData"] = count($totalRecordDatas);
 
 		$applicantTb = $this->getServiceLocator()->get("ApplicantTable-Admin");
@@ -107,7 +107,7 @@ class SituationController extends AbstractActionController {
 
 		$datas = $this->GetOptionDatas($datas);
 
-		$vm = $this->SetViewModel($datas, "/applicant/applicant_list.phtml");
+		$vm = $this->SetViewModel($datas, "/situation/situation_list.phtml");
 		$vm->noticelist = $paginationData;
 		$vm->noticelist->setCurrentPageNumber($page);
 		$vm->noticelist->setItemCountPerPage($printDataNum);
@@ -121,23 +121,52 @@ class SituationController extends AbstractActionController {
 		$index = $this->params()->fromRoute("index");
 
 		$recordTb = $this->getServiceLocator()->get("RecordTable-Admin");
+		$recordData = $recordTb->ReadByIdx($index);
+		if (($recordData["diagnosis_code"]) == null) {
+			header("Location: ../edit/" . $index);
+			exit;
+		}
+
 		$applicantTb = $this->getServiceLocator()->get("ApplicantTable-Admin");
 		$diagnosisTb = $this->getServiceLocator()->get("DiagnosisTable-Admin");
-
-		$recordData = $recordTb->ReadByIdx($index);
 
 		$applicantData = $applicantTb->ReadByIdx($recordData["applicant_idx"]);
 		$recordData = array_merge($applicantData, $recordData);
 
-		if (($recordData["diagnosis_code"]) != null) {
-			$diagnosisData = $diagnosisTb->ReadByCode($recordData["diagnosis_code"]);
-			$recordData = array_merge($diagnosisData, $recordData);
-		}
+		$diagnosisData = $diagnosisTb->ReadByCode($recordData["diagnosis_code"]);
+		$recordData = array_merge($diagnosisData, $recordData);
+		
 		$datas = $this->GetOptionDatas($datas);
 
 		$datas["recordData"] = $recordData;
 
-		return $this->SetViewModel($datas, "/applicant/applicant_detail.phtml");
+		return $this->SetViewModel($datas, "/situation/situation_detail.phtml");
+	}
+
+	/** When you click 新規登録 button on 診断者一覧 page */
+	public function inputAction() {
+		$this->ChkLogin();
+		$datas["breadcrumbData"] = ["ITスキル診断状況管理", "診断者登録"];
+
+		$password = "";
+		for ($i = 0; $i < 8; $i++) {
+			$rand = rand(1, 3);
+
+			switch ($rand) {
+				case 1:
+					$password .= rand(0, 9);
+					break;
+				case 2:
+					$password .= chr(rand(65, 90));
+					break;
+				case 3:
+					$password .= chr(rand(97, 122));
+					break;
+			}
+		}
+		$datas["password"] = $password;
+
+		return $this->SetViewModel($datas, "/situation/situation_input.phtml");
 	}
 
 	/** Set Layout & Make ViewModel with datas and template 

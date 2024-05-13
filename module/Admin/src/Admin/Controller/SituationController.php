@@ -5,7 +5,7 @@ use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Zend\Session\Container;
 
-class ApplicantController extends AbstractActionController {
+class SituationController extends AbstractActionController {
 	function ChkLogin() {
 		$session = new Container("user");
 
@@ -21,7 +21,7 @@ class ApplicantController extends AbstractActionController {
 
 	public function indexAction() {
 		$this->ChkLogin();
-		header("Location: ./applicant/list");
+		header("Location: ./situation/list");
 		exit;
 	}
 
@@ -112,6 +112,32 @@ class ApplicantController extends AbstractActionController {
 		$vm->noticelist->setCurrentPageNumber($page);
 		$vm->noticelist->setItemCountPerPage($printDataNum);
 		return $vm;
+	}
+
+	/** When you choose list data on 診断者一覧 page */
+	public function detailAction() {
+		$this->ChkLogin();
+		$datas["breadcrumbData"] = ["ITスキル診断状況管理", "診断状況詳細"];
+		$index = $this->params()->fromRoute("index");
+
+		$recordTb = $this->getServiceLocator()->get("RecordTable-Admin");
+		$applicantTb = $this->getServiceLocator()->get("ApplicantTable-Admin");
+		$diagnosisTb = $this->getServiceLocator()->get("DiagnosisTable-Admin");
+
+		$recordData = $recordTb->ReadByIdx($index);
+
+		$applicantData = $applicantTb->ReadByIdx($recordData["applicant_idx"]);
+		$recordData = array_merge($applicantData, $recordData);
+
+		if (($recordData["diagnosis_code"]) != null) {
+			$diagnosisData = $diagnosisTb->ReadByCode($recordData["diagnosis_code"]);
+			$recordData = array_merge($diagnosisData, $recordData);
+		}
+		$datas = $this->GetOptionDatas($datas);
+
+		$datas["recordData"] = $recordData;
+
+		return $this->SetViewModel($datas, "/applicant/applicant_detail.phtml");
 	}
 
 	/** Set Layout & Make ViewModel with datas and template 

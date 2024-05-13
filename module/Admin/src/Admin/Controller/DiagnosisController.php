@@ -232,15 +232,15 @@ class DiagnosisController extends AbstractActionController {
 				$totalQuestionDatas[$before["point"]][$before["index"]] = $before["data"];
 			}
 
-			// if ($i + 1 == $post["question_num"] && $totalPoint != 100) {
-			// 	$point = 100 - $totalPoint + 1;
+			if ($i + 1 == $post["question_num"] && $totalPoint != 100) {
+				$point = 100 - $totalPoint + 1;
 
-			// 	$index = array_rand($questionDatas[1]);
-			// 	unset($questionDatas[1][$index]);
+				$index = array_rand($questionDatas[1]);
+				unset($questionDatas[1][$index]);
 
-			// 	$index = array_rand($tempQuestionDatas[$point]);
-			// 	$questionDatas[$point][$index] = $tempQuestionDatas[$point][$index];
-			// }
+				$index = array_rand($tempQuestionDatas[$point]);
+				$questionDatas[$point][$index] = $tempQuestionDatas[$point][$index];
+			}
 		}
 		die($this->PointQuestionsToJson($questionDatas));
 	}

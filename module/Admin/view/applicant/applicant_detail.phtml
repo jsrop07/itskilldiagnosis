@@ -1,0 +1,204 @@
+<?php
+	print_r($recordData);
+	$caseTexts = ["新卒", "中途"];
+	$genderTexts = ["男", "女"];
+	$skillTexts = ["有", "無"];
+?>
+
+<?php echo $this->partial("breadcrumb", ["datas" => $breadcrumbData]); ?>
+
+<h1 class="title">ITスキル診断状況管理</h1>
+
+<style type="text/css">
+	option { color: black; }
+	input::placeholder { font-style: italic; }
+</style>
+
+<div class="emegra card">
+	<div class="card-header">ITスキル診断者情報</div>
+
+	<div class="card-body">
+		<style type="text/css">
+			dl.emegra.info { grid-template-columns:  repeat(2, 170px 1fr) }
+		</style>
+		<dl class="emegra info">
+			<dt>ID</dt>
+			<dd><?php echo $recordData["email"]; ?></dd>
+
+			<dt>応募区分</dt>
+			<dd><?php echo $caseTexts[$recordData["case"]]; ?></dd>
+
+			<dt>パスワード</dt>
+			<dd><?php echo $recordData["password"]; ?></dd>
+
+			<dt>お名前（漢字）</dt>
+			<dd><?php echo $recordData["name"]; ?></dd>
+
+			<dt>申込日</dt>
+			<dd><?php echo date("y.m.d", strtotime($recordData["apply_date"])); ?></dd>
+
+			<dt>お名前（カナ）</dt>
+			<dd><?php echo $recordData["kana"]; ?></dd>
+
+			<dt>性別</dt>
+			<dd><?php echo $genderTexts[$recordData["gender"]]; ?></dd>
+
+			<dt>学歴</dt>
+			<dd><?php echo $recordData["education"]; ?></dd>
+
+			<dt>生年月日</dt>
+			<dd><?php echo date("Y.m.d", strtotime($recordData["birth"])); ?></dd>
+
+		</dl>
+	</div>
+</div>
+
+<div class="emegra card" style="margin-top: 32px;">
+	<div class="card-header">診断者ITスキル有無</div>
+
+	<div class="card-body">
+		<style type="text/css">
+			dl.emegra.skill { grid-template-columns: repeat(1, 170px 1fr); }
+		</style>
+		<dl class="emegra skill">
+			<dt>ITスキル有無</dt>
+			<dd><?php echo $skillTexts[$recordData["skill"]]; ?></dd>
+
+			<dt>経験分野</dt>
+			<dd><?php echo $recordData["class1st"]; ?></dd>
+
+			<dt>IT経験年数</dt>
+			<dd><?php echo ($recordData["career"] != null) ? $recordData["career"] . "年" : "無"; ?></dd>
+
+			<dt>問題種別</dt>
+			<dd><?php echo $optionDatas[$recordData["class2nd"]]; ?></dd>
+		</dl>
+	</div>
+</div>
+
+<div class="emegra card" style="margin-top: 32px;">
+	<div class="card-header">ITスキル診断問項詳細</div>
+
+	<div class="card-body">
+		<style type="text/css">
+			dl.emegra.setting { grid-template-columns: repeat(2, 170px 1fr); }
+		</style>
+		<dl class="emegra setting">
+			<dt>診断依頼</dt>
+			<dd><?php echo ($recordData["request_date"] != null) ? date("y.m.d", strtotime($recordData["request_date"])) : "未設定"; ?></dd>
+
+			<dt>診断問項ID</dt>
+			<dd><?php echo $recordData["diagnosis_code"]; ?></dd>
+
+			<dt>レベル</dt>
+			<dd><?php echo $optionDatas[$recordData["level"]]; ?></dd>
+
+			<dt>問項数別</dt>
+			<dd><?php echo $recordData["question_num"]; ?>問項</dd>
+
+			<dt>診断方法</dt>
+			<dd>WEB</dd>
+		</dl>
+	</div>
+</div>
+
+<div class="emegra card" style="margin-top: 32px;">
+	<div class="card-header">ITスキル診断状況</div>
+
+	<div class="card-body">
+		<style type="text/css">
+			dl.emegra.detail { grid-template-columns: repeat(2, 150px 1fr); }
+		</style>
+		<dl class="emegra detail">
+			<?php if ($recordData["get_point"] != null): ?>
+				<dt>診断実施日</dt>
+				<dd><?php echo date("y.m.d", strtotime($recordData["execute_date"])); ?></dd>
+
+				<dt>得点</dt>
+				<dd><?php echo $recordData["get_point"]; ?></dd>
+
+				<dt>評価等級</dt>
+				<dd><?php echo $recordData["rank"]; ?></dd>
+
+				<dt>診断者のコメント</dt>
+				<dd><?php echo $recordData["diagnosis_comment"]; ?></dd>
+
+				<dt>備考</dt>
+				<dd><?php echo $recordData["comment"]; ?></dd>
+			<?php else: ?>
+				<div>未受験</div>
+			<?php endif; ?>
+		</dl>
+	</div>
+</div>
+
+<div class="btn-place" style="margin-top: 32px;">
+	<button class="emegra cancel" onclick="self.location.href='../list';">戻る</button>
+    <button class="emegra" style="background:orange;" onclick="self.location.href='../detailedit';">修正</button>
+	<button class="emegra" style="width:150px;" onclick="Regist();">ITスキル診断依頼</button>
+</div>
+
+<script type="text/javascript">
+	const smtp = document.getElementById("smtp");
+	const form = document.getElementById("form");
+	const pattern = /^[A-Za-z0-9_\.\-]+@[A-Za-z0-9\-]+\.[A-za-z0-9\-]+/;
+
+	function ActiveSmtp(value) {
+		if (value == "y") { smtp.disabled = false; }
+		else { smtp.disabled = true; }
+	}
+
+	function Regist() {
+		if (form.code.value == "") {
+			alert("職別コードを入力してください");
+			setTimeout("form.code.focus();", 100);
+			return false;
+		}
+		
+		if (form.id.value == "") {
+			alert("IDを入力してください");
+			setTimeout("form.id.focus()", 100);
+			return false;
+		}
+		
+		if (pattern.test(form.id.value) === false) {
+			alert("IDを確認してください");
+			setTimeout("form.id.focus()", 100);
+			return false;
+		}
+		
+		if (form.password.value == "") {
+			alert("パスワードを入力してください");
+			setTimeout("form.password.focus()", 100);
+			return false;
+		}
+		
+		if (form.name.value == "") {
+			alert("名前を入力してください");
+			setTimeout("form.name.focus()", 100);
+			return false;
+		}
+		
+		if (smtp.disabled == false && smtp.value == "") {
+			alert("SMTPを入力してください");
+			setTimeout("smtp.focus()", 100);
+			return false;
+		}
+
+		form.submit();
+	}
+</script>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/datepicker/1.0.10/datepicker.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/datepicker/1.0.10/datepicker.min.css">
+
+  <script>
+    $(document).ready(function(){
+      var birth = document.getElementById("birth");
+      $(birth).datepicker({
+        format: 'yyyy-mm-dd',
+        autohide: true
+      });
+    });
+  </script>

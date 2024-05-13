@@ -52,4 +52,9 @@ class RecordTable {
 		$qry = $this->sql->select("record")->where($where);
 		return iterator_to_array($this->sql->prepareStatementForSqlObject($qry)->execute());
 	}
+
+	public function ReadByIdx($idx) {
+		$qry = $this->sql->select("record")->where(["idx" => $idx]);
+		return $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
+	}
 }

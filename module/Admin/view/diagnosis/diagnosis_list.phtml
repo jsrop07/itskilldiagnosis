@@ -75,7 +75,7 @@
 		</div>
 
 		<div style="display: flex;">
-			<select class="form-select form-s elect-sm" style="width: 150px; margin-right: 8px;" onchange="ChangeSearch(this.value)">
+			<select class="form-select form-select-sm" style="width: 150px; margin-right: 8px;" onchange="ChangeSearch(this.value)">
 				<option value="level" <?php echo (isset($searchData) && $searchKey == "level") ? " selected" : ""; ?>>レベル</option>
 				<option value="class1st" <?php echo (isset($searchData) && $searchKey == "class1st") ? " selected" : ""; ?>>大分類</option>
 				<option value="class2nd" <?php echo (isset($searchData) && $searchKey == "class2nd") ? " selected" : ""; ?>>小分類</option>

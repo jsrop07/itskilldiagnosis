@@ -141,7 +141,7 @@ class DiagnosisController extends AbstractActionController {
 		$datas = $this->GetOptionDatas($datas);
 
 		// Get Code
-		$idx = $this->params()->fromRoute("idx");
+		$idx = $this->params()->fromRoute("index");
 
 		$diagnosisTb = $this->getServiceLocator()->get("DiagnosisTable-Admin");
 		try { $datas["diagnosisData"] = $diagnosisTb->ReadByIdx($idx); }
@@ -169,7 +169,7 @@ class DiagnosisController extends AbstractActionController {
 
 		$diagnosisTb = $this->getServiceLocator()->get("DiagnosisTable-Admin");
 		$datas["diagnosisData"] = $diagnosisTb->ReadByIdx($idx);
-	
+
 		return $this->SetViewModel($datas, "/diagnosis/diagnosis_edit.phtml");
 	}
 
@@ -331,10 +331,11 @@ class DiagnosisController extends AbstractActionController {
 	public function removeAction() {
 		$idxs = $this->params()->fromPost("idxs");
 		$idxArr = explode(",", $idxs);
-		
+
 		$diagnosisTb = $this->getServiceLocator()->get("DiagnosisTable-Admin");
 		foreach ($idxArr as $idx) {	
-			$diagnosisTb->DeleteQuestion($idx);
+			try { $diagnosisTb->DeleteDiagnosis($idx); }
+			catch (\Exception $e) { die($e->getMessage()); }
 		}
 		die("success");
 	}

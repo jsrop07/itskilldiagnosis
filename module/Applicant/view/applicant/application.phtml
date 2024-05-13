@@ -103,8 +103,28 @@
                 </div>
                 <div class="button_box">
                     <button class="applicant_cancel" onclick="window.location.href='../applicant/application';">キャンセル</button>
-                    <button id="btn_submit" name="mode" value="btn_submit" class="applicant_button" onclick="applicationConfirm();">申込</button>
+                    <button type="button" class="applicant_button" onclick="applicationConfirm();">登録</button>
                 </div>
+               
+                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" style="margin-top:150px">
+                    <div class="modal-content rounded-4">
+                        <div class="modal-header" style="background:linear-gradient(111deg, #87D782 0%, #22BC8E 100%);color:white; height: 40px;border-top-left-radius:13px;border-top-right-radius:13px">
+                            <h5 class="modal-title" id="exampleModalLabel">申し込み案内</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(100%);"></button>
+                        </div>
+                        <div class="modal-body fs-5" style="padding-bottom:0; text-align:center">
+                        申し込みますか？
+                        </div>
+                        <div class="modal-footer  border-top-0" style="margin-bottom:8px; justify-content:center;">
+                            <button type="button" class="applicant_cancel" data-bs-dismiss="modal">キャンセル</button>
+                            <button id="btn_submit" name="mode" value="btn_submit" class="applicant_button">申込</button>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             </form>
     </div>
     
@@ -256,12 +276,12 @@ function checkKanji(input) {
     }
 
     var halfWidthInput = toHalfWidth(input);
-    var japaneseRegex = /^[\u4E00-\u9FFF]+$/; // 
-    var hiraganaRegex = /^[\u3040-\u309F]+$/; // 
+    var japaneseRegex = /^[\u4E00-\u9FFF\u3040-\u309F]+$/; // 
     var katakanaRegex = /^[\u30A0-\u30FF]+$/; // 
 
-    return japaneseRegex.test(halfWidthInput) || hiraganaRegex.test(halfWidthInput) || katakanaRegex.test(halfWidthInput);
+    return japaneseRegex.test(halfWidthInput) || katakanaRegex.test(halfWidthInput);
 }
+
 
 function checkKana(input) {
     var katakanaRegex = /^[\u30A0-\u30FFー]+$/; 
@@ -270,102 +290,85 @@ function checkKana(input) {
 </script>
 
 <!-- 必須項目有効性検査 -->
-<script type="text/javascript">
-	function applicationConfirm() {
-		if (form.email.value == "" || !emailValidationCheck(form.email.value)) {
-			alert("メールアドレスを入力してください。");
+<script>
+    function applicationConfirm() {
+        if (form.email.value == "" || !emailValidationCheck(form.email.value)) {
+            alert("メールアドレスを入力してください。");
             setTimeout("form.email.focus()",100);
-            event.preventDefault();
-			return false;
-		}
+            return false;
+        }
 
         if (form.name.value == "" || !checkKanji(form.name.value)) {
             alert("漢字を入力してください。");
             setTimeout("form.name.focus()",100);
-            event.preventDefault();
-
             return false;
         }
 
         if (form.kana.value == "" || !checkKana(form.kana.value)) {
-			alert("カナを入力してください。");
+            alert("カナを入力してください。");
             setTimeout("form.kana.focus()",100);
-            event.preventDefault();
-			return false;
-		}
-
-        if (form.birth.value == "" ) {
-			alert("生年月日を入力してください。");
-            setTimeout("form.birth.focus()",100);
-            event.preventDefault();
-			return false;
-		}
-    
-        if (form.case.value == "") {
-			alert("応募区分を入力してください。");
-            setTimeout("form.case.focus()",100);
-            event.preventDefault();
-			return false;
-		}
-        if (form.educationSelect.value == "") {
-			alert("学歴入力してください。");
-            setTimeout("form.educationSelect.focus()",100);
-            event.preventDefault();
-			return false;
-		}
-
-        if (form.educationSelect.value == "その他" && form.otherEducation.value=="") {
-			alert("その他の場合の、記入してください。");
-            setTimeout("form.educationSelect.focus()",100);
-            event.preventDefault();
-			return false;
-		}
-
-
-        if (form.skill.value == "") {
-			alert("ITスキル有無を入力してください。");
-            setTimeout("form.skill.focus()",100);
-            event.preventDefault();
-			return false;
-		}
-
-     
-        if (!class1stSelect.disabled && form.class1stSelect.value === "") {
-            alert("経験分野を入力してくださいsd。");
-            setTimeout("form.class1stSelect.focus()",100);
-            event.preventDefault(); 
             return false;
         }
 
+        if (form.birth.value == "" ) {
+            alert("生年月日を入力してください。");
+            setTimeout("form.birth.focus()",100);
+            return false;
+        }
+    
+        if (form.case.value == "") {
+            alert("応募区分を入力してください。");
+            setTimeout("form.case.focus()",100);
+            return false;
+        }
+        if (form.educationSelect.value == "") {
+            alert("学歴入力してください。");
+            setTimeout("form.educationSelect.focus()",100);
+            return false;
+        }
+
+        if (form.educationSelect.value == "その他" && form.otherEducation.value=="") {
+            alert("その他の場合の、記入してください。");
+            setTimeout("form.educationSelect.focus()",100);
+            return false;
+        }
+
+        if (form.skill.value == "") {
+            alert("ITスキル有無を入力してください。");
+            setTimeout("form.skill.focus()",100);
+            return false;
+        }
+
+        if (!class1stSelect.disabled && form.class1stSelect.value === "") {
+            alert("経験分野を入力してくださいsd。");
+            setTimeout("form.class1stSelect.focus()",100);
+            return false;
+        }
 
         if (form.class1stSelect.value == "その他" && form.otherclass1st.value=="") {
-			alert("その他の場合の、記入してください");
+            alert("その他の場合の、記入してください");
             setTimeout("form.class1stSelect.focus()",100);
-            event.preventDefault();
-			return false;
-		}
+            return false;
+        }
 
         if (!careerInput.disabled && (isNaN(form.career.value) || form.career.value === "")) {
             alert("IT経験年数を入力してください。");
             setTimeout("form.careerInput.focus()",100);
-            event.preventDefault(); 
             return false;
         }
 
         if (!typeSelect.disabled && form.typeSelect.value == "") {
-			alert("問題種別を入力してください。");
+            alert("問題種別を入力してください。");
             setTimeout("form.typeSelect.focus()",100);
-            event.preventDefault();
-			return false;
-		}
-        
-        var submitConfirm=confirm("申し込みますか？");
-        if (!submitConfirm){
-            event.preventDefault();
             return false;
         }
-	}
 
+        // 유효성 검사가 모두 통과되면 모달을 엽니다.
+        var myModal = new bootstrap.Modal(document.getElementById('exampleModal'), {
+            keyboard: false
+        });
+        myModal.show();
+    }
 </script>
 
 <!-- selectbox 選択時の　色 -->

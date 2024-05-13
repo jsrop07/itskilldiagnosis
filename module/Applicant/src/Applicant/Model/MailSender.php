@@ -135,6 +135,9 @@ class MailSender extends AbstractActionController
 
 		$transport = new SmtpTransport();
 
+
+		
+		// $params['config']['smtp']['jjjj']['password']=
 		unset($params['config']['smtp']['fromname']);
 		unset($params['config']['smtp']['fromemail']);
 		$options   = new SmtpOptions($params['config']['smtp']);

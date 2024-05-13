@@ -12,6 +12,10 @@ use Applicant\Model\MailSender;
 
 class ApplicantController extends AbstractActionController
 {
+	public function indexAction() {
+		header("Location: applicant/login");
+		exit;
+	}
   public function applicationAction()
   {
 	$this->layout("layout/applicant/application_layout");
@@ -262,16 +266,16 @@ class ApplicantController extends AbstractActionController
 			];
 		}
 		foreach ($selectedRank as $item) {
-			if ($get_point > $selectedRank[1]['result_points']) {
+			if ($get_point > $selectedRank[0]['result_points']) {
 				 $recordRank="A";
 				 $recordExamResult=$selectedRank[0]['result_comments'];
 			}
-			elseif($get_point <= $selectedRank[1]['result_points'] && $get_point > $selectedRank[2]['result_points']){
+			elseif($get_point <= $selectedRank[0]['result_points'] && $get_point > $selectedRank[1]['result_points']){
 				$recordRank="B";
 				$recordExamResult=$selectedRank[1]['result_comments'];
 
 			}
-			elseif($get_point <= $selectedRank[2]['result_points'] && $get_point > $selectedRank[3]['result_points']){
+			elseif($get_point <= $selectedRank[1]['result_points'] && $get_point > $selectedRank[2]['result_points']){
 				$recordRank="C";
 				$recordExamResult=$selectedRank[2]['result_comments'];
 
@@ -282,7 +286,6 @@ class ApplicantController extends AbstractActionController
 
 			}
 		}
-
 		$caseArray = array("新卒", "中途（経歴職）");
 		if($examRecordInfo['case']==0){
 			$caseText=$caseArray[0];
@@ -294,6 +297,9 @@ class ApplicantController extends AbstractActionController
 
 		if($examRecordInfo['major']==""){
 			$majorText="なし";
+		}
+		else{
+			$majorText=$examRecordInfo['major'];
 		}
 
 		//제출하기
@@ -312,6 +318,7 @@ class ApplicantController extends AbstractActionController
 			$applicantExamTbl->deletePasswordByIdx($applicantInfo["idx"]);
 			$this->mailByApplicantExam($applicantInfo,$sqlSet);
 			$this->mailByAdminToApplicant($applicantInfo,$examRecordRecent,$caseText,$majorText);
+
 			session_unset(); 
 			echo "
 			<script>

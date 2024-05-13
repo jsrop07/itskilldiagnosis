@@ -99,7 +99,7 @@ class DiagnosisController extends AbstractActionController {
 
 		// Check return from 登録確認　page
 		$post = $this->params()->fromPost();
-		if (isset($post["code"])) {
+		if (isset($post["idx"])) {
 			$datas["diagnosisData"] = $post;
 		} else {
 			$diagnosisTb = $this->getServiceLocator()->get("DiagnosisTable-Admin");
@@ -141,10 +141,10 @@ class DiagnosisController extends AbstractActionController {
 		$datas = $this->GetOptionDatas($datas);
 
 		// Get Code
-		$code = $this->params()->fromRoute("code");
+		$idx = $this->params()->fromRoute("idx");
 
 		$diagnosisTb = $this->getServiceLocator()->get("DiagnosisTable-Admin");
-		try { $datas["diagnosisData"] = $diagnosisTb->ReadByCode($code); }
+		try { $datas["diagnosisData"] = $diagnosisTb->ReadByIdx($idx); }
 		catch (\Exception $e) { print_r($e->getMessage()); exit; }
 
 		$questionTb = $this->getServiceLocator()->get("QuestionTable");
@@ -162,8 +162,15 @@ class DiagnosisController extends AbstractActionController {
 
 	/** When you click 修正 button on 診断書詳細 page */
 	public function editAction() {
-		// Get Code
-		$code = $this->params()->fromRoute("code");
+		$this->ChkLogin();
+		$datas["breadcrumbData"] = ["ITスキル診断書管理", "診断書詳細"];
+		$idx = $this->params()->fromRoute("idx");	// Get Code from url
+		$datas = $this->GetOptionDatasForInput($datas);
+
+		$diagnosisTb = $this->getServiceLocator()->get("DiagnosisTable-Admin");
+		$datas["diagnosisData"] = $diagnosisTb->ReadByIdx($idx);
+	
+		return $this->SetViewModel($datas, "/diagnosis/diagnosis_edit.phtml");
 	}
 
 	public function readAction() {
@@ -173,11 +180,6 @@ class DiagnosisController extends AbstractActionController {
 
 		unset($sqlWhere["question_num"]);
 		unset($sqlWhere["time_limit"]);
-
-		$sqlWhere["class1st"] = 7;
-		$sqlWhere["class2nd"] = 2;
-		
-		$post["question_num"] = 35;
 
 		$totalQuestionDatas = $this->ReadDataForDiagnosis($sqlWhere);
 
@@ -324,6 +326,17 @@ class DiagnosisController extends AbstractActionController {
 		catch (\Exception $e) { die($e->getMessage()); }
 
 		die ("success");
+	}
+
+	public function removeAction() {
+		$idxs = $this->params()->fromPost("idxs");
+		$idxArr = explode(",", $idxs);
+		
+		$diagnosisTb = $this->getServiceLocator()->get("DiagnosisTable-Admin");
+		foreach ($idxArr as $idx) {	
+			$diagnosisTb->DeleteQuestion($idx);
+		}
+		die("success");
 	}
 
 	/** Set Layout & Make ViewModel with datas and template 

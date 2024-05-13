@@ -10,6 +10,8 @@
 	// Check approve authority
 	$isApprover = false;
 	if ($_SESSION["user"]["level"] >= 1) { $isApprover = true; }
+
+	print_r($diagnosisData); exit;
 ?>
 
 <?php echo $this->partial("breadcrumb", ["datas" => $breadcrumbData]); ?>

@@ -359,10 +359,10 @@ class QuestionController extends AbstractActionController
 	}
 
 	public function createByCsvAction() {
-		if ($_FILES["csvFile"]["error"] == "0") {
+		if ($_FILES["csv_file"]["error"] == "0") {
 			header("Content-Type: text/html; charset=utf-8");
 
-			$filePointer = fopen($_FILES["csvFile"]["tmp_name"], "r");
+			$filePointer = fopen($_FILES["csv_file"]["tmp_name"], "r");
 			if (!$filePointer) { die("ファイル　オープン　失敗"); }
 
 			$csvStrings = array();

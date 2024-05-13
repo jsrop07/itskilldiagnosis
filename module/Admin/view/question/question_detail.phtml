@@ -100,7 +100,7 @@
 		<button class="emegra" onclick="Approve();">承認</button>
 	<?php endif; ?>
 	<?php if ($isApprover || ($isRegister && $questionData["admin_approve"] == null)): ?>
-		<button class="emegra delete" onclick="Delete();">削除</button>
+		<button class="emegra delete" onclick="Remove();">削除</button>
 		<button class="emegra" onclick="self.location.href='../edit/<?php echo $questionData['idx']; ?>';">修正</button>
 	<?php endif; ?>
 </div>
@@ -131,12 +131,12 @@
 	<?php endif; ?>
 
 	<?php if ($isApprover || ($isRegister && $questionData["admin_approve"] == null)): ?>
-		function Delete() {
+		function Remove() {
 			const postForm = new FormData();
 			postForm.append("idxs", <?php echo $questionData["idx"]; ?>);
 
 			const xhr = new XMLHttpRequest();
-			xhr.open("POST", "../delete", true);
+			xhr.open("POST", "../remove", true);
 			xhr.send(postForm);
 			xhr.onload = () => {
 				if (xhr.status == 200) {

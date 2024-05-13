@@ -341,7 +341,7 @@ class QuestionController extends AbstractActionController
 		die("success");
 	}
 
-	public function deleteAction() {
+	public function removeAction() {
 		$post = $this->params()->fromPost();
 		$idxDatas = explode(",", $post["idxs"]);
 

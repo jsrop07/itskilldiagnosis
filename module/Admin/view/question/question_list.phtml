@@ -153,9 +153,9 @@
 
 		<div>
 			<?php if ($_SESSION["user"]["level"] >= 1): ?>
-				<button class="emegra" style="margin-right: 8px;" onclick="Regist()">承認</button>
+				<button class="emegra" style="margin-right: 8px;" onclick="Approve()">承認</button>
 			<?php endif; ?>
-			<button class="emegra delete" style="margin-right: 8px" onclick="Delete()">削除</button>
+			<button class="emegra delete" style="margin-right: 8px" onclick="Remove()">削除</button>
 			<button class="emegra" style="margin-right: 8px;" onclick="self.window.location='./csv'">CSV登録</button>
 			<button class="emegra" onclick="self.window.location='./input'">新規登録</button>
 		</div>
@@ -275,16 +275,18 @@
 		self.window.location = url;
 	}
 
-	function Regist() {
+	function Approve() {
 		let idxDatas = "";
 
 		check_idxs.forEach(e => {
-			if (e.checked) {
-				idxDatas += e.value + ",";
-			}
+			if (e.checked) { idxs += e.value + ","; }
 		});
 
-		let chk = true;
+		if (idxs == "") {
+			alert("承認するデータを選択してください。");
+			return false;
+		}
+
 		const postForm = new FormData();
 		postForm.append("idxs", idxDatas.slice(0, -1));
 
@@ -308,24 +310,24 @@
 		}
 	}
 
-	function Delete() {
-		let idxDatas = "";
+	function Remove() {
+		let idxs = "";
 
 		check_idxs.forEach(e => {
-			if (e.checked) {
-				idxDatas += e.value + ",";
-			}
+			if (e.checked) { idxs += e.value + ","; }
 		});
 
-		idxDatas.slice(0, -1);
+		if (idxs == "") {
+			alert("削除するデータを選択してください。");
+			return false;
+		}
 
 		const postForm = new FormData();
-		postForm.append("idxs", idxDatas.slice(0, -1));
+		postForm.append("idxs", idxs.slice(0, -1));
 
 		const xhr = new XMLHttpRequest();
-		xhr.open("POST", "./delete", true);
+		xhr.open("POST", "./remove", true);
 		xhr.send(postForm);
-
 		xhr.onload = () => {
 			if (xhr.status == 200) {
 				const result = xhr.responseText;

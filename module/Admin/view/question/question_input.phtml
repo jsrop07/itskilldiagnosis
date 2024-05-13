@@ -97,7 +97,7 @@
 				<dt class="essential">問題</dt>
 				<dd><input class="form-control" name="question" type="text" placeholder="問題を入力してください" value="<?php echo ($isReturn) ? $questionData["question"] : ""; ?>"/></dd>
 
-				<dt class="essential">答え</dt>
+				<dt class="essential">選択肢</dt>
 				<div id="answers" name="answers" style="display: grid; grid-template-columns: 140px 1fr; grid-gap: 24px 8px;">
 					<?php if ($isReturn): ?>
 						<?php foreach ($answers as $index => $data): ?>

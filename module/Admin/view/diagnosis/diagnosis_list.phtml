@@ -114,7 +114,7 @@
 					<th style="grid-area: num">問項数</th>
 					<th style="grid-area: criteria">合格基準</th>
 					<th style="grid-area: update">変更日</th>
-					<th style="grid-area: id">ID</th>
+					<th style="grid-area: id">職別コード</th>
 					<th style="grid-area: case">応募対象</th>
 					<th style="grid-area: level">レベル</th>
 					<th style="grid-area: class1st">大分類</th>
@@ -128,12 +128,12 @@
 						<td><?php echo $data["code"]; ?></td>
 						<td><?php echo $optionDatas[$data["case"]]; ?></td>
 						<td><?php echo $optionDatas[$data["level"]]; ?></td>
-						<td class="link left" onclick="self.location.href='./detail/<?php echo $data['code']; ?>'"><?php echo $data["title"]; ?></td>
+						<td class="link left" onclick="self.location.href='./detail/<?php echo $data['idx']; ?>'"><?php echo $data["title"]; ?></td>
 						<td><?php echo $optionDatas[$data["class1st"]]; ?></td>
 						<td><?php echo $optionDatas[$data["class2nd"]]; ?></td>
-						<td><?php echo $data["question_num"]; ?></td>
+						<td><?php echo $data["question_num"]; ?>問題</td>
 						<td>100点</td>
-						<td><?php echo ($data["date_update"] == null) ? "未変更" : date("y.m.d", strtotime($data["date_update"])); ?></td>
+						<td><?php echo date("y.m.d", strtotime($data["date_start"])); ?></td>
 					</tr>
 				<?php endforeach; ?>
 			</tbody>

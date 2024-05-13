@@ -39,14 +39,14 @@ class DiagnosisTable {
 	*/
 	public function ReadAllList() {
 		$where = new Where();
-		$where->isNull("date_update");
+		$where->isNull("date_end");
 
-		$qry = $this->sql->select("diagnosis")->where($where)->order("date_create DESC");
+		$qry = $this->sql->select("diagnosis")->where($where)->order("date_start DESC");
 		return iterator_to_array($this->sql->prepareStatementForSqlObject($qry)->execute());
 	}
 	public function GetAllList() {
 		$where = new Where();
-		$where->isNotNull("date_create");
+		$where->isNull("date_end");
 
 		$qry = $this->sql->select("diagnosis")->where($where);
 		$paginatorAdapter = new DbSelect($qry, $this->adapter);
@@ -58,13 +58,22 @@ class DiagnosisTable {
 	 * @return mixed Records Array
 	*/
 	public function ReadListByOption($whereData) {
-		$qry = $this->sql->select("diagnosis")->where($whereData)->order("date_create DESC");
+		$qry = $this->sql->select("diagnosis")->where($whereData)->order("date_start DESC");
 		return iterator_to_array($this->sql->prepareStatementForSqlObject($qry)->execute());
 	}
 	public function GetListByOption($whereData) {
-		$qry = $this->sql->select("diagnosis")->where($whereData)->order("date_create DESC");
+		$qry = $this->sql->select("diagnosis")->where($whereData)->order("date_start DESC");
 		$paginatorAdapter = new DbSelect($qry, $this->adapter);
 		return new Paginator($paginatorAdapter);
+	}
+
+	/** Read Table record By idx
+	 * @param int $idx
+	 * @return mixed Record
+	 */
+	public function ReadByIdx($idx) {
+		$qry = $this->sql->select("diagnosis")->where(["idx" => $idx]);
+		return $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
 	}
 
 	/** Read Table record By Code
@@ -74,5 +83,13 @@ class DiagnosisTable {
 	public function ReadByCode($code) {
 		$qry = $this->sql->select("diagnosis")->where(["code" => $code]);
 		return $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
+	}
+
+	/** Update date_end By idx
+	 * @param int $idx
+	*/
+	public function DeleteDiagnosis($idx) {
+		$qry = $this->sql->update("diagnosis")->where(["idx" => $idx])->set(["date_end" => date("Y-m-d H:i:s")]);
+		return $this->sql->prepareStatementForSqlObject($qry)->execute();
 	}
 }

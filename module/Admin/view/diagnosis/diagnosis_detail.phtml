@@ -48,7 +48,7 @@
 		</style>
 		<dl class="emegra question">
 			<dt>問項数</dt>
-			<dd><?php echo $diagnosisData["question_num"]; ?>問項</dd>
+			<dd><?php echo $diagnosisData["question_num"]; ?>問題</dd>
 
 			<dt>診断時間</dt>
 			<dd><?php echo $diagnosisData["time_limit"]; ?>分</dd>
@@ -139,9 +139,32 @@
 	<button class="emegra cancel" onclick="history.back();">戻る</button>
 	<?php if ($isApprover): ?>
 		<button class="emegra" onclick="self.location.href='../edit/<?php echo $diagnosisData['code']; ?>';">修正</button>
-		<button class="emegra delete" onclick="Delete();">削除</button>
+		<button class="emegra delete" onclick="Remove();">削除</button>
 	<?php endif; ?>
 </div>
 
 <script type="text/javascript">
+	<?php if ($isApprover): ?>
+		function Remove() {
+			const postForm = new FormData();
+			postForm.append("idxs", <?php echo $diagnosisData["idx"]; ?>);
+
+			const xhr = new XMLHttpRequest();
+			xhr.open("POST", "../remove", true);
+			xhr.send(postForm);
+			xhr.onload = () => {
+				if (xhr.status == 200) {
+				const result = xhr.responseText;
+				if (result == "success") {
+					alert("登録しました。");
+					self.location.href = "../list";
+				}
+				else {
+					alert("Error");
+					console.log(result);
+					}
+				}
+			}
+		}
+	<?php endif; ?>
 </script>

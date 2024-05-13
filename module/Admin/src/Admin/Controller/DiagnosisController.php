@@ -160,6 +160,12 @@ class DiagnosisController extends AbstractActionController {
 		return $this->SetViewModel($datas, "/diagnosis/diagnosis_detail.phtml");
 	}
 
+	/** When you click 修正 button on 診断書詳細 page */
+	public function editAction() {
+		// Get Code
+		$code = $this->params()->fromRoute("code");
+	}
+
 	public function readAction() {
 		$post = $this->params()->fromPost();
 
@@ -167,6 +173,11 @@ class DiagnosisController extends AbstractActionController {
 
 		unset($sqlWhere["question_num"]);
 		unset($sqlWhere["time_limit"]);
+
+		$sqlWhere["class1st"] = 7;
+		$sqlWhere["class2nd"] = 2;
+		
+		$post["question_num"] = 35;
 
 		$totalQuestionDatas = $this->ReadDataForDiagnosis($sqlWhere);
 
@@ -233,22 +244,49 @@ class DiagnosisController extends AbstractActionController {
 			}
 
 			if ($i + 1 == $post["question_num"] && $totalPoint != 100) {
-				$point = 100 - $totalPoint + 1;
+				while ($totalPoint <= 95) {
+					for ($j = 2; $j <= 5; $j++) {
+						if (!empty($tempQuestionDatas[$j])) { break; }
+						if ($j >= 5) { die($this->PointQuestionsToJson($questionDatas)); }
+					}
 
-				$index = array_rand($questionDatas[1]);
-				unset($questionDatas[1][$index]);
+					for ($j = 1; $j <= 4; $j++) {
+						if (!empty($questionDatas[$j])) { break; }
+						if ($j >= 5) { die($this->PointQuestionsToJson($questionDatas)); }
+					}
+					
+					do { $point = rand(1, 4); }
+					while (empty($questionDatas[$point]));
+					$index = array_rand($questionDatas[$point]);
+					$before["point"] = $point;
+					$before["index"] = $index;
+					$before["data"] = $questionDatas[$point][$index];
+					unset($questionDatas[$point][$index]);
 
-				$index = array_rand($tempQuestionDatas[$point]);
-				$questionDatas[$point][$index] = $tempQuestionDatas[$point][$index];
+					do { $point = rand(2, $before["point"]); }
+					while (empty($tempQuestionDatas[$point]));
+					$index = array_rand($tempQuestionDatas[$point]);
+					$after["point"] = $point;
+					$after["index"] = $index;
+
+					$questionDatas[$point][$index] = $tempQuestionDatas[$point][$index];
+					unset($tempQuestionDatas[$point][$index]);
+
+					$totalPoint += $after["point"] - $before["point"];
+				}
+
+				if ($totalPoint != 100) {
+					$point = 100 - $totalPoint + 1;
+
+					$index = array_rand($questionDatas[1]);
+					unset($questionDatas[1][$index]);
+
+					$index = array_rand($tempQuestionDatas[$point]);
+					$questionDatas[$point][$index] = $tempQuestionDatas[$point][$index];
+				}
 			}
 		}
 		die($this->PointQuestionsToJson($questionDatas));
-	}
-
-	/** When you click 修正 button on 診断書詳細 page */
-	public function editAction() {
-		// Get Code
-		$code = $this->params()->fromRoute("code");
 	}
 
 	function createAction() {

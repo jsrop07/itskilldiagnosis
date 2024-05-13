@@ -39,7 +39,7 @@ class DiagnosisTable {
 	*/
 	public function ReadAllList() {
 		$where = new Where();
-		$where->isNotNull("date_create");
+		$where->isNull("date_update");
 
 		$qry = $this->sql->select("diagnosis")->where($where)->order("date_create DESC");
 		return iterator_to_array($this->sql->prepareStatementForSqlObject($qry)->execute());

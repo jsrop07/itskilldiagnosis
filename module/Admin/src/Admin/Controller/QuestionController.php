@@ -28,17 +28,15 @@ class QuestionController extends AbstractActionController
 	public function listAction() {
 		$this->ChkLogin();
 		$datas["breadcrumbData"] = ["ITスキル診断問項管理"];
+		$datas["optionDatas"] = $this->GetOptionDatas();
 
-		$printDataNum = 10;							// Number of data to output on one page
-		$totalQuestionDatas = array();	// Number of all data that can be shown
+		$printDataNum = 10;	// Number of data to output on one page
 
 		// Data of login user
 		$session = new Container("user");
-		$userCode = $session["code"];
 		$userLevel = $session["level"];
 
 		$questionTb = $this->getServiceLocator()->get("QuestionTable");
-
 		$query = $this->params()->fromQuery();
 
 		// Get Current Page
@@ -48,70 +46,71 @@ class QuestionController extends AbstractActionController
 			unset($query["page"]);
 		}
 
-		// Check search data
-		if (!empty($query)) {
-			$sqlWhere = array();
-			if (isset($query["approver"])) {
-				$adminTb = $this->getServiceLocator()->get("AdminTable");
-				$sqlWhere["admin_approve"] = $adminTb->ReadByName($query["approver"])["code"];
-				$datas["searchDatas"]["approver"] = $query["approver"];
-			}
+		// Save Search data
+		$sqlWhere = array();
+		if (isset($query["approver"])) {
+			$adminTb = $this->getServiceLocator()->get("AdminTable");
+			$sqlWhere["admin_approve"] = $adminTb->ReadByName($query["approver"])["code"];
+			$datas["searchDatas"]["approver"] = $query["approver"];
+		}
 
-			if (isset($query["title"])) {
-				$sqlWhere["title"] = $query["title"];
-				$datas["searchDatas"]["title"] = $query["title"];
-			}
+		if (isset($query["title"])) {
+			$sqlWhere["title"] = $query["title"];
+			$datas["searchDatas"]["title"] = $query["title"];
+		}
 
-			if ($userLevel >= 1) {
-				$totalQuestionDatas = $questionTb->ReadListByOption($sqlWhere);
-				$paginationData = $questionTb->GetListByOption($sqlWhere);
+		// Save Align data
+		$sqlOrder = array();
+		if (isset($query["align"])) {
+			$sqlOrder["field"] = explode("-", $query["align"])[0];
+			$sqlOrder["seq"] = explode("-", $query["align"])[1];
+			$datas["searchDatas"]["align"] = $query["align"];
+		}
+
+		$questionDatas = "";
+		// Check User Level
+		if ($userLevel >= 1) {
+			// Check Search data and Align data
+			if (!empty($sqlOrder) && !empty($sqlWhere)) {
+				try { $questionDatas = $questionTb->GetListBySearchnAlign($sqlWhere, $sqlOrder); }
+				catch (\Exception $e) { print_r($e->getMessage()); exit; }
+			}
+			else if (!empty($sqlOrder) && empty($sqlWhere)) {
+				try { $questionDatas = $questionTb->GetListByAlign($sqlOrder); }
+				catch (\Exception $e) { print_r($e->getMessage()); exit; }
+			}
+			else if (empty($sqlOrder) && !empty($sqlWhere)) {
+				try { $questionDatas = $questionTb->GetListBySearch($sqlWhere); }
+				catch (\Exception $e) { print_r($e->getMessage()); exit; }
 			}
 			else {
-				$totalQuestionDatas = $questionTb->ReadValidListByOption($userCode, $sqlWhere);
-				$paginationData = $questionTb->GetValidListByOption($userCode, $sqlWhere);
+				try { $questionDatas = $questionTb->GetAllList(); }
+				catch (\Exception $e) { print_r($e->getMessage()); exit; }
 			}
 		} else {
-			if ($userLevel >= 1) {
-				$totalQuestionDatas = $questionTb->ReadAllList();
-				$paginationData = $questionTb->GetAllList();
+			$userCode = $session["code"];
+			if (!empty($sqlOrder) && !empty($sqlWhere)) {
+				try { $questionDatas = $questionTb->GetListValidBySearchnAlign($userCode, $sqlWhere, $sqlOrder); }
+				catch (\Exception $e) { print_r($e->getMessage()); exit; }
+			}
+			else if (!empty($sqlOrder) && empty($sqlWhere)) {
+				try { $questionDatas = $questionTb->GetValidListByAlign($userCode, $sqlOrder); }
+				catch (\Exception $e) { print_r($e->getMessage()); exit; }
+			}
+			else if (empty($sqlOrder) && !empty($sqlWhere)) {
+				try { $questionDatas = $questionTb->GetValidListBySearch($userCode, $sqlWhere); }
+				catch (\Exception $e) { print_r($e->getMessage()); exit; }
 			}
 			else {
-				$totalQuestionDatas = $questionTb->ReadValidList($userCode);
-				$paginationData = $questionTb->GetValidList($userCode);
+				try { $questionDatas = $questionTb->GetValidList($userCode); }
+				catch (\Exception $e) { print_r($e->getMessage()); exit; }
 			}
 		}
-		
-		// Align datas
-		if (isset($query["align"])) {
-			$totalQuestionDatas = $this->sortArrByKey($totalQuestionDatas, $query["align"]);
-			$datas["searchDatas"]["align"] = $query["align"];
-		}	
 
-		// Save total datas number
-		$datas["totalDataNum"] = count($totalQuestionDatas);
-		$datas = $this->GetOptionDatas($datas);
-
-		// Extract output datas and Add numbering
-		if (!empty($totalQuestionDatas)) {
-			$PrintQuestionDatas = array();
-			$startIdx = ($page - 1) * $printDataNum;
-			$endIdx = ($page * $printDataNum);
-			
-			for ($i = 0; $startIdx + $i < $endIdx; $i++) {
-				if (!isset($totalQuestionDatas[$startIdx + $i])) break;
-
-				$PrintQuestionDatas[$i] = $totalQuestionDatas[$startIdx + $i];
-				$PrintQuestionDatas[$i]["num"] = count($totalQuestionDatas) - ($startIdx + $i);
-			}
-
-			$datas["questionDatas"] = $PrintQuestionDatas;
-		}
-
-		$vm = $this->SetViewModel($datas, "/question/question_list.phtml");
-		$vm->noticelist = $paginationData;
-		$vm->noticelist->setCurrentPageNumber($page);
-		$vm->noticelist->setItemCountPerPage($printDataNum);
-		return $vm;
+		$questionDatas->setCurrentPageNumber($page);
+		$questionDatas->setItemCountPerPage($printDataNum);
+		$datas["questionDatas"] = $questionDatas;
+		return $this->SetViewModel($datas, "/question/question_list.phtml");
 	}
 	
 	/** When you click 新規登録 button on 一覧 page */
@@ -233,19 +232,19 @@ class QuestionController extends AbstractActionController
 		return $vm;
 	}
 
-	/** Add optionDatas in $datas
-	 * @param mixed $datas array #ViewModel($datas)
-	 * @return mixed $datas add optionDatas["index" => "text"]
+	/** Get optionDatas
+	 * @return array $optionDatas["idx" => "text"]
 	*/
-	function GetOptionDatas($datas) {
+	function GetOptionDatas() {
 		$optionTb = $this->getServiceLocator()->get("OptionTable");
-		$optionDatas = iterator_to_array($optionTb->ReadAll());
+		$beforeOptionDatas = iterator_to_array($optionTb->ReadAll());
 
-		foreach ($optionDatas as $data) {
-			$datas["optionDatas"][$data["idx"]] = $data["text"];
+		$afterOptionDatas = array();
+		foreach ($beforeOptionDatas as $data) {
+			$afterOptionDatas[$data["idx"]] = $data["text"];
 		}
 
-		return $datas;
+		return $afterOptionDatas;
 	}
 
 	/** Add optionDatas for input in $datas

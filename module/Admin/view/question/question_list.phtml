@@ -8,6 +8,8 @@
 	$url = $_SERVER["REQUEST_URI"] . "?";
 	$query = explode("?", $url)[1];
 
+	$firstNo = $questionDatas->getTotalItemCount() - (($questionDatas->getCurrentPageNumber() - 1) * $questionDatas->getitemCountPerPage());
+
 	// Check authority
 	$isApprover = false;
 	if ($_SESSION["user"]["level"] >= 1) { $isApprover = true; }
@@ -71,7 +73,7 @@
 <content class="header">
 	<div class="title">ITスキル診断問項管理</div>
 	<div class="info-num">
-		<div class="count">問項総計<div class="num"><?php echo $totalDataNum; ?></div>問項</div>
+		<div class="count">問項総計<div class="num"><?php echo $questionDatas->getTotalItemCount(); ?></div>問項</div>
 	</div>
 </content>
 
@@ -88,20 +90,20 @@
 		<button class="emegra search confirm" onclick="SearchTitle()">検索</button>
 		<div style="display: flex; align-items: center;">並び替え</div>
 		<select class="form-select form-select-sm" onchange="ChangeSearch(this.value)">
-			<option value="regist_DESC"<?php echo (isset($searchDatas["align"]) && $searchDatas["align"] == "regist_DESC") ? " selected" : ""; ?>>作成日（昇順）</option>
-			<option value="regist_ASC"<?php echo (isset($searchDatas["align"]) && $searchDatas["align"] == "regist_ASC") ? " selected" : ""; ?>>作成日（降順）</option>
-			<option value="status_ASC"<?php echo (isset($searchDatas["align"]) && $searchDatas["align"] == "status_ASC") ? " selected" : ""; ?>>ステータス（昇順）</option>
-			<option value="status_DESC"<?php echo (isset($searchDatas["align"]) && $searchDatas["align"] == "status_DESC") ? " selected" : ""; ?>>ステータス（降順）</option>
-			<option value="class1st_ASC"<?php echo (isset($searchDatas["align"]) && $searchDatas["align"] == "class1st_ASC") ? " selected" : ""; ?>>大分類（昇順）</option>
-			<option value="class1st_DESC"<?php echo (isset($searchDatas["align"]) && $searchDatas["align"] == "class1st_DESC") ? " selected" : ""; ?>>大分類（降順）</option>
-			<option value="class2nd_ASC"<?php echo (isset($searchDatas["align"]) && $searchDatas["align"] == "class2nd_ASC") ? " selected" : ""; ?>>小分類（昇順）</option>
-			<option value="class2nd_DESC"<?php echo (isset($searchDatas["align"]) && $searchDatas["align"] == "class2nd_DESC") ? " selected" : ""; ?>>小分類（降順）</option>
-			<option value="level_ASC"<?php echo (isset($searchDatas["align"]) && $searchDatas["align"] == "level_ASC") ? " selected" : ""; ?>>レベル（昇順）</option>
-			<option value="level_DESC"<?php echo (isset($searchDatas["align"]) && $searchDatas["align"] == "level_DESC") ? " selected" : ""; ?>>レベル（降順）</option>
+			<option value="date_regist-DESC"<?php echo (isset($searchDatas["align"]) && $searchDatas["align"] == "date_regist-DESC") ? " selected" : ""; ?>>作成日（昇順）</option>
+			<option value="date_regist-ASC"<?php echo (isset($searchDatas["align"]) && $searchDatas["align"] == "date_regist-ASC") ? " selected" : ""; ?>>作成日（降順）</option>
+			<option value="status-ASC"<?php echo (isset($searchDatas["align"]) && $searchDatas["align"] == "status-ASC") ? " selected" : ""; ?>>ステータス（昇順）</option>
+			<option value="status-DESC"<?php echo (isset($searchDatas["align"]) && $searchDatas["align"] == "status-DESC") ? " selected" : ""; ?>>ステータス（降順）</option>
+			<option value="class1st-ASC"<?php echo (isset($searchDatas["align"]) && $searchDatas["align"] == "class1st-ASC") ? " selected" : ""; ?>>大分類（昇順）</option>
+			<option value="class1st-DESC"<?php echo (isset($searchDatas["align"]) && $searchDatas["align"] == "class1st-DESC") ? " selected" : ""; ?>>大分類（降順）</option>
+			<option value="class2nd-ASC"<?php echo (isset($searchDatas["align"]) && $searchDatas["align"] == "class2nd-ASC") ? " selected" : ""; ?>>小分類（昇順）</option>
+			<option value="class2nd-DESC"<?php echo (isset($searchDatas["align"]) && $searchDatas["align"] == "class2nd-DESC") ? " selected" : ""; ?>>小分類（降順）</option>
+			<option value="level-ASC"<?php echo (isset($searchDatas["align"]) && $searchDatas["align"] == "level-ASC") ? " selected" : ""; ?>>レベル（昇順）</option>
+			<option value="level-DESC"<?php echo (isset($searchDatas["align"]) && $searchDatas["align"] == "level-DESC") ? " selected" : ""; ?>>レベル（降順）</option>
 		</select>
 	</div>
 
-	<?php if (empty($questionDatas)): ?>
+	<?php if (empty(iterator_to_array($questionDatas))): ?>
 		<div class="table-empty" style="margin-top: 16px;">
 			データがありません。
 		</div>
@@ -125,9 +127,10 @@
 				</tr>
 			</thead>
 			<tbody>
-				<?php foreach($questionDatas as $data): ?>
+				<?php foreach($questionDatas as $index => $data): ?>
+					<?php  ?>
 					<tr>
-						<td><?php echo $data["num"]; ?></td>
+						<td><?php echo $firstNo - $index ; ?></td>
 						<td><?php echo $optionDatas[$data["status"]]; ?></td>
 						<td><?php echo $optionDatas[$data["class1st"]]; ?></td>
 						<td><?php echo $optionDatas[$data["class2nd"]]; ?></td>
@@ -145,7 +148,7 @@
 	<?php endif; ?>
 
 	<div class="pagination-place" style="margin-top: 10px;">
-		<?php echo $this->paginationControl($this->noticelist, "sliding", array("pagination", "Notice"), array("url" => "")); ?>
+		<?php echo $this->paginationControl($questionDatas, "sliding", array("pagination", "Notice"), array("url" => "")); ?>
 	</div>
 
 	<div class="button-place" style="margin-top: 10px;">

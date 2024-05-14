@@ -378,11 +378,11 @@ table.emegra tbody td {
 }
 table.emegra td.left { text-align: left; }
 table.emegra td.link {
-	text-decoration: underline;
 	color: blue;
 
 	cursor: pointer;
 }
+table.emegra td.link:hover { text-decoration: underline; }
 
 
 

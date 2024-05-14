@@ -99,7 +99,7 @@ class DiagnosisController extends AbstractActionController {
 
 		// Check return from 登録確認　page
 		$post = $this->params()->fromPost();
-		if (isset($post["code"])) {
+		if (isset($post["idx"])) {
 			$datas["diagnosisData"] = $post;
 		} else {
 			$diagnosisTb = $this->getServiceLocator()->get("DiagnosisTable-Admin");
@@ -141,10 +141,10 @@ class DiagnosisController extends AbstractActionController {
 		$datas = $this->GetOptionDatas($datas);
 
 		// Get Code
-		$code = $this->params()->fromRoute("code");
+		$idx = $this->params()->fromRoute("index");
 
 		$diagnosisTb = $this->getServiceLocator()->get("DiagnosisTable-Admin");
-		try { $datas["diagnosisData"] = $diagnosisTb->ReadByCode($code); }
+		try { $datas["diagnosisData"] = $diagnosisTb->ReadByIdx($idx); }
 		catch (\Exception $e) { print_r($e->getMessage()); exit; }
 
 		$questionTb = $this->getServiceLocator()->get("QuestionTable");
@@ -158,6 +158,19 @@ class DiagnosisController extends AbstractActionController {
 		$datas["questionDatas"] = $questionDatas;
 
 		return $this->SetViewModel($datas, "/diagnosis/diagnosis_detail.phtml");
+	}
+
+	/** When you click 修正 button on 診断書詳細 page */
+	public function editAction() {
+		$this->ChkLogin();
+		$datas["breadcrumbData"] = ["ITスキル診断書管理", "診断書詳細"];
+		$idx = $this->params()->fromRoute("idx");	// Get Code from url
+		$datas = $this->GetOptionDatasForInput($datas);
+
+		$diagnosisTb = $this->getServiceLocator()->get("DiagnosisTable-Admin");
+		$datas["diagnosisData"] = $diagnosisTb->ReadByIdx($idx);
+
+		return $this->SetViewModel($datas, "/diagnosis/diagnosis_edit.phtml");
 	}
 
 	public function readAction() {
@@ -233,22 +246,49 @@ class DiagnosisController extends AbstractActionController {
 			}
 
 			if ($i + 1 == $post["question_num"] && $totalPoint != 100) {
-				$point = 100 - $totalPoint + 1;
+				while ($totalPoint <= 95) {
+					for ($j = 2; $j <= 5; $j++) {
+						if (!empty($tempQuestionDatas[$j])) { break; }
+						if ($j >= 5) { die($this->PointQuestionsToJson($questionDatas)); }
+					}
 
-				$index = array_rand($questionDatas[1]);
-				unset($questionDatas[1][$index]);
+					for ($j = 1; $j <= 4; $j++) {
+						if (!empty($questionDatas[$j])) { break; }
+						if ($j >= 5) { die($this->PointQuestionsToJson($questionDatas)); }
+					}
+					
+					do { $point = rand(1, 4); }
+					while (empty($questionDatas[$point]));
+					$index = array_rand($questionDatas[$point]);
+					$before["point"] = $point;
+					$before["index"] = $index;
+					$before["data"] = $questionDatas[$point][$index];
+					unset($questionDatas[$point][$index]);
 
-				$index = array_rand($tempQuestionDatas[$point]);
-				$questionDatas[$point][$index] = $tempQuestionDatas[$point][$index];
+					do { $point = rand(2, $before["point"]); }
+					while (empty($tempQuestionDatas[$point]));
+					$index = array_rand($tempQuestionDatas[$point]);
+					$after["point"] = $point;
+					$after["index"] = $index;
+
+					$questionDatas[$point][$index] = $tempQuestionDatas[$point][$index];
+					unset($tempQuestionDatas[$point][$index]);
+
+					$totalPoint += $after["point"] - $before["point"];
+				}
+
+				if ($totalPoint != 100) {
+					$point = 100 - $totalPoint + 1;
+
+					$index = array_rand($questionDatas[1]);
+					unset($questionDatas[1][$index]);
+
+					$index = array_rand($tempQuestionDatas[$point]);
+					$questionDatas[$point][$index] = $tempQuestionDatas[$point][$index];
+				}
 			}
 		}
 		die($this->PointQuestionsToJson($questionDatas));
-	}
-
-	/** When you click 修正 button on 診断書詳細 page */
-	public function editAction() {
-		// Get Code
-		$code = $this->params()->fromRoute("code");
 	}
 
 	function createAction() {
@@ -286,6 +326,18 @@ class DiagnosisController extends AbstractActionController {
 		catch (\Exception $e) { die($e->getMessage()); }
 
 		die ("success");
+	}
+
+	public function removeAction() {
+		$idxs = $this->params()->fromPost("idxs");
+		$idxArr = explode(",", $idxs);
+
+		$diagnosisTb = $this->getServiceLocator()->get("DiagnosisTable-Admin");
+		foreach ($idxArr as $idx) {	
+			try { $diagnosisTb->DeleteDiagnosis($idx); }
+			catch (\Exception $e) { die($e->getMessage()); }
+		}
+		die("success");
 	}
 
 	/** Set Layout & Make ViewModel with datas and template 

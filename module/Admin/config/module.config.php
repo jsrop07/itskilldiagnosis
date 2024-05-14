@@ -57,7 +57,7 @@ return array(
 			"diagnosis" => array(
 				"type" => "Zend\Mvc\Router\Http\Segment",
 				"options" => array(
-					"route" => "/admin/diagnosis[/:action][/:code]",
+					"route" => "/admin/diagnosis[/:action][/:index]",
 					"constraints" => array(),
 					"defaults" => array(
 						"controller"	=> "Diagnosis",
@@ -72,6 +72,17 @@ return array(
 					"constraints" => array(),
 					"defaults" => array(
 						"controller"	=> "Situation",
+						"action"			=> "index",
+					),
+				),
+			),
+			"tempsitu" => array(
+				"type" => "Zend\Mvc\Router\Http\Segment",
+				"options" => array(
+					"route" => "/admin/situ[/:action][/:index]",
+					"constraints" => array(),
+					"defaults" => array(
+						"controller"	=> "Situ",
 						"action"			=> "index",
 					),
 				),
@@ -114,6 +125,7 @@ return array(
 			"Question"	=> "Admin\Controller\QuestionController",
 			"Diagnosis"	=> "Admin\Controller\DiagnosisController",
 			"Situation"		=> "Admin\Controller\SituationController",
+			"Situ"		=> "Admin\Controller\SituController",
 			"Manager"		=> "Admin\Controller\ManagerController",
 		),
 	),

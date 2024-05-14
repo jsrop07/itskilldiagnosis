@@ -31,7 +31,7 @@
 				dl.emegra.setting { grid-template-columns: 140px 1fr; }
 			</style>
 			<dl class="emegra setting">
-				<dt>ID</dt>
+				<dt>職別コード</dt>
 				<dd><input class="form-control form-control-sm" name="code" style="width: 150px;" readonly value="<?php echo ($isReturn) ? $diagnosisData["code"] : $code; ?>"/></dd>
 
 				<dt class="essential">大分類</dt>
@@ -85,7 +85,7 @@
 			</style>
 			<dl class="emegra question">
 				<dt class="essential">問項数</dt>
-				<dd><input type="number" class="form-control" name="question_num" style="width: 80px;" value="<?php echo ($isReturn) ? $diagnosisData["question_num"] : "30"; ?>"/>項目</dd>
+				<dd><input type="number" class="form-control" name="question_num" style="width: 80px;" value="<?php echo ($isReturn) ? $diagnosisData["question_num"] : "35"; ?>"/>項目</dd>
 
 				<dt class="essential">診断時間</dt>
 				<dd><input type="number" class="form-control" name="time_limit" style="width: 80px;" value="<?php echo ($isReturn) ? $diagnosisData["time_limit"] : "120"; ?>"/>分</dd>

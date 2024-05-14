@@ -124,4 +124,11 @@ class ApplicationTable
         $recordResult = $this->adapter->query($recordSqlString, Adapter::QUERY_MODE_EXECUTE);
     }
 
+    public function readByManagerInfo()
+    {
+      $qry = $this->sql->select("admin")->where(["pic" => "y"]);
+      return $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
+    }
+  
+
 }

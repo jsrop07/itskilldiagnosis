@@ -24,6 +24,13 @@ class ApplicantController extends AbstractActionController
 	$tbl=$this->getServiceLocator()->get('ApplicationTable');
 	$class2nd=$tbl->getclass2nd();
 	$class1st=$tbl->getclass1st();
+	$managerInfo=$tbl->readByManagerInfo();
+	$managerArray=[$managerInfo["id"], $managerInfo["password"],$managerInfo["name"],$managerInfo["smtp_password"]];
+	// array_push($managerArray, $managerInfo["id"], $managerInfo["password"],$managerInfo["name"],$managerInfo["smtp_password"]);
+	// array_push($managerArray, ['key' => 'value5']);
+	// print_r($managerArray);
+	// exit;
+
 	$p = $this->params()->fromPost();
 	$mode =(isset($p['mode'])    &&   $p['mode'] !='')? $p['mode']:'';
 	$viewModel = new ViewModel(['class2nd' => $class2nd,'class1st' => $class1st,'p' => $p]);
@@ -68,8 +75,8 @@ class ApplicantController extends AbstractActionController
 			'education' => $education,
 			'major' => $major,
 			'skill' => $skill,
-			'class2nd' => $class2nd,
 			'class1st' => $class1st,
+			'class2nd' => $class2nd,
 			'career' => $career,
 			'certificates' => $certificates,
 			'other' => $other,
@@ -77,7 +84,7 @@ class ApplicantController extends AbstractActionController
 
 	   $tbl->insertAndUpdateApplication($arr);
 		
-	   $this->mailByApplicantation($arr,$skillText,$caseText);
+	   $this->mailByApplicantation($arr,$skillText,$caseText,$managerArray);
 
 	   echo "
 	   <script>
@@ -95,9 +102,8 @@ class ApplicantController extends AbstractActionController
 	$this->layout("/applicant/applicationclear");
 	}
 
-  function mailByApplicantation($arr,$skillText,$caseText){
+  function mailByApplicantation($arr,$skillText,$caseText,$managerArray){
 	$mail = new MailSender();
-
 	// 기본 메일 전송 관련 설정 로드
 	$param['config']=$this->getConfig();
 	// 메일 제목 지정 (일반적으로 DB에 메일폼 테이블을 만들어서 그것을 가져와서 아래의 title contents에 넣지만, 이건 샘플이므로 간단히.)
@@ -107,16 +113,17 @@ class ApplicantController extends AbstractActionController
 
 	// 사람이름이나, URL등 고유하게 변경해야 하는 것은 이렇게 처리한다.
 	// 메일 제목과 내용 부분 모두 변환처리.
-	$param['title']=str_replace("{{user_name}}","担当者",$param['title']);
-	// print_r($param['title']);
+	$param['title']=str_replace("{{user_name}}","申し込み担当者",$param['title']);
+	// print_r($param['config']);
 	// $param['content']=str_replace("{{user_name}}","変換する試験受け者名",$param['content']);
 	$param['content']=str_replace("{{URL}}","テスト",$param['content']);
 
 
 	// 수신자 이메일과 이름 설정
-	$param['email']='jsrop07@gmail.com';
-	$param['name']="temp";
-
+	$param['email']=$managerArray[0];
+	$param['password']="$managerArray[1]";
+	$param['name']="$managerArray[2]";
+	$param['smtp_password']="$managerArray[3]";
 	// 전송
 	$result = $mail->mailsender($param);
 	// $result = $this->getServiceLocator()->get("mailsender");
@@ -190,10 +197,16 @@ class ApplicantController extends AbstractActionController
         }
 	  }
 
+
+
 	  // 아이디 값 불러오기
 	  $applicantExamTbl = $this->getServiceLocator()->get("ApplicantExamTable");
 	  $applicantInfo    = $applicantExamTbl->readById($emailId);
 	  $applicantIdx     = $applicantInfo["idx"];	  
+
+	  // 담당자 정보 불러오기
+	  $managerInfo=$applicantExamTbl->readByManagerInfo();
+	  $managerArray=[$managerInfo["id"], $managerInfo["password"],$managerInfo["name"],$managerInfo["smtp_password"]];
 
 	  // applicant의 id값과 record의 idx값 비교해서 불러오기
 	  $examRecordInfo =  $applicantExamTbl->readByApplicantIdx($applicantInfo);
@@ -227,7 +240,8 @@ class ApplicantController extends AbstractActionController
 		}
 	  }
 	  $datas["matchedData"]=$matchedData;
-
+	//   print_r($matchedData);
+	//   exit;
 
 	  $output = [];
 		foreach ($matchedData as $item) {
@@ -315,11 +329,11 @@ class ApplicantController extends AbstractActionController
 			$applicantExamTbl->updateExam($sqlWhere, $sqlSet);			
 			$examRecordRecent =  $applicantExamTbl->readByApplicantIdx($applicantInfo);
 
-			$applicantExamTbl->deletePasswordByIdx($applicantInfo["idx"]);
-			$this->mailByApplicantExam($applicantInfo,$sqlSet);
-			$this->mailByAdminToApplicant($applicantInfo,$examRecordRecent,$caseText,$majorText);
+			// $applicantExamTbl->deletePasswordByIdx($applicantInfo["idx"]);
+			$this->mailByApplicantExam($applicantInfo,$sqlSet,$managerArray);
+			$this->mailByAdminToApplicant($applicantInfo,$examRecordRecent,$caseText,$majorText,$managerArray);
 
-			session_unset(); 
+			// session_unset(); 
 			echo "
 			<script>
 			self.location.href='/applicant/examclear';
@@ -335,7 +349,7 @@ class ApplicantController extends AbstractActionController
 	  return $viewModel;
   }
 
-function mailByApplicantExam($applicantInfo,$sqlSet){
+function mailByApplicantExam($applicantInfo,$sqlSet,$managerArray){
 	$mail = new MailSender();
 
 	// 기본 메일 전송 관련 설정 로드
@@ -354,8 +368,11 @@ function mailByApplicantExam($applicantInfo,$sqlSet){
 
 
 	// 수신자 이메일과 이름 설정
-	$param['email']='jsrop07@gmail.com';
-	$param['name']="temp";
+	// $param['managerEmail']=$managerArray[0];
+	$param['email']=$managerArray[0];
+	$param['password']="$managerArray[1]";
+	$param['name']="$managerArray[2]";
+	$param['smtp_password']="$managerArray[3]";
 
 	// 전송
 	$result = $mail->mailsender($param);
@@ -376,10 +393,8 @@ function mailByApplicantExam($applicantInfo,$sqlSet){
 	}
   }
 
-  function mailByAdminToApplicant($applicantInfo,$examRecordRecent,$caseText,$majorText){
+  function mailByAdminToApplicant($applicantInfo,$examRecordRecent,$caseText,$majorText,$managerArray){
 	$mail = new MailSender();
-
-
 
 	// 기본 메일 전송 관련 설정 로드
 	$param['config']=$this->getConfig();
@@ -390,18 +405,19 @@ function mailByApplicantExam($applicantInfo,$sqlSet){
 
 	// 사람이름이나, URL등 고유하게 변경해야 하는 것은 이렇게 처리한다.
 	// 메일 제목과 내용 부분 모두 변환처리.
-	$param['title']=str_replace("{{user_name}}","担当者",$param['title']);
-	// print_r($param['title']);
-	// $param['content']=str_replace("{{user_name}}","変換する試験受け者名",$param['content']);
+	$param['title']=str_replace("{{user_name}}","ITスキル診断担当者",$param['title']);
 	$param['content']=str_replace("{{URL}}","テスト",$param['content']);
 
 
 	// 수신자 이메일과 이름 설정
-	$param['email']=$applicantInfo["email"];
-	$param['name']="temp";
+	$param['managerEmail']=$managerArray[0];
+	$param['email']=$applicantInfo["email"];;
+	$param['password']="$managerArray[1]";
+	$param['name']="$managerArray[2]";
+	$param['smtp_password']="$managerArray[3]";
 
 	// 전송
-	$result = $mail->mailsender($param);
+	$result = $mail->mailApplicant($param);
 	// $result = $this->getServiceLocator()->get("mailsender");
 
 	$result_row = $result['transport']->getConnection()->getResponse();

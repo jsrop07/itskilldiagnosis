@@ -28,12 +28,9 @@ return array(
 			'name'              => 'gngs.co.jp',
 			'host'              => 'smtp.mail.us-east-1.awsapps.com',
 			'port' => 465,
-			'fromemail' => 'jsrop07@gngs.co.jp',
-			'fromname' => 'sw',
+			'fromname' => '',
 			'connection_class' => 'login',
 			'connection_config' => array(
-					'username' => 'jsrop07@gngs.co.jp',
-					'password' => 'Gngs1234@',
 					'ssl'=> 'ssl',
 			),
 		),

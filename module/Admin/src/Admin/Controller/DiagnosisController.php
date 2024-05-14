@@ -96,6 +96,7 @@ class DiagnosisController extends AbstractActionController {
 		$this->ChkLogin();
 		$datas["breadcrumbData"] = ["ITスキル診断書管理", "診断書登録"];
 		$datas["title"] = "診断書登録";
+		$datas["resultDatas"] = $this->GetResultDatas();
 
 		// Check return from 登録確認　page
 		$post = $this->params()->fromPost();
@@ -398,6 +399,57 @@ class DiagnosisController extends AbstractActionController {
 		array_push($datas["optionDatas"]["level"], $optionTb->ReadByText("高級"));
 
 		return $datas;
+	}
+
+	function GetResultDatas() {
+		$optionTb = $this->getServiceLocator()->get("OptionTable");
+
+		$idx = $optionTb->ReadByText("初級")["idx"];
+		$result["point1"] = 90;
+		$result["point2"] = 80;
+		$result["point3"] = 70;
+		$result["point4"] = 60;
+		$result["text1"] = "優秀";
+		$result["text2"] = "やや優秀";
+		$result["text3"] = "努力が必要";
+		$result["text4"] = "IT職業に向いてない";
+		$result["comment1"] = "優れている";
+		$result["comment2"] = "適性に合うようである";
+		$result["comment3"] = "成長の可能性が見える";
+		$result["comment4"] = "適性が合わないようである";
+		$resultDatas[$idx] = $result;
+
+		$idx = $optionTb->ReadByText("中級")["idx"];
+		$result["point1"] = 85;
+		$result["point2"] = 75;
+		$result["point3"] = 65;
+		$result["point4"] = 55;
+		$result["text1"] = "中級T1";
+		$result["text2"] = "中級T2";
+		$result["text3"] = "中級T3";
+		$result["text4"] = "中級T4";
+		$result["comment1"] = "中級C1";
+		$result["comment2"] = "中級C2";
+		$result["comment3"] = "中級C3";
+		$result["comment4"] = "中級C4";
+		$resultDatas[$idx] = $result;
+
+		$idx = $optionTb->ReadByText("高級")["idx"];
+		$result["point1"] = 80;
+		$result["point2"] = 70;
+		$result["point3"] = 60;
+		$result["point4"] = 50;
+		$result["text1"] = "優秀";
+		$result["text2"] = "やや優秀";
+		$result["text3"] = "努力が必要";
+		$result["text4"] = "IT職業に向いてない";
+		$result["comment1"] = "優れている";
+		$result["comment2"] = "適性に合うようである";
+		$result["comment3"] = "成長の可能性が見える";
+		$result["comment4"] = "適性が合わないようである";
+		$resultDatas[$idx] = $result;
+
+		return $resultDatas;
 	}
 
 	/** Make QuestionDatas by Point

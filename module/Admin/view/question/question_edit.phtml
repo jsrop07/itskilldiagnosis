@@ -27,10 +27,6 @@
 
 <form id="form">
 	<input name="idx" value="<?php echo $questionData["idx"]; ?>" hidden/>
-	<input name="status" value="<?php echo $updateStatus; ?>" hidden/>
-	<input name="answers" value="" hidden/>
-	<input name="admin_approve" value="null" hidden/>
-	<input name="date_approve" value="null" hidden/>
 
 	<div class="emegra card">
 		<div class="card-header">設定</div>
@@ -55,8 +51,7 @@
 				<dt class="essential">小分類</dt>
 				<dd>
 					<select class="form-select" name="class2nd"style="width: 150px;">
-						<option value="" hidden>選択</option>
-						<?php foreach($optionDatas["class2nd"] as $idx => $data): ?>
+						<?php foreach ($optionDatas["class2nd"][$questionData["class1st"]] as $data): ?>
 							<option value="<?php echo $data["idx"]; ?>"<?php echo ($questionData["class2nd"] == $data["idx"]) ? " selected" : ""; ?>>
 								<?php echo $data["text"]; ?>
 							</option>
@@ -105,12 +100,12 @@
 				<dt class="essential">問題</dt>
 				<dd><input class="form-control" name="question" type="text" placeholder="問題を入力してください" value="<?php echo $questionData["question"]; ?>"/></dd>
 
-				<dt class="essential">答え</dt>
-				<div id="answers" style="display: grid; grid-template-columns: 140px 1fr; grid-gap: 24px 8px;">
-					<?php foreach (explode(",", $questionData["answers"]) as $index => $data): ?>
-						<dt class="essential"><?php echo $numTexts[$index]; ?></dt>
-						<dd><input class="form-control" name="answer<?= $index + 1; ?>" type="text" value="<?php echo $data; ?>"/></dd>
-					<?php endforeach; ?>
+				<dt class="essential">選択肢</dt>
+				<div id="answers" name="answers" style="display: grid; grid-template-columns: 140px 1fr; grid-gap: 24px 8px;">
+					<?php for ($i = 1; $i <= $answerNum; $i++): ?>
+						<dt class="essential"><?= $numTexts[$i - 1]; ?></dt>
+						<dd><input class="form-control" name="answer<?= $i; ?>" type="text" value="<?php echo $questionData["answer" . $i]; ?>"></dd>
+					<?php endfor; ?>
 				</div>
 
 				<dt class="essential" id="correct-title">正解番号</dt>
@@ -154,8 +149,8 @@
 					</select>
 				</dd>
 
-				<dt class="essential">作成日</dt>
-				<dd><input class="form-control" name="date_regist" type="date" style="width: 150px;" disabled value="<?php echo date("Y-m-d", strtotime($questionData["date_regist"])); ?>"></dd>
+				<dt>作成日</dt>
+				<dd><input class="form-control" name="date_regist" type="date" style="width: 150px;" readonly value="<?php echo date("Y-m-d", strtotime($questionData["date_regist"])); ?>"></dd>
 			
 				<dt>備考</dt>
 				<dd class="expand">
@@ -293,18 +288,10 @@
 			RequestSelect(form.point, "点数");
 			return false;
 		}
-		
-		// Create answers data
-		let answers = "";
-		for (let i = 1; i <= answerCount; i++) {
-			var element = document.getElementsByName("answer" + i)[0];
-			answers += element.value + ",";
-			element.disabled = true;
-		}
-		form.answers.value = answers.slice(0, -1);
+
+		if (confirm("修正しますか？") === false) { return false; }
 
 		// Change 作成日 data
-		form.date_regist.disabled = false;
 		form.date_regist.type = "text";
 		form.date_regist.value = "<?php echo $questionData["date_regist"]; ?>";
 
@@ -317,7 +304,7 @@
 				const result = xhr.responseText;
 				if (result == "success") {
 					alert("修正しました。");
-					self.location.href = "../list/";
+					self.location.href = "../list";
 				}
 				else {
 					alert("Error");

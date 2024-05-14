@@ -151,9 +151,9 @@ class QuestionController extends AbstractActionController
 	/** When you choose list data on 問題一覧 page */
 	public function detailAction() {
 		$this->ChkLogin();
-		$datas["breadcrumbData"] = ["ITスキル診断問項管理", "問題詳細"];
-
-		$datas = $this->GetOptionDatas($datas);
+		$datas["breadcrumbData"] = ["ITスキル診断問項管理", "問題詳細"];		
+		$datas["optionDatas"] = $this->GetOptionDatas();
+	
 		$index = $this->params()->fromRoute("index");
 
 		$questionTable = $this->getServiceLocator()->get("QuestionTable");
@@ -180,10 +180,10 @@ class QuestionController extends AbstractActionController
 		$this->ChkLogin();
 		$datas["breadcrumbData"] = ["ITスキル診断問項管理", "問題詳細", "問題修正"];
 		$datas["title"] = "問題修正";
+		$datas["optionDatas"] = $this->GetOptionDatasForInput();
 
 		$optionTb = $this->getServiceLocator()->get("OptionTable");
 		$datas["updateStatus"] = $optionTb->ReadByText("承認依頼")["idx"];
-		$datas = $this->GetOptionDatasForInput($datas);
 
 		$idx = $this->params()->fromRoute("index");
 
@@ -274,14 +274,16 @@ class QuestionController extends AbstractActionController
 		return $afterOptionDatas;
 	}
 
-	public function createAction() {
+	public function registAction() {
 		$post = $this->params()->fromPost();
 
 		$optionTb = $this->getServiceLocator()->get("OptionTable");
-		$post["status"] = $optionTb->ReadByText("新規")["idx"];
+		try { $post["status"] = $optionTb->ReadByText("新規")["idx"]; }
+		catch (\Exception $e) { print_r($e->getMessage()); exit; }
 
 		$questionTb = $this->getServiceLocator()->get("QuestionTable");
-		$questionTb->CreateQuestion($post);
+		try { $questionTb->CreateQuestion($post); }
+		catch (\Exception $e) { print_r($e->getMessage()); exit; }
 
 		die("success");
 	}
@@ -322,14 +324,14 @@ class QuestionController extends AbstractActionController
 		unset($post["idx"]);
 
 		$optionTb = $this->getServiceLocator()->get("OptionTable");
-		if(!isset($post["status"])) { $post["status"] = $optionTb->ReadByText("承認依頼")["idx"]; }
+		$post["status"] = $optionTb->ReadByText("承認依頼")["idx"];
 
-		if(isset($post["admin_approve"]) && $post["admin_approve"] == "null") { $post["admin_approve"] = null; }
-		if(isset($post["date_approve"]) && $post["date_approve"] == "null") { $post["date_approve"] = null; }
-		else { $post["date_approve"] = date("Y-m-d H:i:s"); }
+		$post["admin_approve"] = null;
+		$post["date_approve"] = null;
 
 		$questionTb = $this->getServiceLocator()->get("QuestionTable");
-		$questionTb->UpdateByIdx($idx, $post);
+		try { $questionTb->UpdateByIdx($idx, $post); }
+		catch (\Exception $e) { die($e->getMessage()); }
 
 		die("success");
 	}

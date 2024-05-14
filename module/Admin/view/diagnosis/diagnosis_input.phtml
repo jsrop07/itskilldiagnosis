@@ -1,6 +1,4 @@
 <?php
-	function InitStyle() { return " font-style: italic; color: grey;"; }
-
 	if (!isset($_SESSION)) { session_start(); }
 
 	$isReturn = false;
@@ -8,6 +6,8 @@
 		$isReturn = true;
 		$questionDatas = json_decode($diagnosisData["questionDatas"]);
 	}
+
+	print_r($resultDatas);
 ?>
 
 <?php echo $this->partial("breadcrumb", ["datas" => $breadcrumbData]); ?>
@@ -36,7 +36,7 @@
 
 				<dt class="essential">大分類</dt>
 				<dd>
-					<select class="form-select" name="class1st" onchange="ChangeInputStyle(this)" style="width: 150px;<?php echo ($isReturn) ? "" : InitStyle(); ?>">
+					<select class="form-select" name="class1st" onchange="ChangeValue(this)" style="width: 150px;">
 						<option value="" hidden>選択</option>
 						<?php foreach($optionDatas["class1st"] as $data): ?>
 							<option value="<?php echo $data["idx"]; ?>"<?php echo ($isReturn && $diagnosisData["class1st"] == $data["idx"]) ? " selected" : ""; ?>>
@@ -48,7 +48,7 @@
 
 				<dt class="essential">小分類</dt>
 				<dd>
-					<select class="form-select" name="class2nd" onchange="ChangeInputStyle(this)" style="width: 150px;<?php echo ($isReturn) ? "" : InitStyle(); ?>">
+					<select class="form-select" name="class2nd" onchange="ChangeValue(this)" style="width: 150px;">
 						<option value="" hidden>選択</option>
 						<?php foreach($optionDatas["class2nd"] as $idx => $data): ?>
 							<option value="<?php echo $data["idx"]; ?>"<?php echo ($isReturn && $diagnosisData["class2nd"] == $data["idx"]) ? " selected" : ""; ?>>
@@ -60,7 +60,7 @@
 
 				<dt class="essential">レベル</dt>
 				<dd>
-					<select class="form-select" name="level" onchange="ChangeInputStyle(this)" style="width: 100px;<?php echo ($isReturn) ? "" : InitStyle(); ?>">
+					<select class="form-select" name="level" onchange="ChangeLevel(this)" style="width: 100px;">
 						<option value="" hidden>選択</option>
 						<?php foreach($optionDatas["level"] as $data): ?>
 							<option value="<?php echo $data["idx"]; ?>"<?php echo ($isReturn && $diagnosisData["level"] == $data["idx"]) ? " selected" : ""; ?>>
@@ -85,7 +85,7 @@
 			</style>
 			<dl class="emegra question">
 				<dt class="essential">問項数</dt>
-				<dd><input type="number" class="form-control" name="question_num" style="width: 80px;" value="<?php echo ($isReturn) ? $diagnosisData["question_num"] : "35"; ?>"/>項目</dd>
+				<dd><input type="number" class="form-control" name="question_num" style="width: 80px;" value="<?php echo ($isReturn) ? $diagnosisData["question_num"] : "35"; ?>"/>問題</dd>
 
 				<dt class="essential">診断時間</dt>
 				<dd><input type="number" class="form-control" name="time_limit" style="width: 80px;" value="<?php echo ($isReturn) ? $diagnosisData["time_limit"] : "120"; ?>"/>分</dd>
@@ -218,6 +218,7 @@
 	const numTexts = ["①", "②", "③", "④", "⑤"];
 
 	const listBody = document.getElementById("tbody-list");
+	const selectboxElements = document.getElementsByTagName("select");
 
 	const form = document.getElementById("form");
 
@@ -227,13 +228,47 @@
 	window.onload = function() {
 		const now = new Date();
 		datetime = now.toISOString().replace("T", " ").substring(0, 19);
+		SetValue();
 	}
 
-	function ChangeInputStyle(element) {
-		element.style.fontStyle = "normal";
-		element.style.color = "black";
+	function SetValue() {
+		<?php if ($isReturn): ?>
+			for (let i = 0; i < selectboxElements.length; i++ ) {
+				var select = selectboxElements.item(i);
+				if (select.value == "") { select.dataset.value = ""; }
+				else { select.dataset.value = "1"; }
+			}
+		<?php else: ?>
+			for (let i = 0; i < selectboxElements.length; i++ ) {
+				var select = selectboxElements.item(i);
+				if (select.value == "") { select.dataset.value = ""; }
+				else { select.dataset.value = "1"; }
+			}
+		<?php endif; ?>
 	}
 
+	function ChangeValue(element) { element.dataset.value = element.value; }
+
+	function ChangeLevel(element) {
+		ChangeValue(element);
+
+		console.log(form.poin1);
+
+		switch (element.value) {
+			<?php foreach ($resultDatas as $idx => $data): ?>
+				case "<?php echo $idx; ?>":
+					<?php foreach ($data as $name => $value): ?>
+						form.<?php echo $name; ?>.value = "<?php echo $value; ?>";
+						<?php if (strpos($name, "point") !== false): ?>
+							let pointElement = document.getElementById("<?php echo $value; ?>Child");
+							pointElement.value = <?php echo $value; ?> - 1;
+						<?php endif; ?>
+					<?php endforeach; ?>
+					break;
+			<?php endforeach; ?>
+		}
+	}
+	
 	function CreateList(element) {
 		if (form.class1st.value == "") {
 			RequestSelect(form.class1st, "大分類");

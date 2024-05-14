@@ -4,6 +4,12 @@
 	if (!isset($_SESSION)) { session_start(); }
 	$userCode = $_SESSION["user"]["code"] ;
 
+	$answerNum = 0;
+	for ($i = 1; $i <= 5; $i++) {
+		if (!isset($questionData["answer" . $i])) { break; }
+		$answerNum++;
+	}
+
 	// Check approve authority
 	$isApprover = false;
 	if ($_SESSION["user"]["level"] >= 1) { $isApprover = true; }
@@ -51,12 +57,12 @@
 			<dt>問題</dt>
 			<dd><?php echo $questionData["question"]; ?></dd>
 
-			<dt>答え</dt>
+			<dt>選択肢</dt>
 			<dd class="expand">
-				<?php foreach (explode(",", $questionData["answers"]) as $index => $answer): ?>
-					<?= $numTexts[$index]; ?>
-					<?php echo $answer; ?> </br>
-				<?php endforeach; ?>
+				<?php for ($i = 1; $i <= $answerNum; $i++): ?>
+					<?= $numTexts[$i - 1]; ?>
+					<?php echo $questionData["answer" . $i]; ?> </br>
+				<?php endfor; ?>
 			</dd>
 
 			<dt>正解番号</dt>
@@ -95,7 +101,7 @@
 </div>
 
 <div class="btn-place" style="margin-top: 32px;">
-	<button class="emegra cancel" onclick="self.location.href='../list';">戻る</button>
+	<button class="emegra cancel" onclick="history.back();">戻る</button>
 	<?php if ($isApprover && $questionData["admin_approve"] == null): ?>
 		<button class="emegra" onclick="Approve();">承認</button>
 	<?php endif; ?>
@@ -132,6 +138,8 @@
 
 	<?php if ($isApprover || ($isRegister && $questionData["admin_approve"] == null)): ?>
 		function Remove() {
+			if (confirm("削除しますか？") === false) { return false; }
+
 			const postForm = new FormData();
 			postForm.append("idxs", <?php echo $questionData["idx"]; ?>);
 

@@ -35,13 +35,13 @@
 		font-weight: 400;
 	}
 
-	table.emegra tr { grid-template-columns: 50px 100px repeat(2, 60px) 1fr repeat(2, 60px) 50px 60px 60px; }
+	table.emegra tr { grid-template-columns: 50px 100px 60px 1fr repeat(2, 60px) 50px 60px 60px; }
 	table.emegra tr.index {
 		padding-top: 8px;
 		padding-bottom: 4px;
 		grid-template-areas:
-		"no question question question title  class    class   num criteria update"
-		"no    id      case     level  title class1st class2nd num criteria update";
+		"no question question title  class    class   num criteria update"
+		"no    id     level  title class1st class2nd num criteria update";
 	}
 	table.emegra tr.index > th {
 		padding: 0;
@@ -115,7 +115,6 @@
 					<th style="grid-area: criteria">合格基準</th>
 					<th style="grid-area: update">変更日</th>
 					<th style="grid-area: id">職別コード</th>
-					<th style="grid-area: case">応募対象</th>
 					<th style="grid-area: level">レベル</th>
 					<th style="grid-area: class1st">大分類</th>
 					<th style="grid-area: class2nd">小分類</th>
@@ -126,7 +125,6 @@
 					<tr>
 						<td><?php echo $data["num"]; ?></td>
 						<td><?php echo $data["code"]; ?></td>
-						<td><?php echo $optionDatas[$data["case"]]; ?></td>
 						<td><?php echo $optionDatas[$data["level"]]; ?></td>
 						<td class="link left" onclick="self.location.href='./detail/<?php echo $data['idx']; ?>'"><?php echo $data["title"]; ?></td>
 						<td><?php echo $optionDatas[$data["class1st"]]; ?></td>

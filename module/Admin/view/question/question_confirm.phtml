@@ -1,16 +1,17 @@
 <?php
 	$numTexts = array("①", "②", "③", "④", "⑤");
 
-	setcookie("user", "", time() - 3600, "/");
-	if (isset($_COOKIE["user"])) {
-    $username = $_COOKIE["user"];
-    echo $username;
+	$answerNum = 0;
+	for ($i = 1; $i <= 5; $i++) {
+		if (!isset($questionData["answer" . $i])) { break; }
+		$answerNum++;
 	}
 ?>
 
 <?php echo $this->partial("breadcrumb", ["datas" => $breadcrumbData]); ?>
 
 <h1 class="title"><?php echo $title; ?></h1>
+
 	<div class="emegra card">
 		<div class="card-header">設定</div>
 
@@ -48,6 +49,13 @@
 				<dt>問題</dt>
 				<dd><?php echo $questionData["question"]; ?></dd>
 
+				<dt>選択肢</dt>
+				<dd class="expand">
+					<?php for ($i = 1; $i <= $answerNum; $i++): ?>
+						<?= $numTexts[$i - 1]; ?>
+						<?php echo $questionData["answer" . $i]; ?> </br>
+					<?php endfor; ?>
+				</dd>
 
 				<dt>正解番号</dt>
 				<dd><?php echo $numTexts[$questionData["correct"] - 1]; ?></dd>
@@ -80,7 +88,7 @@
 
 
 
-<form id="form" method="post" action="./input">
+<form id="form" method="post"	>
 	<?php foreach ($questionData as $key => $data): ?>
 		<input type="hidden" name="<?php echo $key; ?>" value="<?php echo $data; ?>"/>
 	<?php endforeach; ?>
@@ -94,6 +102,26 @@
 <script type="text/javascript">
 	const numTexts = ["①", "②", "③", "④", "⑤"];
 	const form = document.getElementById("form");
+
+	function Regist() {
+		const postForm = new FormData(form);
+		const xhr = new XMLHttpRequest();
+		xhr.open("POST", "regist", true);
+		xhr.send(postForm);
+		xhr.onload = () => {
+			if (xhr.status == 200) {
+				const result = xhr.responseText;
+				if (result == "success") {
+					alert("登録しました。");
+					self.location.href = "list";
+				}
+				else {
+					alert("Error");
+					console.log(result);
+				}
+			}
+		}
+	}
 
 	function Return() {
 		setCookie("questionData", '<?php echo json_encode($questionData); ?>', {secure: true, "max-age": 30});

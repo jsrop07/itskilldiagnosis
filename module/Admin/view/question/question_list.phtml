@@ -73,7 +73,7 @@
 <content class="header">
 	<div class="title">ITスキル診断問項管理</div>
 	<div class="info-num">
-		<div class="count">問項総計<div class="num"><?php echo $questionDatas->getTotalItemCount(); ?></div>問項</div>
+		<div class="count">問項総計<div class="num"><?php echo $questionDatas->getTotalItemCount(); ?></div>問題</div>
 	</div>
 </content>
 
@@ -279,7 +279,7 @@
 	}
 
 	function Approve() {
-		let idxDatas = "";
+		let idxs = "";
 
 		check_idxs.forEach(e => {
 			if (e.checked) { idxs += e.value + ","; }
@@ -291,10 +291,10 @@
 		}
 
 		const postForm = new FormData();
-		postForm.append("idxs", idxDatas.slice(0, -1));
+		postForm.append("idxs", idxs.slice(0, -1));
 
 		const xhr = new XMLHttpRequest();
-		xhr.open("POST", "./approve", true);
+		xhr.open("POST", "approve", true);
 		xhr.send(postForm);
 		xhr.onload = () => {
 			if (xhr.status == 200) {
@@ -325,11 +325,13 @@
 			return false;
 		}
 
+		if (confirm("削除しますか？") === false) { return false; }
+
 		const postForm = new FormData();
 		postForm.append("idxs", idxs.slice(0, -1));
 
 		const xhr = new XMLHttpRequest();
-		xhr.open("POST", "./remove", true);
+		xhr.open("POST", "remove", true);
 		xhr.send(postForm);
 		xhr.onload = () => {
 			if (xhr.status == 200) {

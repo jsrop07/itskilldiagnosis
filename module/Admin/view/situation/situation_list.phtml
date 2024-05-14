@@ -125,18 +125,22 @@
 						<td><?php echo ($data["major"] != null) ? $data["major"] : "無"; ?></td>
 						<td><?php echo ($data["career"] != null) ? $data["career"] . "年" : "無"; ?></td>
 						<?php if ($data["request_date"] != null): ?>
-						<td><?php echo ($data["request_date"] != null) ? date("y.m.d", strtotime($data["request_date"])) : "未実行"; ?></td>
-						<td><?php echo $optionDatas[$data["level"]]; ?></td>
-						<td><?php echo $data["diagnosis_code"]; ?></td>
+							<td><?php echo ($data["request_date"] != null) ? date("y.m.d", strtotime($data["request_date"])) : "未実行"; ?></td>
+							<td><?php echo $optionDatas[$data["level"]]; ?></td>
+							<td><?php echo $data["diagnosis_code"]; ?></td>
 						<?php else: ?>
-							<td style="grid-column: 9 / 12">未依頼</td>
+							<td>未依頼</td>
+							<td>未設定</td>
+							<td>未設定</td>
 						<?php endif; ?>
 						<?php if ($data["execute_date"] != null): ?>
 							<td><?php echo date("y.m.d", strtotime($data["execute_date"])); ?></td>
 							<td><?php echo $data["get_point"]; ?>/100</td>
 							<td><?php echo $data["rank"]; ?></td>
 						<?php else: ?>
-							<td style="grid-column: 12 / 15">未実行</td>
+							<td>未実行</td>
+							<td>未実行</td>
+							<td>未実行</td>
 						<?php endif; ?>
 						<td><input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"></td>
 					</tr>

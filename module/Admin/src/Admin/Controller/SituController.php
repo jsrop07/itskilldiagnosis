@@ -28,10 +28,14 @@ class SituController extends AbstractActionController {
 		$this->ChkLogin();
 		$datas["breadcrumbData"] = ["ITスキル診断状況管理", "診断状況詳細", "診断状況修正"];
 		$index = $this->params()->fromRoute("index");
+		$post = $this->params()->fromPost();
+		$editDatas  = (isset($post['editDatas']) && $post['editDatas'] !='')  ? $post['editDatas'] : '';
 
+		// print_r(($post['id']));
 		$recordTb = $this->getServiceLocator()->get("RecordTable-Admin");
 		$applicantTb = $this->getServiceLocator()->get("ApplicantTable-Admin");
 		$diagnosisTb = $this->getServiceLocator()->get("DiagnosisTable-Admin");
+		$situTb = $this->getServiceLocator()->get("situTable");
 
 		$recordData = $recordTb->ReadByIdx($index);
 
@@ -48,7 +52,33 @@ class SituController extends AbstractActionController {
 		$datas["applicantArray"]=$applicantData;
 		$datas['recordArray']=$recordData;
 		$datas['diagnosisArray']=$diagnosisData;
+		// print_r(($recordData['idx']));
 
+		// if($editDatas == "btn_submit"){
+		// 	$sqlWhere['idx']=$recordData['idx'];
+		// 	// $sqlSet['email']=$applicantData['email'];
+		// 	// $sqlSet['name']=$applicantData['name'];
+		// 	// $sqlSet['kana']=$applicantData['kana'];
+		// 	$sqlSet['case']=$editDatas['case'];
+		// 	$sqlSet['education']=$recordData['education'];
+		// 	// $sqlSet['career']=$applicantData['career'];
+		// 	// $sqlSet['certificates']=$applicantData['certificates'];
+		// 	// $sqlSet['other']=$applicantData['other'];
+		// 	$sqlSet['major']=$recordData['major'];
+		// 	$sqlSet['skill']=$recordData['skill'];
+		// 	// $sqlSet['class1st']=$recordData['class1st'];
+		// 	// $sqlSet['class2nd']=$recordData['class2nd'];
+		// 	print_r($recordData['idx']);
+
+
+		// 	$situTb->updateExam($sqlWhere, $sqlSet);			
+		// 	echo "
+		// 	<script>
+		// 	self.location.href='/applicant/examclear';
+		// 	</script>
+		// 	";	
+	
+		// }
 
 		return $this->SetViewModel($datas, "/situation/situation_edit.phtml");
 	}

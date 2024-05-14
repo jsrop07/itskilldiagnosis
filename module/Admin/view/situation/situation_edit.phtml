@@ -101,6 +101,8 @@ function InitStyle() { return " font-style: italic; color: grey;"; }
                 <dt>生年月日</dt>
 				<dd><input class="form-control" id="birth" name="birth" type="text" placeholder="YYYY-MM-DD" autocomplete="off"  style="width:50%" value="<?php echo $applicantArray["birth"] ?>"></dd> 
 
+				<dt>その他</dt>
+				<dd><input class="form-control" id="other" name="other" type="text"  style="width:50%" value="<?php echo $applicantArray["other"] ?>"></dd> 
 
 			</dl>
 		</div>
@@ -139,7 +141,7 @@ function InitStyle() { return " font-style: italic; color: grey;"; }
 
                 <dt class="essential">経験分野</dt>
 				<dd>
-					<select class="form-select" name="develop" style="width:20%;<?php echo ($isReturn) ? "" : InitStyle(); ?>" onchange="ChangeInputStyle(this)" id="developSelect" <?php echo $isDisabled ? 'disabled' : ''; ?>>
+					<select class="form-select" name="class1st" style="width:20%;<?php echo ($isReturn) ? "" : InitStyle(); ?>" onchange="ChangeInputStyle(this)" id="developSelect" <?php echo $isDisabled ? 'disabled' : ''; ?>>
 						<option value="" selected  >
 							<?php
 								if($recordArray['class1st']==NULL){
@@ -166,7 +168,7 @@ function InitStyle() { return " font-style: italic; color: grey;"; }
 
 				<dt class="essential">問題種別</dt>
 				<dd>
-					<select class="form-select" name="question_type" style="width:20%;<?php echo ($isReturn) ? "" : InitStyle(); ?>" onchange="ChangeInputStyle(this)" id="typeSelect">
+					<select class="form-select" name="class2nd" style="width:20%;<?php echo ($isReturn) ? "" : InitStyle(); ?>" onchange="ChangeInputStyle(this)" id="typeSelect">
 						<option value="" selected  >選択してください。</option>
 						<?php foreach ($this->questionType as $row): ?>
 							<?php $texts = explode(',', $row['text']); ?>
@@ -190,7 +192,7 @@ function InitStyle() { return " font-style: italic; color: grey;"; }
 		</style>
 		<dl class="emegra detail">
                 <dt>診断依頼</dt>
-				<dd><input class="form-control" name="apply_date" type="text" style="width:50%; " value="<?php echo $applicantArray['apply_date']?>"></dd>
+				<dd><input class="form-control" name="request_date" type="text" style="width:50%; " value="<?php echo $recordArray['request_date']?>"></dd>
 
 				<dt class="essential">診断問項ID</dt>
 				<dd><?php echo $diagnosisArray['code']?></dd> 
@@ -203,7 +205,7 @@ function InitStyle() { return " font-style: italic; color: grey;"; }
 		
 				<dt class="essential">診断方法</dt>
                 <dd style="grid-column: 2 / 5;">
-					<select class="form-select" style="width:13%;<?php echo ($isReturn) ? "" : InitStyle(); ?>" onchange="ChangeInputStyle(this)" >
+					<select class="form-select" name="methods" style="width:13%;<?php echo ($isReturn) ? "" : InitStyle(); ?>" onchange="ChangeInputStyle(this)" >
                         <option value="" selected disabled hidden><?php echo $recordArray['method']?></option>
                         <option value="0">WEB</option>
                         <option value="1">対面</option>
@@ -221,19 +223,20 @@ function InitStyle() { return " font-style: italic; color: grey;"; }
 			</style>
 			<dl class="emegra detail">
 				<dt>診断者のコメント</dt>
-				<dd></dd>
+				<dd><input class="form-control" name="comment" type="text" style="width:50%; " value="<?php echo $recordArray['comment']?>"></dd>
 		
 				<dt>備考</dt>
-				<dd></dd>
+				<dd><input class="form-control" name="note" type="text" style="width:50%; " value="<?php echo $recordArray['note']?>"></dd>
+
 			</dl>
 		</div>
 	</div>
-</form>
 
 <div class="btn-place" style="margin-top: 32px;">
-	<button class="emegra cancel" onclick="self.location.href='./list';">戻る</button>
-	<button class="emegra" style="width:150px;" onclick="self.location.href='./editconfirm';">ITスキル診断依頼</button>
+	<button type="button" class="emegra cancel" onclick="self.location.href='../../situation/list';">戻る</button>
+	<button type="submit" class="emegra"  id="btn_submit" name="editDatas" value="btn_submit"  style="width:150px;">ITスキル診断依頼</button>
 </div>
+</form>
 
 <script type="text/javascript">
 	const smtp = document.getElementById("smtp");

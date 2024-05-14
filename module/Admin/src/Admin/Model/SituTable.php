@@ -48,4 +48,18 @@ class SituTable
 		$qry = $this->sql->select("option")->where($whereData);
 		return $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
 	}
+	public function updateApplicantInfo($sqlWhere, $sqlSet){
+		$qry=new sql($this->adapter);
+		$update=$qry->update('record');
+	
+		$sqlSet["request_date"] = date("Y-m-d H:i:s");
+	
+		$update->set($sqlSet);
+		$update->where($sqlWhere);
+	
+		$sqlString = $qry->getSqlStringForSqlObject($update);
+		$result = $this->adapter->query($sqlString, Adapter::QUERY_MODE_EXECUTE);
+	
+		return $result;   
+	  }
 }

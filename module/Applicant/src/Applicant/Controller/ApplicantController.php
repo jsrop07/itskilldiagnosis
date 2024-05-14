@@ -323,8 +323,6 @@ class ApplicantController extends AbstractActionController
 			$sqlSet["comment"] = $comment;
 			$sqlSet['rank']=$recordRank;
 			$sqlSet['diagnosis_comment']=$recordExamResult;
-
-
 			$applicantExamTbl->updateExam($sqlWhere, $sqlSet);			
 			$examRecordRecent =  $applicantExamTbl->readByApplicantIdx($applicantInfo);
 

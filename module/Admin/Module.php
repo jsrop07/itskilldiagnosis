@@ -16,6 +16,8 @@ use Admin\Model\OptionTable;
 use Admin\Model\DiagnosisTable;
 use Admin\Model\ApplicantTable;
 use Admin\Model\RecordTable;
+use Admin\Model\SituTable;
+
 use Zend\Mvc\ModuleRouteListener;
 use Zend\Mvc\MvcEvent;
 

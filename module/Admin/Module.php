@@ -71,6 +71,11 @@ class Module {
 					$table = new ApplicantTable($dbAdapter);
 					return $table;
 				},
+				"SituTable" => function($sm) {
+					$dbAdapter = $sm->get("Zend\Db\Adapter\Adapter");
+					$table = new SituTable($dbAdapter);
+					return $table;
+				},
 				"RecordTable-Admin" => function($sm) {
 					$dbAdapter = $sm->get("Zend\Db\Adapter\Adapter");
 					$table = new RecordTable($dbAdapter);

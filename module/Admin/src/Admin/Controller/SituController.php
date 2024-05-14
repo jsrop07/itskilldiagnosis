@@ -42,8 +42,13 @@ class SituController extends AbstractActionController {
 			$diagnosisData = $diagnosisTb->ReadByCode($recordData["diagnosis_code"]);
 			$recordData = array_merge($diagnosisData, $recordData);
 		}
-		
+		$diagnosisData = $diagnosisTb->ReadByCode($recordData["diagnosis_code"]);
+
 		$datas = $this->GetOptionDatas($datas);
+		$datas["applicantArray"]=$applicantData;
+		$datas['recordArray']=$recordData;
+		$datas['diagnosisArray']=$diagnosisData;
+
 
 		return $this->SetViewModel($datas, "/situation/situation_edit.phtml");
 	}
@@ -54,9 +59,12 @@ class SituController extends AbstractActionController {
 	 * @return ViewModel
 	*/
 	function SetViewModel($datas, $template) {
-		$this->layout("layout/default");
+		$this->layout("/layout/situ_layout.phtml");
+
 		$vm = new ViewModel($datas);
+		
 		$vm->setTemplate($template);
+	
 		return $vm;
 	}
 

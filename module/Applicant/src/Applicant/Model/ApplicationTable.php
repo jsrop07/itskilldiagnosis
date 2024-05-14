@@ -34,22 +34,10 @@ class ApplicationTable
       $this->sql = new Sql($this->adapter);
     }
 
-    public function getclass2nd(){
-        $qry = $this->sql->select("option");
-        $qry->columns([
-            'idx','type','text'
-        ]);
-        $qry->where(['type' => 'class2nd']);
-        $statement = $this->sql->prepareStatementForSqlObject($qry);
-        $result = $statement->execute();
-
-        return $result;
-    }
-
     public function getclass1st(){
         $qry = $this->sql->select("option");
         $qry->columns([
-            'type','text'
+            'idx','type','text'
         ]);
         $qry->where(['type' => 'class1st']);
         $statement = $this->sql->prepareStatementForSqlObject($qry);
@@ -57,6 +45,19 @@ class ApplicationTable
 
         return $result;
     }
+
+    public function getclass2nd(){
+        $qry = $this->sql->select("option");
+        $qry->columns([
+            'idx','type','text','class_upper'
+        ]);
+        $qry->where(['type' => 'class2nd','class_upper'=>7]);
+        $statement = $this->sql->prepareStatementForSqlObject($qry);
+        $result = $statement->execute();
+    
+        return $result;
+    }
+    
 
     public function getApplicantByEmail($email) {
         $qry = new Sql($this->adapter);

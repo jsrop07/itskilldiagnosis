@@ -66,7 +66,7 @@
                     </select>
 
                     <span id="spanclass1stSelect">経験分野</span>
-                    <select class="" name="class1st" style="width:40%" id="class1stSelect" >
+                    <select class="" name="class1st" style="width:40%" id="class1stSelect" onclick="ChangeClass1st(this)">
                     <option value="" selected  >選択してください。</option>
                         <?php foreach ($this->class1st as $row): ?>
                             <?php $texts = explode(',', $row['text']); ?>
@@ -84,14 +84,7 @@
 
                     <span  id="spanTypeSelect">問題種別</span>
                     <select class="" name="class2nd" style="width:40%" id="typeSelect">
-                    <option value="" selected  >選択してください。</option>
-                    <?php foreach ($this->class2nd as $row): ?>
-                        <?php $texts = explode(',', $row['text']); ?>
-                        <?php $idxs = explode(',', $row['idx']); ?>
-                        <?php foreach ($texts as $index=> $text): ?>
-                            <option value="<?php echo $idxs[$index]; ?>"><?php echo $text; ?></option>
-                        <?php endforeach; ?>
-                    <?php endforeach; ?>
+                    <option value=""  >選択してください。</option>
                     </select>
 
                     <span class="no_after_style" id='spanCertificates'>IT関連資格</span>
@@ -421,3 +414,34 @@ $(document).ready(function(){
   });
 </script>
 
+<script>
+    	function ChangeClass1st(element) {
+
+		class2ndSelect.replaceChildren();
+		
+        console.log(class2ndSelect);
+		switch (element.value) {
+        <?php foreach ($optionDatas["class2nd"] as $value => $class2nd): ?>
+            case "<?php echo $optionDatas["class1st"][array_search($value, array_column($optionDatas["class1st"], "idx"))]["text"]; ?>":
+                var option = document.createElement("option");
+                option.hidden = true;
+                option.innerText = "選択してください。";
+                class2ndSelect.appendChild(option);
+
+                <?php foreach ($class2nd as $data): ?>
+                    var option = document.createElement("option");
+                    option.value = <?php echo $data["idx"]; ?>;
+                    option.innerText = "<?php echo $data["text"]; ?>";
+                    class2ndSelect.appendChild(option);
+                <?php endforeach; ?>
+                break;
+                <?php endforeach; ?>
+                default:
+                    var option = document.createElement("option");
+                    option.value = 7;
+                    option.innerText = "データがありません";
+                    class2ndSelect.appendChild(option);
+                    break;
+            }
+	}
+</script>

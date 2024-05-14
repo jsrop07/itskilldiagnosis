@@ -16,6 +16,7 @@ class ApplicantController extends AbstractActionController
 		header("Location: applicant/login");
 		exit;
 	}
+
   public function applicationAction()
   {
 	$this->layout("layout/applicant/application_layout");
@@ -26,14 +27,12 @@ class ApplicantController extends AbstractActionController
 	$class1st=$tbl->getclass1st();
 	$managerInfo=$tbl->readByManagerInfo();
 	$managerArray=[$managerInfo["id"], $managerInfo["password"],$managerInfo["name"],$managerInfo["smtp_password"]];
-	// array_push($managerArray, $managerInfo["id"], $managerInfo["password"],$managerInfo["name"],$managerInfo["smtp_password"]);
-	// array_push($managerArray, ['key' => 'value5']);
-	// print_r($managerArray);
-	// exit;
+
+	$datas["optionDatas"] = $this->GetOptionDatasForInput();
 
 	$p = $this->params()->fromPost();
 	$mode =(isset($p['mode'])    &&   $p['mode'] !='')? $p['mode']:'';
-	$viewModel = new ViewModel(['class2nd' => $class2nd,'class1st' => $class1st,'p' => $p]);
+	$viewModel = new ViewModel(['class2nd' => $class2nd,'class1st' => $class1st,  "optionDatas"=>$this->GetOptionDatasForInput(), 'p' => $p]);
 	$viewModel->setTemplate("/applicant/application.phtml");
 
 	if ($mode == 'btn_submit') {
@@ -593,5 +592,45 @@ function mailByApplicantExam($applicantInfo,$sqlSet,$managerArray){
 		return $vm;
 	}
 
-		
+	function GetOptionDatasForInput() {
+		$optionTb = $this->getServiceLocator()->get("OptionTable");
+		$beforeOptionDatas = iterator_to_array($optionTb->ReadValid());
+
+		$afterOptionDatas = array();
+		$class2ndDatas = array();
+		$other = array();
+		foreach ($beforeOptionDatas as $data) {
+			if ($data["type"] == "status") { continue; }
+			if ($data["type"] == "level") { continue; }
+			if ($data["text"] == "その他") {
+				$other = $data;
+				continue;
+			}
+			if ($data["type"] == "class2nd") {
+				array_push($class2ndDatas, $data);
+				continue;
+			}
+
+			if (!isset($afterOptionDatas[$data["type"]])) {
+				$afterOptionDatas[$data["type"]] = array();
+			}
+			array_push($afterOptionDatas[$data["type"]], $data);
+		}
+
+		array_push($afterOptionDatas["class1st"], $other);
+
+		foreach ($class2ndDatas as $data) {
+			if (!isset($afterOptionDatas["class2nd"][$data["class_upper"]])) {
+				$afterOptionDatas["class2nd"][$data["class_upper"]] = array();
+			}
+			array_push($afterOptionDatas["class2nd"][$data["class_upper"]], $data);
+		}
+
+		$afterOptionDatas["level"] = array();
+		array_push($afterOptionDatas["level"], $optionTb->ReadByText("初級"));
+		array_push($afterOptionDatas["level"], $optionTb->ReadByText("中級"));
+		array_push($afterOptionDatas["level"], $optionTb->ReadByText("高級"));
+
+		return $afterOptionDatas;
+	}	
 }

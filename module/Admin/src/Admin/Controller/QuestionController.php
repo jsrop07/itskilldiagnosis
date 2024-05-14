@@ -30,8 +30,6 @@ class QuestionController extends AbstractActionController
 		$datas["breadcrumbData"] = ["ITスキル診断問項管理"];
 		$datas["optionDatas"] = $this->GetOptionDatas();
 
-		$printDataNum = 10;	// Number of data to output on one page
-
 		// Data of login user
 		$session = new Container("user");
 		$userLevel = $session["level"];
@@ -108,7 +106,7 @@ class QuestionController extends AbstractActionController
 		}
 
 		$questionDatas->setCurrentPageNumber($page);
-		$questionDatas->setItemCountPerPage($printDataNum);
+		$questionDatas->setItemCountPerPage(10);
 		$datas["questionDatas"] = $questionDatas;
 		return $this->SetViewModel($datas, "/question/question_list.phtml");
 	}
@@ -118,6 +116,8 @@ class QuestionController extends AbstractActionController
 		$this->ChkLogin();
 		$datas["breadcrumbData"] = ["ITスキル診断問項管理", "問題登録"];
 		$datas["title"] = "問題登録";
+		$datas["optionDatas"] = $this->GetOptionDatasForInput($datas);
+
 
 		// Check return from 登録確認　page
 		$post = $this->params()->fromPost();
@@ -128,7 +128,6 @@ class QuestionController extends AbstractActionController
 		$adminTb = $this->getServiceLocator()->get("AdminTable");
 		$datas["adminDatas"] = $adminTb->ReadAllList();
 
-		$datas = $this->GetOptionDatasForInput($datas);
 		return $this->SetViewModel($datas, "/question/question_input.phtml");
 	}
 
@@ -137,31 +136,14 @@ class QuestionController extends AbstractActionController
 		$this->ChkLogin();
 		$datas["breadcrumbData"] = ["ITスキル診断問項管理", "問題登録", "登録確認"];
 		$datas["title"] = "登録確認";
+		$datas["optionDatas"] = $this->GetOptionDatas();
 
 		$post = $this->params()->fromPost();
-
-		// Change 答え data to string
-		$answers = "";
-		foreach ($post as $key => $value) {
-			if (strpos($key, "answer") !== false) {
-				$answers .= $value . ",";
-				unset($post[$key]);
-			}
-		}
-		$post["answers"] = substr($answers, 0, -1);
-
-		$datas["printDatas"] = $post;
-		$datas["inputDatas"] = $post;
+		$datas["questionData"] = $post;
 
 		// Save register name
 		$adminTb = $this->getServiceLocator()->get("AdminTable");
 		$datas["register"] = $adminTb->ReadByCode($post["admin_regist"])["name"];
-
-		$optionTb = $this->getServiceLocator()->get("OptionTable");
-		$optionDatas = iterator_to_array($optionTb->ReadAll());
-		foreach ($optionDatas as $data) {
-			$datas["optionDatas"][$data["idx"]] = $data["text"];
-		}
 
 		return $this->SetViewModel($datas, "/question/question_confirm.phtml");
 	}
@@ -233,7 +215,7 @@ class QuestionController extends AbstractActionController
 	}
 
 	/** Get optionDatas
-	 * @return array $optionDatas["idx" => "text"]
+	 * @return array $optionDatas ["idx" => "text"]
 	*/
 	function GetOptionDatas() {
 		$optionTb = $this->getServiceLocator()->get("OptionTable");
@@ -247,37 +229,49 @@ class QuestionController extends AbstractActionController
 		return $afterOptionDatas;
 	}
 
-	/** Add optionDatas for input in $datas
-	 * @param mixed $datas array #ViewModel($datas)
-	 * @return mixed $datas add optionDatas["type"] = array()
+	/** Get optionDatas for Input
+	 * @return array $optionDatas ["idx" => $data]
 	*/
-	function GetOptionDatasForInput($datas) {
+	function GetOptionDatasForInput() {
 		$optionTb = $this->getServiceLocator()->get("OptionTable");
-		$optionDatas = iterator_to_array($optionTb->ReadValid());
+		$beforeOptionDatas = iterator_to_array($optionTb->ReadValid());
 
-		$datas["optionDatas"] = array();
+		$afterOptionDatas = array();
+		$class2ndDatas = array();
 		$other = array();
-		foreach ($optionDatas as $data) {
+		foreach ($beforeOptionDatas as $data) {
 			if ($data["type"] == "status") { continue; }
 			if ($data["type"] == "level") { continue; }
 			if ($data["text"] == "その他") {
 				$other = $data;
 				continue;
 			}
-
-			if (!isset($datas["optionDatas"][$data["type"]])) {
-				$datas["optionDatas"][$data["type"]] = array();
+			if ($data["type"] == "class2nd") {
+				array_push($class2ndDatas, $data);
+				continue;
 			}
-			array_push($datas["optionDatas"][$data["type"]], $data);
+
+			if (!isset($afterOptionDatas[$data["type"]])) {
+				$afterOptionDatas[$data["type"]] = array();
+			}
+			array_push($afterOptionDatas[$data["type"]], $data);
 		}
 
-		array_push($datas["optionDatas"]["class1st"], $other);
-		$datas["optionDatas"]["level"] = array();
-		array_push($datas["optionDatas"]["level"], $optionTb->ReadByText("初級"));
-		array_push($datas["optionDatas"]["level"], $optionTb->ReadByText("中級"));
-		array_push($datas["optionDatas"]["level"], $optionTb->ReadByText("高級"));
+		array_push($afterOptionDatas["class1st"], $other);
 
-		return $datas;
+		foreach ($class2ndDatas as $data) {
+			if (!isset($afterOptionDatas["class2nd"][$data["class_upper"]])) {
+				$afterOptionDatas["class2nd"][$data["class_upper"]] = array();
+			}
+			array_push($afterOptionDatas["class2nd"][$data["class_upper"]], $data);
+		}
+
+		$afterOptionDatas["level"] = array();
+		array_push($afterOptionDatas["level"], $optionTb->ReadByText("初級"));
+		array_push($afterOptionDatas["level"], $optionTb->ReadByText("中級"));
+		array_push($afterOptionDatas["level"], $optionTb->ReadByText("高級"));
+
+		return $afterOptionDatas;
 	}
 
 	public function createAction() {

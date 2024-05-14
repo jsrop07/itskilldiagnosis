@@ -1,7 +1,11 @@
 <?php
 	$numTexts = array("①", "②", "③", "④", "⑤");
 
-	$answers = explode(",", $printDatas["answers"]);
+	setcookie("user", "", time() - 3600, "/");
+	if (isset($_COOKIE["user"])) {
+    $username = $_COOKIE["user"];
+    echo $username;
+	}
 ?>
 
 <?php echo $this->partial("breadcrumb", ["datas" => $breadcrumbData]); ?>
@@ -16,19 +20,19 @@
 			</style>
 			<dl class="emegra setting">
 				<dt>大分類</dt>
-				<dd><?php echo $optionDatas[$printDatas["class1st"]]; ?></dd>
+				<dd><?php echo $optionDatas[$questionData["class1st"]]; ?></dd>
 
 				<dt>小分類</dt>
-				<dd><?php echo $optionDatas[$printDatas["class2nd"]]; ?></dd>
+				<dd><?php echo $optionDatas[$questionData["class2nd"]]; ?></dd>
 		
 				<dt>レベル</dt>
-				<dd><?php echo $optionDatas[$printDatas["level"]]; ?></dd>
+				<dd><?php echo $optionDatas[$questionData["level"]]; ?></dd>
 
 				<dt>問題タイプ</dt>
-				<dd><?php echo $optionDatas[$printDatas["type"]]; ?></dd>
+				<dd><?php echo $optionDatas[$questionData["type"]]; ?></dd>
 		
 				<dt>タイトル</dt>
-				<dd><?php echo $printDatas["title"]; ?></dd>
+				<dd><?php echo $questionData["title"]; ?></dd>
 			</dl>
 		</div>
 	</div>
@@ -42,21 +46,14 @@
 			</style>
 			<dl class="emegra question">
 				<dt>問題</dt>
-				<dd><?php echo $printDatas["question"]; ?></dd>
+				<dd><?php echo $questionData["question"]; ?></dd>
 
-				<dt>答え</dt>
-				<div id="answers" name="answers" style="display: grid; grid-template-columns: 15px 1fr; grid-gap: 24px 8px;">
-					<?php foreach($answers as $index => $data): ?>
-						<dt><?= $numTexts[$index]; ?></dt>
-						<dd><?php echo $data; ?></dd>
-					<?php endforeach; ?>
-				</div>
 
 				<dt>正解番号</dt>
-				<dd><?php echo $numTexts[$printDatas["correct"] - 1]; ?></dd>
+				<dd><?php echo $numTexts[$questionData["correct"] - 1]; ?></dd>
 
 				<dt>点数</dt>
-				<dd><?php echo $printDatas["point"]; ?></dd>
+				<dd><?php echo $questionData["point"]; ?></dd>
 			</dl>
 		</div>
 	</div>
@@ -73,10 +70,10 @@
 				<dd><?php echo $register; ?></dd>
 
 				<dt>作成日</dt>
-				<dd><?php echo date("y/m/d", strtotime($printDatas["date_regist"])); ?></dd>
+				<dd><?php echo date("y/m/d", strtotime($questionData["date_regist"])); ?></dd>
 			
 				<dt>備考</dt>
-				<dd><?php echo $printDatas["note"]; ?></dd>
+				<dd><?php echo $questionData["note"]; ?></dd>
 			</dl>
 		</div>
 	</div>
@@ -84,7 +81,7 @@
 
 
 <form id="form" method="post" action="./input">
-	<?php foreach ($inputDatas as $key => $data): ?>
+	<?php foreach ($questionData as $key => $data): ?>
 		<input type="hidden" name="<?php echo $key; ?>" value="<?php echo $data; ?>"/>
 	<?php endforeach; ?>
 </form>
@@ -98,32 +95,8 @@
 	const numTexts = ["①", "②", "③", "④", "⑤"];
 	const form = document.getElementById("form");
 
-	function Regist() {
-		const postForm = new FormData();
-		<?php foreach($inputDatas as $key => $data): ?>
-			postForm.append("<?php echo $key; ?>", "<?php echo $data; ?>");
-		<?php endforeach; ?>
-
-		const xhr = new XMLHttpRequest();
-		xhr.open("POST", "create", true);
-		xhr.send(postForm);
-		
-		xhr.onload = () => {
-			if (xhr.status == 200) {
-				const result = xhr.responseText;
-				if (result == "success") {
-					alert("登録しました。");
-					self.location.href = "list";
-				}
-				else {
-					alert("Error");
-					console.log(result);
-				}
-			}
-		}
-	}
-
 	function Return() {
-		form.submit();
+		setCookie("questionData", '<?php echo json_encode($questionData); ?>', {secure: true, "max-age": 30});
+		history.back();
 	}
 </script>

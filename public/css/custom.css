@@ -9,3 +9,14 @@ option {
 	font-style: normal;
 	color: black;
 }
+
+.grid.answers > div {
+	height: 38px;
+	margin-top: 24px;
+	display: grid;
+	grid-template-columns: 80px 1fr;
+	grid-gap: 0 16px;
+}
+.grid.answers > .answer_first {
+	margin-top: 0;
+}

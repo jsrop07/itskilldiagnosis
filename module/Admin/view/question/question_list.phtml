@@ -1,4 +1,6 @@
 <?php
+	$levelTexts = array("0級", "初級", "中級", "高級");
+
 	function ChkDeleter($data, $optionDatas) {
 		if ($optionDatas[$data["status"]] == "新規") { return true; }
 		return false;
@@ -42,7 +44,7 @@
 	button.emegra.search.confirm {
 		height: 30px;
 		width: 100px;
-		
+
 		font-size: 15px;
 		font-weight: 400;
 	}
@@ -134,7 +136,7 @@
 						<td><?php echo $optionDatas[$data["status"]]; ?></td>
 						<td><?php echo $optionDatas[$data["class1st"]]; ?></td>
 						<td><?php echo $optionDatas[$data["class2nd"]]; ?></td>
-						<td><?php echo $optionDatas[$data["level"]]; ?></td>
+						<td><?php echo $levelTexts[$data["level"]]; ?></td>
 						<td class="link left" onclick="self.location.href='./detail/<?php echo $data['idx']; ?>';"><?php echo $data["title"]; ?></td>
 						<td><?php echo $optionDatas[$data["type"]]; ?></td>
 						<td><?php echo $data["point"]; ?></td>

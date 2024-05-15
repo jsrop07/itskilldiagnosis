@@ -27,6 +27,7 @@
 				const result = xhr.responseText;	
 				if (result == "success") {
 					alert("登録しました。");
+					self.location.href = "list";
 				}
 				else {
 					alert("Error");

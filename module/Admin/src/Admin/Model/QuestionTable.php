@@ -10,32 +10,21 @@ use Zend\Paginator\Paginator;
 
 class QuestionTable {
 	public function __construct() {
-		//Local設定ファイルがある場合、Local設定を優先する
 		if (is_file($_SERVER["DOCUMENT_ROOT"] . "/../config/autoload/local.php")) {
 			$this->config = require $_SERVER["DOCUMENT_ROOT"] . "/../config/autoload/local.php";
 		} else {
 			$this->config = require $_SERVER["DOCUMENT_ROOT"] . "/../config/autoload/global.php";
 		}
 
-		//指定DB設定情報通り接続
 		$dbArr = $this->config["db"];
 		$adapter = new Adapter($dbArr);
-		//Adapter設定
+
 		$this->adapter = $adapter;
-		//簡単に共通Sql宣言
 		$this->sql = new Sql($this->adapter);
 	}
 
 	public function CreateQuestion($datas) {
 		$qry = $this->sql->insert("question")->values($datas);
-		try { return $this->sql->prepareStatementForSqlObject($qry)->execute();
-		} catch (\Exception $e) {
-			return $e->getMessage();
-		}
-	}
-
-	public function ReadQuestion() {
-		$qry = $this->sql->select("question")->order("date_regist DESC");
 		return $this->sql->prepareStatementForSqlObject($qry)->execute();
 	}
 
@@ -252,14 +241,6 @@ class QuestionTable {
 		return $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
 	}
 
-	/** Read Table records for Diagnosis
-	 * @param array $whereDatas array[class1st, class2nd, level, point]
-	 * @return mixed data
-	 */
-	public function ReadForDiagnosis($whereDatas) {
-
-	}
-
 	/** Update data by index
 	 * @param int $idx index
 	 * @param mixed $setDatas
@@ -267,25 +248,17 @@ class QuestionTable {
 	 */
 	public function UpdateByIdx($idx, $setDatas) {
 		$qry = $this->sql->update("question")->where(["idx" => $idx])->set($setDatas);
-		try {
-			return $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
-		} catch (\Exception $e) {
-			return $e->getMessage();
-		}
+		return $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
 	}
 
 	/** Delete data by index
 	 * @param int $idx index
-	 * @param mixed $setDatas
+	 * @param mixed $setDatasW
 	 * @return mixed data
 	 */
-	public function DeleteQuestion($idx, $setDatas) {
+	public function RemoveQuestion($idx, $setDatas) {
 		$setDatas["date_delete"] = date("Y-m-d H:i:s");
 		$qry = $this->sql->update("question")->where(["idx" => $idx])->set($setDatas);
-		try {
-			return $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
-		} catch (\Exception $e) {
-			return $e->getMessage();
-		}
+		return $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
 	}
 }

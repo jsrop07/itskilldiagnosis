@@ -48,14 +48,56 @@ class SituTable
 		$qry = $this->sql->select("option")->where($whereData);
 		return $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
 	}
-	public function updateApplicantInfo($sqlWhere, $sqlSet){
+	
+	public function readByManagerInfo()
+    {
+      $qry = $this->sql->select("admin")->where(["pic" => "y"]);
+      return $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
+    }
+
+	public function getclass1st(){
+        $qry = $this->sql->select("option");
+        $qry->columns([
+            'idx','type','text'
+        ]);
+        $qry->where(['type' => 'class1st']);
+        $statement = $this->sql->prepareStatementForSqlObject($qry);
+        $result = $statement->execute();
+
+        return $result;
+    }
+	public function getclass2nd(){
+        $qry = $this->sql->select("option");
+        $qry->columns([
+            'idx','type','text','class_upper'
+        ]);
+        $qry->where(['type' => 'class2nd']);
+        $statement = $this->sql->prepareStatementForSqlObject($qry);
+        $result = $statement->execute();
+    
+        return $result;
+    }
+	public function updateRecordInfo($recordlWhere, $recordSet){
 		$qry=new sql($this->adapter);
 		$update=$qry->update('record');
 	
-		$sqlSet["request_date"] = date("Y-m-d H:i:s");
+		$recordSet["request_date"] = date("Y-m-d H:i:s");
 	
-		$update->set($sqlSet);
-		$update->where($sqlWhere);
+		$update->set($recordSet);
+		$update->where($recordlWhere);
+	
+		$sqlString = $qry->getSqlStringForSqlObject($update);
+		$result = $this->adapter->query($sqlString, Adapter::QUERY_MODE_EXECUTE);
+	
+		return $result;   
+	  }
+	  public function updateApplicantInfo($applicantWhere, $applicantSet){
+		$qry=new sql($this->adapter);
+		$update=$qry->update('applicant');
+	
+	
+		$update->set($applicantSet);
+		$update->where($applicantWhere);
 	
 		$sqlString = $qry->getSqlStringForSqlObject($update);
 		$result = $this->adapter->query($sqlString, Adapter::QUERY_MODE_EXECUTE);

@@ -27,7 +27,6 @@ class ApplicantController extends AbstractActionController
 	$class1st=$tbl->getclass1st();
 	$managerInfo=$tbl->readByManagerInfo();
 	$managerArray=[$managerInfo["id"], $managerInfo["password"],$managerInfo["name"],$managerInfo["smtp_password"]];
-
 	$datas["optionDatas"] = $this->GetOptionDatasForInput();
 
 	$p = $this->params()->fromPost();
@@ -82,8 +81,9 @@ class ApplicantController extends AbstractActionController
 		];
 
 	   $tbl->insertAndUpdateApplication($arr);
-		
-	   $this->mailByApplicantation($arr,$skillText,$caseText,$managerArray);
+	   $applicantInfo = $tbl->getRecord();
+
+	   $this->mailByApplicantation($arr,$skillText,$caseText,$managerArray,$applicantInfo);
 
 	   echo "
 	   <script>
@@ -101,14 +101,14 @@ class ApplicantController extends AbstractActionController
 	$this->layout("/applicant/applicationclear");
 	}
 
-  function mailByApplicantation($arr,$skillText,$caseText,$managerArray){
+  function mailByApplicantation($arr,$skillText,$caseText,$managerArray,$applicantInfo){
 	$mail = new MailSender();
 	// 기본 메일 전송 관련 설정 로드
 	$param['config']=$this->getConfig();
 	// 메일 제목 지정 (일반적으로 DB에 메일폼 테이블을 만들어서 그것을 가져와서 아래의 title contents에 넣지만, 이건 샘플이므로 간단히.)
 	// 사람마다 변환해야 할 부분은 {{이렇게}} 메일폼에 넣어놓는다.
 	$param['title']="{{user_name}}様、新しい試験診断の申し込みがあります。";
-	$param["content"] = "以下の申込者の情報をご参照ください。\n\nお名前（漢字）：{$arr["name"]}\nお名前（カナ）：{$arr["kana"]}\n応募区分：{$caseText}\nITスキル：{$skillText}\n\n診断者ページ：http://gngitskill:84/admin/applicant/list";
+	$param["content"] = "以下の申込者の情報をご参照ください。\n\nお名前（漢字）：{$arr["name"]}\nお名前（カナ）：{$arr["kana"]}\n応募区分：{$caseText}\nITスキル：{$skillText}\n\n診断者ページ：http://gngitskill:84/admin/situ/edit/{$applicantInfo["idx"]}";
 
 	// 사람이름이나, URL등 고유하게 변경해야 하는 것은 이렇게 처리한다.
 	// 메일 제목과 내용 부분 모두 변환처리.
@@ -326,11 +326,11 @@ class ApplicantController extends AbstractActionController
 			$applicantExamTbl->updateExam($sqlWhere, $sqlSet);			
 			$examRecordRecent =  $applicantExamTbl->readByApplicantIdx($applicantInfo);
 
-			// $applicantExamTbl->deletePasswordByIdx($applicantInfo["idx"]);
+			$applicantExamTbl->deletePasswordByIdx($applicantInfo["idx"]);
 			$this->mailByApplicantExam($applicantInfo,$sqlSet,$managerArray);
 			$this->mailByAdminToApplicant($applicantInfo,$examRecordRecent,$caseText,$majorText,$managerArray);
 
-			// session_unset(); 
+			session_unset(); 
 			echo "
 			<script>
 			self.location.href='/applicant/examclear';
@@ -354,7 +354,7 @@ function mailByApplicantExam($applicantInfo,$sqlSet,$managerArray){
 	// 메일 제목 지정 (일반적으로 DB에 메일폼 테이블을 만들어서 그것을 가져와서 아래의 title contents에 넣지만, 이건 샘플이므로 간단히.)
 	// 사람마다 변환해야 할 부분은 {{이렇게}} 메일폼에 넣어놓는다.
 	$param['title']="{{user_name}}様、{$applicantInfo["name"]}診断者の試験結果が出ました。";
-	$param["content"] = "以下の診断者の試験結果をご参照ください。\n\nお名前（漢字）：{$applicantInfo["name"]}\nお名前（カナ）：{$applicantInfo["kana"]}\nメールアドレス：{$applicantInfo["email"]}\n得点：{$sqlSet["get_point"]}\n評価：{$sqlSet["rank"]}\n評価結果：{$sqlSet["diagnosis_comment"]}\n\n診断者ページ：http://gngitskill:84/admin/applicant/list";
+	$param["content"] = "以下の診断者の試験結果をご参照ください。\n\nお名前（漢字）：{$applicantInfo["name"]}\nお名前（カナ）：{$applicantInfo["kana"]}\nメールアドレス：{$applicantInfo["email"]}\n得点：{$sqlSet["get_point"]}\n評価：{$sqlSet["rank"]}\n評価結果：{$sqlSet["diagnosis_comment"]}\n\n診断者ページ：http://gngitskill:84/admin/situation";
 
 	// 사람이름이나, URL등 고유하게 변경해야 하는 것은 이렇게 처리한다.
 	// 메일 제목과 내용 부분 모두 변환처리.

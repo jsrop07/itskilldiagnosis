@@ -189,7 +189,7 @@ window.onload = function() {
 
     var timerDisplay = document.getElementById("timerDisplay");
     
-    var examTime  =1; 
+    var examTime  = <?php echo $time_limit?>; 
     var stopTime = parseInt(10); 
 
     var minuteToSecond = examTime * 60;

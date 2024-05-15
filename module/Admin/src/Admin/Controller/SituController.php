@@ -4,6 +4,7 @@ namespace Admin\Controller;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Zend\Session\Container;
+use Admin\Model\MailRequest;
 
 class SituController extends AbstractActionController {
 	function ChkLogin() {
@@ -36,52 +37,118 @@ class SituController extends AbstractActionController {
 		$applicantTb = $this->getServiceLocator()->get("ApplicantTable-Admin");
 		$diagnosisTb = $this->getServiceLocator()->get("DiagnosisTable-Admin");
 		$situTb = $this->getServiceLocator()->get("situTable");
+		$managerInfo=$situTb->readByManagerInfo();
+		$managerArray=[$managerInfo["id"], $managerInfo["password"],$managerInfo["name"],$managerInfo["smtp_password"]];
 
 		$recordData = $recordTb->ReadByIdx($index);
 
 		$applicantData = $applicantTb->ReadByIdx($recordData["applicant_idx"]);
 		$recordData = array_merge($applicantData, $recordData);
 
-		if (($recordData["diagnosis_code"]) == null) {
+		if (($recordData["diagnosis_code"]) != null) {
 			$diagnosisData = $diagnosisTb->ReadByCode($recordData["diagnosis_code"]);
 			$recordData = array_merge($diagnosisData, $recordData);
 		}
 		$diagnosisData = $diagnosisTb->ReadByCode($recordData["diagnosis_code"]);
+		$datas["optionDatas"] = $this->GetOptionDatasForInput();
 
-		$datas = $this->GetOptionDatas($datas);
-		$datas["applicantArray"]=$applicantData;
-		$datas['recordArray']=$recordData;
-		$datas['diagnosisArray']=$diagnosisData;
-		// print_r(($recordData['idx']));
-
-		// if($editDatas == "btn_submit"){
-		// 	$sqlWhere['idx']=$recordData['idx'];
-		// 	// $sqlSet['email']=$applicantData['email'];
-		// 	// $sqlSet['name']=$applicantData['name'];
-		// 	// $sqlSet['kana']=$applicantData['kana'];
-		// 	$sqlSet['case']=$editDatas['case'];
-		// 	$sqlSet['education']=$recordData['education'];
-		// 	// $sqlSet['career']=$applicantData['career'];
-		// 	// $sqlSet['certificates']=$applicantData['certificates'];
-		// 	// $sqlSet['other']=$applicantData['other'];
-		// 	$sqlSet['major']=$recordData['major'];
-		// 	$sqlSet['skill']=$recordData['skill'];
-		// 	// $sqlSet['class1st']=$recordData['class1st'];
-		// 	// $sqlSet['class2nd']=$recordData['class2nd'];
-		// 	print_r($recordData['idx']);
+		$class1st=$situTb->getclass1st();
+		$class2nd=$situTb->getclass2nd();
 
 
-		// 	$situTb->updateExam($sqlWhere, $sqlSet);			
-		// 	echo "
-		// 	<script>
-		// 	self.location.href='/applicant/examclear';
-		// 	</script>
-		// 	";	
+		$datas["class1st"] = $class1st;
+		$datas["class2nd"] = $class2nd;
+
+		$datas["applicantArray"] = $applicantData;
+		$datas["recordArray"] = $recordData;
+		$datas["diagnosisArray"] = $diagnosisData;
+
+
+		if($editDatas == "btn_submit"){
+			$recordlWhere['idx']=$recordData['idx'];
+			$applicantWhere['idx']=$applicantData['idx'];
+			$applicantSet['email']=$post['email'];
+			$applicantSet['name']=$post['name'];
+			$applicantSet['kana']=$post['kana'];
+			$applicantSet['birth']=$post['birth'];
+			$recordSet['case']=$post['case'];
+			$recordSet['education']=$post['education'];
+			$applicantSet['career']=$post['career'];
+			$applicantSet['certificates']=$post['certificates'];
+			$applicantSet['other']=$post['other'];
+			$recordSet['major']=$post['major'];
+			$recordSet['skill']=$post['skill'];
+			$recordSet['class1st']=$post['class1st'];
+			$recordSet['class2nd']=$post['class2nd'];
+			// exit;	
+
+			$situTb->updateRecordInfo($recordlWhere, $recordSet);	
+			// exit;	
+			$situTb->updateApplicantInfo($applicantWhere, $applicantSet);	
+			$this->mailByRequest($recordData,$managerArray);
+			// print_r($applicantSet);
+			// print_r("<br>");
+			// print_r($recordSet);
+			// print_r("<br>");
+			// // print_r($applicantWhere);
+			// print_r("<br>");
+			// exit;
+			echo "
+			<script>
+			alert('依頼が 完了しました。')
+			self.location.href='/admin/situation/list';
+			</script>
+			";	
 	
-		// }
+		}
 
 		return $this->SetViewModel($datas, "/situation/situation_edit.phtml");
 	}
+
+	function mailByRequest($recordData,$managerArray){
+		$mail = new MailRequest();
+
+		// 기본 메일 전송 관련 설정 로드
+		$param['config']=$this->getConfig();
+		// 메일 제목 지정 (일반적으로 DB에 메일폼 테이블을 만들어서 그것을 가져와서 아래의 title contents에 넣지만, 이건 샘플이므로 간단히.)
+		// 사람마다 변환해야 할 부분은 {{이렇게}} 메일폼에 넣어놓는다.
+
+		$param['title']="{$recordData["name"]}様、株式会社ジエンジサービスから、ITスキル診断依頼が到着しています。";
+		$param["content"] = "以下URLより「ITスキル診断サイト」にログインし診断を行ってください。\n\nログインID：{$recordData["email"]}\nログインPWD：{$recordData["password"]}\n\n＜ITスキル診断URL＞\nhttp://gngitskill:84/applicant/login\n\n\n※このメールに返信しないでください。";
+	
+		// 사람이름이나, URL등 고유하게 변경해야 하는 것은 이렇게 처리한다.
+		// 메일 제목과 내용 부분 모두 변환처리.
+		$param['title']=str_replace("{{user_name}}","担当者",$param['title']);
+		// print_r($param['title']);
+		// $param['content']=str_replace("{{user_name}}","変換する試験受け者名",$param['content']);
+		$param['content']=str_replace("{{URL}}","テスト",$param['content']);
+	
+
+		// 수신자 이메일과 이름 설정
+		$param['managerEmail']=$managerArray[0];
+		$param['email']=$recordData["email"];;
+		$param['password']="$managerArray[1]";
+		$param['name']="$managerArray[2]";
+		$param['smtp_password']="$managerArray[3]";
+	
+		// 전송
+		$result = $mail->mailsender($param);
+		// $result = $this->getServiceLocator()->get("mailsender");
+	
+		$result_row = $result['transport']->getConnection()->getResponse();
+	
+		$results = str_replace("\r","",str_replace("\n","",str_replace(" ","",$result_row[0])));
+		switch(substr(strtolower($results),0,5)){
+			// 250ok 가 나오면 전송 의뢰 성공이다.
+				case "250ok":
+					$status = 'OK';
+						break;
+				// 그외의 것은 모두 실패로 처리한다.
+				default:
+					$status = 'FALSE';
+						break;
+		}
+	  }
 
 	/** Set Layout & Make ViewModel with datas and template 
 	 * @param mixed $datas array #ViewModel($datas)
@@ -117,34 +184,61 @@ class SituController extends AbstractActionController {
 	 * @param mixed $datas array #ViewModel($datas)
 	 * @return mixed $datas add optionDatas["type"] = array()
 	*/
-	function GetOptionDatasForInput($datas) {
+	function GetOptionDatasForInput() {
 		$optionTb = $this->getServiceLocator()->get("OptionTable");
-		$optionDatas = iterator_to_array($optionTb->ReadValid());
+		$beforeOptionDatas = iterator_to_array($optionTb->ReadValid());
 
-		if (!isset($datas["optionDatas"])) { $data["optionDatas"] = array(); }
+		$afterOptionDatas = array();
+		$class1stDatas = array();
+		$class2ndDatas = array();
 		$other = array();
-		foreach ($optionDatas as $data) {
+		foreach ($beforeOptionDatas as $data) {
 			if ($data["type"] == "status") { continue; }
 			if ($data["type"] == "level") { continue; }
 			if ($data["text"] == "その他") {
 				$other = $data;
 				continue;
 			}
-
-			if (!isset($datas["optionDatas"][$data["type"]])) {
-				$datas["optionDatas"][$data["type"]] = array();
+			if ($data["type"] == "class1st") {
+				$class1stDatas[$data["idx"]] = $data["text"];
 			}
-			array_push($datas["optionDatas"][$data["type"]], $data);
+			if ($data["type"] == "class2nd") {
+				array_push($class2ndDatas, $data);
+				continue;
+			}
+
+			if (!isset($afterOptionDatas[$data["type"]])) {
+				$afterOptionDatas[$data["type"]] = array();
+			}
+			array_push($afterOptionDatas[$data["type"]], $data);
 		}
 
-		array_push($datas["optionDatas"]["class1st"], $other);
-		$datas["optionDatas"]["level"] = array();
-		array_push($datas["optionDatas"]["level"], $optionTb->ReadByText("初級"));
-		array_push($datas["optionDatas"]["level"], $optionTb->ReadByText("中級"));
-		array_push($datas["optionDatas"]["level"], $optionTb->ReadByText("高級"));
+		array_push($afterOptionDatas["class1st"], $other);
 
-		return $datas;
-	}
+		foreach ($class2ndDatas as $data) {
+			if (!isset($afterOptionDatas["class2nd"][$class1stDatas[$data["class_upper"]]])) {
+				$afterOptionDatas["class2nd"][$class1stDatas[$data["class_upper"]]] = array();
+			}
+			array_push($afterOptionDatas["class2nd"][$class1stDatas[$data["class_upper"]]], $data);
+		}
+
+
+		return $afterOptionDatas;
+	}	
+
+	public function getConfig(){
+		if(isset($_SERVER['DOCUMENT_ROOT']) && $_SERVER['DOCUMENT_ROOT']!=''){
+				$droot = $_SERVER['DOCUMENT_ROOT'];
+		}else{
+				$droot = "abc";
+		}
+		if(is_file($droot.'/../config/autoload/local.php')){
+				$config = require $droot.'/../config/autoload/local.php';
+		}else{
+				$config = require $droot.'/../config/autoload/global.php';
+		}
+		return $config;
+}
 
 	/** Make QuestionDatas by Point
 	 * @param array $whereDatas array[class1st, class2nd, level]
@@ -172,4 +266,6 @@ class SituController extends AbstractActionController {
 
 		return $questionDatas;
 	}
+
+	
 }

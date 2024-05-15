@@ -51,13 +51,17 @@ class ApplicationTable
         $qry->columns([
             'idx','type','text','class_upper'
         ]);
-        $qry->where(['type' => 'class2nd','class_upper'=>7]);
+        $qry->where(['type' => 'class2nd']);
         $statement = $this->sql->prepareStatementForSqlObject($qry);
         $result = $statement->execute();
     
         return $result;
     }
     
+    public function getRecord(){
+        $qry = $this->sql->select("record")->order("idx DESC");
+        return $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
+    }
 
     public function getApplicantByEmail($email) {
         $qry = new Sql($this->adapter);

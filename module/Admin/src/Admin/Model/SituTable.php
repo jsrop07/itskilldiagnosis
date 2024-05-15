@@ -77,7 +77,35 @@ class SituTable
     
         return $result;
     }
-	public function updateRecordInfo($recordlWhere, $recordSet){
+	// public function updateRecordInfo($recordlWhere, $recordSet){
+	// 	$qry=new sql($this->adapter);
+	// 	$update=$qry->update('record');
+	
+	// 	$recordSet["request_date"] = date("Y-m-d H:i:s");
+	
+	// 	$update->set($recordSet);
+	// 	$update->where($recordlWhere);
+	
+	// 	$sqlString = $qry->getSqlStringForSqlObject($update);
+	// 	$result = $this->adapter->query($sqlString, Adapter::QUERY_MODE_EXECUTE);
+	
+	// 	return $result;   
+	//   }
+	//   public function updateApplicantInfo($applicantWhere, $applicantSet){
+	// 	$qry=new sql($this->adapter);
+	// 	$update=$qry->update('applicant');
+	
+	
+	// 	$update->set($applicantSet);
+	// 	$update->where($applicantWhere);
+	
+	// 	$sqlString = $qry->getSqlStringForSqlObject($update);
+	// 	$result = $this->adapter->query($sqlString, Adapter::QUERY_MODE_EXECUTE);
+	
+	// 	return $result;   
+	//   }
+
+	public function updateRecordInfos($recordlWhere, $recordSet){
 		$qry=new sql($this->adapter);
 		$update=$qry->update('record');
 	
@@ -91,7 +119,7 @@ class SituTable
 	
 		return $result;   
 	  }
-	  public function updateApplicantInfo($applicantWhere, $applicantSet){
+	  public function updateApplicantInfos($applicantWhere, $applicantSet){
 		$qry=new sql($this->adapter);
 		$update=$qry->update('applicant');
 	

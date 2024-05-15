@@ -63,11 +63,11 @@ class SituController extends AbstractActionController {
 		$datas["recordArray"] = $recordData;
 		$datas["diagnosisArray"] = $diagnosisData;
 
-
 		if($editDatas == "btn_submit"){
 			$recordlWhere['idx']=$recordData['idx'];
 			$applicantWhere['idx']=$applicantData['idx'];
 			$applicantSet['email']=$post['email'];
+			$applicantSet['password']=$post['password'];
 			$applicantSet['name']=$post['name'];
 			$applicantSet['kana']=$post['kana'];
 			$applicantSet['birth']=$post['birth'];
@@ -81,7 +81,6 @@ class SituController extends AbstractActionController {
 			$recordSet['class1st']=$post['class1st'];
 			$recordSet['class2nd']=$post['class2nd'];
 			// exit;	
-
 			$situTb->updateRecordInfo($recordlWhere, $recordSet);	
 			// exit;	
 			$situTb->updateApplicantInfo($applicantWhere, $applicantSet);	

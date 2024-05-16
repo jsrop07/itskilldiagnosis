@@ -279,16 +279,6 @@ class QuestionController extends AbstractActionController
 			array_push($optionDatas["class2nd"][$data["class_upper"]], $data);
 		}
 
-		$optionDatas["level"] = array();
-		try {
-			array_push($optionDatas["level"], $optionTb->ReadByText("初級"));
-			array_push($optionDatas["level"], $optionTb->ReadByText("中級"));
-			array_push($optionDatas["level"], $optionTb->ReadByText("高級"));
-		} catch (\Exception $e) {
-			print_r($e->getMessage());
-			exit;
-		}
-
 		return $optionDatas;
 	}
 
@@ -297,11 +287,11 @@ class QuestionController extends AbstractActionController
 
 		$optionTb = $this->getServiceLocator()->get("OptionTable");
 		try { $post["status"] = $optionTb->ReadByText("新規")["idx"]; }
-		catch (\Exception $e) { die($e->getMessage()); exit; }
+		catch (\Exception $e) { die($e->getMessage()); }
 
 		$questionTb = $this->getServiceLocator()->get("QuestionTable");
 		try { $questionTb->CreateQuestion($post); }
-		catch (\Exception $e) { die($e->getMessage()); exit; }
+		catch (\Exception $e) { die($e->getMessage()); }
 
 		die("success");
 	}
@@ -316,7 +306,7 @@ class QuestionController extends AbstractActionController
 
 		$optionTb = $this->getServiceLocator()->get("OptionTable");
 		try { $post["status"] = $optionTb->ReadByText("承認依頼")["idx"]; }
-		catch (\Exception $e) { die($e->getMessage()); exit; }
+		catch (\Exception $e) { die($e->getMessage()); }
 
 		$questionTb = $this->getServiceLocator()->get("QuestionTable");
 		try { $questionTb->UpdateByIdx($idx, $post); }
@@ -334,12 +324,12 @@ class QuestionController extends AbstractActionController
 
 		$optionTb = $this->getServiceLocator()->get("OptionTable");
 		try { $sqlSet["status"] = $optionTb->ReadByText("削除")["idx"]; }
-		catch (\Exception $e) { die($e->getMessage()); exit; }
+		catch (\Exception $e) { die($e->getMessage()); }
 
 		$questionTb = $this->getServiceLocator()->get("QuestionTable");
 		foreach ($idxDatas as $idx) {
 			try { $questionTb->RemoveQuestion($idx, $sqlSet); }
-			catch (\Exception $e) { die($e->getMessage()); exit; }
+			catch (\Exception $e) { die($e->getMessage()); }
 		}
 		die("success");
 	}
@@ -355,7 +345,7 @@ class QuestionController extends AbstractActionController
 		$beforeNotes = array();
 		foreach ($idxDatas as $idx) {
 			try { $result = $questionTb->ReadByIdx($idx); }
-			catch (\Exception $e) { die($e->getMessage()); exit; }
+			catch (\Exception $e) { die($e->getMessage()); }
 			if ($result["date_approve"] != null) { die("fail"); }
 			else { array_push($beforeNotes, $result["note"]); }
 		}
@@ -367,13 +357,13 @@ class QuestionController extends AbstractActionController
 
 		$optionTb = $this->getServiceLocator()->get("OptionTable");
 		try { $sqlSet["status"] = $optionTb->ReadByText("承認済")["idx"]; }
-		catch (\Exception $e) { die($e->getMessage()); exit; }
+		catch (\Exception $e) { die($e->getMessage()); }
 
 		foreach ($idxDatas as $index => $idx) {
 			$sqlSet["note"] = $beforeNotes[$index] . $log;
 
 			try { $questionTb->UpdateByIdx($idx, $sqlSet); }
-			catch (\Exception $e) { die($e->getMessage()); exit; }
+			catch (\Exception $e) { die($e->getMessage()); }
 		}
 
 		die("success");
@@ -406,8 +396,8 @@ class QuestionController extends AbstractActionController
 					$questionData[$keys[$idx]] = $data;
 				}
 
-				for ($i = 3; $i < 5; $i++) {
-					if (trim($questionData["answer" . $i]) == "") {
+				for ($i = 4; $i <= 5; $i++) {
+					if (!isset($questionData["answer" . $i]) || trim($questionData["answer" . $i]) == "") {
 						$questionData["answer" . $i] = null;
 					}
 				}
@@ -433,7 +423,7 @@ class QuestionController extends AbstractActionController
 					$sqlWhere["type"] = "class2nd";
 					$sqlWhere["text"] = $questionData["class2nd"];
 					$sqlWhere["class_upper"] = $questionData["class1st"];
-					$questionData["class2nd"] = $optionTb->ReadOption($sqlWhere)[0]["idx"];
+					$questionData["class2nd"] = $optionTb->ReadByOption($sqlWhere)[0]["idx"];
 					$questionData["type"] = $optionTb->ReadByText([$questionData["type"]])["idx"];
 					$questionData["note"] = "CSVで作成　" . date("Y.m.d") . "　" . $session["name"] . "\n";
 					$questionData["status"] = $optionTb->ReadByText(["新規"])["idx"];
@@ -443,7 +433,6 @@ class QuestionController extends AbstractActionController
 					$questionTb->CreateQuestion($questionData);
 				} catch (\Exception $e) {
 					die($e->getMessage());
-					exit;
 				}
 			}
 		}

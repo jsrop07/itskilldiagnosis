@@ -1,4 +1,6 @@
 <?php
+	$levelTexts = array("0級", "初級", "中級", "高級");
+
 	$url = explode("?", $_SERVER["REQUEST_URI"])[0];
 	if (!isset($_SESSION)) { session_start(); }
 
@@ -76,22 +78,22 @@
 
 		<div style="display: flex;">
 			<select class="form-select form-select-sm" style="width: 150px; margin-right: 8px;" onchange="ChangeSearch(this.value)">
-				<option value="level" <?php echo (isset($searchData) && $searchKey == "level") ? " selected" : ""; ?>>レベル</option>
-				<option value="class1st" <?php echo (isset($searchData) && $searchKey == "class1st") ? " selected" : ""; ?>>大分類</option>
-				<option value="class2nd" <?php echo (isset($searchData) && $searchKey == "class2nd") ? " selected" : ""; ?>>小分類</option>
+				<option value="level"<?php echo (isset($searchData) && $searchKey == "level") ? " selected" : ""; ?>>レベル</option>
+				<option value="class1st"<?php echo (isset($searchData) && $searchKey == "class1st") ? " selected" : ""; ?>>大分類</option>
+				<option value="class2nd"<?php echo (isset($searchData) && $searchKey == "class2nd") ? " selected" : ""; ?>>小分類</option>
 			</select>
 			<div style="width: 150px; margin-right: 8px;">
 				<select class="form-select form-select-sm" id="select-search">
 					<?php if (isset($searchData)): ?>
 						<option value="" hidden>選択</option>
-						<?php foreach ($optionDatas[$searchKey] as $data): ?>
+						<?php foreach ($inputOption[$searchKey] as $data): ?>
 							<option value="<?php echo $data["idx"]; ?>"<?php echo ($data["idx"] == $searchValue) ? " selected" : ""; ?>><?php echo $data["text"]; ?></option>
 						<?php endforeach; ?>
 					<?php else: ?>
 						<option value="" hidden>選択</option>
-						<?php foreach ($optionDatas["level"] as $data): ?>
-							<option value="<?php echo $data["idx"]; ?>"><?php echo $data["text"]; ?></option>
-						<?php endforeach; ?>
+						<?php for($i = 0; $i <= 3; $i++): ?>
+							<option value="<?= $i; ?>"><?= $levelTexts[$i]; ?></option>
+						<?php endfor; ?>
 					<?php endif; ?>
 				</select>
 			</div>
@@ -125,7 +127,7 @@
 					<tr>
 						<td><?php echo $data["num"]; ?></td>
 						<td><?php echo $data["code"]; ?></td>
-						<td><?php echo $optionDatas[$data["level"]]; ?></td>
+						<td><?php echo $levelTexts[$data["level"]]; ?></td>
 						<td class="link left" onclick="self.location.href='./detail/<?php echo $data['idx']; ?>'"><?php echo $data["title"]; ?></td>
 						<td><?php echo $optionDatas[$data["class1st"]]; ?></td>
 						<td><?php echo $optionDatas[$data["class2nd"]]; ?></td>
@@ -154,7 +156,7 @@
 <script type="text/javascript">
 	const selectSearch = document.getElementById("select-search");
 
-	let searchOption = "<?php echo (isset($searchData)) ? $searchKey : "status"; ?>";
+	let searchOption = "<?php echo (isset($searchData)) ? $searchKey : "level"; ?>";
 
 	function ChangeSearch(value) {
 		selectSearch.replaceChildren();
@@ -168,15 +170,15 @@
 
 		switch(value) {
 			case "level":
-				<?php foreach ($optionDatas["level"] as $data): ?>
+				<?php for ($i = 0; $i <= 3; $i++): ?>
 					var option = document.createElement("option");
-					option.value = <?php echo $data["idx"]; ?>;
-					option.innerText = "<?php echo $data["text"]; ?>";
+					option.value = <?= $i; ?>;
+					option.innerText = "<?= $levelTexts[$i]; ?>";
 					selectSearch.appendChild(option);
-				<?php endforeach; ?>
+				<?php endfor; ?>
 				break;
 			case "class1st":
-				<?php foreach ($optionDatas["class1st"] as $data): ?>
+				<?php foreach ($inputOptionDatas["class1st"] as $data): ?>
 					var option = document.createElement("option");
 					option.value = <?php echo $data["idx"]; ?>;
 					option.innerText = "<?php echo $data["text"]; ?>";
@@ -184,18 +186,10 @@
 				<?php endforeach; ?>
 				break;
 			case "class2nd":
-				<?php foreach ($optionDatas["class2nd"] as $data): ?>
+				<?php foreach ($class2ndDatas as $data): ?>
 					var option = document.createElement("option");
-					option.value = <?php echo $data["idx"]; ?>;
-					option.innerText = "<?php echo $data["text"]; ?>";
-					selectSearch.appendChild(option);
-				<?php endforeach; ?>
-				break;
-			case "case":
-				<?php foreach ($optionDatas["case"] as $data): ?>
-					var option = document.createElement("option");
-					option.value = <?php echo $data["idx"]; ?>;
-					option.innerText = "<?php echo $data["text"]; ?>";
+					option.value = "<?php echo $data; ?>";
+					option.innerText = "<?php echo $data; ?>";
 					selectSearch.appendChild(option);
 				<?php endforeach; ?>
 				break;

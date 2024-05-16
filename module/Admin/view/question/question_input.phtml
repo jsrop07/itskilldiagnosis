@@ -32,7 +32,7 @@
 <h1 class="title"><?php echo $title; ?></h1>
 
 <form id="form" method="post" action="./confirm">
-	<input name="date_regist" hidden/>
+	<input name="date_regist" value="<?php echo ($isSet) ? date("Y-m-d H:i:s", strtotime($questionData["date_regist"])) : date("Y-m-d H:i:s"); ?>" hidden>
 	<?php if ($isEdit): ?>
 		<input name="idx" value="<?php echo $questionData["idx"]; ?>" hidden/>
 	<?php endif; ?>
@@ -235,17 +235,9 @@
 	let answerCount = <?php echo $answerNum; ?>;
 	let answers;
 
-	// Get datetime data
 	window.onload = function() {
 		answers = [form.answer1, form.answer2, form.answer3, form.answer4, form.answer5];
 		SetValue();
-
-		<?php if ($isSet): ?>
-			form.date_regist.value = "<?php echo $questionData["date_regist"]; ?>";
-		<?php else: ?>
-			const now = new Date();
-			form.date_regist.value = now.toISOString().replace("T", " ").substring(0, 19);
-		<?php endif; ?>
 	}
 
 	function SetValue() {

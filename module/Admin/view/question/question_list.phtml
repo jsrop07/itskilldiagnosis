@@ -130,7 +130,6 @@
 			</thead>
 			<tbody>
 				<?php foreach($questionDatas as $index => $data): ?>
-					<?php  ?>
 					<tr>
 						<td><?php echo $firstNo - $index ; ?></td>
 						<td><?php echo $optionDatas[$data["status"]]; ?></td>
@@ -291,6 +290,8 @@
 			alert("承認するデータを選択してください。");
 			return false;
 		}
+
+		if (confirm("承認しますか？") === false) { return false; }
 
 		const postForm = new FormData();
 		postForm.append("idxs", idxs.slice(0, -1));

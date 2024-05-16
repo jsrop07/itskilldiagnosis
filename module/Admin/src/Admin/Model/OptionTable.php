@@ -44,7 +44,7 @@ class OptionTable
 		return iterator_to_array($this->sql->prepareStatementForSqlObject($qry)->execute());
 	}
 
-	public function ReadOption($whereData) {
+	public function ReadByOption($whereData) {
 		$qry = $this->sql->select("option")->where($whereData);
 		return iterator_to_array($this->sql->prepareStatementForSqlObject($qry)->execute());
 	}

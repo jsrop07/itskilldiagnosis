@@ -55,7 +55,7 @@ function InitStyle() { return " font-style: italic; color: ;"; }
 				<dd><input class="form-control" name="email" type="text" style="width:220px; " value="<?php echo $applicantArray["email"] ?>" readonly></dd>
 				
                 <dt class="essential">応募区分</dt>
-				<select class="form-select" name="case" style="width:220px;<?php echo ($isReturn) ? "" : InitStyle(); ?>" onchange="ChangeInputStyle(this)" value="<?php echo $recordArray["case"] ?>" >
+				<select class="form-select" name="case" style="width:220px;" onchange="ChangeInputStyle(this)" value="<?php echo $recordArray["case"] ?>" >
                         <option value="<?php echo ($recordArray['case']) ?>" selected hidden>
 						<?php
 							if ($recordArray['case'] == NULL) {
@@ -71,7 +71,7 @@ function InitStyle() { return " font-style: italic; color: ;"; }
                     </select>
 
                 <dt>パスワード</dt>
-				<dd><input class="form-control" name="password" type="text" style="width:220px;" value="123" readonly></dd>
+				<dd><input class="form-control" name="password" type="text" style="width:220px;" value="B7A2D423" readonly></dd>
 
 				<dt class="essential">お名前（漢字）</dt>
 				<dd><input class="form-control" id="userInput" name="name" type="text" placeholder="漢字を記入してください。"style="width:220px" maxlength='20' value="<?php echo $applicantArray["name"] ?>"></dd>
@@ -84,7 +84,7 @@ function InitStyle() { return " font-style: italic; color: ;"; }
 
                 <dt>性別</dt>
 				<dd> 
-					<select class="form-select"  name="gender" style="width:220px;<?php echo ($isReturn) ? "" : InitStyle(); ?>" onchange="ChangeInputStyle(this)" value="<?php echo $applicantArray["gender"] ?>" >
+					<select class="form-select"  name="gender" style="width:220px;" onchange="ChangeInputStyle(this)" value="<?php echo $applicantArray["gender"] ?>" >
                         <option selected disabled hidden>
 						<?php
 							if ($applicantArray['gender'] == NULL) {
@@ -109,7 +109,7 @@ function InitStyle() { return " font-style: italic; color: ;"; }
                         <option value="大学院卒" <?php echo($isITEducation4) ? "selected" : "" ;?>>大学院卒</option>
                         <option value="その他"<?php echo (!$isITEducation1 && $isITEducation2 && !$isITEducation3 && !$isITEducation4) ? "" : "selected"; ?>>その他</option>
                     </select>
-                        <input class="form-control w-50"  style="margin-left: 10px;" type="text" placeholder="その他の場合の、記入" id="educationInput" name="education" maxlength='20' value="<?php echo ($recordArray['education']) ?>">
+                        <input class="form-control w-50"  style="margin-left: 10px;" type="text" placeholder="その他の場合" id="educationInput" name="education" maxlength='20' value="<?php echo ($recordArray['education']) ?>">
 				</dd>
 
                 <dt>生年月日</dt>
@@ -125,7 +125,7 @@ function InitStyle() { return " font-style: italic; color: ;"; }
                         <option value="IT・ソフトウェア専攻"<?php echo ($isITMajor) ? " selected" : ""; ?>>IT・ソフトウェア専攻</option>
                         <option value="other"<?php echo ($recordArray["major"] != null && !$isITMajor) ? " selected" : ""; ?>>IT・ソフトウェア以外</option>
                     </select>
-                    <input class="form-control w-50" style="margin-left: 10px;" type="text" placeholder="その他の場合の、記入" id="majorInput"  name="major" maxlength='20' value='<?php echo ($recordArray['major']) ?>'  />
+                    <input class="form-control w-50" style="margin-left: 10px;" type="text" placeholder="その他の場合" id="majorInput"  name="major" maxlength='20' value='<?php echo ($recordArray['major']) ?>'  />
 				</dd>
 
 				<dt>その他</dt>
@@ -145,22 +145,14 @@ function InitStyle() { return " font-style: italic; color: ;"; }
 			<dl class="emegra setting">
                 <dt class="essential" id="ITskillTitle">ITスキル有無</dt>
 				<dd>
-					<select class="form-select" name="skill" id="ITskillId" style="width:220px;<?php echo ($isReturn) ? "" : InitStyle(); ?>">
+					<select class="form-select" name="skill" id="ITskillId" style="width:220px;">>
                         <option value="0" <?php echo($isITSkill) ? "selected" : "" ;?>>有</option>
                         <option value="1" <?php echo(!$isITSkill) ? "selected" : "" ;?>>無</option>
                     </select>
 				</dd>
                 <dt class="essential" id="class1stTitle">経験分野</dt>
 				<dd>
-					<select class="form-select" name="class1st" id="class1stId" style="width:220px;<?php echo ($isReturn) ? "" : InitStyle(); ?>" onchange="ChangeInputStyle(this)"  onclick="ChangeClass1st(this)" <?php echo $isDisabled ? 'disabled' : ''; ?>>
-						<option value="<?php echo $recordArray['class1st']; ?>"  selected disabled hidden>
-							<?php
-								if($recordArray['class1st']== NULL){
-									echo $recordArray['class1st']="なし";
-								}else
-									echo $recordArray['class1st'];
-								?>						
-						</option>
+					<select class="form-select" name="class1st" id="class1stId" style="width:220px;" onchange="ChangeInputStyle(this)"  onclick="ChangeClass1st(this)" <?php echo $isDisabled ? 'disabled' : ''; ?>>
 						<?php foreach ($this->class1st as $row): ?>
 							<?php $texts = explode(',', $row['text']); ?>
                             <?php foreach ($texts as $text): ?>
@@ -175,7 +167,7 @@ function InitStyle() { return " font-style: italic; color: ;"; }
 
 				<dt class="essential" id=class2ndTitle>問題種別</dt>
 				<dd>
-					<select class="form-select" name="class2nd" id="class2ndId" style="width:220px;<?php echo ($isReturn) ? "" : InitStyle(); ?>" onchange="ChangeInputStyle(this)">
+					<select class="form-select" name="class2nd" id="class2ndId" style="width:220px;" onchange="ChangeInputStyle(this)">
 						<option value="" hidden>選択</option>
 						<?php if (true): ?>
 							<?php foreach ($optionDatas["class2nd"][$recordArray["class1st"]] as $data): ?>
@@ -227,7 +219,7 @@ function InitStyle() { return " font-style: italic; color: ;"; }
 		
 				<dt class="essential">診断方法</dt>
                 <dd style="grid-column: 2 / 5;">
-					<select class="form-select" name="methods" style="width:13%;<?php echo ($isReturn) ? "" : InitStyle(); ?>" onchange="ChangeInputStyle(this)" >
+					<select class="form-select" name="methods" style="width:13%;" onchange="ChangeInputStyle(this)" >
                         <option value="" selected disabled hidden><?php echo $recordArray['method']?></option>
                         <option value="0">WEB</option>
                         <option value="1">対面</option>
@@ -296,46 +288,6 @@ function InitStyle() { return " font-style: italic; color: ;"; }
 			form.education.value = elements.value;
 		}
 	}
-
-	function Regist() {
-		if (form.code.value == "") {
-			alert("職別コードを入力してください");
-			setTimeout("form.code.focus();", 100);
-			return false;
-		}
-		
-		if (form.id.value == "") {
-			alert("IDを入力してください");
-			setTimeout("form.id.focus()", 100);
-			return false;
-		}
-		
-		if (pattern.test(form.id.value) === false) {
-			alert("IDを確認してください");
-			setTimeout("form.id.focus()", 100);
-			return false;
-		}
-		
-		if (form.password.value == "") {
-			alert("パスワードを入力してください");
-			setTimeout("form.password.focus()", 100);
-			return false;
-		}
-		
-		if (form.name.value == "") {
-			alert("名前を入力してください");
-			setTimeout("form.name.focus()", 100);
-			return false;
-		}
-		
-		if (smtp.disabled == false && smtp.value == "") {
-			alert("SMTPを入力してください");
-			setTimeout("smtp.focus()", 100);
-			return false;
-		}
-
-		form.submit();
-	}
 </script>
 <script>
 	function ChangeInputStyle(element) {
@@ -347,7 +299,7 @@ function InitStyle() { return " font-style: italic; color: ;"; }
 <script>
 	window.onload=function(){
 		// console.log(form.major);
-		randomPW();
+		// randomPW();
 	}
 </script>
 
@@ -359,9 +311,9 @@ function InitStyle() { return " font-style: italic; color: ;"; }
 	skillSelect.addEventListener('change', function() {
     var selectedValue = this.value;
 			if (selectedValue === '1') {
-				class1stSelect.diabled=true;
-				class2ndSelect.diabled=true;
-				careerSelect.diabled=true;
+				class1stSelect.value="その他";
+				class2ndSelect.value="33";
+				// careerSelect.diabled=true;
 			}
 			else{
 				class1stSelect.diabled=false;
@@ -454,12 +406,7 @@ switch (element.value) {
 		<?php endforeach; ?>
 		break;
 		<?php endforeach; ?>
-		default:
-			var option = document.createElement("option");
-			option.value = 7;
-			option.innerText = "データがありません";
-			class2ndSelect.appendChild(option);
-			break;
+		
 	}
 }
 </script>

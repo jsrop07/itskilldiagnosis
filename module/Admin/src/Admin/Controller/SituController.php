@@ -45,6 +45,7 @@ class SituController extends AbstractActionController {
 		$applicantData = $applicantTb->ReadByIdx($recordData["applicant_idx"]);
 		$recordData = array_merge($applicantData, $recordData);
 
+
 		if (($recordData["diagnosis_code"]) != null) {
 			$diagnosisData = $diagnosisTb->ReadByCode($recordData["diagnosis_code"]);
 			$recordData = array_merge($diagnosisData, $recordData);
@@ -80,9 +81,8 @@ class SituController extends AbstractActionController {
 			$recordSet['skill']=$post['skill'];
 			$recordSet['class1st']=$post['class1st'];
 			$recordSet['class2nd']=$post['class2nd'];
-			// exit;	
 			$situTb->updateRecordInfo($recordlWhere, $recordSet);	
-			// exit;	
+			exit;	
 			$situTb->updateApplicantInfo($applicantWhere, $applicantSet);	
 			$this->mailByRequest($recordData,$managerArray);
 			// print_r($applicantSet);
@@ -215,12 +215,30 @@ class SituController extends AbstractActionController {
 		array_push($afterOptionDatas["class1st"], $other);
 
 		foreach ($class2ndDatas as $data) {
-			if (!isset($afterOptionDatas["class2nd"][$class1stDatas[$data["class_upper"]]])) {
-				$afterOptionDatas["class2nd"][$class1stDatas[$data["class_upper"]]] = array();
+			$class_upper = $data["class_upper"];
+			
+			// Debugging: Check if class_upper exists in $class1stDatas
+			if (!isset($class1stDatas[$class_upper])) {
+				// echo "Notice: Undefined index $class_upper in \$class1stDatas\n";
+				continue; // Skip this iteration if the index is not set
 			}
-			array_push($afterOptionDatas["class2nd"][$class1stDatas[$data["class_upper"]]], $data);
+		
+			$class1stValue = $class1stDatas[$class_upper];
+		
+			// Check if $class1stValue is set in $afterOptionDatas["class2nd"]
+			if (!isset($afterOptionDatas["class2nd"][$class1stValue])) {
+				$afterOptionDatas["class2nd"][$class1stValue] = array();
+			}
+		
+			array_push($afterOptionDatas["class2nd"][$class1stValue], $data);
 		}
-
+		
+		// Optional: Debugging output
+		// print_r($afterOptionDatas);
+		
+		// print_r($afterOptionDatas["class2nd"][$class1stDatas[$data["class_upper"]]]);
+		// print_r($afterOptionDatas["class2nd"][$class1stDatas[$data["class_upper"]]]);
+		// exit;
 
 		return $afterOptionDatas;
 	}	

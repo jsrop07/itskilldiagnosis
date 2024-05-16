@@ -45,7 +45,7 @@ if ($ses_id) {
                             if (!empty($row[$answerKey])) : // answer가 존재하는 경우에만 출력
                             ?>
                                 <li style="padding: 10px 0">         
-                                    <input type="radio" style="margin-left: 100px;" name="answer<?= $idx + 1 ?>" value="<?= $i ?>"> <?= $row[$answerKey] ?>
+                                    <input type="radio" style="margin-left: 100px;" name="answ er<?=$idx + 1 ?>" value="<?= $i ?>"> <?php echo htmlspecialchars($row[$answerKey], ENT_QUOTES) ?>
                                 </li>
                             <?php endif; ?>
                         <?php endfor; ?>

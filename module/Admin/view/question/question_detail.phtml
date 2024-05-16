@@ -1,8 +1,15 @@
 <?php
+	$levelTexts = array("0級", "初級", "中級", "高級");
 	$numTexts = array("①", "②", "③", "④", "⑤");
 
 	if (!isset($_SESSION)) { session_start(); }
 	$userCode = $_SESSION["user"]["code"] ;
+
+	$answerNum = 0;
+	for ($i = 1; $i <= 5; $i++) {
+		if (!isset($questionData["answer" . $i])) { break; }
+		$answerNum++;
+	}
 
 	// Check approve authority
 	$isApprover = false;
@@ -29,13 +36,13 @@
 			<dd><?php echo $optionDatas[$questionData["class1st"]] . " / " . $optionDatas[$questionData["class2nd"]]; ?></dd>
 
 			<dt>レベル</dt>
-			<dd><?php echo $optionDatas[$questionData["level"]]; ?></dd>
+			<dd><?php echo $levelTexts[$questionData["level"]]; ?></dd>
 
 			<dt>問題タイプ</dt>
 			<dd style="grid-column: 2 / 5;"><?php echo $optionDatas[$questionData["type"]]; ?></dd>
 
 			<dt>タイトル</dt>
-			<dd style="grid-column: 2 / 5;"><?php echo $questionData["title"]; ?></dd>
+			<dd style="grid-column: 2 / 5;"><?php echo htmlspecialchars($questionData["title"], ENT_QUOTES); ?></dd>
 		</dl>
 	</div>
 </div>
@@ -49,18 +56,18 @@
 		</style>
 		<dl class="emegra question">
 			<dt>問題</dt>
-			<dd><?php echo $questionData["question"]; ?></dd>
+			<dd><?php echo htmlspecialchars($questionData["question"], ENT_QUOTES); ?></dd>
 
-			<dt>答え</dt>
+			<dt>選択肢</dt>
 			<dd class="expand">
-				<?php foreach (explode(",", $questionData["answers"]) as $index => $answer): ?>
-					<?= $numTexts[$index]; ?>
-					<?php echo $answer; ?> </br>
-				<?php endforeach; ?>
+				<?php for ($i = 1; $i <= $answerNum; $i++): ?>
+					<?= $numTexts[$i - 1]; ?>
+					<?php echo htmlspecialchars($questionData["answer" . $i], ENT_QUOTES); ?></br>
+				<?php endfor; ?>
 			</dd>
 
 			<dt>正解番号</dt>
-			<dd><?php echo $questionData["correct"]; ?></dd>
+			<dd><?php echo $numTexts[$questionData["correct"] - 1]; ?></dd>
 
 			<dt>点数</dt>
 			<dd><?php echo $questionData["point"]; ?></dd>
@@ -86,7 +93,7 @@
 			<dd><?php echo ($questionData["admin_approve"] != null) ? $approver : "未承認"; ?></dd>
 
 			<dt>承認日</dt>
-			<dd><?php echo isset($questionData["date_approve"]) ? date("y/m/d", strtotime($questionData["date_approve"])) : "未承認"; ?></dd>
+			<dd ><?php echo isset($questionData["date_approve"]) ? date("y/m/d", strtotime($questionData["date_approve"])) : "未承認"; ?></dd>
 
 			<dt>備考</dt>
 			<dd class="expand" style="grid-column: 2 / 5;"><?php echo $note; ?></dd>
@@ -95,12 +102,12 @@
 </div>
 
 <div class="btn-place" style="margin-top: 32px;">
-	<button class="emegra cancel" onclick="self.location.href='../list';">戻る</button>
+	<button class="emegra cancel" onclick="history.back();">戻る</button>
 	<?php if ($isApprover && $questionData["admin_approve"] == null): ?>
 		<button class="emegra" onclick="Approve();">承認</button>
 	<?php endif; ?>
 	<?php if ($isApprover || ($isRegister && $questionData["admin_approve"] == null)): ?>
-		<button class="emegra delete" onclick="Delete();">削除</button>
+		<button class="emegra delete" onclick="Remove();">削除</button>
 		<button class="emegra" onclick="self.location.href='../edit/<?php echo $questionData['idx']; ?>';">修正</button>
 	<?php endif; ?>
 </div>
@@ -131,12 +138,14 @@
 	<?php endif; ?>
 
 	<?php if ($isApprover || ($isRegister && $questionData["admin_approve"] == null)): ?>
-		function Delete() {
+		function Remove() {
+			if (confirm("削除しますか？") === false) { return false; }
+
 			const postForm = new FormData();
 			postForm.append("idxs", <?php echo $questionData["idx"]; ?>);
 
 			const xhr = new XMLHttpRequest();
-			xhr.open("POST", "../delete", true);
+			xhr.open("POST", "../remove", true);
 			xhr.send(postForm);
 			xhr.onload = () => {
 				if (xhr.status == 200) {

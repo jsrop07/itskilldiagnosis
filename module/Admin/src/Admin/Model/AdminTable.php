@@ -105,15 +105,13 @@ class AdminTable {
 	 * @param mixed $name input name
 	 * @return mixed Record Array
 	 */
-	public function ReadByName($name)
-	{
+	public function ReadByName($name) {
 		$qry = $this->sql->select("admin")->where(["date_end" => null, "name" => $name]);
 		return $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
 	}
 
 	/** Read Approvers */
-	public function ReadApprovers()
-	{
+	public function ReadApprovers() {
 		$qry = $this->sql->select("admin")->where(["date_end" => null, "level > 0"]);
 		return $this->sql->prepareStatementForSqlObject($qry)->execute();
 	}

@@ -88,7 +88,7 @@ class DiagnosisTable {
 	/** Update date_end By idx
 	 * @param int $idx
 	*/
-	public function DeleteDiagnosis($idx) {
+	public function RemoveDiagnosis($idx) {
 		$qry = $this->sql->update("diagnosis")->where(["idx" => $idx])->set(["date_end" => date("Y-m-d H:i:s")]);
 		return $this->sql->prepareStatementForSqlObject($qry)->execute();
 	}

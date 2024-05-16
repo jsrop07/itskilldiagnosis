@@ -10,7 +10,8 @@
 	$url = $_SERVER["REQUEST_URI"] . "?";
 	$query = explode("?", $url)[1];
 
-	$firstNo = $questionDatas->getTotalItemCount() - (($questionDatas->getCurrentPageNumber() - 1) * $questionDatas->getitemCountPerPage());
+	$firstNo = $questionDatas->getTotalItemCount();
+	$firstNo - (($questionDatas->getCurrentPageNumber() - 1) * $questionDatas->getitemCountPerPage());
 
 	// Check authority
 	$isApprover = false;

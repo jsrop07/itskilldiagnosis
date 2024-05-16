@@ -4,6 +4,9 @@
 	$url = explode("?", $_SERVER["REQUEST_URI"])[0];
 	if (!isset($_SESSION)) { session_start(); }
 
+	$firstNo = $diagnosisDatas->getTotalItemCount();
+	$firstNo -= (($diagnosisDatas->getCurrentPageNumber() - 1) * $diagnosisDatas->getitemCountPerPage());
+
 	if (isset($searchData)) {
 		$searchKey = array_keys($searchData)[0];
 		$searchValue = $searchData[$searchKey];
@@ -73,7 +76,7 @@
 <content class="main">
 	<div style="width: 100%; display: flex; align-items: end; justify-content: space-between;">
 		<div class="info-num">
-			<div class="count">診断書総計<div class="num"><?php echo $totalData; ?></div>部</div>
+			<div class="count">診断書総計<div class="num"><?php echo $diagnosisDatas->getTotalItemCount(); ?></div>部</div>
 		</div>
 
 		<div style="display: flex;">
@@ -101,7 +104,7 @@
 		</div>
 	</div>
 
-	<?php if (empty($diagnosisDatas)): ?>
+	<?php if (empty(iterator_to_array($diagnosisDatas))): ?>
 		<div class="table-empty" style="margin-top: 16px;">
 			データがありません。
 		</div>
@@ -123,9 +126,9 @@
 				</tr>
 			</thead>
 			<tbody>
-				<?php foreach ($diagnosisDatas as $data): ?>
+				<?php foreach ($diagnosisDatas as $index => $data): ?>
 					<tr>
-						<td><?php echo $data["num"]; ?></td>
+						<td><?php echo $firstNo - $index ; ?></td>
 						<td><?php echo $data["code"]; ?></td>
 						<td><?php echo $levelTexts[$data["level"]]; ?></td>
 						<td class="link left" onclick="self.location.href='./detail/<?php echo $data['idx']; ?>'"><?php echo $data["title"]; ?></td>
@@ -141,7 +144,7 @@
 	<?php endif; ?>
 
 	<div class="pagination-place" style="margin-top: 10px;">
-		<?php echo $this->paginationControl($this->noticelist, "sliding", array("pagination", "Notice"), array("url" => "")); ?>
+		<?php echo $this->paginationControl($diagnosisDatas, "sliding", array("pagination", "Notice"), array("url" => "")); ?>
 	</div>
 
 	<div class="button-place" style="margin-top: 10px;">

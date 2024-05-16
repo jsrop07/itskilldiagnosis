@@ -20,3 +20,9 @@ option {
 .grid.answers > .answer_first {
 	margin-top: 0;
 }
+
+.info-num {
+	height: 100%;
+	display: flex;
+	justify-content: end;
+}

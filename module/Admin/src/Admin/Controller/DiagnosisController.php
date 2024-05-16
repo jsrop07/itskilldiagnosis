@@ -44,63 +44,32 @@ class DiagnosisController extends AbstractActionController {
 		}
 		$datas["class2ndDatas"] = $class2ndDatas;
 
-		// Number of data to output on one page
-		$printDataNum = 10;
+		$query = $this->params()->fromQuery();
 
 		// Get Current Page
-		$page = $this->params()->fromQuery("page", 1);
-
-		// Get Query Except page
-		$query  = $this->params()->fromQuery();
-		unset($query["page"]);
+		$page = 1;
+		if (isset($query["page"])) {
+			$page = $query["page"];
+			unset($query["page"]);
+		}
 
 		$diagnosisTb = $this->getServiceLocator()->get("DiagnosisTable-Admin");
 
-		$totalDiagnosisDatas = "";
-		$paginationData = "";
+		$diagnosisDatas = array();
 		if (!empty($query)) {
-			try {
-				$totalDiagnosisDatas = $diagnosisTb->ReadListByOption($query);
-				$paginationData = $diagnosisTb->GetListByOption($query);
-			} catch (\Exception $e) {
-				print_r($e->getMessage());
-				exit;
-			}
+			try { $diagnosisDatas = $diagnosisTb->GetListByOption($query); }
+			catch (\Exception $e) { print_r($e->getMessage()); exit; }
 			$datas["searchData"] = $query;
 		}
 		else {
-			try {
-				$totalDiagnosisDatas = $diagnosisTb->ReadAllList();
-				$paginationData = $diagnosisTb->GetAllList();
-			} catch (\Exception $e) {
-				print_r($e->getMessage());
-				exit;
-			}
+			try {$diagnosisDatas = $diagnosisTb->GetAllList(); }
+			catch (\Exception $e) { print_r($e->getMessage()); exit; }
 		}
-
-		$datas["totalData"] = count($totalDiagnosisDatas);
-
-		// Extract output datas and Add numbering
-		if (!empty($totalDiagnosisDatas)) {
-			$diagnosisDatas = array();
-			$startIdx = ($page - 1) * $printDataNum;
-			$endIdx = ($page * $printDataNum);
-			
-			for ($i = 0; $startIdx + $i < $endIdx; $i++) {
-				if (!isset($totalDiagnosisDatas[$startIdx + $i])) break;
-
-				$diagnosisDatas[$i] = $totalDiagnosisDatas[$startIdx + $i];
-				$diagnosisDatas[$i]["num"] = count($totalDiagnosisDatas) - ($startIdx + $i);
-			}
-
-			$datas["diagnosisDatas"] = $diagnosisDatas;
-		}
-
-		$vm = $this->SetViewModel($datas, "/diagnosis/diagnosis_list.phtml");
-		$vm->noticelist = $paginationData;
-		$vm->noticelist->setCurrentPageNumber($page);
-		$vm->noticelist->setItemCountPerPage($printDataNum);
-		return $vm;
+		
+		$diagnosisDatas->setCurrentPageNumber($page);
+		$diagnosisDatas->setItemCountPerPage(10);
+		$datas["diagnosisDatas"] = $diagnosisDatas;
+		return $this->SetViewModel($datas, "/diagnosis/diagnosis_list.phtml");
 	}
 	
 	/** When you click 新規登録 button on 一覧 page */

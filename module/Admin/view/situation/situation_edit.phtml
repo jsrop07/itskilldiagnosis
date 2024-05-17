@@ -1,14 +1,25 @@
 <?php 
 echo $this->partial("breadcrumb", ["datas" => $breadcrumbData]); 
-// $currentDate = date("Y-m-d H:i:s");
+$currentDate = date("Y-m-d H:i:s");
 
 function InitStyle() { return " font-style: italic; color: ;"; }
 	$isITMajor = false;
+	
 	$isITSkill =false;
+
 	$isITEducation1 =false;
 	$isITEducation2 = false;
 	$isITEducation3 = false;
 	$isITEducation4 = false;
+	$isITEducation5 = false;
+
+
+	$isClass1st1 = false;
+	$isClass1st2 = false;
+	$isClass1st3 = false;
+	$isClass1st4 = false;
+	$isClass1st5 = false;
+
 
 	if ($recordArray["major"] == "IT・ソフトウェア専攻") {
 		$isITMajor = true;
@@ -31,7 +42,27 @@ function InitStyle() { return " font-style: italic; color: ;"; }
 	if ($recordArray["education"] == "大学院卒") {
 		$isITEducation4 = true;
 	}
-	
+	if ($recordArray["education"] == "その他") {
+		!$isITEducation1 && $isITEducation2 && !$isITEducation3 && !$isITEducation4=true ;
+	}
+
+	if ($recordArray["class1st"] == "WEB") {
+		$isClass1st1 = true;
+	}
+
+	if ($recordArray["class1st"] == "IT基礎") {
+		$isClass1st2 = true;
+	}
+	if ($recordArray["class1st"] == "モバイル") {
+		$isClass1st3 = true;
+	}
+	if ($recordArray["class1st"] == "サーバ") {
+		$isClass1st4 = true;
+	}
+	if ($recordArray["class1st"] == "インフラ") {
+		$isClass1st5 = true;
+	}
+
 ?>
 
 
@@ -107,7 +138,7 @@ function InitStyle() { return " font-style: italic; color: ;"; }
                         <option value="専門卒" <?php echo($isITEducation2) ? "selected" : "" ;?>>専門卒</option>
                         <option value="大卒" <?php echo($isITEducation3) ? "selected" : "" ;?>>大卒</option>
                         <option value="大学院卒" <?php echo($isITEducation4) ? "selected" : "" ;?>>大学院卒</option>
-                        <option value="その他"<?php echo (!$isITEducation1 && $isITEducation2 && !$isITEducation3 && !$isITEducation4) ? "" : "selected"; ?>>その他</option>
+                        <option value="その他"<?php echo ($isITEducation1 || $isITEducation2 || $isITEducation3 || $isITEducation4 ) ? "" : "selected"; ?>>その他</option>
                     </select>
                         <input class="form-control w-50"  style="margin-left: 10px;" type="text" placeholder="その他の場合" id="educationInput" name="education" maxlength='20' value="<?php echo ($recordArray['education']) ?>">
 				</dd>
@@ -151,32 +182,41 @@ function InitStyle() { return " font-style: italic; color: ;"; }
                     </select>
 				</dd>
                 <dt class="essential" id="class1stTitle">経験分野</dt>
+				
 				<dd>
-					<select class="form-select" name="class1st" id="class1stId" style="width:220px;" onchange="ChangeInputStyle(this)"  onclick="ChangeClass1st(this)" <?php echo $isDisabled ? 'disabled' : ''; ?>>
-						<?php foreach ($this->class1st as $row): ?>
-							<?php $texts = explode(',', $row['text']); ?>
-                            <?php foreach ($texts as $text): ?>
-                                <option value="<?php echo $text; ?>"><?php echo $text; ?></option>
-                            <?php endforeach; ?>
-                        <?php endforeach; ?>
+					<select class="form-select"  id="class1stId" style="width:220px;" onchange="ChangeClass1stValue(this)"  onclick="ChangeClass1st(this)">
+					<option value="WEB" <?php echo($isClass1st1) ? "selected" : "" ;?>>WEB</option>
+					<option value="IT基礎" <?php echo($isClass1st2) ? "selected" : "" ;?>>IT基礎</option>
+					<option value="モバイル" <?php echo($isClass1st3) ? "selected" : "" ;?>>モバイル</option>
+					<option value="サーバ" <?php echo($isClass1st4) ? "selected" : "" ;?>>サーバ</option>
+					<option value="インフラ" <?php echo($isClass1st5) ? "selected" : "" ;?>>インフラ</option>
+					<option value="その他"<?php echo ($isClass1st1 || $isClass1st2 || $isClass1st3 || $isClass1st4 || $isClass1st5) ? "" : "selected"; ?>>その他</option>
                     </select>
-                    <div id="otherclass1stInput" style="margin-left: 10px; display:none;">
-                        <input class="form-control" type="text" placeholder="その他の場合の、記入" id="otherclass1st" name="class1st" maxlength='20'>
-                    </div>
+					<input class="form-control w-50" style="margin-left: 10px;" type="text" placeholder="その他の場合" id="class1stInput"  name="class1st" maxlength='20' value='<?php echo ($recordArray['class1st']) ?>'  />
 				</dd>
 
 				<dt class="essential" id=class2ndTitle>問題種別</dt>
 				<dd>
-					<select class="form-select" name="class2nd" id="class2ndId" style="width:220px;" onchange="ChangeInputStyle(this)">
-						<option value="" hidden>選択</option>
-						<?php if (true): ?>
-							<?php foreach ($optionDatas["class2nd"][$recordArray["class1st"]] as $data): ?>
-								<option value="<?php echo $data["idx"]; ?>"<?php echo ($recordArray["class2nd"] == $data["idx"]) ? " selected" : ""; ?>>
-									<?php echo $data["text"]; ?>
-								</option>
-							<?php endforeach; ?>
-						<?php endif; ?>
-                    </select>
+				<select class="form-select" name="class2nd" id="class2ndId" style="width:220px;" onchange="ChangeInputStyle(this)">
+				<?php if (true): ?>
+					<?php
+					$class2ndText = '';
+					foreach ($optionDatas["class2nd"][$recordArray["class1st"]] as $data) {
+						if ($data["idx"] == $recordArray["class2nd"]) {
+							$class2ndText = $data["text"];
+							break;
+						}
+					}
+					?>
+					<option value="<?php echo $recordArray["class2nd"]; ?>" hidden><?php echo $class2ndText; ?></option>
+					<?php foreach ($optionDatas["class2nd"][$recordArray["class1st"]] as $data): ?>
+						<option value="<?php echo $data["idx"]; ?>">
+							<?php echo $data["text"]; ?>
+						</option>
+					<?php endforeach; ?>
+				<?php endif; ?>
+			</select>
+
 				</dd>
 
 				<dt class="essential" id="careerTitle">IT経験年数</dt>
@@ -194,7 +234,7 @@ function InitStyle() { return " font-style: italic; color: ;"; }
 		</style>
 		<dl class="emegra detail">
                 <dt>診断依頼</dt>
-				<dd><input class="form-control"  type="text" style="width:220px; " value="<?php echo $recordArray['request_date']?>"readonly></dd>
+				<dd><input class="form-control"  type="text" style="width:220px;" value="<?php echo $currentDate?>"readonly></dd>
 
 				<dt class="essential">診断問項ID</dt>
 				<dd><input class="form-control" name="" type="text" style="width:220px; " value="<?php echo $diagnosisArray['code']?>"></dd> 
@@ -248,7 +288,7 @@ function InitStyle() { return " font-style: italic; color: ;"; }
 
 <div class="btn-place" style="margin-top: 32px;">
 	<button type="button" class="emegra cancel" onclick="self.location.href='../../situation/list';">戻る</button>
-	<button type="submit" class="emegra"  id="btn_submit" name="editDatas" value="btn_submit"  style="width:150px;">ITスキル診断依頼</button>
+	<button type="submit" class="emegra"  id="btn_submit" name="editDatas" value="btn_submit"  style="width:150px;" onclick=editConfirm()>ITスキル診断依頼</button>
 </div>
 </form>
 
@@ -261,6 +301,7 @@ function InitStyle() { return " font-style: italic; color: ;"; }
 		if (value == "y") { smtp.disabled = false; }
 		else { smtp.disabled = true; }
 	}
+
     var selectElement = document.getElementById('majorId');
     var inputElement = document.getElementById('majorInput');
 	if (selectElement.value != "other" || selectElement.value == "なし") {
@@ -288,6 +329,22 @@ function InitStyle() { return " font-style: italic; color: ;"; }
 			form.education.value = elements.value;
 		}
 	}
+
+	var selectElement3 = document.getElementById('class1stId');
+    var inputElement3 = document.getElementById('class1stInput');
+	if (selectElement3.value != "その他") {
+        inputElement3.hidden = true;
+    } else if (selectElement3.value === "その他") {
+        inputElement3.hidden = false;
+    }
+
+	function ChangeClass1stValue(elementss) {
+		ChangeInputStyle(elementss);
+		if (form.class1st.value != "その他") { 
+			form.class1st.value = elementss.value;
+		}
+	}
+
 </script>
 <script>
 	function ChangeInputStyle(element) {
@@ -299,30 +356,8 @@ function InitStyle() { return " font-style: italic; color: ;"; }
 <script>
 	window.onload=function(){
 		// console.log(form.major);
-		// randomPW();
+		randomPW();
 	}
-</script>
-
-<script>
-	let skillSelect = document.getElementById('ITskillId');
-	let class1stSelect = document.getElementById('class1stId')
-	var class2ndSelect = document.getElementById('class2ndId')
-	let careerSelect = document.getElementById('careerId')
-	skillSelect.addEventListener('change', function() {
-    var selectedValue = this.value;
-			if (selectedValue === '1') {
-				class1stSelect.value="その他";
-				class2ndSelect.value="z`";
-				// careerSelect.diabled=true;
-			}
-			else{
-				class1stSelect.diabled=false;
-				class2ndSelect.diabled=false;
-				careerSelect.diabled=false;
-			}
-			console.log(class1stSelect.diabled);
-		}	
-	)
 </script>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -338,6 +373,28 @@ function InitStyle() { return " font-style: italic; color: ;"; }
       });
     });
   </script>
+
+<script>
+	let skillSelect = document.getElementById('ITskillId');
+	let class1stSelect = document.getElementById('class1stId')
+	var class2ndSelect = document.getElementById('class2ndId')
+	let careerSelect = document.getElementById('careerId')
+	skillSelect.addEventListener('change', function() {
+    var selectedValue = this.value;
+			if (selectedValue === '1') {
+				class1stSelect.value="その他";
+				class2ndSelect.innerText=""
+				var option = document.createElement("option");
+				option.value = "33";
+				option.innerText = "テキスト";
+				class2ndSelect.appendChild(option);
+				class2ndSelect.value = "33";
+
+			}
+		}	
+	)
+
+</script>
 
 <script>
 document.getElementById('educationId').addEventListener('change', function(event) {
@@ -366,20 +423,14 @@ document.getElementById('majorId').addEventListener('change', function(event) {
 });
 
 document.getElementById('class1stId').addEventListener('change', function(event) {
-    var selectedOption = event.target.value;
-    var otherclass1stInput = document.getElementById('otherclass1stInput');
+	var selectedOption = event.target.value;
 
-    if (selectedOption === "その他") {
-        otherclass1stInput.style.display = 'block';
-    } else {
-        otherclass1stInput.style.display = 'none';
-    }
-
-    var otherclass1st = document.getElementById('otherclass1st');
-    if (selectedOption === "その他") {
-        otherclass1st.removeAttribute('disabled');
-    } else {
-        otherclass1st.setAttribute('disabled', 'disabled');
+	if (selectedOption === "その他") {
+		form.class1st.value = "";
+        form.class1st.hidden = false;
+    } else if(selectedOption != "その他") {
+        form.class1st.hidden = true;
+		// form.education.style.display = 'none';
     }
 });
 </script>
@@ -392,7 +443,7 @@ class2ndSelect.replaceChildren();
 console.log(class2ndSelect);
 switch (element.value) {
 <?php foreach ($optionDatas["class2nd"] as $value => $class2nd): ?>
-	case "<?php echo $value; ?>":
+	case "<?php echo $optionDatas["class1st"][array_search($value, array_column($optionDatas["class1st"], "idx"))]["text"]; ?>":
 		var option = document.createElement("option");
 		option.hidden = true;
 		option.innerText = "選択してください。";
@@ -412,6 +463,14 @@ switch (element.value) {
 </script>
 
 <script>
+	function editConfirm(){
+		var submitConfirm=confirm("依頼しますか？");
+		if (!submitConfirm){
+            event.preventDefault();
+            return false;
+        }
+		
+	}
 	function randomPW(){
 		const pwLength = 8;
 		const pwEncoding = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -423,7 +482,7 @@ switch (element.value) {
 			randomPw += pwEncoding.charAt(randomIndex);
 		}
 		form.password.value = randomPw;
-		console.log(randomPW);
+		// console.log(randomPW);
 
 
 	}

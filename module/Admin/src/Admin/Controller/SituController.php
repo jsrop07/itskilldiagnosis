@@ -25,6 +25,86 @@ class SituController extends AbstractActionController {
 
 	}
 
+	public function inputAction() {
+		$this->ChkLogin();
+		$datas["breadcrumbData"] = ["ITスキル診断状況管理", "診断者登録"];
+		$index = $this->params()->fromRoute("index");
+		$post = $this->params()->fromPost();
+		$editDatas  = (isset($post['editDatas']) && $post['editDatas'] !='')  ? $post['editDatas'] : '';
+
+		// print_r(($post['id']));
+		$recordTb = $this->getServiceLocator()->get("RecordTable-Admin");
+		$applicantTb = $this->getServiceLocator()->get("ApplicantTable-Admin");
+		$diagnosisTb = $this->getServiceLocator()->get("DiagnosisTable-Admin");
+		$situTb = $this->getServiceLocator()->get("situTable");
+		$managerInfo=$situTb->readByManagerInfo();
+		$managerArray=[$managerInfo["id"], $managerInfo["password"],$managerInfo["name"],$managerInfo["smtp_password"]];
+
+		$recordData = $recordTb->ReadByIdx($index);
+
+		$applicantData = $applicantTb->ReadByIdx($recordData["applicant_idx"]);
+		// $recordData = array_merge($applicantData, $recordData);
+
+
+		if (($recordData["diagnosis_code"]) != null) {
+			$diagnosisData = $diagnosisTb->ReadByCode($recordData["diagnosis_code"]);
+			$recordData = array_merge($diagnosisData, $recordData);
+		}
+		$diagnosisData = $diagnosisTb->ReadByCode($recordData["diagnosis_code"]);
+		$datas["optionDatas"] = $this->GetOptionDatasForInput();
+
+		$class1st=$situTb->getclass1st();
+		$class2nd=$situTb->getclass2nd();
+		$applicantInfo = $situTb->readById($index);
+
+
+		$datas["class1st"] = $class1st;
+		$datas["class2nd"] = $class2nd;
+
+		$datas["applicantArray"] = $applicantData;
+		$datas["recordArray"] = $recordData;
+		$datas["diagnosisArray"] = $diagnosisData;
+
+		if($editDatas == "btn_submit"){
+			$recordlWhere['idx']=$recordData['idx'];
+			$applicantWhere['idx']=$applicantData['idx'];
+			$applicantSet['email']=$post['email'];
+			$applicantSet['password']=$post['password'];
+			$applicantSet['name']=$post['name'];
+			$applicantSet['kana']=$post['kana'];
+			$applicantSet['birth']=$post['birth'];
+			$recordSet['case']=$post['case'];
+			$recordSet['education']=$post['education'];
+			$applicantSet['career']=$post['career'];
+			$applicantSet['certificates']=$post['certificates'];
+			$applicantSet['other']=$post['other'];
+			$recordSet['major']=$post['major'];
+			$recordSet['skill']=$post['skill'];
+			$recordSet['class1st']=$post['class1st'];
+			$recordSet['class2nd']=$post['class2nd'];
+			$datas["recordArray"] = $recordData;
+			$datas["applicantArray"] = $applicantData;
+			
+			$situTb->updateRecordInfo($recordlWhere, $recordSet);	
+			$situTb->updateApplicantInfo($applicantWhere, $applicantSet);	
+			$recentPassword =  $situTb->readById($applicantInfo);
+
+			$this->mailByRequest($recordData,$managerArray,$recentPassword);
+
+			echo "
+			<script>
+			alert('依頼が 完了しました。')
+			self.location.href='/admin/situation/list';
+			</script>
+			";	
+	
+		}
+
+	
+
+		return $this->SetViewModel($datas, "/situation/situation_input.phtml");
+	}
+
 	public function editAction() {
 		$this->ChkLogin();
 		$datas["breadcrumbData"] = ["ITスキル診断状況管理", "診断状況詳細", "診断状況修正"];
@@ -55,6 +135,7 @@ class SituController extends AbstractActionController {
 
 		$class1st=$situTb->getclass1st();
 		$class2nd=$situTb->getclass2nd();
+		$applicantInfo = $situTb->readById($index);
 
 
 		$datas["class1st"] = $class1st;
@@ -81,17 +162,15 @@ class SituController extends AbstractActionController {
 			$recordSet['skill']=$post['skill'];
 			$recordSet['class1st']=$post['class1st'];
 			$recordSet['class2nd']=$post['class2nd'];
+			$datas["recordArray"] = $recordData;
+			$datas["applicantArray"] = $applicantData;
+			
 			$situTb->updateRecordInfo($recordlWhere, $recordSet);	
-			exit;	
 			$situTb->updateApplicantInfo($applicantWhere, $applicantSet);	
-			$this->mailByRequest($recordData,$managerArray);
-			// print_r($applicantSet);
-			// print_r("<br>");
-			// print_r($recordSet);
-			// print_r("<br>");
-			// // print_r($applicantWhere);
-			// print_r("<br>");
-			// exit;
+			$recentPassword =  $situTb->readById($applicantInfo);
+
+			$this->mailByRequest($recordData,$managerArray,$recentPassword);
+
 			echo "
 			<script>
 			alert('依頼が 完了しました。')
@@ -104,7 +183,7 @@ class SituController extends AbstractActionController {
 		return $this->SetViewModel($datas, "/situation/situation_edit.phtml");
 	}
 
-	function mailByRequest($recordData,$managerArray){
+	function mailByRequest($recordData,$managerArray,$recentPassword){
 		$mail = new MailRequest();
 
 		// 기본 메일 전송 관련 설정 로드
@@ -113,7 +192,7 @@ class SituController extends AbstractActionController {
 		// 사람마다 변환해야 할 부분은 {{이렇게}} 메일폼에 넣어놓는다.
 
 		$param['title']="{$recordData["name"]}様、株式会社ジエンジサービスから、ITスキル診断依頼が到着しています。";
-		$param["content"] = "以下URLより「ITスキル診断サイト」にログインし診断を行ってください。\n\nログインID：{$recordData["email"]}\nログインPWD：{$recordData["password"]}\n\n＜ITスキル診断URL＞\nhttp://gngitskill:84/applicant/login\n\n\n※このメールに返信しないでください。";
+		$param["content"] = "以下URLより「ITスキル診断サイト」にログインし診断を行ってください。\n\nログインID：{$recordData["email"]}\nログインPWD：{$recentPassword["password"]}\n\n＜ITスキル診断URL＞\nhttp://gngitskill:84/applicant/login\n\n\n※このメールに返信しないでください。";
 	
 		// 사람이름이나, URL등 고유하게 변경해야 하는 것은 이렇게 처리한다.
 		// 메일 제목과 내용 부분 모두 변환처리.
@@ -215,6 +294,13 @@ class SituController extends AbstractActionController {
 		array_push($afterOptionDatas["class1st"], $other);
 
 		foreach ($class2ndDatas as $data) {
+			if (!isset($afterOptionDatas["class2nd"][$data["class_upper"]])) {
+				$afterOptionDatas["class2nd"][$data["class_upper"]] = array();
+			}
+			array_push($afterOptionDatas["class2nd"][$data["class_upper"]], $data);
+		}
+
+		foreach ($class2ndDatas as $data) {
 			$class_upper = $data["class_upper"];
 			
 			// Debugging: Check if class_upper exists in $class1stDatas
@@ -232,11 +318,9 @@ class SituController extends AbstractActionController {
 		
 			array_push($afterOptionDatas["class2nd"][$class1stValue], $data);
 		}
-		
 		// Optional: Debugging output
+
 		// print_r($afterOptionDatas);
-		
-		// print_r($afterOptionDatas["class2nd"][$class1stDatas[$data["class_upper"]]]);
 		// print_r($afterOptionDatas["class2nd"][$class1stDatas[$data["class_upper"]]]);
 		// exit;
 

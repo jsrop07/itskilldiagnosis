@@ -55,6 +55,12 @@ class SituTable
       return $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
     }
 
+	public function readById($email)
+	{
+	  $qry = $this->sql->select("applicant")->where(["email" => $email]);
+	  return $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
+	}
+	
 	public function getclass1st(){
         $qry = $this->sql->select("option");
         $qry->columns([

@@ -1,12 +1,74 @@
 <?php 
 echo $this->partial("breadcrumb", ["datas" => $breadcrumbData]); 
-function InitStyle() { return " font-style: italic; color: grey;"; }
+$currentDate = date("Y-m-d H:i:s");
+
+function InitStyle() { return " font-style: italic; color: ;"; }
+	$isITMajor = false;
+	
+	$isITSkill =false;
+
+	$isITEducation1 =false;
+	$isITEducation2 = false;
+	$isITEducation3 = false;
+	$isITEducation4 = false;
+	$isITEducation5 = false;
+
+
+	$isClass1st1 = false;
+	$isClass1st2 = false;
+	$isClass1st3 = false;
+	$isClass1st4 = false;
+	$isClass1st5 = false;
+
+
+	if ($recordArray["major"] == "IT・ソフトウェア専攻") {
+		$isITMajor = true;
+	}
+	if ($recordArray["skill"] == 0) {
+		$isITSkill = true;
+	}
+	if ($recordArray["education"] == "高卒") {
+		$isITEducation1 = true;
+	}
+
+	if ($recordArray["education"] == "専門卒") {
+		$isITEducation2 = true;
+	}
+
+	if ($recordArray["education"] == "大卒") {
+		$isITEducation3 = true;
+	}
+
+	if ($recordArray["education"] == "大学院卒") {
+		$isITEducation4 = true;
+	}
+	if ($recordArray["education"] == "その他") {
+		!$isITEducation1 && $isITEducation2 && !$isITEducation3 && !$isITEducation4=true ;
+	}
+
+	if ($recordArray["class1st"] == "WEB") {
+		$isClass1st1 = true;
+	}
+
+	if ($recordArray["class1st"] == "IT基礎") {
+		$isClass1st2 = true;
+	}
+	if ($recordArray["class1st"] == "モバイル") {
+		$isClass1st3 = true;
+	}
+	if ($recordArray["class1st"] == "サーバ") {
+		$isClass1st4 = true;
+	}
+	if ($recordArray["class1st"] == "インフラ") {
+		$isClass1st5 = true;
+	}
+
 ?>
 
 
 <h1 class="title">ITスキル診断状況管理</h1>
 
-<form id="form" method="post" action="./inputconfirm">
+<form id="form" name="input_form" enctype="multipart/form-data" action="/admin/situ/input" method="post">
 	<style type="text/css">
 		option { color: black; }
 		/* input::placeholder { font-style: italic; } */
@@ -20,48 +82,41 @@ function InitStyle() { return " font-style: italic; color: grey;"; }
 				dl.emegra.info { grid-template-columns:  repeat(2, 170px 1fr) }
 			</style>
 			<dl class="emegra info">
-				<dt>ID</dt>
-				<dd><input class="form-control" name="id" type="text" style="width: 200px;"></dd>
+				<dt class="essential">ID</dt>
+				<dd><input class="form-control" name="email" type="text" style="width:220px; " ></dd>
 				
-				<dt class="essential">応募区分</dt>
-				<select class="form-select" name="application_category" style="width: 200px;<?php echo ($isReturn) ? "" : InitStyle(); ?>" onchange="ChangeInputStyle(this)" >
-					<option value="" selected disabled hidden>選択してください。</option>
-					<option value="0">新卒</option>
-					<option value="1">中途（経歴職）</option>
-				</select>
+                <dt class="essential">応募区分</dt>
+				<select class="form-select" name="case" style="width:220px" >
+                        <option value="" selected>選択してください。</option>
+                        <option value="0">新卒</option>
+                        <option value="1">中途（経歴職）</option>
+                    </select>
 
-				<dt>申込日</dt>
-				<dd><input class="form-control" name="apply_date" type="text" style="width:50%; text-align:center;" value="2024.5.6" disabled></dd>
+                <dt class="essential">パスワード</dt>
+				<dd><input class="form-control" name="password" type="text" style="width:220px;" readonly></dd>
 
 				<dt class="essential">お名前（漢字）</dt>
-				<dd><input class="form-control" name="name" type="text" placeholder="漢字を記入してください。"style="width:80%" maxlength="20"></dd>
+				<dd><input class="form-control" id="userInput" name="name" type="text" placeholder="漢字を記入してください。"style="width:220px" maxlength='20'></dd>
 
-				<dt>パスワード</dt>
-				<dd><input class="form-control" name="password" type="text" style="width:50%;" value="<?php echo $password; ?>" readonly></dd>
+                <dt>申込日</dt>
+				<dd><input class="form-control" type="text" style="width:220px; " value="<?php echo $currentDate ?>" readonly></dd>
 				
-                <dt class="essential">メール</dt>
-				<dd><input class="form-control" name="email" type="email" placeholder="Emailを入力ください。" style="width:80%" maxlength='50'></dd>
-                
+                <dt class="essential">お名前（カナ）</dt>
+				<dd><input class="form-control" name="kana" type="text" placeholder="カナを記入してください。"style="width:220px" maxlength='50'></dd>
+
                 <dt>性別</dt>
 				<dd> 
-					<select class="form-select"  name="gender" style="width:20%;<?php echo ($isReturn) ? "" : InitStyle(); ?>" onchange="ChangeInputStyle(this)" >
-                        <option selected disabled hidden>選択</option>
+					<select class="form-select"  name="gender" style="width:220px;" onchange="ChangeInputStyle(this)" value="<?php echo $applicantArray["gender"] ?>" >
+						<option selected disabled hidden>選択</option>
                         <option value="0">男</option>
                         <option value="1">女</option>
                     </select>
 				</dd>
 				
-				<dt class="essential">お名前（カナ）</dt>
-				<dd><input class="form-control" name="kana" type="text" placeholder="カナを記入してください。"style="width:80%" maxlength='50'></dd>
-
-                <dt>生年月日</dt>
-				<dd><input class="form-control" id="birth" name="birth" type="text" placeholder="YYYY-MM-DD" autocomplete="off"  style="width:50%"></dd> 
-
-				
                 <dt class="essential">学歴</dt>
 				<dd>
-					<select class="form-select" name="education" style="width:40%;<?php echo ($isReturn) ? "" : InitStyle(); ?>" onchange="ChangeInputStyle(this)" id="educationSelect" >
-                        <option value=""selected disabled hidden>選択してください。</option>
+				<select class="form-select" name="education" style="width:220px" id="educationSelect" >
+                        <option value=""selected>選択してください。</option>
                         <option value="高卒">高卒</option>
                         <option value="専門卒">専門卒</option>
                         <option value="大卒">大卒</option>
@@ -73,6 +128,26 @@ function InitStyle() { return " font-style: italic; color: grey;"; }
                     </div>
 				</dd>
 
+                <dt class="essential">生年月日</dt>
+				<dd><input class="form-control" id="birth" name="birth" type="text" placeholder="YYYY-MM-DD" autocomplete="off"  style="width:220px" value="<?php echo $applicantArray["birth"] ?>"></dd> 
+
+				<dt>IT関連資格</dt>
+				<dd><input class="form-control" id="certificatesId" name="certificates" type="text"  style="width:220px" value="<?php echo $applicantArray["certificates"] ?>"></dd> 
+
+				<dt>専攻</dt>
+				<dd> 
+				<select class="form-select" name="major" style="width: 220px;" id="majorSelect" >
+                        <option selected disabled hidden>選択してください。</option>
+                        <option value="IT・ソフトウェア専攻">IT・ソフトウェア専攻</option>
+                        <option value="IT・ソフトウェア以外">IT・ソフトウェア以外</option>
+                    </select>
+                    <div id="otherMajorInput" style=" margin-top:-15px; display:none;">
+                        <input class="form-control" type="text" placeholder="その他の場合の、記入" id="otherMajor" name="major" maxlength='20'>
+                    </div>
+				</dd>
+
+				<dt>その他</dt>
+				<dd><input class="form-control" id="other" name="other" type="text"  style="width:220px" value="<?php echo $applicantArray["other"] ?>"></dd> 
 			</dl>
 		</div>
 	</div>
@@ -85,48 +160,41 @@ function InitStyle() { return " font-style: italic; color: grey;"; }
 
 		dl.emegra.setting { grid-template-columns: repeat(1, 180px 1fr); }
 				</style>
-		<dl class="emegra setting">
-                <dt class="essential">ITスキル有無</dt>
+			<dl class="emegra setting">
+                <dt class="essential" id="ITskillTitle">ITスキル有無</dt>
 				<dd>
-					<select class="form-select" name="skill" style="width:20%;<?php echo ($isReturn) ? "" : InitStyle(); ?>" onchange="ChangeInputStyle(this)" >
-                        <option value="" selected disabled hidden>選択</option>
+				<select class="" name="skill" style="width:220px" >
+                        <option value="" selected>選択</option>
                         <option value="0">有</option>
                         <option value="1">無</option>
                     </select>
 				</dd>
 
-                <dt class="essential">経験分野</dt>
+                <dt class="essential" id="class1stTitle">経験分野</dt>
 				<dd>
-					<select class="form-select" name="develop" style="width:20%;<?php echo ($isReturn) ? "" : InitStyle(); ?>" onchange="ChangeInputStyle(this)" id="developSelect" >
-						<option value="" selected  >選択してください。</option>
-							<?php foreach ($this->develop as $row): ?>
-								<?php $texts = explode(',', $row['text']); ?>
-								<?php foreach ($texts as $text): ?>
-									<option value="<?php echo $text; ?>"><?php echo $text; ?></option>
-								<?php endforeach; ?>
-							<?php endforeach; ?>
+				<select class="form-select" name="class1st" style="width:220px;" id="class1stId" onclick="ChangeClass1st(this)">
+                    <option value="" selected  >選択してください。</option>
+                        <?php foreach ($this->class1st as $row): ?>
+                            <?php $texts = explode(',', $row['text']); ?>
+                            <?php foreach ($texts as $text): ?>
+                                <option value="<?php echo $text; ?>"><?php echo $text; ?></option>
+                            <?php endforeach; ?>
+                        <?php endforeach; ?>
                     </select>
-                    <div id="otherDevelopInput" style="margin-top:-15px; display:none;">
-                        <input class="form-control" type="text" placeholder="その他の場合の、記入" id="otherDevelop" name="develop" maxlength='20'>
+                    <div id="otherclass1stInput" style="margin-top:-15px; display:none;">
+                        <input class="form-control" type="text" placeholder="その他の場合の、記入" id="otherclass1st" name="class1st" maxlength='20'>
                     </div>
 				</dd>
 
-				<dt class="essential">IT経験年数</dt>
-				<dd><input class="form-control" id="career" name="career" type="text" placeholder="経歴を記入してください。" style="font-size:15px; width:20%" maxlength='2'></dd> 
-
-				<dt class="essential">問題種別</dt>
+				<dt class="essential" id=class2ndTitle>問題種別</dt>
 				<dd>
-					<select class="form-select" name="question_type" style="width:20%;<?php echo ($isReturn) ? "" : InitStyle(); ?>" onchange="ChangeInputStyle(this)" id="typeSelect">
-						<option value="" selected  >選択してください。</option>
-						<?php foreach ($this->questionType as $row): ?>
-							<?php $texts = explode(',', $row['text']); ?>
-							<?php foreach ($texts as $text): ?>
-								<option value="<?php echo $text; ?>"><?php echo $text; ?></option>
-							<?php endforeach; ?>
-						<?php endforeach; ?>
-                    </select>
+				<select class="" name="class2nd" style="width:220px;" id="class2ndId">
+                    <option value=""  >選択してください。</option>
+                </select>
 				</dd>
 
+				<dt class="essential" id="careerTitle">IT経験年数</dt>
+				<dd><input class="form-control" id="career" name="career" type="text" placeholder="経歴を記入してください。" style="font-size:15px; width:220px;" maxlength='2'></dd> 
 		</dl>
 	</div>
 </div>
@@ -140,116 +208,58 @@ function InitStyle() { return " font-style: italic; color: grey;"; }
 		</style>
 		<dl class="emegra detail">
                 <dt>診断依頼</dt>
-				<dd>2024.05.06</dd>
+				<dd><input class="form-control"  type="text" style="width:220px;" value="<?php echo $currentDate?>"readonly></dd>
 
 				<dt class="essential">診断問項ID</dt>
-				<dd>B-50-T1</dd> 
+				<dd><input class="form-control" name="" type="text" style="width:220px; " value="<?php echo $diagnosisArray['code']?>"></dd> 
 
 				<dt class="essential">レベル</dt>
-				<dd>初級</dd>
+				<dd><input class="form-control" name="" type="text" style="width:80px; " 
+				value="<?php if($diagnosisArray["level"]==0){
+							echo "０級";}
+						elseif($diagnosisArray["level"]==1){
+							echo "初級";
+						}
+						elseif($diagnosisArray["level"]==2){
+							echo "中級";
+						}elseif($diagnosisArray["level"]==3){
+							echo "高級";
+						}
+					 ?>">
+				</dd>
 
 				<dt class="essential">問項数別</dt>
-				<dd>50問</dd>
+				<dd><input class="form-control" type="text" style="width:50px;text-align:center " value="<?php echo $diagnosisArray['question_num']?>"> 問</dd>
 		
 				<dt class="essential">診断方法</dt>
                 <dd style="grid-column: 2 / 5;">
-					<select class="form-select" style="width:10%;<?php echo ($isReturn) ? "" : InitStyle(); ?>" onchange="ChangeInputStyle(this)" >
-                        <option value="" selected disabled hidden>選択</option>
+					<select class="form-select" name="methods" style="width:13%;" onchange="ChangeInputStyle(this)" >
+                        <option value="" selected disabled hidden></option>
                         <option value="0">WEB</option>
-                        <option value="1">対面</option>
+                        <option value="1"selected>対面</option>
                     </select>
 				</dd>
 		</dl>
 	</div>
 </div>
 
-    <!-- <div class="emegra card" style="margin-top: 32px;">
-		<div class="card-header">ITスキル診断状況</div>
-
-		<div class="card-body">
-			<style type="text/css">
-			dl.emegra.info { grid-template-columns: repeat(2, 180px 1fr); }
-			</style>
-			<dl class="emegra info">
-				<dt>診断実施日</dt>
-				<dd><span value="">asd</span></dd>
-
-				<dt>得点</dt>
-				<dd><span>11</span></dd> 
-
-				<dt>評価等級</dt>
-				<dd>2024.5.7</dd>
-
-				<dt>診断者のコメント</dt>
-				<dd></dd>
-		
-				<dt>備考</dt>
-				<dd></dd>
-			</dl>
-		</div>
-	</div> -->
+<div class="btn-place" style="margin-top: 32px;">
+	<button type="button" class="emegra cancel" onclick="self.location.href='../../situation/list';">戻る</button>
+	<button class="emegra"  id="btn_submit" name="inputDatas" value="btn_submit"  style="width:150px;" onclick=inputConfirm()>ITスキル診断依頼</button>
+</div>
 </form>
 
-<div class="btn-place" style="margin-top: 32px;">
-	<button class="emegra cancel" onclick="self.location.href='./list';">戻る</button>
-    <button class="emegra" style="background:#f59e0b;" onclick="Regist();">一時保存</button>
-	<button class="emegra" style="width:150px;" onclick="self.location.href='./inputconfirm';">ITスキル診断依頼</button>
-</div>
-
-<script type="text/javascript">
-	const smtp = document.getElementById("smtp");
-	const form = document.getElementById("form");
-	const pattern = /^[A-Za-z0-9_\.\-]+@[A-Za-z0-9\-]+\.[A-za-z0-9\-]+/;
-
-	function ActiveSmtp(value) {
-		if (value == "y") { smtp.disabled = false; }
-		else { smtp.disabled = true; }
-	}
-
-	function Regist() {
-		if (form.code.value == "") {
-			alert("職別コードを入力してください");
-			setTimeout("form.code.focus();", 100);
-			return false;
-		}
-		
-		if (form.id.value == "") {
-			alert("IDを入力してください");
-			setTimeout("form.id.focus()", 100);
-			return false;
-		}
-		
-		if (pattern.test(form.id.value) === false) {
-			alert("IDを確認してください");
-			setTimeout("form.id.focus()", 100);
-			return false;
-		}
-		
-		if (form.password.value == "") {
-			alert("パスワードを入力してください");
-			setTimeout("form.password.focus()", 100);
-			return false;
-		}
-		
-		if (form.name.value == "") {
-			alert("名前を入力してください");
-			setTimeout("form.name.focus()", 100);
-			return false;
-		}
-		
-		if (smtp.disabled == false && smtp.value == "") {
-			alert("SMTPを入力してください");
-			setTimeout("smtp.focus()", 100);
-			return false;
-		}
-
-		form.submit();
-	}
-</script>
 <script>
 	function ChangeInputStyle(element) {
 		element.style.fontStyle = "normal";
 		element.style.color = "black";
+	}
+</script>
+
+<script>
+	window.onload=function(){
+		// console.log(form.major);
+		randomPW();
 	}
 </script>
 
@@ -266,3 +276,329 @@ function InitStyle() { return " font-style: italic; color: grey;"; }
       });
     });
   </script>
+
+<script>
+	let skillSelect = document.getElementById('ITskillId');
+	let class1stSelect = document.getElementById('class1stId')
+	var class2ndSelect = document.getElementById('class2ndId')
+	let careerSelect = document.getElementById('careerId')
+	skillSelect.addEventListener('change', function() {
+    var selectedValue = this.value;
+			if (selectedValue === '1') {
+				class1stSelect.value="その他";
+				class2ndSelect.innerText=""
+				var option = document.createElement("option");
+				option.value = "33";
+				option.innerText = "テキスト";
+				class2ndSelect.appendChild(option);
+				class2ndSelect.value = "33";
+
+			}
+		}	
+	)
+
+</script>
+
+<script>
+document.getElementById('educationId').addEventListener('change', function(event) {
+    var selectedOption = event.target.value;
+
+    if (selectedOption === "その他") {
+		form.education.value = "";
+        form.education.hidden = false;
+    } else if(selectedOption != "その他") {
+        form.education.hidden = true;
+		// form.education.style.display = 'none';
+    }
+});
+
+
+document.getElementById('majorId').addEventListener('change', function(event) {
+    var selectedOption = event.target.value;
+
+    if (selectedOption === "other") {
+		form.major.value = "";
+        form.major.hidden = false;
+    } else {
+        form.major.hidden = true;
+		form.major.style.display = 'none';
+    }
+});
+
+document.getElementById('class1stId').addEventListener('change', function(event) {
+	var selectedOption = event.target.value;
+
+	if (selectedOption === "その他") {
+		form.class1st.value = "";
+        form.class1st.hidden = false;
+    } else if(selectedOption != "その他") {
+        form.class1st.hidden = true;
+		// form.education.style.display = 'none';
+    }
+});
+</script>
+
+<script>
+	function ChangeClass1st(element) {
+
+class2ndSelect.replaceChildren();
+
+console.log(class2ndSelect);
+switch (element.value) {
+<?php foreach ($optionDatas["class2nd"] as $value => $class2nd): ?>
+	case "<?php echo $optionDatas["class1st"][array_search($value, array_column($optionDatas["class1st"], "idx"))]["text"]; ?>":
+		var option = document.createElement("option");
+		option.hidden = true;
+		option.innerText = "選択してください。";
+		class2ndSelect.appendChild(option);
+
+		<?php foreach ($class2nd as $data): ?>
+			var option = document.createElement("option");
+			option.value = <?php echo $data["idx"]; ?>;
+			option.innerText = "<?php echo $data["text"]; ?>";
+			class2ndSelect.appendChild(option);
+		<?php endforeach; ?>
+		break;
+		<?php endforeach; ?>
+		
+	}
+}
+</script>
+
+<script>
+	function editConfirm(){
+		var submitConfirm=confirm("依頼しますか？");
+		if (!submitConfirm){
+            event.preventDefault();
+            return false;
+        }
+		
+	}
+	function randomPW(){
+		const pwLength = 8;
+		const pwEncoding = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+		let randomPw = "";
+
+		for (let i = 0; i < pwLength; i++) {
+			const randomIndex = Math.floor(Math.random() * pwEncoding.length);
+			randomPw += pwEncoding.charAt(randomIndex);
+		}
+		form.password.value = randomPw;
+		// console.log(randomPW);
+
+
+	}
+</script>
+
+<script>
+    document.getElementById('educationSelect').addEventListener('change', function(event) {
+    var selectedOption = event.target.value;
+    var otherEducationInput = document.getElementById('otherEducationInput');
+
+    if (selectedOption === "その他") {
+        otherEducationInput.style.display = 'block';
+    } else {
+        otherEducationInput.style.display = 'none';
+    }
+
+    var otherEducation = document.getElementById('otherEducation');
+    if (selectedOption === "その他") {
+        otherEducation.removeAttribute('disabled');
+    } else {
+        otherEducation.setAttribute('disabled', 'disabled');
+    }
+});
+
+    document.getElementById('class1stId').addEventListener('change', function(event) {
+    var selectedOption = event.target.value;
+    var otherclass1stInput = document.getElementById('otherclass1stInput');
+
+    if (selectedOption === "その他") {
+        otherclass1stInput.style.display = 'block';
+    } else {
+        otherclass1stInput.style.display = 'none';
+    }
+
+    var otherclass1st = document.getElementById('otherclass1st');
+    if (selectedOption === "その他") {
+        otherclass1st.removeAttribute('disabled');
+    } else {
+        otherclass1st.setAttribute('disabled', 'disabled');
+    }
+});
+
+document.getElementById('majorSelect').addEventListener('change', function(event) {
+    var selectedOption = event.target.value;
+    var otherMajorInput = document.getElementById('otherMajorInput');
+
+    if (selectedOption === "IT・ソフトウェア以外") {
+        otherMajorInput.style.display = 'block';
+    } else {
+        otherMajorInput.style.display = 'none';
+    }
+
+    var otherMajor = document.getElementById('otherMajor');
+    if (selectedOption === "IT・ソフトウェア以外") {
+        otherMajor.removeAttribute('disabled');
+    } else {
+        otherMajor.setAttribute('disabled', 'disabled');
+    }
+});
+</script>
+
+<!-- 漢字カナ入力時有効性検査 -->
+<script>
+function emailValidationCheck(input){
+    var emailValidation =  /^[A-Za-z0-9_\.\-]+@[A-Za-z0-9\-]+\.[A-Za-z0-9\-]+/;
+    return emailValidation.test(input);
+}
+
+function checkKanji(input) {
+    function toHalfWidth(str) {
+        return str.replace(/[！-～]/g, function(s) {
+            return String.fromCharCode(s.charCodeAt(0) - 0xFEE0);
+        }).replace(/　/g, " ");
+    }
+
+    var halfWidthInput = toHalfWidth(input);
+    var japaneseRegex = /^[\u4E00-\u9FFF\u3040-\u309F]+$/; // 
+    var katakanaRegex = /^[\u30A0-\u30FF]+$/; // 
+
+    return japaneseRegex.test(halfWidthInput) || katakanaRegex.test(halfWidthInput);
+}
+
+
+function checkKana(input) {
+    var katakanaRegex = /^[\u30A0-\u30FFー]+$/; 
+    return katakanaRegex.test(input);
+}
+</script>
+
+<script>
+    function inputConfirm() {
+        if (form.email.value == "" || !emailValidationCheck(form.email.value)) {
+            alert("メールアドレスを入力してください。");
+            setTimeout("form.email.focus()",100);
+            return false;
+        }
+
+        if (form.name.value == "" || !checkKanji(form.name.value)) {
+            alert("漢字を入力してください。");
+            setTimeout("form.name.focus()",100);
+            return false;
+        }
+
+        if (form.kana.value == "" || !checkKana(form.kana.value)) {
+            alert("カナを入力してください。");
+            setTimeout("form.kana.focus()",100);
+            return false;
+        }
+
+        if (form.birth.value == "" ) {
+            alert("生年月日を入力してください。");
+            setTimeout("form.birth.focus()",100);
+            return false;
+        }
+    
+        if (form.case.value == "") {
+            alert("応募区分を入力してください。");
+            setTimeout("form.case.focus()",100);
+            return false;
+        }
+        if (form.educationSelect.value == "") {
+            alert("学歴入力してください。");
+            setTimeout("form.educationSelect.focus()",100);
+            return false;
+        }
+
+        if (form.educationSelect.value == "その他" && form.otherEducation.value=="") {
+            alert("その他の場合の、記入してください。");
+            setTimeout("form.educationSelect.focus()",100);
+            return false;
+        }
+
+        if (form.skill.value == "") {
+            alert("ITスキル有無を入力してください。");
+            setTimeout("form.skill.focus()",100);
+            return false;
+        }
+
+        if (!class1stSelect.disabled && form.class1stSelect.value === "") {
+            alert("経験分野を入力してくださいsd。");
+            setTimeout("form.class1stSelect.focus()",100);
+            return false;
+        }
+
+        if (form.class1stSelect.value == "その他" && form.otherclass1st.value=="") {
+            alert("その他の場合の、記入してください");
+            setTimeout("form.class1stSelect.focus()",100);
+            return false;
+        }
+
+        if (!careerInput.disabled && (isNaN(form.career.value) || form.career.value === "")) {
+            alert("IT経験年数を入力してください。");
+            setTimeout("form.careerInput.focus()",100);
+            return false;
+        }
+
+        if (!typeSelect.disabled && form.typeSelect.value == "") {
+            alert("問題種別を入力してください。");
+            setTimeout("form.typeSelect.focus()",100);
+            return false;
+        }
+
+
+    }
+</script>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.0/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/locales/bootstrap-datepicker.ja.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
+
+<script>
+  $(document).ready(function(){
+    var birth = document.getElementById("birth");
+    $(birth).datepicker({
+      format: 'yyyy-mm-dd',
+      autohide: true,
+      language: 'ja',
+      startDate: '1980-01-01',
+      endDate: '2010-12-31'
+    });
+  });
+</script>
+
+<script>
+    	function ChangeClass1st(element) {
+
+		class2ndSelect.replaceChildren();
+		
+        console.log(class2ndSelect);
+		switch (element.value) {
+        <?php foreach ($optionDatas["class2nd"] as $value => $class2nd): ?>
+            case "<?php echo $optionDatas["class1st"][array_search($value, array_column($optionDatas["class1st"], "idx"))]["text"]; ?>":
+                var option = document.createElement("option");
+                option.hidden = true;
+                option.innerText = "選択してください。";
+                class2ndSelect.appendChild(option);
+
+                <?php foreach ($class2nd as $data): ?>
+                    var option = document.createElement("option");
+                    option.value = <?php echo $data["idx"]; ?>;
+                    option.innerText = "<?php echo $data["text"]; ?>";
+                    class2ndSelect.appendChild(option);
+                <?php endforeach; ?>
+                break;
+                <?php endforeach; ?>
+                default:
+                    var option = document.createElement("option");
+                    option.value = 7;
+                    option.innerText = "データがありません";
+                    class2ndSelect.appendChild(option);
+                    break;
+            }
+	}
+</script>

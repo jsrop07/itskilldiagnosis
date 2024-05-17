@@ -266,7 +266,7 @@ class QuestionTable {
 	 * @param array $whereDatas [field => value]
 	 * @return array $questionDatas
 	*/
-	public function ReadForDiagnosis($whereDatas) {
+	public function ReadForDiagnosis($whereDatas = []) {
 		$where = new Where();
 		$where->isNotNull("date_approve")->and->isNull("date_delete");
 		foreach ($whereDatas as $field => $data) {

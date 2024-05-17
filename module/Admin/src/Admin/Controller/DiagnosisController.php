@@ -21,8 +21,15 @@ class DiagnosisController extends AbstractActionController {
 
 	public function indexAction() {
 		$this->ChkLogin();
-		header("Location: ./diagnosis/list");
-		exit;
+		// header("Location: ./diagnosis/list");
+		// exit;
+		$questionTb = $this->getServiceLocator()->get("QuestionTable");
+		$sqlWhere["level"] = 1;
+		$sqlWhere["class1st"] = 7;
+		$sqlWhere["class2nd"] = 13;
+		try { $datas["questionDatas"] = $questionTb->ReadForDiagnosis($sqlWhere); }
+		catch (\Exception $e) { print_r($e->getMessage()); exit; }
+		return $this->SetViewModel($datas, "/diagnosis/test.phtml");
 	}
 
 	public function listAction() {
@@ -84,7 +91,9 @@ class DiagnosisController extends AbstractActionController {
 		$post = $this->params()->fromPost();
 		if (isset($post["idx"])) {
 			$datas["diagnosisData"] = $post;
-		} else {
+		} 
+		/* Delete 24/05/17
+		削除前： else {
 			$diagnosisTb = $this->getServiceLocator()->get("DiagnosisTable-Admin");
 
 			// Make Code
@@ -98,6 +107,7 @@ class DiagnosisController extends AbstractActionController {
 
 			$datas["code"] = $code;
 		}
+		*/
 
 		return $this->SetViewModel($datas, "/diagnosis/diagnosis_input.phtml");
 	}
@@ -479,7 +489,7 @@ class DiagnosisController extends AbstractActionController {
 		return $resultDatas;
 	}
 
-	/** Make QuestionDatas by Point
+	/** Make QuestionDatas by Point (Change to read Directly)
 	 * @param array $whereDatas array[class1st, class2nd, level]
 	 * @return mixed $questionDatas
 	*/

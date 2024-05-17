@@ -51,8 +51,11 @@
 				dl.emegra.setting { grid-template-columns: 140px 1fr; }
 			</style>
 			<dl class="emegra setting">
+				<!-- <?php /* ?> Delete 24/05/17
+				削除前：
 				<dt>職別コード</dt>
 				<dd><input class="form-control form-control-sm" name="code" style="width: 150px;" readonly value="<?php echo ($isSet) ? $diagnosisData["code"] : $code; ?>"/></dd>
+				<?php */ ?> -->
 
 				<dt class="essential">大分類</dt>
 				<dd>
@@ -127,12 +130,75 @@
 								<th>点数</th>
 							</tr>
 						</thead>
-						<tbody id="tbody-list">
+						<tbody id="tbody-question_list">
+							<?php if ($isSet): ?>
+								<?php foreach ($questionDatas as $index => $data): ?>
+									<tr>
+										<td><?= $index + 1; ?></td>
+										<td style="text-align: left" data-bs-toggle="popover" data-bs-placement="bottom" data-bs-title="<?php echo $data->question; ?>" data-bs-content=""><div><?php echo $data->title; ?></div></td>
+										<td><?php echo $data->type; ?></td>
+										<td><?php echo $data->point; ?></td>
+									</tr>
+								<?php endforeach; ?>
+								<tr>
+									<td style="grid-column: 1 / 4;"></td>
+									<td><?php echo $diagnosisData["totalPoint"]; ?>点</td>
+								</tr>
+							<?php else: ?>
+								<tr>
+									<td style="grid-column: 1 / 5;">設定で大分類、小分類、レベルを選択し、左側のボタンを押してください。</td>
+								</tr>
+							<?php endif; ?>
 						</tbody>
 					</table>
 					<button type="button" class="emegra" onclick="CreateList()" style="margin-left: 8px;">問題作成</button>
 				</div>
 			</dl>
+		</div>
+	</div>
+
+	
+	<div class="modal fade" id="modal-question_select" tabindex="-1" data-bs-backdrop="static">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+				<div class="modal-header" style="padding: 0;">
+					<table class="emegra">
+						<thead>
+							<tr style="padding-right: 32px;">
+								<th><input type="checkbox"/></th>
+								<th>タイトル</th>
+								<th>タイプ</th>
+								<th>点数</th>
+							</tr>
+						</thead>
+					</table>
+				</div>
+				<div class="modal-body" style="padding: 0;">
+					<table class="emegra">
+						<tbody id="tbody-question_select">
+							<?php foreach ($questionDatas as $data): ?>
+								<?php
+									$popContent = $numTexts[0] . ReplaceSymbol($data["answer1"]);
+									for ($i = 2; $i <= 5; $i++) {
+										if ($data["answer" . $i] == null) { break; }
+										$popContent .= "<br/>" . $numTexts[$i -1] . ReplaceSymbol($data["answer" . $i]);
+									}
+								?>
+								<tr>
+									<td><input type="checkbox" value="<?php echo $data["idx"]; ?>"/></td>
+									<td class="left" data-bs-toggle="popover" data-bs-placement="bottom" data-bs-title="<?php echo ReplaceSymbol($data["question"]); ?>" data-bs-content="<?php echo $popContent; ?>" data-bs-html="true"><?php echo $data["title"]; ?></td>
+									<td><?php echo $data["type"]; ?></td>
+									<td><?php echo $data["point"]; ?></td>
+								</tr>
+							<?php endforeach; ?>
+						</tbody>
+					</table>
+				</div>
+				<div class="modal-footer" style="justify-content: center;">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="width: 120px;">閉じる</button>
+					<button type="button" class="emegra" onclick="AddQuestion()">追加</button>
+				</div>
+			</div>
 		</div>
 	</div>
 
@@ -223,9 +289,14 @@
 	<?php endif; ?>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 <script type="text/javascript">
-	const listBody = document.getElementById("tbody-list");
+	const questionListBody = document.getElementById("tbody-question_list");
 	const selectInputs = document.getElementsByTagName("select");
+
+	const questionSelectBody = document.getElementById("tbody-question_select");
+	const modalDiv = document.getElementById("modal-question_select");
+	const modal = new bootstrap.Modal(modalDiv);
 
 	const form = document.getElementById("form");
 
@@ -353,39 +424,41 @@
 		}
 	}
 
-	function ReadList() {
-		const postForm = new FormData();
-		postForm.append("question_idxs", form.question_idxs.value);
+	<?php if ($isSet): ?>
+		function ReadList() {
+			const postForm = new FormData();
+			postForm.append("question_idxs", form.question_idxs.value);
 
-		const xhr = new XMLHttpRequest();
-		<?php if ($isEdit): ?>
-			xhr.open("POST", "../read", true);
-		<?php else: ?>
-			xhr.open("POST", "./read", true);
-		<?php endif; ?>
-		xhr.send(postForm);
+			const xhr = new XMLHttpRequest();
+			<?php if ($isEdit): ?>
+				xhr.open("POST", "../read", true);
+			<?php else: ?>
+				xhr.open("POST", "./read", true);
+			<?php endif; ?>
+			xhr.send(postForm);
 
-		xhr.onload = () => {
-			if (xhr.status == 200) {
-				const result = xhr.responseText;
-				console.log(result);
-				
-				// Check is json
-				try {
-					questionDatas = JSON.parse(result);
-				} catch (e) {
-					alert("error");
+			xhr.onload = () => {
+				if (xhr.status == 200) {
+					const result = xhr.responseText;
 					console.log(result);
-					return false;
-				}
+					
+					// Check is json
+					try {
+						questionDatas = JSON.parse(result);
+					} catch (e) {
+						alert("error");
+						console.log(result);
+						return false;
+					}
 
-				UpdateQuestionDatas(questionDatas);
+					UpdateQuestionDatas(questionDatas);
+				}
 			}
 		}
-	}
+	<?php endif; ?>
 
 	function UpdateQuestionDatas(questionDatas) {
-		listBody.replaceChildren();
+		questionListBody.replaceChildren();
 
 		let point = 0;
 		let questionTdxs = "";
@@ -413,7 +486,7 @@
 			pointTd.innerHTML = questionDatas[i]["point"];
 			tr.appendChild(pointTd);
 
-			listBody.appendChild(tr);
+			questionListBody.appendChild(tr);
 			point += Number(questionDatas[i]["point"]);
 			questionTdxs += questionDatas[i]["idx"] + ",";
 		}
@@ -429,10 +502,101 @@
 		let resultTd = document.createElement("td");
 		resultTd.innerText = point + "点";
 		resultTr.appendChild(resultTd);
-		listBody.appendChild(resultTr);
+		questionListBody.appendChild(resultTr);
 		form.totalPoint.value = point;
 
 		form.question_idxs.value = questionTdxs.slice(0, -1);
+	}
+
+	modalDiv.addEventListener("show.bs.modal", function (event) {
+		let selectCheckboxs = questionSelectBody.getElementsByTagName("input");
+		questionIdxs = form.question_idx.value.split(",");
+
+		for (let i = 0; i < selectCheckboxs.length; i++) {
+			if (questionIdxs.indexOf(selectCheckboxs[i].value) == -1) {
+				selectCheckboxs[i].parentNode.parentNode.hidden = false;
+				selectCheckboxs[i].checked = false;
+			}
+			else {
+				selectCheckboxs[i].parentNode.parentNode.hidden = true;
+				selectCheckboxs[i].checked = true;
+			}
+		}
+	})
+	
+	function AddQuestion() {
+		let selectCheckboxs = questionSelectBody.getElementsByTagName("input");
+
+		chkCheked = false;
+		let questionIdxs = [];
+		let createIdxs = [];
+		for (let i = 0; i < selectCheckboxs.length; i++) {
+			if (selectCheckboxs[i].parentNode.parentNode.hidden == true) {
+				questionIdxs.push(selectCheckboxs[i].value);
+				
+				createIdxs.push(i);
+			}
+			else if (selectCheckboxs[i].checked == true) {
+				chkCheked = true;
+
+				questionIdxs.push(selectCheckboxs[i].value);
+
+				createIdxs.push(i);
+			}
+		}
+
+		if (chkCheked) {
+			questionListBody.replaceChildren();
+			for (let i = 0; i < createIdxs.length; i++) {
+				let row = selectCheckboxs[createIdxs[i]].parentNode.parentNode.cloneNode(true);
+				row.hidden = false;
+				row.getElementsByTagName("input")[0].checked = false;
+				questionListBody.appendChild(row);
+			}
+
+			form.question_idx.value = questionIdxs.join(",");
+
+			modal.hide();
+		}
+		else {
+			alert("追加する問題を選択してください。");
+		}
+	}
+	
+	function DeleteQuestion() {
+		let listCheckboxs = questionListBody.getElementsByTagName("input");
+
+		chkCheked = false;
+		let questionIdxs = form.question_idx.value.split(",");
+		let deleteIdxs = [];
+		for (let i = 0; i < listCheckboxs.length; i++) {
+			if (listCheckboxs[i].checked == true) {
+				chkCheked = true;
+
+				for (let j = 0; j < questionIdxs.length; j++) {
+					if(questionIdxs[j] == listCheckboxs[i].value)  {
+						questionIdxs.splice(j, 1);
+						break;
+					}
+				}
+
+				deleteIdxs.push(i);
+			}
+		}
+
+		if (chkCheked) {
+			if (confirm("削除しますか？") === false) { return false; }
+
+			for (let i = deleteIdxs.length - 1; i >= 0; i--) {
+				console.log(deleteIdxs[i]);
+				listCheckboxs[deleteIdxs[i]].parentNode.parentNode.remove();
+			}
+
+			form.question_idx.value = questionIdxs.join(",");
+		}
+		else { 
+			alert("削除する問題を選択してください。");
+		}
 	}
 
 	function ChangePoint(element) {
@@ -463,7 +627,7 @@
 			
 			if (form.question_idxs.value == "") {
 				alert("問題を作成してください。");
-				listBody.focus();
+				questionListBody.focus();
 				return false;
 			}
 

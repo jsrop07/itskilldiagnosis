@@ -1,0 +1,182 @@
+<?php
+	$numTexts = array("①", "②", "③", "④", "⑤");
+
+	function ReplaceSymbol($string) {
+		$string = str_replace("<", "＜", $string);
+		$string = str_replace(">", "＞", $string);
+		return $string;
+	}
+?>
+
+<style type="text/css">
+	table.emegra tr { grid-template-columns: 60px 1fr 60px 50px; }
+</style>
+
+
+<table class="emegra">
+	<thead>
+		<tr>
+			<th><input type="checkbox"/></th>
+			<th>タイトル</th>
+			<th>タイプ</th>
+			<th>点数</th>
+		</tr>
+	</thead>
+	<tbody id="tbody-question_list">
+	</tbody>
+</table>
+<form id="form">
+	保存したデータインデックス<input name="question_idx">
+</form>
+
+<button type="button" class="emegra" data-bs-toggle="modal" data-bs-target="#modal-question_select">
+  追加
+</button>
+
+<button type="button" class="emegra delete" onclick="DeleteQuestion()">削除</button>
+
+<div class="modal fade" id="modal-question_select" tabindex="-1" data-bs-backdrop="static">
+	<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+		<div class="modal-content">
+			<div class="modal-header" style="padding: 0;">
+				<table class="emegra">
+					<thead>
+						<tr style="padding-right: 32px;">
+							<th><input type="checkbox"/></th>
+							<th>タイトル</th>
+							<th>タイプ</th>
+							<th>点数</th>
+						</tr>
+					</thead>
+				</table>
+			</div>
+			<div class="modal-body" style="padding: 0;">
+				<table class="emegra">
+					<tbody id="tbody-question_select">
+						<?php foreach ($questionDatas as $data): ?>
+							<?php
+								$popContent = $numTexts[0] . ReplaceSymbol($data["answer1"]);
+								for ($i = 2; $i <= 5; $i++) {
+									if ($data["answer" . $i] == null) { break; }
+									$popContent .= "<br/>" . $numTexts[$i -1] . ReplaceSymbol($data["answer" . $i]);
+								}
+							?>
+							<tr>
+								<td><input type="checkbox" value="<?php echo $data["idx"]; ?>"/></td>
+								<td class="left" data-bs-toggle="popover" data-bs-placement="bottom" data-bs-title="<?php echo ReplaceSymbol($data["question"]); ?>" data-bs-content="<?php echo $popContent; ?>" data-bs-html="true"><?php echo $data["title"]; ?></td>
+								<td><?php echo $data["type"]; ?></td>
+								<td><?php echo $data["point"]; ?></td>
+							</tr>
+						<?php endforeach; ?>
+					</tbody>
+				</table>
+			</div>
+      <div class="modal-footer" style="justify-content: center;">
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="width: 120px;">閉じる</button>
+        <button type="button" class="emegra" onclick="AddQuestion()">保存</button>
+      </div>
+		</div>
+	</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+<script type="text/javascript">
+	const questionListBody = document.getElementById("tbody-question_list");
+
+	const modalDiv = document.getElementById("modal-question_select");
+	const modal = new bootstrap.Modal(modalDiv);
+	const questionSelectBody = document.getElementById("tbody-question_select");
+
+	const form = document.getElementById("form");
+
+	modalDiv.addEventListener("show.bs.modal", function (event) {
+		let selectCheckboxs = questionSelectBody.getElementsByTagName("input");
+		questionIdxs = form.question_idx.value.split(",");
+
+		for (let i = 0; i < selectCheckboxs.length; i++) {
+			if (questionIdxs.indexOf(selectCheckboxs[i].value) == -1) {
+				selectCheckboxs[i].parentNode.parentNode.hidden = false;
+				selectCheckboxs[i].checked = false;
+			}
+			else {
+				selectCheckboxs[i].parentNode.parentNode.hidden = true;
+				selectCheckboxs[i].checked = true;
+			}
+		}
+	})
+	
+	function AddQuestion() {
+		let selectCheckboxs = questionSelectBody.getElementsByTagName("input");
+
+		chkCheked = false;
+		let questionIdxs = [];
+		let createIdxs = [];
+		for (let i = 0; i < selectCheckboxs.length; i++) {
+			if (selectCheckboxs[i].parentNode.parentNode.hidden == true) {
+				questionIdxs.push(selectCheckboxs[i].value);
+				
+				createIdxs.push(i);
+			}
+			else if (selectCheckboxs[i].checked == true) {
+				chkCheked = true;
+
+				questionIdxs.push(selectCheckboxs[i].value);
+
+				createIdxs.push(i);
+			}
+		}
+
+		if (chkCheked) {
+			questionListBody.replaceChildren();
+			for (let i = 0; i < createIdxs.length; i++) {
+				let row = selectCheckboxs[createIdxs[i]].parentNode.parentNode.cloneNode(true);
+				row.hidden = false;
+				row.getElementsByTagName("input")[0].checked = false;
+				questionListBody.appendChild(row);
+			}
+
+			form.question_idx.value = questionIdxs.join(",");
+
+			modal.hide();
+		}
+		else {
+			alert("追加する問題を選択してください。");
+		}
+	}
+	
+	function DeleteQuestion() {
+		let listCheckboxs = questionListBody.getElementsByTagName("input");
+
+		chkCheked = false;
+		let questionIdxs = form.question_idx.value.split(",");
+		let deleteIdxs = [];
+		for (let i = 0; i < listCheckboxs.length; i++) {
+			if (listCheckboxs[i].checked == true) {
+				chkCheked = true;
+
+				for (let j = 0; j < questionIdxs.length; j++) {
+					if(questionIdxs[j] == listCheckboxs[i].value)  {
+						questionIdxs.splice(j, 1);
+						break;
+					}
+				}
+
+				deleteIdxs.push(i);
+			}
+		}
+
+		if (chkCheked) {
+			if (confirm("削除しますか？") === false) { return false; }
+
+			for (let i = deleteIdxs.length - 1; i >= 0; i--) {
+				console.log(deleteIdxs[i]);
+				listCheckboxs[deleteIdxs[i]].parentNode.parentNode.remove();
+			}
+
+			form.question_idx.value = questionIdxs.join(",");
+		}
+		else { 
+			alert("削除する問題を選択してください。");
+		}
+	}
+</script>

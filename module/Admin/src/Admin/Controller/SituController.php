@@ -44,15 +44,7 @@ class SituController extends AbstractActionController {
 
 		$recordData = $recordTb->ReadByIdx($index);
 
-		$applicantData = $applicantTb->ReadByIdx($recordData["applicant_idx"]);
-		// $recordData = array_merge($applicantData, $recordData);
 
-
-		if (($recordData["diagnosis_code"]) != null) {
-			$diagnosisData = $diagnosisTb->ReadByCode($recordData["diagnosis_code"]);
-			$recordData = array_merge($diagnosisData, $recordData);
-		}
-		$diagnosisData = $diagnosisTb->ReadByCode($recordData["diagnosis_code"]);
 		$datas["optionDatas"] = $this->GetOptionDatasForInput();
 
 		$class1st=$situTb->getclass1st();
@@ -62,10 +54,6 @@ class SituController extends AbstractActionController {
 
 		$datas["class1st"] = $class1st;
 		$datas["class2nd"] = $class2nd;
-
-		$datas["applicantArray"] = $applicantData;
-		$datas["recordArray"] = $recordData;
-		$datas["diagnosisArray"] = $diagnosisData;
 
 		if($editDatas == "btn_submit"){
 			$recordlWhere['idx']=$recordData['idx'];
@@ -86,12 +74,12 @@ class SituController extends AbstractActionController {
 			$recordSet['class2nd']=$post['class2nd'];
 			$datas["recordArray"] = $recordData;
 			$datas["applicantArray"] = $applicantData;
-			
+			exit;
 			$situTb->updateRecordInfo($recordlWhere, $recordSet);	
 			$situTb->updateApplicantInfo($applicantWhere, $applicantSet);	
 			$recentPassword =  $situTb->readById($applicantInfo);
 
-			$this->mailByRequest($recordData,$managerArray,$recentPassword);
+			// $this->mailByRequest($recordData,$managerArray,$recentPassword);
 
 			echo "
 			<script>
@@ -174,7 +162,7 @@ class SituController extends AbstractActionController {
 			$recordSet['diagnosis_code']=$post['code'];
 			$datas["recordArray"] = $recordData;
 			$datas["applicantArray"] = $applicantData;
-			
+			exit;
 			$situTb->updateRecordInfo($recordlWhere, $recordSet);	
 			$situTb->updateApplicantInfo($applicantWhere, $applicantSet);	
 			$recentPassword =  $situTb->readById($applicantInfo);

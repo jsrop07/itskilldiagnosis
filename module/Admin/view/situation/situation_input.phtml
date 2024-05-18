@@ -3,66 +3,6 @@ echo $this->partial("breadcrumb", ["datas" => $breadcrumbData]);
 $currentDate = date("Y-m-d H:i:s");
 
 function InitStyle() { return " font-style: italic; color: ;"; }
-	$isITMajor = false;
-	
-	$isITSkill =false;
-
-	$isITEducation1 =false;
-	$isITEducation2 = false;
-	$isITEducation3 = false;
-	$isITEducation4 = false;
-	$isITEducation5 = false;
-
-
-	$isClass1st1 = false;
-	$isClass1st2 = false;
-	$isClass1st3 = false;
-	$isClass1st4 = false;
-	$isClass1st5 = false;
-
-
-	if ($recordArray["major"] == "IT・ソフトウェア専攻") {
-		$isITMajor = true;
-	}
-	if ($recordArray["skill"] == 0) {
-		$isITSkill = true;
-	}
-	if ($recordArray["education"] == "高卒") {
-		$isITEducation1 = true;
-	}
-
-	if ($recordArray["education"] == "専門卒") {
-		$isITEducation2 = true;
-	}
-
-	if ($recordArray["education"] == "大卒") {
-		$isITEducation3 = true;
-	}
-
-	if ($recordArray["education"] == "大学院卒") {
-		$isITEducation4 = true;
-	}
-	if ($recordArray["education"] == "その他") {
-		!$isITEducation1 && $isITEducation2 && !$isITEducation3 && !$isITEducation4=true ;
-	}
-
-	if ($recordArray["class1st"] == "WEB") {
-		$isClass1st1 = true;
-	}
-
-	if ($recordArray["class1st"] == "IT基礎") {
-		$isClass1st2 = true;
-	}
-	if ($recordArray["class1st"] == "モバイル") {
-		$isClass1st3 = true;
-	}
-	if ($recordArray["class1st"] == "サーバ") {
-		$isClass1st4 = true;
-	}
-	if ($recordArray["class1st"] == "インフラ") {
-		$isClass1st5 = true;
-	}
-
 ?>
 
 
@@ -87,7 +27,7 @@ function InitStyle() { return " font-style: italic; color: ;"; }
 				
                 <dt class="essential">応募区分</dt>
 				<select class="form-select" name="case" style="width:220px" >
-                        <option value="" selected>選択してください。</option>
+                        <option value="" selected hidden>選択してください。</option>
                         <option value="0">新卒</option>
                         <option value="1">中途（経歴職）</option>
                     </select>
@@ -116,7 +56,7 @@ function InitStyle() { return " font-style: italic; color: ;"; }
                 <dt class="essential">学歴</dt>
 				<dd>
 				<select class="form-select" name="education" style="width:220px" id="educationSelect" >
-                        <option value=""selected>選択してください。</option>
+                        <option value=""selected hidden>選択してください。</option>
                         <option value="高卒">高卒</option>
                         <option value="専門卒">専門卒</option>
                         <option value="大卒">大卒</option>
@@ -129,15 +69,15 @@ function InitStyle() { return " font-style: italic; color: ;"; }
 				</dd>
 
                 <dt class="essential">生年月日</dt>
-				<dd><input class="form-control" id="birth" name="birth" type="text" placeholder="YYYY-MM-DD" autocomplete="off"  style="width:220px" value="<?php echo $applicantArray["birth"] ?>"></dd> 
+				<dd><input class="form-control" id="birth" name="birth" type="text" placeholder="YYYY-MM-DD" autocomplete="off"  style="width:220px" value=""></dd> 
 
 				<dt>IT関連資格</dt>
-				<dd><input class="form-control" id="certificatesId" name="certificates" type="text"  style="width:220px" value="<?php echo $applicantArray["certificates"] ?>"></dd> 
+				<dd><input class="form-control" id="certificatesId" name="certificates" type="text"  style="width:220px"></dd> 
 
 				<dt>専攻</dt>
 				<dd> 
 				<select class="form-select" name="major" style="width: 220px;" id="majorSelect" >
-                        <option selected disabled hidden>選択してください。</option>
+                        <option selected>選択してください。</option>
                         <option value="IT・ソフトウェア専攻">IT・ソフトウェア専攻</option>
                         <option value="IT・ソフトウェア以外">IT・ソフトウェア以外</option>
                     </select>
@@ -147,7 +87,7 @@ function InitStyle() { return " font-style: italic; color: ;"; }
 				</dd>
 
 				<dt>その他</dt>
-				<dd><input class="form-control" id="other" name="other" type="text"  style="width:220px" value="<?php echo $applicantArray["other"] ?>"></dd> 
+				<dd><input class="form-control" id="other" name="other" type="text"  style="width:220px" ></dd> 
 			</dl>
 		</div>
 	</div>
@@ -163,8 +103,8 @@ function InitStyle() { return " font-style: italic; color: ;"; }
 			<dl class="emegra setting">
                 <dt class="essential" id="ITskillTitle">ITスキル有無</dt>
 				<dd>
-				<select class="" name="skill" style="width:220px" >
-                        <option value="" selected>選択</option>
+				<select class="form-select" name="skill" style="width:220px" >
+                        <option value="" selected hidden>選択</option>
                         <option value="0">有</option>
                         <option value="1">無</option>
                     </select>
@@ -173,7 +113,7 @@ function InitStyle() { return " font-style: italic; color: ;"; }
                 <dt class="essential" id="class1stTitle">経験分野</dt>
 				<dd>
 				<select class="form-select" name="class1st" style="width:220px;" id="class1stId" onclick="ChangeClass1st(this)">
-                    <option value="" selected  >選択してください。</option>
+                    <option value="" selected hidden>選択してください。</option>
                         <?php foreach ($this->class1st as $row): ?>
                             <?php $texts = explode(',', $row['text']); ?>
                             <?php foreach ($texts as $text): ?>
@@ -188,7 +128,7 @@ function InitStyle() { return " font-style: italic; color: ;"; }
 
 				<dt class="essential" id=class2ndTitle>問題種別</dt>
 				<dd>
-				<select class="" name="class2nd" style="width:220px;" id="class2ndId">
+				<select class="form-select" name="class2nd" style="width:220px;" id="class2ndId">
                     <option value=""  >選択してください。</option>
                 </select>
 				</dd>
@@ -211,25 +151,13 @@ function InitStyle() { return " font-style: italic; color: ;"; }
 				<dd><input class="form-control"  type="text" style="width:220px;" value="<?php echo $currentDate?>"readonly></dd>
 
 				<dt class="essential">診断問項ID</dt>
-				<dd><input class="form-control" name="" type="text" style="width:220px; " value="<?php echo $diagnosisArray['code']?>"></dd> 
+				<dd><input class="form-control" name="" type="text" style="width:220px; "></dd> 
 
 				<dt class="essential">レベル</dt>
-				<dd><input class="form-control" name="" type="text" style="width:80px; " 
-				value="<?php if($diagnosisArray["level"]==0){
-							echo "０級";}
-						elseif($diagnosisArray["level"]==1){
-							echo "初級";
-						}
-						elseif($diagnosisArray["level"]==2){
-							echo "中級";
-						}elseif($diagnosisArray["level"]==3){
-							echo "高級";
-						}
-					 ?>">
-				</dd>
+				<dd><input class="form-control" name="" type="text" style="width:80px;"> </dd>
 
 				<dt class="essential">問項数別</dt>
-				<dd><input class="form-control" type="text" style="width:50px;text-align:center " value="<?php echo $diagnosisArray['question_num']?>"> 問</dd>
+				<dd><input class="form-control" type="text" style="width:50px;text-align:center"> 問</dd>
 		
 				<dt class="essential">診断方法</dt>
                 <dd style="grid-column: 2 / 5;">
@@ -480,71 +408,90 @@ function checkKana(input) {
         if (form.email.value == "" || !emailValidationCheck(form.email.value)) {
             alert("メールアドレスを入力してください。");
             setTimeout("form.email.focus()",100);
+            event.preventDefault();
             return false;
         }
 
         if (form.name.value == "" || !checkKanji(form.name.value)) {
             alert("漢字を入力してください。");
             setTimeout("form.name.focus()",100);
+            event.preventDefault();
             return false;
         }
 
         if (form.kana.value == "" || !checkKana(form.kana.value)) {
             alert("カナを入力してください。");
             setTimeout("form.kana.focus()",100);
+            event.preventDefault();
             return false;
         }
 
         if (form.birth.value == "" ) {
             alert("生年月日を入力してください。");
             setTimeout("form.birth.focus()",100);
+            event.preventDefault();
             return false;
         }
     
         if (form.case.value == "") {
             alert("応募区分を入力してください。");
             setTimeout("form.case.focus()",100);
+            event.preventDefault();
             return false;
         }
         if (form.educationSelect.value == "") {
             alert("学歴入力してください。");
             setTimeout("form.educationSelect.focus()",100);
+            event.preventDefault();
             return false;
         }
 
         if (form.educationSelect.value == "その他" && form.otherEducation.value=="") {
             alert("その他の場合の、記入してください。");
             setTimeout("form.educationSelect.focus()",100);
+            event.preventDefault();
             return false;
         }
 
         if (form.skill.value == "") {
             alert("ITスキル有無を入力してください。");
             setTimeout("form.skill.focus()",100);
+            event.preventDefault();
             return false;
         }
 
         if (!class1stSelect.disabled && form.class1stSelect.value === "") {
             alert("経験分野を入力してくださいsd。");
             setTimeout("form.class1stSelect.focus()",100);
+            event.preventDefault();
             return false;
         }
 
         if (form.class1stSelect.value == "その他" && form.otherclass1st.value=="") {
             alert("その他の場合の、記入してください");
             setTimeout("form.class1stSelect.focus()",100);
+            event.preventDefault();
+
             return false;
         }
 
         if (!careerInput.disabled && (isNaN(form.career.value) || form.career.value === "")) {
             alert("IT経験年数を入力してください。");
             setTimeout("form.careerInput.focus()",100);
+            event.preventDefault();
             return false;
         }
 
         if (!typeSelect.disabled && form.typeSelect.value == "") {
             alert("問題種別を入力してください。");
             setTimeout("form.typeSelect.focus()",100);
+            event.preventDefault();
+            return false;
+        }
+
+        var submitConfirm=confirm("申し込みますか？");
+        if (!submitConfirm){
+            event.preventDefault();
             return false;
         }
 

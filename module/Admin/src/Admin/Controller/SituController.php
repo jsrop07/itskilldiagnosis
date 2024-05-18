@@ -5,6 +5,8 @@ use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Zend\Session\Container;
 use Admin\Model\MailRequest;
+use Zend\View\Model\JsonModel;
+use Admin\Model\SituTable;
 
 class SituController extends AbstractActionController {
 	function ChkLogin() {
@@ -130,6 +132,13 @@ class SituController extends AbstractActionController {
 			$diagnosisData = $diagnosisTb->ReadByCode($recordData["diagnosis_code"]);
 			$recordData = array_merge($diagnosisData, $recordData);
 		}
+
+		if (isset($post["class2nd"]) && isset($post['level'])) {
+			$result = $situTb->ReadDiagnosis($post["class2nd"], $post["level"]);
+			die(json_encode($result));
+		}
+		// $datas['allDiagnosis'] = $allDiagnosis;
+
 		$diagnosisData = $diagnosisTb->ReadByCode($recordData["diagnosis_code"]);
 		$datas["optionDatas"] = $this->GetOptionDatasForInput();
 
@@ -162,6 +171,7 @@ class SituController extends AbstractActionController {
 			$recordSet['skill']=$post['skill'];
 			$recordSet['class1st']=$post['class1st'];
 			$recordSet['class2nd']=$post['class2nd'];
+			$recordSet['diagnosis_code']=$post['code'];
 			$datas["recordArray"] = $recordData;
 			$datas["applicantArray"] = $applicantData;
 			
@@ -169,7 +179,7 @@ class SituController extends AbstractActionController {
 			$situTb->updateApplicantInfo($applicantWhere, $applicantSet);	
 			$recentPassword =  $situTb->readById($applicantInfo);
 
-			$this->mailByRequest($recordData,$managerArray,$recentPassword);
+			// $this->mailByRequest($recordData,$managerArray,$recentPassword);
 
 			echo "
 			<script>

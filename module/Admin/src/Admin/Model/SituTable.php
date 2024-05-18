@@ -60,6 +60,35 @@ class SituTable
 	  $qry = $this->sql->select("applicant")->where(["email" => $email]);
 	  return $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
 	}
+
+	public function ReadDiagnosis($class2ndAjax,$levelAjax)
+	{
+		$qry = $this->sql->select("diagnosis")->where(
+			array(
+			  "class2nd" => $class2ndAjax,
+			  "level" => $levelAjax,
+			)
+		  );
+
+		  $resultSet  = $this->sql->prepareStatementForSqlObject($qry)->execute();
+
+		  $results = iterator_to_array($resultSet,false);
+
+		  if (empty($results)) {
+			return "wrong";
+		} else {
+			$response = [];
+			foreach ($results as $result) {
+				$response[] = [
+					"code" => $result["code"],
+					"title" => $result['title'],
+					"question_num" => $result["question_num"]
+				];
+			}
+			return $response;
+		}
+
+	}
 	
 	public function getclass1st(){
         $qry = $this->sql->select("option");
@@ -120,32 +149,4 @@ class SituTable
 
 		return $result;   
 	  }
-
-	// public function updateRecordInfos($recordlWhere, $recordSet){
-	// 	$qry=new sql($this->adapter);
-	// 	$update=$qry->update('record');
-	
-	// 	$recordSet["request_date"] = date("Y-m-d H:i:s");
-	
-	// 	$update->set($recordSet);
-	// 	$update->where($recordlWhere);
-	
-	// 	$sqlString = $qry->getSqlStringForSqlObject($update);
-	// 	$result = $this->adapter->query($sqlString, Adapter::QUERY_MODE_EXECUTE);
-	
-	// 	return $result;   
-	//   }
-	//   public function updateApplicantInfos($applicantWhere, $applicantSet){
-	// 	$qry=new sql($this->adapter);
-	// 	$update=$qry->update('applicant');
-	
-	
-	// 	$update->set($applicantSet);
-	// 	$update->where($applicantWhere);
-	
-	// 	$sqlString = $qry->getSqlStringForSqlObject($update);
-	// 	$result = $this->adapter->query($sqlString, Adapter::QUERY_MODE_EXECUTE);
-	
-	// 	return $result;   
-	//   }
 }

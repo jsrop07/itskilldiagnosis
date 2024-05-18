@@ -20,7 +20,6 @@ function InitStyle() { return " font-style: italic; color: ;"; }
 	$isClass1st4 = false;
 	$isClass1st5 = false;
 
-
 	if ($recordArray["major"] == "IT・ソフトウェア専攻") {
 		$isITMajor = true;
 	}
@@ -62,7 +61,6 @@ function InitStyle() { return " font-style: italic; color: ;"; }
 	if ($recordArray["class1st"] == "インフラ") {
 		$isClass1st5 = true;
 	}
-
 ?>
 
 
@@ -237,33 +235,65 @@ function InitStyle() { return " font-style: italic; color: ;"; }
 				<dd><input class="form-control"  type="text" style="width:220px;" value="<?php echo $currentDate?>"readonly></dd>
 
 				<dt class="essential">診断問項ID</dt>
-				<dd><input class="form-control" name="" type="text" style="width:220px; " value="<?php echo $diagnosisArray['code']?>"></dd> 
+				<dd>
+					<input class="form-control" name="code" type="text" style="width:220px; ">
+					<button type="button" data-bs-toggle="modal" data-bs-target="#staticBackdrop" style="margin-left:10px; width:50px; height:40px; border-radius: 10px; background:linear-gradient(111deg, #50D7C7 0%, #40ADF0 100%); color:white;" onclick="diagnosisData();">検索</button>
+				</dd> 
+				
+			<div class="modal modal-sheet py-5" style="backdrop-filter: blur(5px); " tabindex="-1" role="dialog" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+				<div class="modal-dialog" style="margin-top:150px;" role="document">
+					<div class="modal-content rounded-4" style=>
+					  <div class="modal-header border-bottom-0" style="background:linear-gradient(111deg, #50D7C7 0%, #40ADF0 100%); color:white; height: 40px;border-top-left-radius:13px;border-top-right-radius:13px">
+              <h3 class="modal-title fs-6" id="exampleModalLabel">診断書検索</h3>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(100%);"></button>
+					  </div>
+              <div class="modal-body fs-5">
+                  <table class="table" style="text-align:center; font-size:12px;">
+                    <thead>
+                    <tr>
+                        <th>No</th>
+                        <th style="text-align:left;">タイトル</th>
+                        <th>診断書番号</th>
+                        <th>選択</th>
+                      </tr>
+                      </thead>
+                      <tbody style="text-align:center">
+                      
+                      </tbody>
+                    </table>
+              </div>
+              <div class="modal-footer flex-column border-top-0" style="margin-bottom:8px;">
+                <button type="button" id='lock_time' class="btn btn-lg  w-75 mx-0" data-bs-dismiss="modal" style="background:linear-gradient(111deg, #50D7C7 0%, #40ADF0 100%); color:white;">閉じる</button>
+              </div>
+          </div>
+				</div>
+			</div>
+
+      <script>
+
+      </script>
+      
 
 				<dt class="essential">レベル</dt>
-				<dd><input class="form-control" name="" type="text" style="width:80px; " 
-				value="<?php if($diagnosisArray["level"]==0){
-							echo "０級";}
-						elseif($diagnosisArray["level"]==1){
-							echo "初級";
-						}
-						elseif($diagnosisArray["level"]==2){
-							echo "中級";
-						}elseif($diagnosisArray["level"]==3){
-							echo "高級";
-						}
-					 ?>">
+				<dd><select class="form-select" name="level" type="text" style="width:80px;">
+					<option value="0">０級</option>
+					<option value="1">初級</option>
+					<option value="2">中級</option>
+					<option value="3">高級</option>
+					</select>
+					
 				</dd>
 
 				<dt class="essential">問項数別</dt>
-				<dd><input class="form-control" type="text" style="width:50px;text-align:center " value="<?php echo $diagnosisArray['question_num']?>"> 問</dd>
+				<dd><input class="form-control" name="question_num" type="text" style="width:50px;text-align:center "> 問</dd>
 		
 				<dt class="essential">診断方法</dt>
                 <dd style="grid-column: 2 / 5;">
 					<select class="form-select" name="methods" style="width:13%;" onchange="ChangeInputStyle(this)" >
-                        <option value="" selected disabled hidden><?php echo $recordArray['method']?></option>
-                        <option value="0">WEB</option>
-                        <option value="1">対面</option>
-                    </select>
+            <option value="" selected disabled hidden><?php echo $recordArray['method']?></option>
+            <option value="0">WEB</option>
+            <option value="1">対面</option>
+          </select>
 				</dd>
 		</dl>
 	</div>
@@ -439,8 +469,6 @@ document.getElementById('class1stId').addEventListener('change', function(event)
 	function ChangeClass1st(element) {
 
 class2ndSelect.replaceChildren();
-
-console.log(class2ndSelect);
 switch (element.value) {
 <?php foreach ($optionDatas["class2nd"] as $value => $class2nd): ?>
 	case "<?php echo $optionDatas["class1st"][array_search($value, array_column($optionDatas["class1st"], "idx"))]["text"]; ?>":
@@ -486,4 +514,95 @@ switch (element.value) {
 
 
 	}
+</script>
+
+<script>
+    
+
+      function diagnosisData() {
+      var levelElement = document.querySelector('select[name="level"]');
+      var class2ndElement = document.querySelector('select[name="class2nd"]');
+			var levelValue = levelElement.options[levelElement.selectedIndex].value;
+			var class2ndValue = class2ndElement.options[class2ndElement.selectedIndex].value;
+      const url = window.location.href;
+      const postForm = new FormData();
+      postForm.append("level", levelValue);
+		  postForm.append("class2nd", class2ndValue);
+      const xhr = new XMLHttpRequest();
+      xhr.open("POST", url, true);
+      xhr.send(postForm);
+      xhr.onload = () => {
+        if (xhr.status == 200) {
+            try {
+                const result = JSON.parse(xhr.responseText);
+                console.log(result);
+                if (result === "wrong") {
+                  updateTable("wrong");
+                    return;
+                }
+                updateTable(result);
+            } catch (e) {
+                console.error("Failed to parse response", e);
+                alert("サーバー応答の解析に失敗しました");
+            }
+        }
+    }
+}
+
+    function updateTable(data) {
+    const tableBody = document.querySelector(".table tbody");
+    tableBody.innerHTML = ""; 
+    if (data === "wrong" || data.length === 0) {
+        const row = document.createElement("tr");
+
+        const messageCell = document.createElement("td");
+        messageCell.setAttribute("colspan", "4");
+        messageCell.textContent = "データがありません";
+        row.appendChild(messageCell);
+
+        tableBody.appendChild(row);
+    } else {
+      data.forEach((item, index) => {
+        const row = document.createElement("tr");
+
+        const noCell = document.createElement("td");
+        noCell.textContent = index + 1;
+        row.appendChild(noCell);
+
+        const titleCell = document.createElement("td");
+        titleCell.textContent = item.question_num; 
+        row.appendChild(titleCell);
+
+        const codeCell = document.createElement("td");
+        codeCell.textContent = item.code;
+        row.appendChild(codeCell);
+
+        const selectCell = document.createElement("td");
+        const button = document.createElement("button");
+        button.type = "button";
+        button.textContent = "選択";
+        button.addEventListener("click", () => {
+                selectCode(item.code);
+                selectQuestionNum(item.question_num);
+            });
+        selectCell.appendChild(button);
+        row.appendChild(selectCell);
+
+        tableBody.appendChild(row);
+    });
+}}
+
+function selectCode(code) {
+    const codeElement = document.querySelector('input[name="code"]');
+    if (codeElement) {
+        codeElement.value = code;
+    }
+  }
+  function selectQuestionNum(question_num){
+    const numElement = document.querySelector('input[name="question_num"]');
+    if (numElement) {
+        numElement.value = question_num;
+    }
+  }
+
 </script>

@@ -28,17 +28,13 @@ class QuestionController extends AbstractActionController
 	public function listAction() {
 		$this->ChkLogin();
 		$datas["breadcrumbData"] = ["ITスキル診断問項管理"];
-
-		$printDataNum = 10;							// Number of data to output on one page
-		$totalQuestionDatas = array();	// Number of all data that can be shown
+		$datas["optionDatas"] = $this->GetOptionDatas();
 
 		// Data of login user
 		$session = new Container("user");
-		$userCode = $session["code"];
 		$userLevel = $session["level"];
 
 		$questionTb = $this->getServiceLocator()->get("QuestionTable");
-
 		$query = $this->params()->fromQuery();
 
 		// Get Current Page
@@ -48,70 +44,72 @@ class QuestionController extends AbstractActionController
 			unset($query["page"]);
 		}
 
-		// Check search data
-		if (!empty($query)) {
-			$sqlWhere = array();
-			if (isset($query["approver"])) {
-				$adminTb = $this->getServiceLocator()->get("AdminTable");
-				$sqlWhere["admin_approve"] = $adminTb->ReadByName($query["approver"])["code"];
-				$datas["searchDatas"]["approver"] = $query["approver"];
-			}
+		// Save Search data
+		$sqlWhere = array();
+		if (isset($query["approver"])) {
+			$adminTb = $this->getServiceLocator()->get("AdminTable");
+			try { $sqlWhere["admin_approve"] = $adminTb->ReadByName($query["approver"])["code"]; }
+			catch (\Exception $e) { print_r($e->getMessage()); exit; }
+			$datas["searchDatas"]["approver"] = $query["approver"];
+		}
 
-			if (isset($query["title"])) {
-				$sqlWhere["title"] = $query["title"];
-				$datas["searchDatas"]["title"] = $query["title"];
-			}
+		if (isset($query["title"])) {
+			$sqlWhere["title"] = $query["title"];
+			$datas["searchDatas"]["title"] = $query["title"];
+		}
 
-			if ($userLevel >= 1) {
-				$totalQuestionDatas = $questionTb->ReadListByOption($sqlWhere);
-				$paginationData = $questionTb->GetListByOption($sqlWhere);
+		// Save Align data
+		$sqlOrder = array();
+		if (isset($query["align"])) {
+			$sqlOrder["field"] = explode("-", $query["align"])[0];
+			$sqlOrder["seq"] = explode("-", $query["align"])[1];
+			$datas["searchDatas"]["align"] = $query["align"];
+		}
+
+		$questionDatas = "";
+		// Check User Level
+		if ($userLevel >= 1) {
+			// Check Search data and Align data
+			if (!empty($sqlOrder) && !empty($sqlWhere)) {
+				try { $questionDatas = $questionTb->GetListBySearchnAlign($sqlWhere, $sqlOrder); }
+				catch (\Exception $e) { print_r($e->getMessage()); exit; }
+			}
+			else if (!empty($sqlOrder) && empty($sqlWhere)) {
+				try { $questionDatas = $questionTb->GetListByAlign($sqlOrder); }
+				catch (\Exception $e) { print_r($e->getMessage()); exit; }
+			}
+			else if (empty($sqlOrder) && !empty($sqlWhere)) {
+				try { $questionDatas = $questionTb->GetListBySearch($sqlWhere); }
+				catch (\Exception $e) { print_r($e->getMessage()); exit; }
 			}
 			else {
-				$totalQuestionDatas = $questionTb->ReadValidListByOption($userCode, $sqlWhere);
-				$paginationData = $questionTb->GetValidListByOption($userCode, $sqlWhere);
+				try { $questionDatas = $questionTb->GetAllList(); }
+				catch (\Exception $e) { print_r($e->getMessage()); exit; }
 			}
 		} else {
-			if ($userLevel >= 1) {
-				$totalQuestionDatas = $questionTb->ReadAllList();
-				$paginationData = $questionTb->GetAllList();
+			$userCode = $session["code"];
+			if (!empty($sqlOrder) && !empty($sqlWhere)) {
+				try { $questionDatas = $questionTb->GetListValidBySearchnAlign($userCode, $sqlWhere, $sqlOrder); }
+				catch (\Exception $e) { print_r($e->getMessage()); exit; }
+			}
+			else if (!empty($sqlOrder) && empty($sqlWhere)) {
+				try { $questionDatas = $questionTb->GetValidListByAlign($userCode, $sqlOrder); }
+				catch (\Exception $e) { print_r($e->getMessage()); exit; }
+			}
+			else if (empty($sqlOrder) && !empty($sqlWhere)) {
+				try { $questionDatas = $questionTb->GetValidListBySearch($userCode, $sqlWhere); }
+				catch (\Exception $e) { print_r($e->getMessage()); exit; }
 			}
 			else {
-				$totalQuestionDatas = $questionTb->ReadValidList($userCode);
-				$paginationData = $questionTb->GetValidList($userCode);
+				try { $questionDatas = $questionTb->GetValidList($userCode); }
+				catch (\Exception $e) { print_r($e->getMessage()); exit; }
 			}
 		}
-		
-		// Align datas
-		if (isset($query["align"])) {
-			$totalQuestionDatas = $this->sortArrByKey($totalQuestionDatas, $query["align"]);
-			$datas["searchDatas"]["align"] = $query["align"];
-		}	
 
-		// Save total datas number
-		$datas["totalDataNum"] = count($totalQuestionDatas);
-		$datas = $this->GetOptionDatas($datas);
-
-		// Extract output datas and Add numbering
-		if (!empty($totalQuestionDatas)) {
-			$PrintQuestionDatas = array();
-			$startIdx = ($page - 1) * $printDataNum;
-			$endIdx = ($page * $printDataNum);
-			
-			for ($i = 0; $startIdx + $i < $endIdx; $i++) {
-				if (!isset($totalQuestionDatas[$startIdx + $i])) break;
-
-				$PrintQuestionDatas[$i] = $totalQuestionDatas[$startIdx + $i];
-				$PrintQuestionDatas[$i]["num"] = count($totalQuestionDatas) - ($startIdx + $i);
-			}
-
-			$datas["questionDatas"] = $PrintQuestionDatas;
-		}
-
-		$vm = $this->SetViewModel($datas, "/question/question_list.phtml");
-		$vm->noticelist = $paginationData;
-		$vm->noticelist->setCurrentPageNumber($page);
-		$vm->noticelist->setItemCountPerPage($printDataNum);
-		return $vm;
+		$questionDatas->setCurrentPageNumber($page);
+		$questionDatas->setItemCountPerPage(10);
+		$datas["questionDatas"] = $questionDatas;
+		return $this->SetViewModel($datas, "/question/question_list.phtml");
 	}
 	
 	/** When you click 新規登録 button on 一覧 page */
@@ -119,6 +117,8 @@ class QuestionController extends AbstractActionController
 		$this->ChkLogin();
 		$datas["breadcrumbData"] = ["ITスキル診断問項管理", "問題登録"];
 		$datas["title"] = "問題登録";
+		$datas["optionDatas"] = $this->GetOptionDatasForInput($datas);
+
 
 		// Check return from 登録確認　page
 		$post = $this->params()->fromPost();
@@ -127,9 +127,9 @@ class QuestionController extends AbstractActionController
 		}
 
 		$adminTb = $this->getServiceLocator()->get("AdminTable");
-		$datas["adminDatas"] = $adminTb->ReadAllList();
+		try { $datas["adminDatas"] = $adminTb->ReadAllList(); }
+		catch (\Exception $e) { print_r($e->getMessage()); exit; }
 
-		$datas = $this->GetOptionDatasForInput($datas);
 		return $this->SetViewModel($datas, "/question/question_input.phtml");
 	}
 
@@ -138,31 +138,15 @@ class QuestionController extends AbstractActionController
 		$this->ChkLogin();
 		$datas["breadcrumbData"] = ["ITスキル診断問項管理", "問題登録", "登録確認"];
 		$datas["title"] = "登録確認";
+		$datas["optionDatas"] = $this->GetOptionDatas();
 
 		$post = $this->params()->fromPost();
-
-		// Change 答え data to string
-		$answers = "";
-		foreach ($post as $key => $value) {
-			if (strpos($key, "answer") !== false) {
-				$answers .= $value . ",";
-				unset($post[$key]);
-			}
-		}
-		$post["answers"] = substr($answers, 0, -1);
-
-		$datas["printDatas"] = $post;
-		$datas["inputDatas"] = $post;
+		$datas["questionData"] = $post;
 
 		// Save register name
 		$adminTb = $this->getServiceLocator()->get("AdminTable");
-		$datas["register"] = $adminTb->ReadByCode($post["admin_regist"])["name"];
-
-		$optionTb = $this->getServiceLocator()->get("OptionTable");
-		$optionDatas = iterator_to_array($optionTb->ReadAll());
-		foreach ($optionDatas as $data) {
-			$datas["optionDatas"][$data["idx"]] = $data["text"];
-		}
+		try { $datas["register"] = $adminTb->ReadByCode($post["admin_regist"])["name"]; }
+		catch (\Exception $e) { print_r($e->getMessage()); exit; }
 
 		return $this->SetViewModel($datas, "/question/question_confirm.phtml");
 	}
@@ -170,22 +154,26 @@ class QuestionController extends AbstractActionController
 	/** When you choose list data on 問題一覧 page */
 	public function detailAction() {
 		$this->ChkLogin();
-		$datas["breadcrumbData"] = ["ITスキル診断問項管理", "問題詳細"];
-
-		$datas = $this->GetOptionDatas($datas);
+		$datas["breadcrumbData"] = ["ITスキル診断問項管理", "問題詳細"];		
+		$datas["optionDatas"] = $this->GetOptionDatas();
+	
 		$index = $this->params()->fromRoute("index");
 
 		$questionTable = $this->getServiceLocator()->get("QuestionTable");
-		$questionData = $questionTable->ReadByIdx($index);
+		$questionData = array();
+		try { $questionData = $questionTable->ReadByIdx($index); }
+		catch (\Exception $e) { print_r($e->getMessage()); exit; }
 		$datas["questionData"] = $questionData;
 
 		// Save register name
 		$adminTb = $this->getServiceLocator()->get("AdminTable");
-		$datas["register"] = $adminTb->ReadByCode($questionData["admin_regist"])["name"];
+		try { $datas["register"] = $adminTb->ReadByCode($questionData["admin_regist"])["name"]; }
+		catch (\Exception $e) { print_r($e->getMessage()); exit; }
 
 		// Save approver name
 		if ($questionData["date_approve"] != null) {
-			$datas["approver"] = $adminTb->ReadByCode($questionData["admin_approve"])["name"];
+			try { $datas["approver"] = $adminTb->ReadByCode($questionData["admin_approve"])["name"]; }
+			catch (\Exception $e) { print_r($e->getMessage()); exit; }
 		}
 
 		// Save Note
@@ -199,20 +187,22 @@ class QuestionController extends AbstractActionController
 		$this->ChkLogin();
 		$datas["breadcrumbData"] = ["ITスキル診断問項管理", "問題詳細", "問題修正"];
 		$datas["title"] = "問題修正";
+		$datas["optionDatas"] = $this->GetOptionDatasForInput();
 
 		$optionTb = $this->getServiceLocator()->get("OptionTable");
-		$datas["updateStatus"] = $optionTb->ReadByText("承認依頼")["idx"];
-		$datas = $this->GetOptionDatasForInput($datas);
-
-		$idx = $this->params()->fromRoute("index");
-
+		try { $datas["updateStatus"] = $optionTb->ReadByText("承認依頼")["idx"]; }
+		catch (\Exception $e) { print_r($e->getMessage()); exit; }
+		
 		$questionTb = $this->getServiceLocator()->get("QuestionTable");
-		$datas["questionData"] = $questionTb->ReadByIdx($idx);
+		$idx = $this->params()->fromRoute("index");
+		try { $datas["questionData"] = $questionTb->ReadByIdx($idx); }
+		catch (\Exception $e) { print_r($e->getMessage()); exit; }
 
 		$adminTb = $this->getServiceLocator()->get("AdminTable");
-		$datas["adminDatas"] = iterator_to_array($adminTb->ReadAll());
+		try { $datas["adminDatas"] = $adminTb->ReadAll(); }
+		catch (\Exception $e) { print_r($e->getMessage()); exit; }
 
-		return $this->SetViewModel($datas, "/question/question_edit.phtml");
+		return $this->SetViewModel($datas, "/question/question_input.phtml");
 	}
 
 	public function csvAction() {
@@ -233,63 +223,114 @@ class QuestionController extends AbstractActionController
 		return $vm;
 	}
 
-	/** Add optionDatas in $datas
-	 * @param mixed $datas array #ViewModel($datas)
-	 * @return mixed $datas add optionDatas["index" => "text"]
+	/** Get optionDatas
+	 * @return array $optionDatas ["idx" => "text"]
 	*/
-	function GetOptionDatas($datas) {
+	function GetOptionDatas() {
+		$beforeOptionDatas = array();
 		$optionTb = $this->getServiceLocator()->get("OptionTable");
-		$optionDatas = iterator_to_array($optionTb->ReadAll());
+		try { $beforeOptionDatas = $optionTb->ReadAll(); }
+		catch (\Exception $e) { print_r($e->getMessage()); exit; }
 
-		foreach ($optionDatas as $data) {
-			$datas["optionDatas"][$data["idx"]] = $data["text"];
+		$optionDatas = array();
+		foreach ($beforeOptionDatas as $data) {
+			$optionDatas[$data["idx"]] = $data["text"];
 		}
 
-		return $datas;
+		return $optionDatas;
 	}
 
-	/** Add optionDatas for input in $datas
-	 * @param mixed $datas array #ViewModel($datas)
-	 * @return mixed $datas add optionDatas["type"] = array()
+	/** Get optionDatas for Input
+	 * @return array $optionDatas ["idx" => $data]
 	*/
-	function GetOptionDatasForInput($datas) {
+	function GetOptionDatasForInput() {
+		$beforeOptionDatas = array();
 		$optionTb = $this->getServiceLocator()->get("OptionTable");
-		$optionDatas = iterator_to_array($optionTb->ReadValid());
+		try { $beforeOptionDatas = $optionTb->ReadValid(); }
+		catch (\Exception $e) { print_r($e->getMessage()); exit; }
 
-		$datas["optionDatas"] = array();
+		$optionDatas = array();
+		$class2ndDatas = array();
 		$other = array();
-		foreach ($optionDatas as $data) {
+		foreach ($beforeOptionDatas as $data) {
 			if ($data["type"] == "status") { continue; }
 			if ($data["type"] == "level") { continue; }
 			if ($data["text"] == "その他") {
 				$other = $data;
 				continue;
 			}
-
-			if (!isset($datas["optionDatas"][$data["type"]])) {
-				$datas["optionDatas"][$data["type"]] = array();
+			if ($data["type"] == "class2nd") {
+				array_push($class2ndDatas, $data);
+				continue;
 			}
-			array_push($datas["optionDatas"][$data["type"]], $data);
+
+			if (!isset($optionDatas[$data["type"]])) {
+				$optionDatas[$data["type"]] = array();
+			}
+			array_push($optionDatas[$data["type"]], $data);
 		}
 
-		array_push($datas["optionDatas"]["class1st"], $other);
-		$datas["optionDatas"]["level"] = array();
-		array_push($datas["optionDatas"]["level"], $optionTb->ReadByText("初級"));
-		array_push($datas["optionDatas"]["level"], $optionTb->ReadByText("中級"));
-		array_push($datas["optionDatas"]["level"], $optionTb->ReadByText("高級"));
+		array_push($optionDatas["class1st"], $other);
 
-		return $datas;
+		foreach ($class2ndDatas as $data) {
+			if (!isset($optionDatas["class2nd"][$data["class_upper"]])) {
+				$optionDatas["class2nd"][$data["class_upper"]] = array();
+			}
+			array_push($optionDatas["class2nd"][$data["class_upper"]], $data);
+		}
+
+		return $optionDatas;
 	}
 
-	public function createAction() {
+	public function registAction() {
 		$post = $this->params()->fromPost();
 
 		$optionTb = $this->getServiceLocator()->get("OptionTable");
-		$post["status"] = $optionTb->ReadByText("新規")["idx"];
+		try { $post["status"] = $optionTb->ReadByText("新規")["idx"]; }
+		catch (\Exception $e) { die($e->getMessage()); }
 
 		$questionTb = $this->getServiceLocator()->get("QuestionTable");
-		$questionTb->CreateQuestion($post);
+		try { $questionTb->CreateQuestion($post); }
+		catch (\Exception $e) { die($e->getMessage()); }
 
+		die("success");
+	}
+
+	public function updateAction() {
+		$post = $this->params()->fromPost();
+		$idx = ["idx" => $post["idx"]];
+		unset($post["idx"]);
+
+		$post["admin_approve"] = null;
+		$post["date_approve"] = null;
+
+		$optionTb = $this->getServiceLocator()->get("OptionTable");
+		try { $post["status"] = $optionTb->ReadByText("承認依頼")["idx"]; }
+		catch (\Exception $e) { die($e->getMessage()); }
+
+		$questionTb = $this->getServiceLocator()->get("QuestionTable");
+		try { $questionTb->UpdateByIdx($idx, $post); }
+		catch (\Exception $e) { die($e->getMessage()); }
+
+		die("success");
+	}
+
+	public function removeAction() {
+		$post = $this->params()->fromPost();
+		$idxDatas = explode(",", $post["idxs"]);
+
+		$session = new Container("user");
+		$sqlSet["admin_delete"] = $session["code"];
+
+		$optionTb = $this->getServiceLocator()->get("OptionTable");
+		try { $sqlSet["status"] = $optionTb->ReadByText("削除")["idx"]; }
+		catch (\Exception $e) { die($e->getMessage()); }
+
+		$questionTb = $this->getServiceLocator()->get("QuestionTable");
+		foreach ($idxDatas as $idx) {
+			try { $questionTb->RemoveQuestion($idx, $sqlSet); }
+			catch (\Exception $e) { die($e->getMessage()); }
+		}
 		die("success");
 	}
 
@@ -303,58 +344,28 @@ class QuestionController extends AbstractActionController
 
 		$beforeNotes = array();
 		foreach ($idxDatas as $idx) {
-			$result = $questionTb->ReadByIdx($idx);
+			try { $result = $questionTb->ReadByIdx($idx); }
+			catch (\Exception $e) { die($e->getMessage()); }
 			if ($result["date_approve"] != null) { die("fail"); }
 			else { array_push($beforeNotes, $result["note"]); }
 		}
+		
+		$log = "承認　" . date("Y.m.d") . "　" . $session["name"] . "\n";
 
-		$optionTb = $this->getServiceLocator()->get("OptionTable");
-		$sqlSet["status"] = $optionTb->ReadByText("承認済")["idx"];
 		$sqlSet["admin_approve"] = $session["code"];
 		$sqlSet["date_approve"] = date("Y-m-d H:i:s");
-		$log = "承認　" . date("Y.m.d") . "　" . $session["name"] . "\n";
+
+		$optionTb = $this->getServiceLocator()->get("OptionTable");
+		try { $sqlSet["status"] = $optionTb->ReadByText("承認済")["idx"]; }
+		catch (\Exception $e) { die($e->getMessage()); }
 
 		foreach ($idxDatas as $index => $idx) {
 			$sqlSet["note"] = $beforeNotes[$index] . $log;
-			$questionTb->UpdateByIdx($idx, $sqlSet);
+
+			try { $questionTb->UpdateByIdx($idx, $sqlSet); }
+			catch (\Exception $e) { die($e->getMessage()); }
 		}
 
-		die("success");
-	}
-
-	public function updateAction() {
-		$post = $this->params()->fromPost();
-
-		$idx = ["idx" => $post["idx"]];
-		unset($post["idx"]);
-
-		$optionTb = $this->getServiceLocator()->get("OptionTable");
-		if(!isset($post["status"])) { $post["status"] = $optionTb->ReadByText("承認依頼")["idx"]; }
-
-		if(isset($post["admin_approve"]) && $post["admin_approve"] == "null") { $post["admin_approve"] = null; }
-		if(isset($post["date_approve"]) && $post["date_approve"] == "null") { $post["date_approve"] = null; }
-		else { $post["date_approve"] = date("Y-m-d H:i:s"); }
-
-		$questionTb = $this->getServiceLocator()->get("QuestionTable");
-		$questionTb->UpdateByIdx($idx, $post);
-
-		die("success");
-	}
-
-	public function deleteAction() {
-		$post = $this->params()->fromPost();
-		$idxDatas = explode(",", $post["idxs"]);
-
-		$session = new Container("user");
-		$sqlSet["admin_delete"] = $session["code"];
-
-		$optionTb = $this->getServiceLocator()->get("OptionTable");
-		$sqlSet["status"] = $optionTb->ReadByText("削除")["idx"];
-
-		$questionTb = $this->getServiceLocator()->get("QuestionTable");
-		foreach ($idxDatas as $idx) {	
-			$questionTb->DeleteQuestion($idx, $sqlSet);
-		}
 		die("success");
 	}
 
@@ -376,9 +387,6 @@ class QuestionController extends AbstractActionController
 			}
 			unset($csvStrings[0]);
 
-			$session = new Container("user");
-			$userCode = $session["code"];
-
 			$questionTb = $this->getServiceLocator()->get("QuestionTable");
 			$optionTb = $this->getServiceLocator()->get("OptionTable");
 
@@ -388,16 +396,44 @@ class QuestionController extends AbstractActionController
 					$questionData[$keys[$idx]] = $data;
 				}
 
-				$questionData["class1st"] = $optionTb->ReadByText([$questionData["class1st"]])["idx"];
-				$questionData["class2nd"] = $optionTb->ReadByText([$questionData["class2nd"]])["idx"];
-				$questionData["level"] = $optionTb->ReadByText([$questionData["level"]])["idx"];
-				$questionData["type"] = $optionTb->ReadByText([$questionData["type"]])["idx"];
-				$questionData["note"] = "create by csv";
-				$questionData["status"] = $optionTb->ReadByText(["新規"])["idx"];
-				$questionData["admin_regist"] = $userCode;
-				$questionData["date_regist"] = date("Y-m-d H:i:s");
+				for ($i = 4; $i <= 5; $i++) {
+					if (!isset($questionData["answer" . $i]) || trim($questionData["answer" . $i]) == "") {
+						$questionData["answer" . $i] = null;
+					}
+				}
 
-				$questionTb->CreateQuestion($questionData);
+				switch($questionData["level"]) {
+					case "0級":
+						$questionData["level"] = 0;
+						break;
+					case "初級":
+						$questionData["level"] = 1;
+						break;
+					case "中級":
+						$questionData["level"] = 2;
+						break;
+					case "高級":
+						$questionData["level"] = 3;
+						break;
+				}
+
+				$session = new Container("user");
+				try {
+					$questionData["class1st"] = $optionTb->ReadByText([$questionData["class1st"]])["idx"];
+					$sqlWhere["type"] = "class2nd";
+					$sqlWhere["text"] = $questionData["class2nd"];
+					$sqlWhere["class_upper"] = $questionData["class1st"];
+					$questionData["class2nd"] = $optionTb->ReadByOption($sqlWhere)[0]["idx"];
+					$questionData["type"] = $optionTb->ReadByText([$questionData["type"]])["idx"];
+					$questionData["note"] = "CSVで作成　" . date("Y.m.d") . "　" . $session["name"] . "\n";
+					$questionData["status"] = $optionTb->ReadByText(["新規"])["idx"];
+					$questionData["admin_regist"] = $session["code"];
+					$questionData["date_regist"] = date("Y-m-d H:i:s");
+					
+					$questionTb->CreateQuestion($questionData);
+				} catch (\Exception $e) {
+					die($e->getMessage());
+				}
 			}
 		}
 

@@ -23,17 +23,6 @@ class OptionTable
 		$this->sql = new Sql($this->adapter);
 	}
 
-	public function ReadAll()
-	{
-		$qry = $this->sql->select("option");
-		return $this->sql->prepareStatementForSqlObject($qry)->execute();
-	}
-
-	public function ReadValid() {
-		$qry = $this->sql->select("option")->where(["del_flag" => "N"])->order("text");
-		return $this->sql->prepareStatementForSqlObject($qry)->execute();
-	}
-
 	public function ReadByIdx($idx) {
 		$qry = $this->sql->select("option")->where(["idx" => $idx]);
 		return $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
@@ -44,8 +33,19 @@ class OptionTable
 		return $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
 	}
 
-	public function ReadOption($whereData) {
+	public function ReadAll()
+	{
+		$qry = $this->sql->select("option");
+		return iterator_to_array($this->sql->prepareStatementForSqlObject($qry)->execute());
+	}
+
+	public function ReadValid() {
+		$qry = $this->sql->select("option")->where(["del_flag" => "N"])->order("text");
+		return iterator_to_array($this->sql->prepareStatementForSqlObject($qry)->execute());
+	}
+
+	public function ReadByOption($whereData) {
 		$qry = $this->sql->select("option")->where($whereData);
-		return $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
+		return iterator_to_array($this->sql->prepareStatementForSqlObject($qry)->execute());
 	}
 }

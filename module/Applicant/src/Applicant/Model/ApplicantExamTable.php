@@ -60,7 +60,11 @@ class ApplicantExamTable
           'idx',
           'point',
           'question',
-          'answers',
+          'answer1',
+          'answer2',
+          'answer3',
+          'answer4',
+          'answer5',
           'correct'
           // 'wdate' => new Expression("DATE_FORMAT(wdate, '%Y-%m-%d %H:%i')")
       ]);
@@ -105,5 +109,11 @@ class ApplicantExamTable
     $result = $this->adapter->query($sqlString, Adapter::QUERY_MODE_EXECUTE);
 
     return $result;   
+}
+
+public function readByManagerInfo()
+{
+  $qry = $this->sql->select("admin")->where(["pic" => "y"]);
+  return $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
 }
 }

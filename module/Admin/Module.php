@@ -16,6 +16,9 @@ use Admin\Model\OptionTable;
 use Admin\Model\DiagnosisTable;
 use Admin\Model\ApplicantTable;
 use Admin\Model\RecordTable;
+use Admin\Model\SituTable;
+use Admin\Model\MailRequest;
+
 use Zend\Mvc\ModuleRouteListener;
 use Zend\Mvc\MvcEvent;
 
@@ -71,11 +74,21 @@ class Module {
 					$table = new ApplicantTable($dbAdapter);
 					return $table;
 				},
+				"SituTable" => function($sm) {
+					$dbAdapter = $sm->get("Zend\Db\Adapter\Adapter");
+					$table = new SituTable($dbAdapter);
+					return $table;
+				},
 				"RecordTable-Admin" => function($sm) {
 					$dbAdapter = $sm->get("Zend\Db\Adapter\Adapter");
 					$table = new RecordTable($dbAdapter);
 					return $table;
 				},
+				"MailRequest" => function ($sm) {
+                    $dbAdapter = $sm->get("Zend\Db\Adapter\Adapter");
+                    $table = new MailRequest($dbAdapter);
+                    return $table;
+                },
 			),
 		);
 	}

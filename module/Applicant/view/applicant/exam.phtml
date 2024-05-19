@@ -25,7 +25,6 @@ if ($ses_id) {
   <div class="card emegra" >
     <div class="card-body"style="margin-top:70px;">
     <form id="myForm" name="input_form" action="/applicant/exam" method="post">
-        <input name="end" type="hidden"/>
         <div  class="welcomeText">
           <p style="font-weight: bold; font-size: 20px; text-align:center;"><?php echo $name; ?>様</p>         
           <p>表示される問題に従って回答してください。</p>			
@@ -34,27 +33,32 @@ if ($ses_id) {
         </div>
         <div style="padding:0px 50px;">
             <p  style="margin-top:20px;font-weight:bold;">問題数　　<?php echo $question_num; ?>問				</p>				  
-        <?php $count = 1; foreach ($matchedData as $idx => $row) : ?>
-
+            <?php $count = 1; foreach ($matchedData as $idx => $row) : ?>
         <div class="examBox" style="width:100%;">
-            <div class="question" style="margin-left:50px;font-weight:bold;" id= "<?= $row['idx'] ?>">問題 <?= $idx + 1 . ". " . $row["question"] ?></div>
-          <div class="card-body">
-            <div class="answers mt-2">
-              <ul class="list-unstyled">
-                <?php foreach (explode(",", $row["answers"]) as $answerIdx => $answer) : ?>
-                  <li style="padding: 10px 0">         
-                    <input type="radio" style="margin-left: 100px;;" name="answer<?= $idx + 1 ?>" value="<?= $answerIdx + 1 ?>"> <?= $answer ?>
-                  </li>
-                <?php endforeach; ?>
-              </ul>
+            <div class="question" style="margin-left:50px;font-weight:bold;" id="<?= $row['idx'] ?>">問題 <?= $idx + 1 . ". " . $row["question"] ?></div>
+            <div class="card-body" style="margin-left: 100px;">
+                <div class="answers mt-2">
+                    <ul class="list-unstyled">
+                        <?php for ($i = 1; $i <= 5; $i++) : ?>
+                            <?php 
+                            $answerKey = "answer$i";
+                            if (!empty($row[$answerKey])) : // answer가 존재하는 경우에만 출력
+                            ?>
+                                <li style="padding: 10px 0">         
+                                    <input type="radio" name="answer<?=$idx + 1 ?>" value="<?= $i ?>"> <?php echo htmlspecialchars($row[$answerKey], ENT_QUOTES) ?>
+                                </li>
+                            <?php endif; ?>
+                        <?php endfor; ?>
+                    </ul>
+                </div>
             </div>
-          </div>
         </div>
-        <?php endforeach; ?>
+    <?php endforeach; ?>
+    <input type="hidden" id="answer_data" name="answer_data">
+
         <div class="comment">
           <p style="margin-top:50px;font-weight:bold;">コメント　　　　　　　　 <input class="w-75" type="text" name="comment" id="comment" placeholder="自由に記載"></p>
         </div>
-        <span name="password" type="password" hidden value=<?php echo $password ?>>
       </div>
         
        
@@ -65,12 +69,8 @@ if ($ses_id) {
     </div>
     <div class="button_box" style="margin-bottom: 32px; gap:30px">
       <button  class="applicant_cancel" id="cancel" name="submit_post"  value="cancel" onclick="window.location.href='../applicant/login';">キャンセル</button>
-      <button type="button" class="exam_submit" id='btn_submit' name="submit_post"  value="submit">提出</button>
-
+      <button type="button" class="exam_submit" id='btn_submit' name="submit_post"  value="btn_submit">提出</button>
     </div>
-    <input type="hidden" id="answer_data" name="answer_data" value="">
-
-
   </div>
   
 </div>
@@ -89,14 +89,14 @@ if ($ses_id) {
       <!-- <div id="confirmComment"></div> -->
       </div>
       <div class="modal-footer  border-top-0" style="margin-bottom:8px; justify-content:center;">
-  <button type="button" class="applicant_cancel" data-bs-dismiss="modal">キャンセル</button>
-  <button type="submit" class="exam_submit" name="submit_post" value="btn_submit">登録</button>
-
-</div>
-
+    <button type="button" class="applicant_cancel" data-bs-dismiss="modal">キャンセル</button>
+    <button type="submit" class="exam_submit" name="submit_post" value="btn_submit">登録</button>
     </div>
   </div>
+  </div>
 </div>
+<button type="submit" class="timeout_submit" name="submit_post" value="btn_submit" hidden></button>
+
 </form>
 
 
@@ -189,7 +189,7 @@ window.onload = function() {
 
     var timerDisplay = document.getElementById("timerDisplay");
     
-    var examTime  = parseInt(<?php echo $time_limit; ?>); 
+    var examTime  = <?php echo $time_limit?>; 
     var stopTime = parseInt(10); 
 
     var minuteToSecond = examTime * 60;
@@ -215,7 +215,8 @@ window.onload = function() {
       if (minuteToSecond <= 0) {
         clearInterval(timer);
         timerDisplay.innerHTML = "終";
-        window.location.href = '../applicant/examclear';
+        timeoutExam();
+        document.querySelector('.timeout_submit').click();
       }else if(minuteToSecond <= 600 && !firstAlert){
         alert("残り10分です。")
         firstAlert=true;
@@ -271,7 +272,6 @@ window.onload = function() {
 
 
 </script>
-
 <!-- <script>
 function notReload(event) {
     if ((event.ctrlKey && (event.keyCode === 78 || event.keyCode === 82)) || event.keyCode === 116) {
@@ -296,11 +296,10 @@ document.addEventListener("DOMContentLoaded", () => {
             alert("問題を全部入力してください。");
             event.preventDefault(); // Form submit prevent
             form.answer<?= $questionIdx +1 ?>[0].focus();
-            // setTimeout("form.developSelect.focus()",100);
-
             return false; 
           } 
         <?php endforeach; ?>
+        var selected = Array.from(form.answer<?= $questionIdx + 1 ?>).find(radio => radio.checked);
           confirmExam(); 
 
         var myModal = new bootstrap.Modal(document.getElementById('exampleModal'), {
@@ -352,6 +351,31 @@ document.addEventListener("DOMContentLoaded", () => {
 }
 </script>
 
+<script>
+  function timeoutExam() {
+    var formData = new FormData(document.getElementById('myForm'));
+    var totalQuestions = <?= count($matchedData) ?>;
+    var answersArray = new Array(totalQuestions).fill('');
+    var confirmContent = document.getElementById('confirmContent');
+    confirmContent.innerHTML = '試験を提出しますか？';
+
+    for (var pair of formData.entries()) {
+        var questionIdx = parseInt(pair[0].replace('answer', ''), 10); // 'answer' 제거 후 숫자로 변환
+        var selectedRadio = document.querySelector('input[name="' + pair[0] + '"]:checked');
+        if (selectedRadio) {
+            var radioId = selectedRadio.value;
+            answersArray[questionIdx - 1] = radioId; // 질문 인덱스가 1부터 시작한다고 가정
+        }
+    }
+
+    var combinedAnswers = answersArray.join(',');
+    console.log(combinedAnswers);
+
+    document.getElementById('answer_data').value = combinedAnswers;
+  }
+
+
+</script>
 <!-- <script>
  function confirmExam() {
     var formData = new FormData(document.getElementById('myForm'));

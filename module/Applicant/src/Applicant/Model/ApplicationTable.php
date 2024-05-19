@@ -34,28 +34,33 @@ class ApplicationTable
       $this->sql = new Sql($this->adapter);
     }
 
-    public function getclass2nd(){
-        $qry = $this->sql->select("option");
-        $qry->columns([
-            'idx','type','text'
-        ]);
-        $qry->where(['type' => 'class2nd']);
-        $statement = $this->sql->prepareStatementForSqlObject($qry);
-        $result = $statement->execute();
-
-        return $result;
-    }
-
     public function getclass1st(){
         $qry = $this->sql->select("option");
         $qry->columns([
-            'type','text'
+            'idx','type','text'
         ]);
         $qry->where(['type' => 'class1st']);
         $statement = $this->sql->prepareStatementForSqlObject($qry);
         $result = $statement->execute();
 
         return $result;
+    }
+
+    public function getclass2nd(){
+        $qry = $this->sql->select("option");
+        $qry->columns([
+            'idx','type','text','class_upper'
+        ]);
+        $qry->where(['type' => 'class2nd']);
+        $statement = $this->sql->prepareStatementForSqlObject($qry);
+        $result = $statement->execute();
+    
+        return $result;
+    }
+    
+    public function getRecord(){
+        $qry = $this->sql->select("record")->order("idx DESC");
+        return $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
     }
 
     public function getApplicantByEmail($email) {
@@ -123,5 +128,12 @@ class ApplicationTable
         $recordSqlString = $qry->getSqlStringForSqlObject($recordInsert);
         $recordResult = $this->adapter->query($recordSqlString, Adapter::QUERY_MODE_EXECUTE);
     }
+
+    public function readByManagerInfo()
+    {
+      $qry = $this->sql->select("admin")->where(["pic" => "y"]);
+      return $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
+    }
+  
 
 }

@@ -210,11 +210,28 @@ function InitStyle() { return " font-style: italic; color: ;"; }
 
 <div class="btn-place" style="margin-top: 32px;">
 	<button type="button" class="emegra cancel" onclick="self.location.href='.././situation/list';">戻る</button>
-  <button class="emegra"  id="btn_save" name="inputDatas" value="btn_save"  style="width:150px;" onclick=savaConfirm()>一時保存</button>
-
+  <button class="emegra"  id="btn_save" name="inputDatas" value="btn_save"  style="width:150px;" onclick=saveConfirm()>一時保存</button>
 	<button class="emegra"  id="btn_submit" name="inputDatas" value="btn_submit"  style="width:150px;" onclick=inputConfirm()>ITスキル診断依頼</button>
 </div>
 </form>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.0/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/locales/bootstrap-datepicker.ja.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
+<script>
+    $(document).ready(function(){
+      var birth = document.getElementById("birth");
+      $(birth).datepicker({
+        format: 'yyyy-mm-dd',
+        autohide: true,
+        language: 'ja',
+        startDate: '1980-01-01',
+        endDate: '2010-12-31'
+      });
+    });
+  </script>
 
 <script>
 	function ChangeInputStyle(element) {
@@ -525,28 +542,92 @@ function checkKana(input) {
             event.preventDefault();
             return false;
         }
-
-
     }
 </script>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.0/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/locales/bootstrap-datepicker.ja.min.js"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
-
 <script>
-  function editConfirm(){
-		var submitConfirm=confirm("依頼しますか？");
-		if (!submitConfirm){
+  function saveConfirm(){
+    if (form.email.value == "" || !emailValidationCheck(form.email.value)) {
+            alert("メールアドレスを入力してください。");
+            setTimeout("form.email.focus()",100);
             event.preventDefault();
             return false;
         }
-    form.submit();
-		
-	}
-  function savaConfirm(){
+
+        if (form.name.value == "" || !checkKanji(form.name.value)) {
+            alert("漢字を入力してください。");
+            setTimeout("form.name.focus()",100);
+            event.preventDefault();
+            return false;
+        }
+
+        if (form.kana.value == "" || !checkKana(form.kana.value)) {
+            alert("カナを入力してください。");
+            setTimeout("form.kana.focus()",100);
+            event.preventDefault();
+            return false;
+        }
+
+        if (form.birth.value == "" ) {
+            alert("生年月日を入力してください。");
+            setTimeout("form.birth.focus()",100);
+            event.preventDefault();
+            return false;
+        }
+        if (form.case.value == "") {
+            alert("応募区分を入力してください。");
+            setTimeout("form.case.focus()",100);
+            event.preventDefault();
+            return false;
+        }
+        if (form.educationSelect.value == "") {
+            alert("学歴入力してください。");
+            setTimeout("form.educationSelect.focus()",100);
+            event.preventDefault();
+            return false;
+        }
+
+        if (form.educationSelect.value == "その他" && form.otherEducation.value=="") {
+            alert("その他の場合の、記入してください。");
+            setTimeout("form.educationSelect.focus()",100);
+            event.preventDefault();
+            return false;
+        }
+
+        if (form.skill.value == "") {
+            alert("ITスキル有無を入力してください。");
+            setTimeout("form.skill.focus()",100);
+            event.preventDefault();
+            return false;
+        }
+
+        if (form.class1stId.value === "") {
+            alert("経験分野を入力してください。");
+            setTimeout("form.class1stId.focus()",100);
+            event.preventDefault();
+            return false;
+        }
+
+        // if (form.class1stId.value == "その他" && form.otherclass1st.value=="") {
+        //     alert("その他の場合の、記入してください");
+        //     setTimeout("form.class1stId.focus()",100);
+        //     return false;
+        // }
+
+        if (form.class2ndId.value == "") {
+            alert("問題種別を入力してください。");
+            setTimeout("form.class2ndId.focus()",100);
+            event.preventDefault();
+            return false;
+        }
+        // console.log(class2nd.value);
+        if ((isNaN(form.careerId.value) || form.careerId.value === "")) {
+            alert("IT経験年数を入力してください。");
+            setTimeout("form.careerInput.focus()",100);
+            event.preventDefault();
+            return false;
+        }
+
 		var submitConfirm=confirm("保存しますか？");
     if (!submitConfirm){
             event.preventDefault();
@@ -554,18 +635,6 @@ function checkKana(input) {
         }
     form.submit();
   }
-</script>
-<script>
-  $(document).ready(function(){
-    var birth = document.getElementById("birth");
-    $(birth).datepicker({
-      format: 'yyyy-mm-dd',
-      autohide: true,
-      language: 'ja',
-      startDate: '1980-01-01',
-      endDate: '2010-12-31'
-    });
-  });
 </script>
 
 <script>

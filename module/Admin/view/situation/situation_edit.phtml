@@ -83,7 +83,7 @@ switch ($recordArray["class1st"]) {
 
 <h1 class="title">ITスキル診断状況管理</h1>
 
-<form id="form" method="post" action="../../situ/editok">
+<form id="form" method="post" action="../../situ/editok"onsubmit="return handleSubmit()">
 	<style type="text/css">
 		option { color: black; }
 		/* input::placeholder { font-style: italic; } */
@@ -208,13 +208,19 @@ switch ($recordArray["class1st"]) {
 				<select class="form-select" name="class2nd" id="class2ndId" style="width:220px;" onchange="ChangeInputStyle(this)">
 				<?php if (true): ?>
 					<?php
-					$class2ndText = '';
-					foreach ($optionDatas["class2nd"][$recordArray["class1st"]] as $data) {
-						if ($data["idx"] == $recordArray["class2nd"]) {
-							$class2ndText = $data["text"];
-							break;
-						}
-					}
+          if (!empty($optionDatas["class2nd"][$recordArray["class1st"]])) {
+            $dataArray = $optionDatas["class2nd"][$recordArray["class1st"]];
+          } else if($recordArray['class1st'] ==NULL){
+            $class2ndText="テキスト";
+          } else{
+            $dataArray = $optionDatas["class2nd"]['11'];
+          }						
+          foreach ($dataArray as $data) {
+            if ($data["idx"] == $recordArray["class2nd"]) {
+                $class2ndText = $data["text"];
+                break;
+            }
+        }
 					?>
 					<option value="<?php echo $recordArray["class2nd"]; ?>" hidden><?php echo $class2ndText; ?></option>
 					<?php foreach ($optionDatas["class2nd"][$recordArray["class1st"]] as $data): ?>
@@ -374,14 +380,35 @@ switch ($recordArray["class1st"]) {
         inputElement3.hidden = false;
     }
 
-	function ChangeClass1stValue(elementss) {
-		ChangeInputStyle(elementss);
-		if (form.class1st.value != "その他") { 
-			form.class1st.value = elementss.value;
-		}
-	}
 
 </script>
+<script>
+        function ChangeClass1stValue(selectElement) {
+            var otherInput = document.getElementById('otherclass1st');
+            if (ITskillId.value=="1" && selectElement.value === "その他") {
+                otherInput.style.display = 'none';
+            } else if(selectElement.value === "その他"){
+                otherInput.style.display = 'block';
+            } else{
+                otherInput.style.display = 'none';
+                otherInput.value = selectElement.value;
+              }
+            }
+
+        function handleSubmit() {
+            var selectElement = document.getElementById('class1stId');
+            var otherInput = document.getElementById('otherclass1st');
+            if (selectElement.value !== "その他") {
+                otherInput.value = selectElement.value;
+            }
+            return true; // 폼 제출을 계속함
+        }
+
+        // 페이지가 로드될 때 초기 상태를 설정
+        document.addEventListener('DOMContentLoaded', function() {
+            ChangeClass1stValue(document.getElementById('class1stId'));
+        });
+    </script>
 <script>
 	function ChangeInputStyle(element) {
 		element.style.fontStyle = "normal";
@@ -397,15 +424,20 @@ switch ($recordArray["class1st"]) {
 </script>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/datepicker/1.0.10/datepicker.min.js"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/datepicker/1.0.10/datepicker.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.0/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/locales/bootstrap-datepicker.ja.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
 
   <script>
     $(document).ready(function(){
       var birth = document.getElementById("birth");
       $(birth).datepicker({
         format: 'yyyy-mm-dd',
-        autohide: true
+        autohide: true,
+        language: 'ja',
+        startDate: '1980-01-01',
+        endDate: '2010-12-31'
       });
     });
   </script>
@@ -418,21 +450,20 @@ switch ($recordArray["class1st"]) {
 	var class2ndSelect = document.getElementById('class2ndId')
 	let careerSelect = document.getElementById('careerId')
 	skillSelect.addEventListener('change', function() {
-    var selectedValue = this.value;
-			if (selectedValue === '1') {
-				class1stSelect.value="その他";
-				class1stOtherSelect.value="その他";
-				// form.class1stOtherSelect.hidden=true;
-				class2ndSelect.innerText=""
-				var option = document.createElement("option");
-				option.value = "33";
-				option.innerText = "テキスト";
-				class2ndSelect.appendChild(option);
-				class2ndSelect.value = "33";
-
-			}
-		}	
-	)
+  var selectedValue = this.value;
+    if (selectedValue === '1') {
+      class1stSelect.value="その他";
+      class1stOtherSelect.value="その他";
+      // form.class1stOtherSelect.hidden=true;
+      class2ndSelect.innerText=""
+      var option = document.createElement("option");
+      option.value = "33";
+      option.innerText = "テキスト";
+      class2ndSelect.appendChild(option);
+      class2ndSelect.value = "33";
+    }
+  }	
+)
 
 </script>
 
@@ -571,7 +602,6 @@ function diagnosisData() {
     tableBody.innerHTML = ""; 
     if (data === "wrong" || data.length === 0) {
         const row = document.createElement("tr");
-
         const messageCell = document.createElement("td");
         messageCell.setAttribute("colspan", "4");
         messageCell.textContent = "データがありません";

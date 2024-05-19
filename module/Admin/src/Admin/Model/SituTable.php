@@ -132,6 +132,12 @@ class SituTable
 		return $result;   
 	  }
 	  public function updateApplicantInfo($applicantWhere, $applicantSet){
+		if (!isset($applicantSet['gender']) || $applicantSet['gender'] === '') {
+			$applicantSet['gender'] = null;
+		}
+		if (!isset($applicantSet['career']) || $applicantSet['career'] === '') {
+			$applicantSet['career'] = null;
+		}
 		$qry=new sql($this->adapter);
 		$update=$qry->update('applicant');
 
@@ -150,6 +156,10 @@ class SituTable
 	  }
 
 	  public function saveRecordInfo($recordlWhere, $recordSet){
+		if (!isset($recordSet['class2nd']) || $recordSet['class2nd'] === '') {
+			$recordSet['class1st'] = "その他";
+			$recordSet['class2nd'] = "33";
+		}
 		$qry=new sql($this->adapter);
 		$update=$qry->update('record');
 		
@@ -174,7 +184,9 @@ class SituTable
 		if (!isset($applicantSet['gender']) || $applicantSet['gender'] === '') {
 			$applicantSet['gender'] = null;
 		}
-		
+		if (!isset($applicantSet['career']) || $applicantSet['career'] === '') {
+			$applicantSet['career'] = null;
+		}
 		$qry=new sql($this->adapter);
 		$update=$qry->update('applicant');
 	
@@ -227,7 +239,11 @@ class SituTable
             $applicantUpdate->where(['email' => $dataArray['email']]);
             $applicantSqlString = $qry->getSqlStringForSqlObject($applicantUpdate);
 	
-			$this->adapter->query($applicantSqlString, Adapter::QUERY_MODE_EXECUTE);
+			try {
+				$result = $this->adapter->query($applicantSqlString, Adapter::QUERY_MODE_EXECUTE);
+			} catch (\Exception $e) {
+				echo 'Caught exception: ',  $e->getMessage(), "\n";
+			}	
             $applicant_idx = $existingRecord['idx'];
 
         } else {
@@ -247,7 +263,11 @@ class SituTable
 			
             $applicantSqlString = $qry->getSqlStringForSqlObject($applicantInsert);
 			
-            $this->adapter->query($applicantSqlString, Adapter::QUERY_MODE_EXECUTE);
+			try {
+				$result = $this->adapter->query($applicantSqlString, Adapter::QUERY_MODE_EXECUTE);
+			} catch (\Exception $e) {
+				echo 'Caught exception: ',  $e->getMessage(), "\n";
+			}	
             
             $applicant_idx = $this->adapter->getDriver()->getLastGeneratedValue();
         }
@@ -274,6 +294,12 @@ class SituTable
 		$recordInsert->values($values);
 
 		$recordSqlString = $qry->getSqlStringForSqlObject($recordInsert);
-        $recordResult = $this->adapter->query($recordSqlString, Adapter::QUERY_MODE_EXECUTE);
+		try {
+			$result = $this->adapter->query($recordSqlString, Adapter::QUERY_MODE_EXECUTE);
+		} catch (\Exception $e) {
+			echo 'Caught exception: ',  $e->getMessage(), "\n";
+		}	
+
+		return $result;   
     }
 }

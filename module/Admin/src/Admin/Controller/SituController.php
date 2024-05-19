@@ -208,6 +208,7 @@ class SituController extends AbstractActionController {
 		$diagnosisData = $diagnosisTb->ReadByCode($recordData["diagnosis_code"]);
     
 		$datas["optionDatas"] = $this->GetOptionDatasForInput();
+    
 		$class1st=$situTb->getclass1st();
 		$class2nd=$situTb->getclass2nd();
 
@@ -353,7 +354,7 @@ class SituController extends AbstractActionController {
       // 메일 제목 지정 (일반적으로 DB에 메일폼 테이블을 만들어서 그것을 가져와서 아래의 title contents에 넣지만, 이건 샘플이므로 간단히.)
       // 사람마다 변환해야 할 부분은 {{이렇게}} 메일폼에 넣어놓는다.
       $param['title']="{{user_name}}様、新しい試験診断の申し込みがあります。";
-      $param["content"] = "以下の申込者の情報をご参照ください。\n\nお名前（漢字）：{$arr["name"]}\nお名前（カナ）：{$arr["kana"]}\n応募区分：{$caseText}\nITスキル：{$skillText}\n\n診断者ページ：http://gngitskill:84/admin/situ/edit/{$applicantInfo["idx"]}";
+      $param["content"] = "以下の申込者の情報をご参照ください。\n\nお名前（漢字）：{$arr["name"]}\nお名前（カナ）：{$arr["kana"]}\n応募区分：{$caseText}\nITスキル：{$skillText}\n\n診断者ページ：http://gngitskill:84/admin/situation/detail/{$applicantInfo["idx"]}";
     
       // 사람이름이나, URL등 고유하게 변경해야 하는 것은 이렇게 처리한다.
       // 메일 제목과 내용 부분 모두 변환처리.
@@ -477,11 +478,6 @@ class SituController extends AbstractActionController {
 		
 			array_push($afterOptionDatas["class2nd"][$class1stValue], $data);
 		}
-		// Optional: Debugging output
-
-		// print_r($afterOptionDatas);
-		// print_r($afterOptionDatas["class2nd"][$class1stDatas[$data["class_upper"]]]);
-		// exit;
 
 		return $afterOptionDatas;
 	}	

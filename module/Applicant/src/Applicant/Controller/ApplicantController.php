@@ -201,7 +201,6 @@ class ApplicantController extends AbstractActionController
 	  // 아이디 값 불러오기
 	  $applicantExamTbl = $this->getServiceLocator()->get("ApplicantExamTable");
 	  $applicantInfo    = $applicantExamTbl->readById($emailId);
-	  $applicantIdx     = $applicantInfo["idx"];	  
 
 	  // 담당자 정보 불러오기
 	  $managerInfo=$applicantExamTbl->readByManagerInfo();
@@ -210,10 +209,7 @@ class ApplicantController extends AbstractActionController
 	  // applicant의 id값과 record의 idx값 비교해서 불러오기
 	  $examRecordInfo =  $applicantExamTbl->readByApplicantIdx($applicantInfo);
 	  $datas["name"]  =  $applicantInfo["name"];
-	  
-	  
-	  $applicantIdx   =  $examRecordInfo["applicant_idx"];
-	  
+	  	  
 	  // code diagnosis테이블의 code와 question_num, time_limit값 불러오기
 	  $recordCode    = $examRecordInfo["diagnosis_code"];
 	  $diagnosisInfo = $applicantExamTbl->readByDiagnosisCode($recordCode);
@@ -224,8 +220,6 @@ class ApplicantController extends AbstractActionController
 	  // 정답값 비교하기
 	  $findQuestionData      = $applicantExamTbl->findCompareIdx($post);
 	  $selectedQuestion_idxs = ['question_idxs'=>isset($diagnosisInfo['question_idxs'])? $diagnosisInfo['question_idxs']:null];
-
-	  $selectedQnA=[['question_idxs'=> $diagnosisInfo['question_idxs'],'answer_data'=>$examRecordInfo['answer_data']]];
 	  
 	  $matchedData=[];
 	  foreach(explode(',',$selectedQuestion_idxs["question_idxs"]) as $value)
@@ -398,7 +392,7 @@ function mailByApplicantExam($applicantInfo,$sqlSet,$managerArray){
 	// 메일 제목 지정 (일반적으로 DB에 메일폼 테이블을 만들어서 그것을 가져와서 아래의 title contents에 넣지만, 이건 샘플이므로 간단히.)
 	// 사람마다 변환해야 할 부분은 {{이렇게}} 메일폼에 넣어놓는다.
 	$param['title']="{$applicantInfo["name"]}様、診断試験結果が出ました。";
-	$param["content"] = "株式会社ジエンジサービスから、ITスキル診断結果が到着しましたのでご確認をお願いいたします。\n\n申請者：{$applicantInfo["name"]}\nお名前（カナ）：{$applicantInfo["kana"]}\n応募区分：{$caseText}\n学歴：{$examRecordRecent["education"]}\n専攻：{$majorText}\n試験日：{$examRecordRecent["execute_date"]}\n\n得点：{$examRecordRecent["get_point"]}\n評価：{$examRecordRecent["rank"]}\n評価結果：{$examRecordRecent["diagnosis_comment"]}\n\n※ITスキル診断に不明点などありましたら下記の問い合わせ先にご連絡ください。\nお問い合わせ先\n担当者：市島 茉里\n連絡先：\n\n※このメールに返信しないでください。";
+	$param["content"] = "株式会社ジエンジサービスから、ITスキル診断結果が到着しましたのでご確認をお願いいたします。\n\n申請者：{$applicantInfo["name"]}\nお名前（カナ）：{$applicantInfo["kana"]}\n応募区分：{$caseText}\n学歴：{$examRecordRecent["education"]}\n専攻：{$majorText}\n試験日：{$examRecordRecent["execute_date"]}\n\n得点：{$examRecordRecent["get_point"]}\n評価：{$examRecordRecent["rank"]}\n評価結果：{$examRecordRecent["diagnosis_comment"]}\n\n※ITスキル診断に不明点などありましたら下記の問い合わせ先にご連絡ください。\nお問い合わせ先\n担当者：{$managerArray[2]}\n連絡先：{$managerArray[0]}\n\n※このメールに返信しないでください。";
 
 	// 사람이름이나, URL등 고유하게 변경해야 하는 것은 이렇게 처리한다.
 	// 메일 제목과 내용 부분 모두 변환처리.

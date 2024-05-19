@@ -8,7 +8,7 @@ function InitStyle() { return " font-style: italic; color: ;"; }
 
 <h1 class="title">ITスキル診断状況管理</h1>
 
-<form id="form" name="input_form" enctype="multipart/form-data" action="/admin/situ/input" method="post">
+<form id="form" method="post" action=".././situ/inputok">
 	<style type="text/css">
 		option { color: black; }
 		/* input::placeholder { font-style: italic; } */
@@ -23,68 +23,68 @@ function InitStyle() { return " font-style: italic; color: ;"; }
 			</style>
 			<dl class="emegra info">
 				<dt class="essential">ID</dt>
-				<dd><input class="form-control" name="email" type="text" style="width:220px; " ></dd>
-				
-                <dt class="essential">応募区分</dt>
-				<select class="form-select" name="case" style="width:220px" >
-                        <option value="" selected hidden>選択してください。</option>
-                        <option value="0">新卒</option>
-                        <option value="1">中途（経歴職）</option>
-                    </select>
+				<dd><input class="form-control" name="email" type="text" style="width:220px;"></dd>
+          
+        <dt class="essential">応募区分</dt>
+        <dd>
+          <select class="form-select" name="case" style="width:220px" >
+            <option value="" selected hidden>選択してください。</option>
+            <option value="0">新卒</option>
+            <option value="1">中途（経歴職）</option>
+          </select>
+        </dd>
+        
+        <dt class="essential">パスワード</dt>
+        <dd><input class="form-control" name="password" type="text" style="width:220px;" readonly></dd>
 
-                <dt class="essential">パスワード</dt>
-				<dd><input class="form-control" name="password" type="text" style="width:220px;" readonly></dd>
-
-				<dt class="essential">お名前（漢字）</dt>
-				<dd><input class="form-control" id="userInput" name="name" type="text" placeholder="漢字を記入してください。"style="width:220px" maxlength='20'></dd>
-
-                <dt>申込日</dt>
-				<dd><input class="form-control" type="text" style="width:220px; " value="<?php echo $currentDate ?>" readonly></dd>
-				
-                <dt class="essential">お名前（カナ）</dt>
-				<dd><input class="form-control" name="kana" type="text" placeholder="カナを記入してください。"style="width:220px" maxlength='50'></dd>
-
-                <dt>性別</dt>
-				<dd> 
-					<select class="form-select"  name="gender" style="width:220px;" onchange="ChangeInputStyle(this)" value="<?php echo $applicantArray["gender"] ?>" >
-						<option selected disabled hidden>選択</option>
-                        <option value="0">男</option>
-                        <option value="1">女</option>
-                    </select>
-				</dd>
-				
-                <dt class="essential">学歴</dt>
+        <dt class="essential">学歴</dt>
 				<dd>
-				<select class="form-select" name="education" style="width:220px" id="educationSelect" >
-                        <option value=""selected hidden>選択してください。</option>
-                        <option value="高卒">高卒</option>
-                        <option value="専門卒">専門卒</option>
-                        <option value="大卒">大卒</option>
-                        <option value="大学院卒">大学院卒</option>
-                        <option value="その他">その他</option>
-                    </select>
-                    <div id="otherEducationInput" style=" margin-top:-15px; display:none;">
-                        <input class="form-control" type="text" placeholder="その他の場合の、記入" id="otherEducation" name="education" maxlength='20'>
-                    </div>
+          <select class="form-select" name="education" style="width:220px" id="educationSelect" >
+            <option value=""selected hidden>選択してください。</option>
+            <option value="高卒">高卒</option>
+            <option value="専門卒">専門卒</option>
+            <option value="大卒">大卒</option>
+            <option value="大学院卒">大学院卒</option>
+            <option value="その他">その他</option>
+          </select>
+          <div id="otherEducationInput" style=" margin-top:-15px; display:none;">
+              <input class="form-control" type="text" placeholder="その他の場合の、記入" id="otherEducation" name="education" maxlength='20'>
+          </div>
+				</dd>      
+        
+        <dt class="essential">お名前（漢字）</dt>
+				<dd><input class="form-control" id="userInput" name="name" type="text" placeholder="漢字を記入してください。"style="width:220px" maxlength='20'></dd>
+        
+
+        <dt>性別</dt>
+				<dd> 
+          <select  name="gender" style="width:20%" >
+              <option value="" selected disabled hidden>選択</option>
+              <option value="0">男</option>
+              <option value="1">女</option>
+          </select>
 				</dd>
 
-                <dt class="essential">生年月日</dt>
-				<dd><input class="form-control" id="birth" name="birth" type="text" placeholder="YYYY-MM-DD" autocomplete="off"  style="width:220px" value=""></dd> 
-
-				<dt>IT関連資格</dt>
-				<dd><input class="form-control" id="certificatesId" name="certificates" type="text"  style="width:220px"></dd> 
-
+        <dt class="essential">お名前（カナ）</dt>
+				<dd><input class="form-control" name="kana" type="text" placeholder="カナを記入してください。"style="width:220px" maxlength='50'></dd>
+                
 				<dt>専攻</dt>
 				<dd> 
-				<select class="form-select" name="major" style="width: 220px;" id="majorSelect" >
-                        <option selected>選択してください。</option>
-                        <option value="IT・ソフトウェア専攻">IT・ソフトウェア専攻</option>
-                        <option value="IT・ソフトウェア以外">IT・ソフトウェア以外</option>
-                    </select>
-                    <div id="otherMajorInput" style=" margin-top:-15px; display:none;">
-                        <input class="form-control" type="text" placeholder="その他の場合の、記入" id="otherMajor" name="major" maxlength='20'>
-                    </div>
+          <select class="form-select" name="major" style="width: 220px;" id="majorSelect" >
+            <option selected>選択してください。</option>
+            <option value="IT・ソフトウェア専攻">IT・ソフトウェア専攻</option>
+            <option value="IT・ソフトウェア以外">IT・ソフトウェア以外</option>
+          </select>
+          <div id="otherMajorInput" style=" margin-top:-15px; display:none;">
+            <input class="form-control" type="text" placeholder="その他の場合の、記入" id="otherMajor" name="major" maxlength='20'>
+          </div>
 				</dd>
+
+        <dt class="essential">生年月日</dt>
+				<dd><input class="form-control" id="birth" name="birth" type="text" placeholder="YYYY-MM-DD" autocomplete="off"  style="width:220px" value=""></dd>
+
+        <dt>IT関連資格</dt>
+				<dd><input class="form-control" id="certificatesId" name="certificates" type="text"  style="width:220px"></dd> 
 
 				<dt>その他</dt>
 				<dd><input class="form-control" id="other" name="other" type="text"  style="width:220px" ></dd> 
@@ -101,36 +101,35 @@ function InitStyle() { return " font-style: italic; color: ;"; }
 		dl.emegra.setting { grid-template-columns: repeat(1, 180px 1fr); }
 				</style>
 			<dl class="emegra setting">
-                <dt class="essential" id="ITskillTitle">ITスキル有無</dt>
+        <dt class="essential" id="ITskillTitle">ITスキル有無</dt>
 				<dd>
-				<select class="form-select" name="skill" style="width:220px" >
-                        <option value="" selected hidden>選択</option>
-                        <option value="0">有</option>
-                        <option value="1">無</option>
-                    </select>
+          <select class="form-select" name="skill" style="width:220px" >
+            <option value="" selected hidden>選択</option>
+            <option value="0">有</option>
+            <option value="1">無</option>
+          </select>
 				</dd>
-
-                <dt class="essential" id="class1stTitle">経験分野</dt>
+        <dt class="essential" id="class1stTitle">経験分野</dt>
 				<dd>
-				<select class="form-select" name="class1st" style="width:220px;" id="class1stId" onclick="ChangeClass1st(this)">
-                    <option value="" selected hidden>選択してください。</option>
-                        <?php foreach ($this->class1st as $row): ?>
-                            <?php $texts = explode(',', $row['text']); ?>
-                            <?php foreach ($texts as $text): ?>
-                                <option value="<?php echo $text; ?>"><?php echo $text; ?></option>
-                            <?php endforeach; ?>
-                        <?php endforeach; ?>
-                    </select>
-                    <div id="otherclass1stInput" style="margin-top:-15px; display:none;">
-                        <input class="form-control" type="text" placeholder="その他の場合の、記入" id="otherclass1st" name="class1st" maxlength='20'>
-                    </div>
+          <select class="form-select" name="class1st" style="width:220px;" id="class1stId" onclick="ChangeClass1st(this)">
+            <option value="" selected hidden>選択してください。</option>
+              <?php foreach ($this->class1st as $row): ?>
+                <?php $texts = explode(',', $row['text']); ?>
+                  <?php foreach ($texts as $text): ?>
+                    <option value="<?php echo $text; ?>"><?php echo $text; ?></option>
+                  <?php endforeach; ?>
+              <?php endforeach; ?>
+          </select>
+          <div id="otherclass1stInput" style="margin-top:-15px; display:none;">
+            <input class="form-control" type="text" placeholder="その他の場合の、記入" id="otherclass1st" name="class1st" maxlength='20'>
+          </div>
 				</dd>
 
 				<dt class="essential" id=class2ndTitle>問題種別</dt>
 				<dd>
-				<select class="form-select" name="class2nd" style="width:220px;" id="class2ndId">
-                    <option value=""  >選択してください。</option>
-                </select>
+          <select class="form-select" name="class2nd" style="width:220px;" id="class2ndId">
+            <option value=""  >選択してください。</option>
+          </select>
 				</dd>
 
 				<dt class="essential" id="careerTitle">IT経験年数</dt>
@@ -147,32 +146,72 @@ function InitStyle() { return " font-style: italic; color: ;"; }
 			dl.emegra.detail { grid-template-columns: repeat(2, 140px 1fr); }
 		</style>
 		<dl class="emegra detail">
-                <dt>診断依頼</dt>
+        <dt>診断依頼</dt>
 				<dd><input class="form-control"  type="text" style="width:220px;" value="<?php echo $currentDate?>"readonly></dd>
-
-				<dt class="essential">診断問項ID</dt>
-				<dd><input class="form-control" name="" type="text" style="width:220px; "></dd> 
+        
+        <dt class="essential">診断問項ID</dt>
+				<dd>
+					<input name="code" type="hidden" style="width:220px;">
+          <div id="codeDisplay" style="padding-right:5px"></div>
+					<button type="button" data-bs-toggle="modal" data-bs-target="#staticBackdrop" style="padding: 0px 10px ;border-radius: 8px; background:linear-gradient(111deg, #50D7C7 0%, #40ADF0 100%); color:white;" onclick="diagnosisData();">検索</button>
+				</dd> 
+				
+			<div class="modal modal-sheet py-5" style="backdrop-filter: blur(5px); " tabindex="-1" role="dialog" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+				<div class="modal-dialog" style="margin-top:150px;" role="document">
+					<div class="modal-content rounded-4">
+            <div class="modal-header border-bottom-0" style="background:linear-gradient(111deg, #50D7C7 0%, #40ADF0 100%); color:white; height: 40px;border-top-left-radius:13px;border-top-right-radius:13px">
+              <h3 class="modal-title fs-6" id="exampleModalLabel">診断書検索</h3>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(100%);"></button>
+					  </div>
+              <div class="modal-body fs-5">
+                <table class="table" style="text-align:center; font-size:12px;">
+                  <thead>
+                    <tr>
+                      <th>No</th>
+                      <th style="text-align:left;">タイトル</th>
+                      <th>診断書番号</th>
+                      <th>選択</th>
+                    </tr>
+                  </thead>
+                  <tbody style="text-align:center">
+                  </tbody>
+                </table>
+              </div>
+              <div class="modal-footer flex-column border-top-0" style="margin-bottom:8px;">
+                <button type="button" class="btn btn-lg  w-75 mx-0" data-bs-dismiss="modal" style="background:linear-gradient(111deg, #50D7C7 0%, #40ADF0 100%); color:white;">閉じる</button>
+              </div>
+          </div>
+				</div>
+			</div>
 
 				<dt class="essential">レベル</dt>
-				<dd><input class="form-control" name="" type="text" style="width:80px;"> </dd>
+				<dd>
+          <select class="form-select" name="level" type="text" style="width:100px;">
+            <option value="0">０級</option>
+            <option value="1">初級</option>
+            <option value="2">中級</option>
+            <option value="3">高級</option>
+          </select>
+				</dd>
 
 				<dt class="essential">問項数別</dt>
-				<dd><input class="form-control" type="text" style="width:50px;text-align:center"> 問</dd>
+				<dd><input class="form-control" name="question_num" type="text" style="width:50px;text-align:center;">問</dd>
 		
 				<dt class="essential">診断方法</dt>
-                <dd style="grid-column: 2 / 5;">
-					<select class="form-select" name="methods" style="width:13%;" onchange="ChangeInputStyle(this)" >
-                        <option value="" selected disabled hidden></option>
-                        <option value="0">WEB</option>
-                        <option value="1"selected>対面</option>
-                    </select>
+        <dd style="grid-column: 2 / 5;">
+          <select class="form-select" name="method" style="width:13%;" onchange="ChangeInputStyle(this)" >
+            <option value="WEB">WEB</option>
+            <option value="対面"selected>対面</option>
+          </select>
 				</dd>
 		</dl>
 	</div>
 </div>
 
 <div class="btn-place" style="margin-top: 32px;">
-	<button type="button" class="emegra cancel" onclick="self.location.href='../../situation/list';">戻る</button>
+	<button type="button" class="emegra cancel" onclick="self.location.href='.././situation/list';">戻る</button>
+  <button class="emegra"  id="btn_save" name="inputDatas" value="btn_save"  style="width:150px;" onclick=savaConfirm()>一時保存</button>
+
 	<button class="emegra"  id="btn_submit" name="inputDatas" value="btn_submit"  style="width:150px;" onclick=inputConfirm()>ITスキル診断依頼</button>
 </div>
 </form>
@@ -294,14 +333,6 @@ switch (element.value) {
 </script>
 
 <script>
-	function editConfirm(){
-		var submitConfirm=confirm("依頼しますか？");
-		if (!submitConfirm){
-            event.preventDefault();
-            return false;
-        }
-		
-	}
 	function randomPW(){
 		const pwLength = 8;
 		const pwEncoding = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -432,7 +463,6 @@ function checkKana(input) {
             event.preventDefault();
             return false;
         }
-    
         if (form.case.value == "") {
             alert("応募区分を入力してください。");
             setTimeout("form.case.focus()",100);
@@ -489,7 +519,7 @@ function checkKana(input) {
             return false;
         }
 
-        var submitConfirm=confirm("申し込みますか？");
+        var submitConfirm=confirm("依頼しますか？");
         if (!submitConfirm){
             event.preventDefault();
             return false;
@@ -505,6 +535,25 @@ function checkKana(input) {
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/locales/bootstrap-datepicker.ja.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
 
+<script>
+  function editConfirm(){
+		var submitConfirm=confirm("依頼しますか？");
+		if (!submitConfirm){
+            event.preventDefault();
+            return false;
+        }
+    form.submit();
+		
+	}
+  function savaConfirm(){
+		var submitConfirm=confirm("保存しますか？");
+    if (!submitConfirm){
+            event.preventDefault();
+            return false;
+        }
+    form.submit();
+  }
+</script>
 <script>
   $(document).ready(function(){
     var birth = document.getElementById("birth");
@@ -540,12 +589,105 @@ function checkKana(input) {
                 <?php endforeach; ?>
                 break;
                 <?php endforeach; ?>
-                default:
-                    var option = document.createElement("option");
-                    option.value = 7;
-                    option.innerText = "データがありません";
-                    class2ndSelect.appendChild(option);
-                    break;
             }
 	}
+</script>
+<script>
+function diagnosisData() {
+  var levelElement = document.querySelector('select[name="level"]');
+  var class2ndElement = document.querySelector('select[name="class2nd"]');
+  var levelValue = levelElement.options[levelElement.selectedIndex].value;
+  var class2ndValue = class2ndElement.options[class2ndElement.selectedIndex].value;
+  const url = window.location.href;
+  const postForm = new FormData();
+  postForm.append("level", levelValue);
+  postForm.append("class2nd", class2ndValue);
+  const xhr = new XMLHttpRequest();
+  xhr.open("POST", url, true);
+  xhr.send(postForm);
+  xhr.onload = () => {
+    if (xhr.status == 200) {
+        try {
+            const result = JSON.parse(xhr.responseText);
+            console.log(result);
+            if (result === "wrong") {
+              updateTable("wrong");
+                return;
+            }
+            updateTable(result);
+        } catch (e) {
+            console.error("Failed to parse response", e);
+            alert("サーバー応答の解析に失敗しました");
+        }
+    }
+}
+}
+
+    function updateTable(data) {
+    const tableBody = document.querySelector(".table tbody");
+    tableBody.innerHTML = ""; 
+    if (data === "wrong" || data.length === 0) {
+        const row = document.createElement("tr");
+
+        const messageCell = document.createElement("td");
+        messageCell.setAttribute("colspan", "4");
+        messageCell.textContent = "データがありません";
+        row.appendChild(messageCell);
+
+        tableBody.appendChild(row);
+    } else {
+      data.forEach((item, index) => {
+        const row = document.createElement("tr");
+
+        const noCell = document.createElement("td");
+        noCell.style="align-content:center;";
+        noCell.textContent = index + 1;
+        row.appendChild(noCell);
+
+        const titleCell = document.createElement("td");
+        titleCell.style="align-content:center;text-align:left;";
+        titleCell.textContent = item.title; 
+        row.appendChild(titleCell);
+
+        const codeCell = document.createElement("td");
+        codeCell.style="align-content:center";
+        codeCell.textContent = item.code;
+        row.appendChild(codeCell);
+
+        const selectCell = document.createElement("td");
+        selectCell.style="align-content:center";
+        const button = document.createElement("button");
+        button.type = "button";
+        button.textContent = "選択";
+        button.style="background:linear-gradient(111deg, #50D7C7 0%, #40ADF0 100%); padding: 5px 10px; color:white; border-radius:5px;";
+        button.addEventListener("click", () => {
+          selectCode(item.code,item.title);
+          selectQuestionNum(item.question_num);
+          const modalElement = document.querySelector('#staticBackdrop');
+        });
+        
+        selectCell.appendChild(button);
+        row.appendChild(selectCell);
+
+        tableBody.appendChild(row);
+    });
+}}
+
+function selectCode(code, title) {
+    const codeElement = document.querySelector('input[name="code"]');
+    const displayElement = document.querySelector('#codeDisplay');
+    if (codeElement) {
+        codeElement.value =code ;
+    }
+    if (displayElement){
+        displayElement.textContent = title+ "　("+code+")";
+    }
+}
+  function selectQuestionNum(question_num){
+    const numElement = document.querySelector('input[name="question_num"]');
+    if (numElement) {
+        numElement.value = question_num;
+    }
+  }
+
 </script>

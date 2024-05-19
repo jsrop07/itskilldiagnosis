@@ -36,7 +36,7 @@ if ($ses_id) {
             <?php $count = 1; foreach ($matchedData as $idx => $row) : ?>
         <div class="examBox" style="width:100%;">
             <div class="question" style="margin-left:50px;font-weight:bold;" id="<?= $row['idx'] ?>">問題 <?= $idx + 1 . ". " . $row["question"] ?></div>
-            <div class="card-body">
+            <div class="card-body" style="margin-left: 100px;">
                 <div class="answers mt-2">
                     <ul class="list-unstyled">
                         <?php for ($i = 1; $i <= 5; $i++) : ?>
@@ -45,7 +45,7 @@ if ($ses_id) {
                             if (!empty($row[$answerKey])) : // answer가 존재하는 경우에만 출력
                             ?>
                                 <li style="padding: 10px 0">         
-                                    <input type="radio" style="margin-left: 100px;" name="answer<?=$idx + 1 ?>" value="<?= $i ?>"> <?php echo htmlspecialchars($row[$answerKey], ENT_QUOTES) ?>
+                                    <input type="radio" name="answer<?=$idx + 1 ?>" value="<?= $i ?>"> <?php echo htmlspecialchars($row[$answerKey], ENT_QUOTES) ?>
                                 </li>
                             <?php endif; ?>
                         <?php endfor; ?>

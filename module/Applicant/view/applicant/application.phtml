@@ -18,7 +18,7 @@
                     <span>お名前（カナ）</span>
                     <input class="form-control" name="kana" type="text" placeholder="カナを記入してください。"style="width:40%" maxlength='50'>
 
-                    <span class="no_after_style">性別</span>
+                    <span class="form-select">性別</span>
                     <select  name="gender" style="width:20%" >
                         <option selected disabled hidden>選択</option>
                         <option value="0">男</option>
@@ -30,14 +30,14 @@
 
                     <span >応募区分</span>
                     <select class="" name="case" style="width:40%" >
-                        <option value="" selected>選択してください。</option>
+                        <option selected disabled hidden>選択してください。</option>
                         <option value="0">新卒</option>
                         <option value="1">中途（経歴職）</option>
                     </select>
 
                     <span>学歴</span>
                     <select class="" name="education" style="width:40%" id="educationSelect" >
-                        <option value=""selected>選択してください。</option>
+                        <option selected disabled hidden>選択してください。</option>
                         <option value="高卒">高卒</option>
                         <option value="専門卒">専門卒</option>
                         <option value="大卒">大卒</option>
@@ -60,14 +60,14 @@
 
                     <span>ITスキル有無</span>
                     <select class="" name="skill" style="width:20%" >
-                        <option value="" selected>選択</option>
+                        <option selected disabled hidden>選択</option>
                         <option value="0">有</option>
                         <option value="1">無</option>
                     </select>
 
                     <span id="spanclass1stSelect">経験分野</span>
                     <select class="" name="class1st" style="width:40%" id="class1stSelect" onclick="ChangeClass1st(this)">
-                    <option value="" selected  >選択してください。</option>
+                    <option value="" selected disabled hidden  >選択してください。</option>
                         <?php foreach ($this->class1st as $row): ?>
                             <?php $texts = explode(',', $row['text']); ?>
                             <?php foreach ($texts as $text): ?>
@@ -84,7 +84,7 @@
 
                     <span  id="spanTypeSelect">問題種別</span>
                     <select class="" name="class2nd" style="width:40%" id="typeSelect">
-                    <option value=""  >選択してください。</option>
+                    <option value="" selected disabled hidden >選択してください。</option>
                     </select>
 
                     <span class="no_after_style" id='spanCertificates'>IT関連資格</span>

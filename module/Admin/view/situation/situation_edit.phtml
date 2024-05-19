@@ -3,70 +3,81 @@ echo $this->partial("breadcrumb", ["datas" => $breadcrumbData]);
 $currentDate = date("Y-m-d H:i:s");
 
 function InitStyle() { return " font-style: italic; color: ;"; }
-	$isITMajor = false;
-	
-	$isITSkill =false;
+$isGender = false;
+$isMethod = false;
+$isITMajor = false;
+$isITSkill = false;
+$isITEducation1 = false;
+$isITEducation2 = false;
+$isITEducation3 = false;
+$isITEducation4 = false;
+$isClass1st1 = false;
+$isClass1st2 = false;
+$isClass1st3 = false;
+$isClass1st4 = false;
+$isClass1st5 = false;
 
-	$isITEducation1 =false;
-	$isITEducation2 = false;
-	$isITEducation3 = false;
-	$isITEducation4 = false;
-	$isITEducation5 = false;
+// gender
+if ($applicantArray["gender"] == "0") {
+    $isGender = true;
+}
 
+// method
+if ($recordArray["method"] == "WEB") {
+    $isMethod = true;
+}
 
-	$isClass1st1 = false;
-	$isClass1st2 = false;
-	$isClass1st3 = false;
-	$isClass1st4 = false;
-	$isClass1st5 = false;
+// major
+if ($recordArray["major"] == "IT・ソフトウェア専攻") {
+    $isITMajor = true;
+}
 
-	if ($recordArray["major"] == "IT・ソフトウェア専攻") {
-		$isITMajor = true;
-	}
-	if ($recordArray["skill"] == 0) {
-		$isITSkill = true;
-	}
-	if ($recordArray["education"] == "高卒") {
-		$isITEducation1 = true;
-	}
+// skill
+if ($recordArray["skill"] == 0) {
+    $isITSkill = true;
+}
 
-	if ($recordArray["education"] == "専門卒") {
-		$isITEducation2 = true;
-	}
+// education
+switch ($recordArray["education"]) {
+    case "高卒":
+        $isITEducation1 = true;
+        break;
+    case "専門卒":
+        $isITEducation2 = true;
+        break;
+    case "大卒":
+        $isITEducation3 = true;
+        break;
+    case "大学院卒":
+        $isITEducation4 = true;
+        break;
+}
 
-	if ($recordArray["education"] == "大卒") {
-		$isITEducation3 = true;
-	}
+// class1st
+switch ($recordArray["class1st"]) {
+    case "WEB":
+        $isClass1st1 = true;
+        break;
+    case "IT基礎":
+        $isClass1st2 = true;
+        break;
+    case "モバイル":
+        $isClass1st3 = true;
+        break;
+    case "サーバ":
+        $isClass1st4 = true;
+        break;
+    case "インフラ":
+        $isClass1st5 = true;
+        break;
+}
 
-	if ($recordArray["education"] == "大学院卒") {
-		$isITEducation4 = true;
-	}
-	if ($recordArray["education"] == "その他") {
-		!$isITEducation1 && $isITEducation2 && !$isITEducation3 && !$isITEducation4=true ;
-	}
-
-	if ($recordArray["class1st"] == "WEB") {
-		$isClass1st1 = true;
-	}
-
-	if ($recordArray["class1st"] == "IT基礎") {
-		$isClass1st2 = true;
-	}
-	if ($recordArray["class1st"] == "モバイル") {
-		$isClass1st3 = true;
-	}
-	if ($recordArray["class1st"] == "サーバ") {
-		$isClass1st4 = true;
-	}
-	if ($recordArray["class1st"] == "インフラ") {
-		$isClass1st5 = true;
-	}
 ?>
 
 
 <h1 class="title">ITスキル診断状況管理</h1>
 
-<form id="form" method="post" action="">
+<form id="form" method="post" action="../../situ/editok">
 	<style type="text/css">
 		option { color: black; }
 		/* input::placeholder { font-style: italic; } */
@@ -113,20 +124,22 @@ function InitStyle() { return " font-style: italic; color: ;"; }
 
                 <dt>性別</dt>
 				<dd> 
-					<select class="form-select"  name="gender" style="width:220px;" onchange="ChangeInputStyle(this)" value="<?php echo $applicantArray["gender"] ?>" >
-                        <option selected disabled hidden>
+				<select class="form-select" name="gender" style="width:220px;" onchange="ChangeInputStyle(this)" >
+					<option  value="" selected hidden>
 						<?php
-							if ($applicantArray['gender'] == NULL) {
-								echo "なし";
-							} elseif($applicantArray['gender']==0) {
-								echo "男";
-							}	else{echo "女";
-							}
-							?>						
-						</option>
-                        <option value="0">男</option>
-                        <option value="1">女</option>
-                    </select>
+						if ($applicantArray['gender'] === NULL) {
+							echo "なし";
+						} elseif ($applicantArray['gender'] == 0) {
+							echo "男";
+						} else {
+							echo "女";
+						}
+						?>
+					</option>
+					<option value="0" >男</option>
+					<option value="1" >女</option>
+				</select>
+
 				</dd>
 				
                 <dt class="essential">学歴</dt>
@@ -236,8 +249,9 @@ function InitStyle() { return " font-style: italic; color: ;"; }
 
 				<dt class="essential">診断問項ID</dt>
 				<dd>
-					<input class="form-control" name="code" type="text" style="width:220px; ">
-					<button type="button" data-bs-toggle="modal" data-bs-target="#staticBackdrop" style="margin-left:10px; width:50px; height:40px; border-radius: 10px; background:linear-gradient(111deg, #50D7C7 0%, #40ADF0 100%); color:white;" onclick="diagnosisData();">検索</button>
+					<input name="code" type="hidden" style="width:220px; ">
+          <div id="codeDisplay" style="padding-right:5px"></div>
+					<button type="button" data-bs-toggle="modal" data-bs-target="#staticBackdrop" style="padding: 0px 10px ;border-radius: 8px; background:linear-gradient(111deg, #50D7C7 0%, #40ADF0 100%); color:white;" onclick="diagnosisData();">検索</button>
 				</dd> 
 				
 			<div class="modal modal-sheet py-5" style="backdrop-filter: blur(5px); " tabindex="-1" role="dialog" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -263,19 +277,13 @@ function InitStyle() { return " font-style: italic; color: ;"; }
                     </table>
               </div>
               <div class="modal-footer flex-column border-top-0" style="margin-bottom:8px;">
-                <button type="button" id='lock_time' class="btn btn-lg  w-75 mx-0" data-bs-dismiss="modal" style="background:linear-gradient(111deg, #50D7C7 0%, #40ADF0 100%); color:white;">閉じる</button>
+                <button type="button" class="btn btn-lg  w-75 mx-0" data-bs-dismiss="modal" style="background:linear-gradient(111deg, #50D7C7 0%, #40ADF0 100%); color:white;">閉じる</button>
               </div>
           </div>
 				</div>
 			</div>
-
-      <script>
-
-      </script>
-      
-
 				<dt class="essential">レベル</dt>
-				<dd><select class="form-select" name="level" type="text" style="width:80px;">
+				<dd><select class="form-select" name="level" type="text" style="width:100px;">
 					<option value="0">０級</option>
 					<option value="1">初級</option>
 					<option value="2">中級</option>
@@ -285,14 +293,14 @@ function InitStyle() { return " font-style: italic; color: ;"; }
 				</dd>
 
 				<dt class="essential">問項数別</dt>
-				<dd><input class="form-control" name="question_num" type="text" style="width:50px;text-align:center "> 問</dd>
+				<dd><input class="form-control" name="question_num" type="text" style="width:50px;text-align:center;">問</dd>
 		
 				<dt class="essential">診断方法</dt>
                 <dd style="grid-column: 2 / 5;">
-					<select class="form-select" name="methods" style="width:13%;" onchange="ChangeInputStyle(this)" >
-            <option value="" selected disabled hidden><?php echo $recordArray['method']?></option>
-            <option value="0">WEB</option>
-            <option value="1">対面</option>
+					<select class="form-select" name="method" style="width:13%;" onchange="ChangeInputStyle(this)" >
+            <option value="" selected disabled><?php echo $recordArray['method']?></option>
+            <option value="WEB" <?php echo($isMethod) ? "selected" : ""?>>WEB</option>
+            <option value="対面"<?php echo(!$isMethod) ? "selected" : "" ;?>>対面</option>
           </select>
 				</dd>
 		</dl>
@@ -311,27 +319,21 @@ function InitStyle() { return " font-style: italic; color: ;"; }
 		
 				<dt>備考</dt>
 				<dd><input class="form-control" name="note" type="text" style="width:220px; " value="<?php echo $recordArray['note']?>"></dd>
+        <input type="hidden" name="recordindex" value="<?php echo $index?>"></div>
+        <input type="hidden" name="applicantindex" value="<?php echo $applicantArray['idx']?>"></div>
 
 			</dl>
 		</div>
 	</div>
-
 <div class="btn-place" style="margin-top: 32px;">
 	<button type="button" class="emegra cancel" onclick="self.location.href='../../situation/list';">戻る</button>
-	<button type="submit" class="emegra"  id="btn_submit" name="editDatas" value="btn_submit"  style="width:150px;" onclick=editConfirm()>ITスキル診断依頼</button>
+  <button class="emegra"  id="btn_save" name="editDatas" value="btn_save"  style="width:150px;" onclick=savaConfirm()>一時保存</button>
+	<button class="emegra"  id="btn_submit" name="editDatas" value="btn_submit"  style="width:150px;" onclick=editConfirm()>ITスキル診断依頼</button>
 </div>
 </form>
 
 <script type="text/javascript">
-	const smtp = document.getElementById("smtp");
 	const form = document.getElementById("form");
-	const pattern = /^[A-Za-z0-9_\.\-]+@[A-Za-z0-9\-]+\.[A-za-z0-9\-]+/;
-
-	function ActiveSmtp(value) {
-		if (value == "y") { smtp.disabled = false; }
-		else { smtp.disabled = true; }
-	}
-
     var selectElement = document.getElementById('majorId');
     var inputElement = document.getElementById('majorInput');
 	if (selectElement.value != "other" || selectElement.value == "なし") {
@@ -339,6 +341,13 @@ function InitStyle() { return " font-style: italic; color: ;"; }
     } else if (selectElement.value === "other" && selectElement.value !="IT・ソフトウェア専攻") {
         inputElement.hidden = false;
     }
+	function ChangeGender(element) {
+		ChangeInputStyle(element);
+		if (form.gender.value != "other") { 
+			form.gender.value = element.value;
+		}
+	}
+
 	function ChangeMajor(element) {
 		ChangeInputStyle(element);
 		if (form.major.value != "other") { 
@@ -497,8 +506,17 @@ switch (element.value) {
             event.preventDefault();
             return false;
         }
+    form.submit();
 		
 	}
+  function savaConfirm(){
+		var submitConfirm=confirm("保存しますか？");
+    if (!submitConfirm){
+            event.preventDefault();
+            return false;
+        }
+    form.submit();
+  }
 	function randomPW(){
 		const pwLength = 8;
 		const pwEncoding = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -517,36 +535,34 @@ switch (element.value) {
 </script>
 
 <script>
-    
-
-      function diagnosisData() {
-      var levelElement = document.querySelector('select[name="level"]');
-      var class2ndElement = document.querySelector('select[name="class2nd"]');
-			var levelValue = levelElement.options[levelElement.selectedIndex].value;
-			var class2ndValue = class2ndElement.options[class2ndElement.selectedIndex].value;
-      const url = window.location.href;
-      const postForm = new FormData();
-      postForm.append("level", levelValue);
-		  postForm.append("class2nd", class2ndValue);
-      const xhr = new XMLHttpRequest();
-      xhr.open("POST", url, true);
-      xhr.send(postForm);
-      xhr.onload = () => {
-        if (xhr.status == 200) {
-            try {
-                const result = JSON.parse(xhr.responseText);
-                console.log(result);
-                if (result === "wrong") {
-                  updateTable("wrong");
-                    return;
-                }
-                updateTable(result);
-            } catch (e) {
-                console.error("Failed to parse response", e);
-                alert("サーバー応答の解析に失敗しました");
+function diagnosisData() {
+  var levelElement = document.querySelector('select[name="level"]');
+  var class2ndElement = document.querySelector('select[name="class2nd"]');
+  var levelValue = levelElement.options[levelElement.selectedIndex].value;
+  var class2ndValue = class2ndElement.options[class2ndElement.selectedIndex].value;
+  const url = window.location.href;
+  const postForm = new FormData();
+  postForm.append("level", levelValue);
+  postForm.append("class2nd", class2ndValue);
+  const xhr = new XMLHttpRequest();
+  xhr.open("POST", url, true);
+  xhr.send(postForm);
+  xhr.onload = () => {
+    if (xhr.status == 200) {
+        try {
+            const result = JSON.parse(xhr.responseText);
+            console.log(result);
+            if (result === "wrong") {
+              updateTable("wrong");
+                return;
             }
+            updateTable(result);
+        } catch (e) {
+            console.error("Failed to parse response", e);
+            alert("サーバー応答の解析に失敗しました");
         }
     }
+}
 }
 
     function updateTable(data) {
@@ -565,26 +581,34 @@ switch (element.value) {
       data.forEach((item, index) => {
         const row = document.createElement("tr");
 
-        const noCell = document.createElement("td");
-        noCell.textContent = index + 1;
-        row.appendChild(noCell);
+        const indexCell = document.createElement("td");
+        indexCell.style="align-content:center;";
+        indexCell.textContent = index + 1;
+        row.appendChild(indexCell);
 
         const titleCell = document.createElement("td");
-        titleCell.textContent = item.question_num; 
+        titleCell.style="align-content:center;text-align:left;";
+        titleCell.textContent = item.title; 
         row.appendChild(titleCell);
 
         const codeCell = document.createElement("td");
+        codeCell.style="align-content:center";
         codeCell.textContent = item.code;
         row.appendChild(codeCell);
 
         const selectCell = document.createElement("td");
+        selectCell.style="align-content:center";
+
         const button = document.createElement("button");
         button.type = "button";
         button.textContent = "選択";
+        button.style="background:linear-gradient(111deg, #50D7C7 0%, #40ADF0 100%); padding: 5px 10px; color:white; border-radius:5px;";
         button.addEventListener("click", () => {
-                selectCode(item.code);
-                selectQuestionNum(item.question_num);
-            });
+          selectCode(item.code,item.title);
+          selectQuestionNum(item.question_num);
+          const modalElement = document.querySelector('#staticBackdrop');
+        });
+        
         selectCell.appendChild(button);
         row.appendChild(selectCell);
 
@@ -592,12 +616,16 @@ switch (element.value) {
     });
 }}
 
-function selectCode(code) {
+function selectCode(code, title) {
     const codeElement = document.querySelector('input[name="code"]');
+    const displayElement = document.querySelector('#codeDisplay');
     if (codeElement) {
-        codeElement.value = code;
+        codeElement.value =code ;
     }
-  }
+    if (displayElement){
+        displayElement.textContent = title+ "　("+code+")";
+    }
+}
   function selectQuestionNum(question_num){
     const numElement = document.querySelector('input[name="question_num"]');
     if (numElement) {

@@ -41,69 +41,80 @@ class SituationController extends AbstractActionController {
 		unset($query["page"]);
 
 		$recordTb = $this->getServiceLocator()->get("RecordTable-Admin");
+		$paginationData = $recordTb->GetAllList();
 
-		$totalRecordDatas = "";
-		$paginationData = "";
+		$recordDatas = array();
+		$offset = ($page - 1) * 10;
 		if (!empty($query)) {
-			try {
-				$totalNewRecordDatas = $recordTb->ReadAllNewList();
-				$totalRestRecordDatas = $recordTb->ReadAllRestList();
-				$totalRecordDatas = array_merge($totalNewRecordDatas, $totalRestRecordDatas);
-				$paginationData = $recordTb->GetAllList();
-			} catch (\Exception $e) {
-				print_r($e->getMessage());
-				exit;
+			if ($query["align"])
+			$sqlOrder[explode("-", $query["align"])[0]] = explode("-", $query["align"])[1];
+			try { $newRecordDatas = $recordTb->ReadNewListBySearchnOffsetnAlign($offset, $sqlOrder); }
+			catch (\Exception $e) { print_r($e->getMessage()); exit; }
+
+			if (count($newRecordDatas) <= 10) {
+				$offset += count($newRecordDatas);
+				$limit = 10 - count($newRecordDatas);
+				try { $restRecordDatas = $recordTb->ReadRestListBySearchnOffsetnLimitnAlign($offset, $limit, $sqlOrder); }
+				catch (\Exception $e) { print_r($e->getMessage()); exit; }
+				
+				$recordDatas = array_merge($newRecordDatas, $restRecordDatas);
 			}
-			$datas["searchData"] = $query;
+			else {
+				$recordDatas = $newRecordDatas;
+			}
+			$datas["searchDatas"] = $query;
 		}
 		else {
-			try {
-				$totalNewRecordDatas = $recordTb->ReadAllNewList();
-				$totalRestRecordDatas = $recordTb->ReadAllRestList();
-				$totalRecordDatas = array_merge($totalNewRecordDatas, $totalRestRecordDatas);
-				$paginationData = $recordTb->GetAllList();
-			} catch (\Exception $e) {
-				print_r($e->getMessage());
-				exit;
+			try { $newRecordDatas = $recordTb->ReadNewListByOffset($offset); }
+			catch (\Exception $e) { print_r($e->getMessage()); exit; }
+
+			if (count($newRecordDatas) <= 10) {
+				$offset += count($newRecordDatas);
+				$limit = 10 - count($newRecordDatas);
+				try { $restRecordDatas = $recordTb->ReadRestListByOffsetnLimit($offset, $limit); }
+				catch (\Exception $e) { print_r($e->getMessage()); exit; }
+
+				$recordDatas = array_merge($newRecordDatas, $restRecordDatas);
+			}
+			else {
+				$recordDatas = $newRecordDatas;
 			}
 		}
 
-		$datas["totalApply"] = count($recordTb->ReadApplyData());
-		$datas["totalRequest"] = count($recordTb->ReadRequestData());
-		$datas["totalData"] = count($totalRecordDatas);
+		try {
+			$datas["totalApply"] = $recordTb->CountApplyData();
+			$datas["totalRequest"] = $recordTb->CountRequestData();
+			$datas["totalData"] = $recordTb->CountRecordData();
+		} catch (\Exception $e) {
+			print_r($e->getMessage());
+			exit;
+		}
 
 		$applicantTb = $this->getServiceLocator()->get("ApplicantTable-Admin");
 		$diagnosisTb = $this->getServiceLocator()->get("DiagnosisTable-Admin");
 		// Extract output datas and Add numbering
-		if (!empty($totalRecordDatas)) {
-			$recordDatas = array();
-			$startIdx = ($page - 1) * $printDataNum;
-			$endIdx = ($page * $printDataNum);
 
-			for ($i = 0; $startIdx + $i < $endIdx; $i++) {
-				if (!isset($totalRecordDatas[$startIdx + $i])) { break; }
+			foreach ($recordDatas as $index => $data) {
+				try { $applicantData = $applicantTb->ReadByIdx($data["applicant_idx"]); }
+				catch (\Exception $e) { print_r($e->getMessage()); exit; }
+				$data = array_merge($applicantData, $data);
 
-				$recordData = $totalRecordDatas[$startIdx + $i];
-
-				$applicantData = $applicantTb->ReadByIdx($recordData["applicant_idx"]);
-				$recordData = array_merge($applicantData, $recordData);
-
-				if (($recordData["diagnosis_code"]) != null) {
-					$diagnosisData = $diagnosisTb->ReadByCode($recordData["diagnosis_code"]);
-					$recordData = array_merge($diagnosisData, $recordData);
+				if (($data["diagnosis_code"]) != null) {
+					try { $diagnosisData = $diagnosisTb->ReadByCode($data["diagnosis_code"]); }
+					catch (\Exception $e) { print_r($e->getMessage()); exit; }
+					$data = array_merge($diagnosisData, $data);
 				}
 
-				if ($recordData["request_date"] == null) { $recordData["status"] = "新規"; }
-				else if ($recordData["execute_date"] == null) { $recordData["status"] = "診断"; }
-				else { $recordData["status"] = "終了"; }
+				if ($data["request_date"] == null) { $data["status"] = "新規"; }
+				else if ($data["execute_date"] == null) { $data["status"] = "診断"; }
+				else { $data["status"] = "終了"; }
 
-				$recordData["num"] = count($totalRecordDatas) - ($startIdx + $i);
-
-				$recordDatas[$i] = $recordData;
+				$data["num"] = $datas["totalData"] - (($page - 1) * 10) - $index;
+				
+				$recordDatas[$index] = $data;
 			}
 
 			$datas["recordDatas"] = $recordDatas;
-		}
 
 		$datas = $this->GetOptionDatas($datas);
 

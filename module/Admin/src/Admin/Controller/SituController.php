@@ -124,7 +124,7 @@ class SituController extends AbstractActionController {
       $this->mailByAdmin($arr,$skillText,$caseText,$managerArray,$applicantInfo);
 		  echo "
 			<script>
-			alert('依頼が完了しました。')
+			alert('依頼が完了しました')
 			self.location.href='/admin/situation/list';
 			</script>
 			";	

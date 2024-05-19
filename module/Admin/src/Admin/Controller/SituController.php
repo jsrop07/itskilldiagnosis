@@ -291,7 +291,6 @@ class SituController extends AbstractActionController {
       $recordSet['method']=$post['method'];
 			$situTb->saveRecordInfo($recordlWhere, $recordSet);	
 			$situTb->saveApplicantInfo($applicantWhere, $applicantSet);	
-					
 		echo "
 		<script>
 		alert('保存が完了しました。')

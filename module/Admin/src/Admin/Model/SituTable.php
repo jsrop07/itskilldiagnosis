@@ -171,6 +171,10 @@ class SituTable
 		return $result;   
 	  }
 	  public function saveApplicantInfo($applicantWhere, $applicantSet){
+		if (!isset($applicantSet['gender']) || $applicantSet['gender'] === '') {
+			$applicantSet['gender'] = null;
+		}
+		
 		$qry=new sql($this->adapter);
 		$update=$qry->update('applicant');
 	

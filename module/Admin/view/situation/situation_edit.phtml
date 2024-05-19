@@ -3,7 +3,9 @@ echo $this->partial("breadcrumb", ["datas" => $breadcrumbData]);
 $currentDate = date("Y-m-d H:i:s");
 
 function InitStyle() { return " font-style: italic; color: ;"; }
+$isGenderNull = false;
 $isGender = false;
+
 $isMethod = false;
 $isITMajor = false;
 $isITSkill = false;
@@ -18,6 +20,10 @@ $isClass1st4 = false;
 $isClass1st5 = false;
 
 // gender
+if ($applicantArray["gender"] === NULL) {
+    $isGenderNull = true;
+}
+
 if ($applicantArray["gender"] == "0") {
     $isGender = true;
 }
@@ -124,21 +130,12 @@ switch ($recordArray["class1st"]) {
 
                 <dt>性別</dt>
 				<dd> 
-				<select class="form-select" name="gender" style="width:220px;" onchange="ChangeInputStyle(this)" >
-					<option selected hidden>
-						<?php
-						if ($applicantArray['gender'] === NULL) {
-							echo "なし";
-						} elseif ($applicantArray['gender'] == 0) {
-							echo "男";
-						} else {
-							echo "女";
-						}
-						?>
-					</option>
-					<option value="0" >男</option>
-					<option value="1" >女</option>
+				<select class="form-select"  name="gender" id="gender" style="width:220px">
+					<option value="" <?php echo ($isGenderNull) ? "selected" : "" ?>>選択</option>
+					<option value="0" <?php echo (!$isGenderNull && $isGender) ? "selected" : "" ?>>男</option>
+					<option value="1" <?php echo (!$isGenderNull && !$isGender) ? "selected" : "" ?>>女</option>
 				</select>
+
 
 				</dd>
 				
@@ -163,7 +160,7 @@ switch ($recordArray["class1st"]) {
 				<dt>専攻</dt>
 				<dd> 
 					<select class="form-select" id="majorId" style="width:220px;" onchange="ChangeMajor(this)">
-						<option value="" hidden>なし</option>
+						<option value="" hidden>選択</option>
                         <option value="IT・ソフトウェア専攻"<?php echo ($isITMajor) ? " selected" : ""; ?>>IT・ソフトウェア専攻</option>
                         <option value="other"<?php echo ($recordArray["major"] != null && !$isITMajor) ? " selected" : ""; ?>>IT・ソフトウェア以外</option>
                     </select>

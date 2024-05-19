@@ -273,7 +273,7 @@ class QuestionTable {
 			$where->and->equalTo($field, $data);
 		}
 
-		$qry = $this->sql->select("question")->where($where)->order("date_regist DESC");
+		$qry = $this->sql->select("question")->where($where)->order("point")->order("date_regist DESC");
 		return iterator_to_array($this->sql->prepareStatementForSqlObject($qry)->execute());
 	}
 }

@@ -78,19 +78,21 @@
 		<form id="form_logout" action="/admin/account/logout" method="post" action="/admin/account/logout"></form>
 
 		<script>
-			if (typeof bootstrap === 'undefined') {
-				var script = document.createElement('script');
-				script.src = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js';
-				script.integrity = 'sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz';
-				script.crossOrigin = 'anonymous';
+			if (typeof bootstrap === "undefined") {
+				var script = document.createElement("script");
+				script.src = "https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js";
+				script.integrity = "sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz";
+				script.crossOrigin = "anonymous";
 				document.head.appendChild(script);
 			} else {
-				console.log('Bootstrap is already loaded');
+				console.log("Bootstrap is already loaded");
 			}
 		</script>
 		<script>
-			const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
-			const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
+			if (typeof popoverTriggerList === "undefined") {
+				let popoverTriggerList = document.querySelectorAll("[data-bs-toggle='popover']");
+				let popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl));
+			}
 
 			function logout() { document.getElementById("form_logout").submit(); }
 			function setCookie(name, value, options = {}) {

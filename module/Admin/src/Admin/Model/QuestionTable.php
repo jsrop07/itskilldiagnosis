@@ -266,14 +266,14 @@ class QuestionTable {
 	 * @param array $whereDatas [field => value]
 	 * @return array $questionDatas
 	*/
-	public function ReadForDiagnosis($whereDatas = []) {
+	public function ReadForDiagnosis($whereDatas) {
 		$where = new Where();
 		$where->isNotNull("date_approve")->and->isNull("date_delete");
 		foreach ($whereDatas as $field => $data) {
 			$where->and->equalTo($field, $data);
 		}
 
-		$qry = $this->sql->select("question")->where($where)->order("date_regist DESC");
+		$qry = $this->sql->select("question")->where($where)->order("point")->order("date_regist DESC");
 		return iterator_to_array($this->sql->prepareStatementForSqlObject($qry)->execute());
 	}
 }

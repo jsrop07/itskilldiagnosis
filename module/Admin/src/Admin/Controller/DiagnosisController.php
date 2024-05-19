@@ -64,9 +64,23 @@ class DiagnosisController extends AbstractActionController {
 
 		$diagnosisDatas = array();
 		if (!empty($query)) {
+			$datas["searchData"] = $query;
+			
+			$searchKey = array_keys($query)[0];
+			if ($searchKey == "class2nd") {
+				$optionTb = $this->getServiceLocator()->get("OptionTable");
+				$sqlWheres["text"] = $query["class2nd"];
+				try { $class2ndDatas = $optionTb->ReadByOption($sqlWheres); }
+				catch (\Exception $e) { print_r($e->getMessage()); exit; }
+
+				$sqlWhere["class2nd"] = array();
+				foreach ($class2ndDatas as $data) {
+					$sqlWhere["class2nd"][] = $data["idx"];
+				}
+				$query = $sqlWhere;
+			}
 			try { $diagnosisDatas = $diagnosisTb->GetListByOption($query); }
 			catch (\Exception $e) { print_r($e->getMessage()); exit; }
-			$datas["searchData"] = $query;
 		}
 		else {
 			try {$diagnosisDatas = $diagnosisTb->GetAllList(); }
@@ -220,7 +234,36 @@ class DiagnosisController extends AbstractActionController {
 	}
 
 	public function updateAction() {
+		$post = $this->params()->fromPost();
+		$diagnosisTb = $this->getServiceLocator()->get("DiagnosisTable-Admin");
 
+		try { $diagnosisTb->RemoveDiagnosis($post["idx"]); }
+		catch (\Exception $e) { die($e->getMessage()); }
+
+		$sqlValue["code"] = $post["code"];
+		$sqlValue["title"] = $post["title"];
+		$sqlValue["class1st"] = $post["class1st"];
+		$sqlValue["class2nd"] = $post["class2nd"];
+		$sqlValue["level"] = $post["level"];
+		$sqlValue["question_num"] = $post["question_num"];
+		$sqlValue["question_idxs"] = $post["question_idxs"];
+		$sqlValue["time_limit"] = $post["time_limit"];
+		$pointDatas = array();
+		$textDatas = array();
+		$commentDatas = array();
+		for ($i = 1; $i <= 4; $i++) {
+			$pointDatas[] = $post["point" . $i];
+			$textDatas[] = $post["text" . $i];
+			$commentDatas[] = $post["comment" . $i];
+		}
+		$sqlValue["result_points"] = implode(",", $pointDatas);
+		$sqlValue["result_texts"] = implode(",", $textDatas);
+		$sqlValue["result_comments"] = implode(",", $commentDatas);
+		$sqlValue["date_start"] = date("Y-m-d H:i:s");
+		try { $diagnosisTb->CreateDiagnosis($sqlValue); }
+		catch (\Exception $e) { die($e->getMessage()); }
+
+		die ("success");
 	}
 
 	public function removeAction() {
@@ -236,17 +279,60 @@ class DiagnosisController extends AbstractActionController {
 	}
 
 	public function readAction() {
+		$route =$this->params()->fromRoute("index");
 		$post = $this->params()->fromPost();
 
 		if (isset($post["question_idxs"])) {
 			die (json_encode($this->ReadQuestionDatasByIdxs($post["question_idxs"])));
+		}
+		
+		/* test */
+		$sqlWhere["class1st"] = $post["class1st"];
+		$sqlWhere["class2nd"] = $post["class2nd"];
+		$sqlWhere["level"] = $post["level"];
+		/* test */
+		switch ($route) {
+			case "question":
+
+				$questionTb = $this->getServiceLocator()->get("QuestionTable");
+				try { $questionDatas = $questionTb->ReadForDiagnosis($sqlWhere); }
+				catch (\Exception $e) { die($e->getMessage()); }
+
+				$optionTb = $this->getServiceLocator()->get("OptionTable");
+				foreach($questionDatas as $index => $data) {
+					$question["idx"] = $data["idx"];
+					$question["title"] = $data["title"];
+					try { $question["type"] = $optionTb->ReadByIdx($data["type"])["text"]; }
+					catch (\Exception $e) { die($e->getMessage()); }
+					$question["point"] = $data["point"];
+
+					$question["question"] = $data["question"];
+					for ($i = 1; $i <= 5; $i++) {
+						$question["answer" . $i] = $data["answer" . $i];
+					}
+
+					$questionDatas[$index] = $question;
+				}
+
+				die(json_encode($questionDatas));
+				break;
+			case "list":
+				// /* test */
+				// $post["question_num"] = 20;
+				// /* test */
+				$questionTb = $this->getServiceLocator()->get("QuestionTable");
+				$questionIdxsByScore = $this->ReadQuestionIdxsByScore($sqlWhere);
+
+				$questionIdxsByScore = $this->CreateQuestionList($questionIdxsByScore, $post["question_num"]);
+				$questionIdxs = $this->QuestionIdxsByScoreToQuestionIdxs($questionIdxsByScore);
+				die(json_encode($questionIdxs));
+				break;
 		}
 
 		$sqlWhere = $post;
 
 		unset($sqlWhere["question_num"]);
 		unset($sqlWhere["time_limit"]);
-
 		$totalQuestionDatas = $this->ReadQuestionDatasForDiagnosis($sqlWhere);
 
 		$totalPoint = 0;
@@ -541,5 +627,95 @@ class DiagnosisController extends AbstractActionController {
 		}
 
 		return $questionDatas;
+	}
+
+	function ReadQuestionIdxsByScore($sqlWhere) {
+		$questionTb = $this->getServiceLocator()->get("QuestionTable");
+
+		$questionDatasByScore = array();
+		for ($i = 1; $i <= 5; $i++) {
+			$sqlWhere["point"] = $i;
+			try { $questionDatas = $questionTb->ReadForDiagnosis($sqlWhere); }
+			catch (\Exception $e) { die($e->getMessage()); }
+
+			$questionDatasByScore[$i] = array();
+			foreach ($questionDatas as $questionData) {
+				$data["idx"] = $questionData["idx"];
+				$data["point"] = $questionData["point"];
+
+				array_push($questionDatasByScore[$i], $data);
+			}
+		}
+
+		return $questionDatasByScore;
+	}
+
+	function CreateQuestionList($beforeQuestionIdxsByScore, $question_num) {
+		$questionIdxsByScore = array();
+		for ($i = 1; $i <= 5; $i++) {
+			$questionIdxsByScore[$i] = array();
+		}
+
+		$totalPoint = 0;
+		for ($i = 0; $i < $question_num; $i++) {
+			$isEmpty = true;
+			for ($j = 1; $j <= 5; $j++) {
+				if (!empty($beforeQuestionIdxsByScore[$j])) { $isEmpty = false; }
+			}
+			if ($isEmpty) { return $questionIdxsByScore; }
+
+			do { $point = rand(1, 5); }
+			while (empty($beforeQuestionIdxsByScore[$point]));
+
+			$rndIdx = array_rand($beforeQuestionIdxsByScore[$point]);
+			$questionIdxsByScore[$point][$rndIdx] = $beforeQuestionIdxsByScore[$point][$rndIdx];
+			unset($beforeQuestionIdxsByScore[$point][$rndIdx]);
+			$totalPoint += $point;
+
+			while ($totalPoint > 100) {
+				$before = array();
+				$after = array();
+
+				for ($j = 5; $j >= 2; $j--) {
+					if (!empty($questionIdxsByScore[$j])) {
+						$before["point"] = $j;
+						$before["index"] = array_rand($questionIdxsByScore[$j]);
+						$before["data"] = $questionIdxsByScore[$j][$before["index"]];
+						unset($questionIdxsByScore[$before["point"]][$before["index"]]);
+						break;
+					}
+					if ($j == 2) { return $questionIdxsByScore; }
+				}
+
+				for ($j = 1; $j <= $before["point"]; $j++) {
+					if (!empty($beforeQuestionIdxsByScore[$j])) {
+						$after["point"] = $j;
+						$after["index"] = array_rand($beforeQuestionIdxsByScore[$j]);
+						$after["data"] = $beforeQuestionIdxsByScore[$j][$after["index"]];
+						unset($beforeQuestionIdxsByScore[$after["point"]][$after["index"]]);
+						break;
+					}
+					if ($j == $before["point"]	) { return $questionIdxsByScore; }
+				}
+
+				$questionIdxsByScore[$after["point"]][$after["index"]] = $after["data"];
+				$beforeQuestionIdxsByScore[$before["point"]][$before["index"]] = $before["data"];
+				$totalPoint = $totalPoint - $before["point"] + $after["point"];
+			}
+		}
+
+		return $questionIdxsByScore;
+	}
+
+	function QuestionIdxsByScoreToQuestionIdxs($questionIdxsByScore) {
+		$questionIdxs = array();
+
+		foreach ($questionIdxsByScore as $beforeQuestionIdxs) {
+			foreach ($beforeQuestionIdxs as $data) {
+				array_push($questionIdxs, $data["idx"]);
+			}
+		}
+
+		return $questionIdxs;
 	}
 }

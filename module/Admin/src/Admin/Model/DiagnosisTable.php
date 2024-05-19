@@ -10,19 +10,16 @@ use Zend\Paginator\Paginator;
 
 class DiagnosisTable {
 	public function __construct() {
-		//Local設定ファイルがある場合、Local設定を優先する
 		if (is_file($_SERVER["DOCUMENT_ROOT"] . "/../config/autoload/local.php")) {
 			$this->config = require $_SERVER["DOCUMENT_ROOT"] . "/../config/autoload/local.php";
 		} else {
 			$this->config = require $_SERVER["DOCUMENT_ROOT"] . "/../config/autoload/global.php";
 		}
 
-		//指定DB設定情報通り接続
 		$dbArr = $this->config["db"];
 		$adapter = new Adapter($dbArr);
-		//Adapter設定
+
 		$this->adapter = $adapter;
-		//簡単に共通Sql宣言
 		$this->sql = new Sql($this->adapter);
 	}
 
@@ -48,7 +45,7 @@ class DiagnosisTable {
 		$where = new Where();
 		$where->isNull("date_end");
 
-		$qry = $this->sql->select("diagnosis")->where($where);
+		$qry = $this->sql->select("diagnosis")->where($where)->order("date_start DESC");;
 		$paginatorAdapter = new DbSelect($qry, $this->adapter);
 		return new Paginator($paginatorAdapter);
 	}
@@ -57,12 +54,24 @@ class DiagnosisTable {
 	 * @param array $whereDatas [key => data]
 	 * @return mixed Records Array
 	*/
-	public function ReadListByOption($whereData) {
-		$qry = $this->sql->select("diagnosis")->where($whereData)->order("date_start DESC");
-		return iterator_to_array($this->sql->prepareStatementForSqlObject($qry)->execute());
-	}
-	public function GetListByOption($whereData) {
-		$qry = $this->sql->select("diagnosis")->where($whereData)->order("date_start DESC");
+	public function GetListByOption($whereDatas) {
+		$where = new Where();
+		$where->isNull("date_end");
+		foreach ($whereDatas as $field => $whereData) {
+			if ($field == ["class2nd"]) {
+				$where->and->nest()->equalTo("class2nd", $whereData[0]);
+				unset($whereData[0]);
+				foreach ($whereData as $data) {
+					$where->and->equalTo($field, $data);
+				}
+				$where->unnest();
+			}
+			else {
+				$where->and->equalTo($field, $whereData);
+			}
+		}
+
+		$qry = $this->sql->select("diagnosis")->where($where)->order("date_start DESC");
 		$paginatorAdapter = new DbSelect($qry, $this->adapter);
 		return new Paginator($paginatorAdapter);
 	}

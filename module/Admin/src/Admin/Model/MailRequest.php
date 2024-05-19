@@ -94,7 +94,58 @@ class MailRequest extends AbstractActionController
 		return $ret;
 	}
 
+	public function mailAdmin($params){
+		$mail_title=$params['title'];
 
+		$params['config']['smtp']['connection_config']['username']=$params['email'];
+		$params['config']['smtp']['connection_config']['password']=$params['smtp_password'];
+		$params['config']['smtp']['fromemail']=$params['email'];
+
+		$params=array(
+			'config'=>$params['config'],
+			'email'=>$params['email'],
+			'name'=>$params['name'],
+			'title'=>$mail_title,
+			'fromemail'=>$params['config']['smtp']['fromemail'],
+			'fromname'=>$params['config']['smtp']['fromname'],
+			'content'=>$params['content'],
+		);
+
+		$viewModel  = new ViewModel();
+		$viewModel->setVariables(array(
+			'content'  => $params['content'],
+		));
+
+		$bodyPart = new \Zend\Mime\Message();
+		$bodyMessage    = new \Zend\Mime\Part(mb_convert_encoding($params['content'], 'ISO-2022-JP-MS','UTF-8'));
+		$bodyMessage->charset='ISO-2022-JP';
+		$bodyMessage->type = "text/plain";
+
+		mb_language("Japanese");
+		mb_internal_encoding ("ISO-2022-JP"); 
+		$body = new MimeMessage();
+
+	
+		$body->setParts(array($bodyMessage,));
+		$mail = new Mail\Message();
+		$mail->setEncoding('ASCII');
+		$mail->setBody($body);
+		$mail->setFrom($params['fromemail'],$params['fromname']);
+		$mail->setTo($params['email'],'');
+
+		$mail->setSubject("=?iso-2022-jp?B?".base64_encode(mb_convert_encoding($params['title'],"JIS","UTF-8"))."?=");
+
+		$transport = new SmtpTransport();
+
+		unset($params['config']['smtp']['fromname']);
+		unset($params['config']['smtp']['fromemail']);
+		$options   = new SmtpOptions($params['config']['smtp']);
+		$transport->setOptions($options);
+		$transport->send($mail);
+
+		$ret['transport']=$transport;
+		return $ret;
+	}
 
 
     public function getConfig(){

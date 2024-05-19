@@ -75,7 +75,7 @@ class SituTable
 		$results = iterator_to_array($resultSet, false);
 
 		if (empty($results)) {
-			return []; // 빈 배열 반환
+			return [];
 		} else {
 			$response = [];
 			foreach ($results as $result) {

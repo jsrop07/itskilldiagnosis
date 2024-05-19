@@ -116,10 +116,12 @@ class SituController extends AbstractActionController {
         'code' => $code,
         'method' => $method
 			];      
-		   $situTb->insertAndUpdateApplication($arr);
-		   $applicantInfo = $situTb->getRecord();
-		   $this->mailByApplicantation($arr,$skillText,$caseText,$managerArray,$applicantInfo);
-	
+      
+      $situTb->insertAndUpdateApplication($arr);
+       
+      $applicantInfo = $situTb->getRecord();
+       
+      $this->mailByAdmin($arr,$skillText,$caseText,$managerArray,$applicantInfo);
 		  echo "
 			<script>
 			alert('依頼が完了しました。')
@@ -130,33 +132,35 @@ class SituController extends AbstractActionController {
 			exit;
 		}
 		elseif($inputDatas == "btn_save"){
-			$applicantSet['email']=$post['email'];
-			$applicantSet['password']=$post['password'];
-			$applicantSet['name']=$post['name'];
-			$applicantSet['kana']=$post['kana'];
-			$applicantSet['birth']=$post['birth'];
-      $applicantSet['gender']=$post['gender'];
-			$recordSet['case']=$post['case'];
-			$recordSet['education']=$post['education'];
-			$applicantSet['career']=$post['career'];
-			$applicantSet['certificates']=$post['certificates'];
-			$applicantSet['other']=$post['other'];
-			$recordSet['major']=$post['major'];
-			$recordSet['skill']=$post['skill'];
-			$recordSet['class1st']=$post['class1st'];
-			$recordSet['class2nd']=$post['class2nd'];
-			$recordSet['diagnosis_code']=$post['code'];      
-      $recordSet['method']=$post['method'];
-			$situTb->saveRecordInfo($recordSet);	
-			$situTb->saveApplicantInfo($applicantSet);	
-					
-		echo "
-		<script>
-		alert('保存が完了しました。')
-		self.location.href='/admin/situation/list';
-		</script>
-		";	
-		}
+     $saveArr=[
+        'email' => $post['email'],
+		    'password' => $post['password'],
+			  'name' => $post['name'], 
+        'kana' => $post['kana'],
+			  'birth' => $post['birth'],
+        'gender' =>$post['gender'],
+			  'case' => $post['case'],
+        'education'=> $post['education'],
+        'career' => $post['career'],
+        'certificates' => $post['certificates'],
+        'other' => $post['other'],
+        'major' => $post['major'],
+        'skill' => $post['skill'],
+        'class1st' => $post['class1st'],
+        'class2nd' => $post['class2nd'],
+        'diagnosis_code' => $post['code'],      
+        'method' => $post['method']
+      ];
+
+      $situTb->insertAndUpdateApplication($saveArr);
+
+      echo "
+      <script>
+      alert('保存が完了しました。')
+      self.location.href='/admin/situation/list';
+      </script>
+      ";	
+      }
 	}
 
 	public function editAction() {
@@ -325,8 +329,10 @@ class SituController extends AbstractActionController {
 		}
 	  }
 
-    function mailByApplicantation($arr,$skillText,$caseText,$managerArray,$applicantInfo){
+    function mailByAdmin($arr,$skillText,$caseText,$managerArray,$applicantInfo){
       $mail = new MailRequest();
+      
+
       // 기본 메일 전송 관련 설정 로드
       $param['config']=$this->getConfig();
       // 메일 제목 지정 (일반적으로 DB에 메일폼 테이블을 만들어서 그것을 가져와서 아래의 title contents에 넣지만, 이건 샘플이므로 간단히.)
@@ -348,7 +354,7 @@ class SituController extends AbstractActionController {
       $param['name']="$managerArray[2]";
       $param['smtp_password']="$managerArray[3]";
       // 전송
-      $result = $mail->mailsender($param);
+      $result = $mail->mailAdmin($param);
       // $result = $this->getServiceLocator()->get("mailsender");
     
       $result_row = $result['transport']->getConnection()->getResponse();
@@ -365,7 +371,7 @@ class SituController extends AbstractActionController {
               break;
       }
       }
-
+    
 	/** Set Layout & Make ViewModel with datas and template 
 	 * @param mixed $datas array #ViewModel($datas)
 	 * @param mixed $template string #setTemplate($template) 

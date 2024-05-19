@@ -27,7 +27,6 @@ class ApplicantController extends AbstractActionController
 	$class1st=$tbl->getclass1st();
 	$managerInfo=$tbl->readByManagerInfo();
 	$managerArray=[$managerInfo["id"], $managerInfo["password"],$managerInfo["name"],$managerInfo["smtp_password"]];
-
 	$datas["optionDatas"] = $this->GetOptionDatasForInput();
 
 	$p = $this->params()->fromPost();
@@ -585,7 +584,7 @@ function mailByApplicantExam($applicantInfo,$sqlSet,$managerArray){
 	}
 
 	function GetOptionDatasForInput() {
-		$optionTb = $this->getServiceLocator()->get("OptionTable");
+		$optionTb = $this->getServiceLocator()->get("ApplicationTable");
 		$beforeOptionDatas = iterator_to_array($optionTb->ReadValid());
 
 		$afterOptionDatas = array();
@@ -619,9 +618,6 @@ function mailByApplicantExam($applicantInfo,$sqlSet,$managerArray){
 		}
 
 		$afterOptionDatas["level"] = array();
-		array_push($afterOptionDatas["level"], $optionTb->ReadByText("初級"));
-		array_push($afterOptionDatas["level"], $optionTb->ReadByText("中級"));
-		array_push($afterOptionDatas["level"], $optionTb->ReadByText("高級"));
 
 		return $afterOptionDatas;
 	}	

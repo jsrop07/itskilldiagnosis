@@ -125,7 +125,7 @@ switch ($recordArray["class1st"]) {
                 <dt>性別</dt>
 				<dd> 
 				<select class="form-select" name="gender" style="width:220px;" onchange="ChangeInputStyle(this)" >
-					<option  value="" selected hidden>
+					<option selected hidden>
 						<?php
 						if ($applicantArray['gender'] === NULL) {
 							echo "なし";
@@ -151,7 +151,7 @@ switch ($recordArray["class1st"]) {
                         <option value="大学院卒" <?php echo($isITEducation4) ? "selected" : "" ;?>>大学院卒</option>
                         <option value="その他"<?php echo ($isITEducation1 || $isITEducation2 || $isITEducation3 || $isITEducation4 ) ? "" : "selected"; ?>>その他</option>
                     </select>
-                        <input class="form-control w-50"  style="margin-left: 10px;" type="text" placeholder="その他の場合" id="educationInput" name="education" maxlength='20' value="<?php echo ($recordArray['education']) ?>">
+                        <input class="form-control"  style="margin-left: 10px; width:200px;" type="text" placeholder="その他の場合" id="educationInput" name="education" maxlength='20' value="<?php echo ($recordArray['education']) ?>">
 				</dd>
 
                 <dt>生年月日</dt>
@@ -167,7 +167,7 @@ switch ($recordArray["class1st"]) {
                         <option value="IT・ソフトウェア専攻"<?php echo ($isITMajor) ? " selected" : ""; ?>>IT・ソフトウェア専攻</option>
                         <option value="other"<?php echo ($recordArray["major"] != null && !$isITMajor) ? " selected" : ""; ?>>IT・ソフトウェア以外</option>
                     </select>
-                    <input class="form-control w-50" style="margin-left: 10px;" type="text" placeholder="その他の場合" id="majorInput"  name="major" maxlength='20' value='<?php echo ($recordArray['major']) ?>'  />
+                    <input class="form-control" style="margin-left: 10px; width:200px;" type="text" placeholder="その他の場合" id="majorInput"  name="major" maxlength='20' value='<?php echo ($recordArray['major']) ?>'  />
 				</dd>
 
 				<dt>その他</dt>
@@ -203,7 +203,7 @@ switch ($recordArray["class1st"]) {
 					<option value="インフラ" <?php echo($isClass1st5) ? "selected" : "" ;?>>インフラ</option>
 					<option value="その他"<?php echo ($isClass1st1 || $isClass1st2 || $isClass1st3 || $isClass1st4 || $isClass1st5) ? "" : "selected"; ?>>その他</option>
                     </select>
-					<input class="form-control w-50" style="margin-left: 10px;" type="text" placeholder="その他の場合" id="class1stInput"  name="class1st" maxlength='20' value='<?php echo ($recordArray['class1st']) ?>'  />
+					<input class="form-control w-50" style="margin-left: 10px;" type="text" placeholder="その他の場合" id="otherclass1st"  name="class1st" maxlength='20' value='<?php echo ($recordArray['class1st']) ?>'  />
 				</dd>
 
 				<dt class="essential" id=class2ndTitle>問題種別</dt>
@@ -370,7 +370,7 @@ switch ($recordArray["class1st"]) {
 	}
 
 	var selectElement3 = document.getElementById('class1stId');
-    var inputElement3 = document.getElementById('class1stInput');
+    var inputElement3 = document.getElementById('otherclass1st');
 	if (selectElement3.value != "その他") {
         inputElement3.hidden = true;
     } else if (selectElement3.value === "その他") {
@@ -416,12 +416,16 @@ switch ($recordArray["class1st"]) {
 <script>
 	let skillSelect = document.getElementById('ITskillId');
 	let class1stSelect = document.getElementById('class1stId')
+	let class1stOtherSelect = document.getElementById('otherclass1st')
+
 	var class2ndSelect = document.getElementById('class2ndId')
 	let careerSelect = document.getElementById('careerId')
 	skillSelect.addEventListener('change', function() {
     var selectedValue = this.value;
 			if (selectedValue === '1') {
 				class1stSelect.value="その他";
+				class1stOtherSelect.value="その他";
+				// form.class1stOtherSelect.hidden=true;
 				class2ndSelect.innerText=""
 				var option = document.createElement("option");
 				option.value = "33";

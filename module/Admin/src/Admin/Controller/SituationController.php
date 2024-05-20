@@ -43,7 +43,7 @@ class SituationController extends AbstractActionController {
 		unset($query["page"]);
 
 		$recordTb = $this->getServiceLocator()->get("RecordTable-Admin");
-		$paginationData = $recordTb->GetAllList();
+		$paginationData = "";
 
 		$recordDatas = array();
 		$offset = ($page - 1) * 10;
@@ -58,6 +58,7 @@ class SituationController extends AbstractActionController {
 					$sqlWhere[] = $data["idx"];
 				}
 			}
+			$sqlWhere = $query["name"];
 
 			$sqlOrder["apply_date"] = "DESC";
 			if (isset($query["align"])) {
@@ -69,7 +70,6 @@ class SituationController extends AbstractActionController {
 			catch (\Exception $e) { print_r($e->getMessage()); exit; }
 
 			if (count($newRecordDatas) <= 10) {
-				$offset += count($newRecordDatas);
 				$limit = 10 - count($newRecordDatas);
 				try { $restRecordDatas = $recordTb->ReadRestListBySearchnOffsetnLimitnAlign($sqlWhere, $offset, $limit, $sqlOrder); }
 				catch (\Exception $e) { print_r($e->getMessage()); exit; }
@@ -79,6 +79,7 @@ class SituationController extends AbstractActionController {
 			else {
 				$recordDatas = $newRecordDatas;
 			}
+			$paginationData = $recordTb->GetListBySearch($sqlWhere);
 			$datas["searchDatas"] = $query;
 		}
 		else {
@@ -86,7 +87,6 @@ class SituationController extends AbstractActionController {
 			catch (\Exception $e) { print_r($e->getMessage()); exit; }
 
 			if (count($newRecordDatas) <= 10) {
-				$offset += count($newRecordDatas);
 				$limit = 10 - count($newRecordDatas);
 				try { $restRecordDatas = $recordTb->ReadRestListByOffsetnLimit($offset, $limit); }
 				catch (\Exception $e) { print_r($e->getMessage()); exit; }
@@ -96,12 +96,14 @@ class SituationController extends AbstractActionController {
 			else {
 				$recordDatas = $newRecordDatas;
 			}
+			$paginationData = $recordTb->GetAllList();
 		}
+		// print_r($recordDatas); exit;
 
 		try {
 			$datas["totalApply"] = $recordTb->CountApplyData();
 			$datas["totalRequest"] = $recordTb->CountRequestData();
-			$datas["totalData"] = $recordTb->CountRecordData();
+			$datas["totalData"] = $recordTb->CountAllData();
 		} catch (\Exception $e) {
 			print_r($e->getMessage());
 			exit;
@@ -172,31 +174,6 @@ class SituationController extends AbstractActionController {
 	}
 
 	/** When you click 新規登録 button on 診断者一覧 page */
-	public function inputAction() {
-		$this->ChkLogin();
-		$datas["breadcrumbData"] = ["ITスキル診断状況管理", "診断者登録"];
-
-		$password = "";
-		for ($i = 0; $i < 8; $i++) {
-			$rand = rand(1, 3);
-
-			switch ($rand) {
-				case 1:
-					$password .= rand(0, 9);
-					break;
-				case 2:
-					$password .= chr(rand(65, 90));
-					break;
-				case 3:
-					$password .= chr(rand(97, 122));
-					break;
-			}
-		}
-		$datas["password"] = $password;
-
-		return $this->SetViewModel($datas, "/situation/situation_input.phtml");
-	}
-
 	function requestAction() {
 		$idxs = $this->params()->fromPost("idxs");
 		$recordIdxs = explode(",", $idxs);
@@ -212,7 +189,6 @@ class SituationController extends AbstractActionController {
 			foreach ($recordIdxs as $idx) {
 				try { $recordData = $recordTb->ReadByIdx($idx); }
 				catch (\Exception $e) { die($e->getMessage()); }
-				
 				try { $applicantData = $applicantTb->ReadByIdx($recordData["applicant_idx"]); }
 				catch (\Exception $e) { die($e->getMessage()); }
 
@@ -227,7 +203,6 @@ class SituationController extends AbstractActionController {
 
 				try { $recordTb->RequestByIdx($idx); }
 				catch (\Exception $e) { die($e->getMessage()); }
-				
 			}
 		}
 
@@ -442,4 +417,338 @@ class SituationController extends AbstractActionController {
 				}
 				return $config;
 		}
+		
+		public function inputAction() {
+			$this->ChkLogin();
+			$datas["breadcrumbData"] = ["ITスキル診断状況管理", "診断者登録"];
+			$post = $this->params()->fromPost();
+	
+			$situTb = $this->getServiceLocator()->get("situTable");
+	
+			if (isset($post["class2nd"]) && isset($post['level'])) {
+				$result = $situTb->ReadDiagnosis($post["class2nd"], $post["level"]);
+				die(json_encode($result));
+				
+			}
+	
+			$datas["optionDatas"] = $this->GetOptionDatasForInput2();
+	
+			$class1st=$situTb->getclass1st();
+			$class2nd=$situTb->getclass2nd();
+	
+	
+			$datas["class1st"] = $class1st;
+			$datas["class2nd"] = $class2nd;
+	
+			
+			return $this->SetViewModel($datas, "/situation/situation_input.phtml");
+		}
+	
+		public function inputOkAction() {
+			$post = $this->params()->fromPost();
+			$inputDatas  = (isset($post['inputDatas']) && $post['inputDatas'] !='')  ? $post['inputDatas'] : '';
+	
+			$situTb = $this->getServiceLocator()->get("situTable");
+	
+			
+			$managerInfo=$situTb->readByManagerInfo();
+			
+			$managerArray=[$managerInfo["id"], $managerInfo["password"],$managerInfo["name"],$managerInfo["smtp_password"]];		
+	
+			// $applicantInfo = $situTb->readById($post['recordindex']);
+	
+			if($inputDatas == "btn_submit"){
+				$email = $this->params()->fromPost('email');
+				$password = $this->params()->fromPost('password');
+				$name = $this->params()->fromPost('name');
+				$kana = $this->params()->fromPost('kana');
+				$gender = $this->params()->fromPost('gender');
+				$birth = $this->params()->fromPost('birth');
+				$case = $this->params()->fromPost('case');
+				$education = $this->params()->fromPost('education');
+				$major = $this->params()->fromPost('major');
+				$skill = $this->params()->fromPost('skill');
+				$class1st = $this->params()->fromPost('class1st');
+				$class2nd = $this->params()->fromPost('class2nd');
+				$career = $this->params()->fromPost('career');
+				$certificates = $this->params()->fromPost('certificates');
+				$other = $this->params()->fromPost('other');	
+				$code = $this->params()->fromPost('code');	
+				$method = $this->params()->fromPost('method');	
+	
+				if ($skill == 0) {
+					$skillText = '有';
+				} else {
+					$skillText = '無';
+				}
+	
+				if($case == 0){
+					$caseText = "新卒";
+				}else{
+					$caseText = "中途（経歴職）";
+				}
+				$arr = [
+					'email' => $email,
+					'password' => $password,
+					'name' => $name,
+					'kana' => $kana,
+					'gender' => $gender,
+					'birth' => $birth,
+					'case' => $case,
+					'education' => $education,
+					'major' => $major,
+					'skill' => $skill,
+					'class1st' => $class1st,
+					'class2nd' => $class2nd,
+					'career' => $career,
+					'certificates' => $certificates,
+					'other' => $other,
+					'code' => $code,
+					'method' => $method
+				];      
+				$situTb->insertAndUpdateApplication($arr);
+				 
+				$applicantInfo = $situTb->getRecord();
+				 
+				$this->mailByAdmin($arr,$skillText,$caseText,$managerArray,$applicantInfo);
+				echo "
+				<script>
+				alert('依頼が完了しました')
+				self.location.href='/admin/situation/list';
+				</script>
+				";	
+		
+				exit;
+			} elseif($inputDatas == "btn_save"){
+				$email = $this->params()->fromPost('email');
+				$password = $this->params()->fromPost('password');
+				$name = $this->params()->fromPost('name');
+				$kana = $this->params()->fromPost('kana');
+				$gender = $this->params()->fromPost('gender');
+				$birth = $this->params()->fromPost('birth');
+				$case = $this->params()->fromPost('case');
+				$education = $this->params()->fromPost('education');
+				$major = $this->params()->fromPost('major');
+				$skill = $this->params()->fromPost('skill');
+				$class1st = $this->params()->fromPost('class1st');
+				$class2nd = $this->params()->fromPost('class2nd');
+				$career = $this->params()->fromPost('career');
+				$certificates = $this->params()->fromPost('certificates');
+				$other = $this->params()->fromPost('other');	
+				$code = $this->params()->fromPost('code');	
+				$method = $this->params()->fromPost('method');	
+			 $saveArr=[
+					'email' => $email,
+					'password' => $password,
+					'name' => $name,
+					'kana' => $kana,
+					'gender' => $gender,
+					'birth' => $birth,
+					'case' => $case,
+					'education' => $education,
+					'major' => $major,
+					'skill' => $skill,
+					'class1st' => $class1st,
+					'class2nd' => $class2nd,
+					'career' => $career,
+					'certificates' => $certificates,
+					'other' => $other,
+					'code' => $code,
+					'method' => $method,
+					'save' => "save"
+				];
+	
+				$situTb->insertAndUpdateApplication($saveArr);
+				echo "
+				<script>
+				alert('保存が完了しました。')
+				self.location.href='/admin/situation/list';
+				</script>
+				";	
+				}
+		}
+
+		public function editAction() {
+			$this->ChkLogin();
+			$datas["breadcrumbData"] = ["ITスキル診断状況管理", "診断状況詳細", "診断状況修正"];
+			$index = $this->params()->fromRoute("index");
+			$post = $this->params()->fromPost();
+	
+			$recordTb = $this->getServiceLocator()->get("RecordTable-Admin");
+			$applicantTb = $this->getServiceLocator()->get("ApplicantTable-Admin");
+			$diagnosisTb = $this->getServiceLocator()->get("DiagnosisTable-Admin");
+			$situTb = $this->getServiceLocator()->get("situTable");
+	
+			$recordData = $recordTb->ReadByIdx($index);
+	
+			$applicantData = $applicantTb->ReadByIdx($recordData["applicant_idx"]);
+			$recordData = array_merge($applicantData, $recordData);
+	
+	
+			if (($recordData["diagnosis_code"]) != null) {
+				$diagnosisData = $diagnosisTb->ReadByCode($recordData["diagnosis_code"]);
+				$recordData = array_merge($diagnosisData, $recordData);
+			}
+	
+			if (isset($post["class2nd"]) && isset($post['level'])) {
+				$result = $situTb->ReadDiagnosis($post["class2nd"], $post["level"]);
+				die(json_encode($result));
+				
+			}
+			$diagnosisData = $diagnosisTb->ReadByCode($recordData["diagnosis_code"]);
+			
+			$datas["optionDatas"] = $this->GetOptionDatasForInput2();
+			
+			$class1st=$situTb->getclass1st();
+			$class2nd=$situTb->getclass2nd();
+	
+			$datas["index"] =$index;
+	
+			$datas["class1st"] = $class1st;
+			$datas["class2nd"] = $class2nd;
+	
+			$datas["applicantArray"] = $applicantData;
+			$datas["recordArray"] = $recordData;
+			$datas["diagnosisArray"] = $diagnosisData;
+	
+	
+			return $this->SetViewModel($datas, "/situation/situation_edit.phtml");
+		}
+	
+		public function editOkAction() {
+			$post = $this->params()->fromPost();
+			$editDatas  = (isset($post['editDatas']) && $post['editDatas'] !='')  ? $post['editDatas'] : '';
+			$recordTb = $this->getServiceLocator()->get("RecordTable-Admin");
+			$situTb = $this->getServiceLocator()->get("situTable");
+			$managerInfo=$situTb->readByManagerInfo();
+			$managerArray=[$managerInfo["id"], $managerInfo["password"],$managerInfo["name"],$managerInfo["smtp_password"]];		
+			$applicantInfo = $recordTb->ReadByIdx($post['recordindex']);
+	
+			$applicantInfos = $situTb->readById($applicantInfo['applicant_idx']);
+	
+			if($editDatas == "btn_submit"){
+				$recordlWhere['idx']=$post['recordindex'];
+				$applicantWhere['idx']=$post['applicantindex'];
+				$applicantSet['email']=$post['email'];
+				$applicantSet['password']=$post['password'];
+				$applicantSet['name']=$post['name'];
+				$applicantSet['kana']=$post['kana'];
+				$applicantSet['birth']=$post['birth'];
+				$applicantSet['gender']=$post['gender'];
+				$recordSet['case']=$post['case'];
+				$recordSet['education']=$post['education'];
+				$applicantSet['career']=$post['career'];
+				$applicantSet['certificates']=$post['certificates'];
+				$applicantSet['other']=$post['other'];
+				$recordSet['major']=$post['major'];
+				$recordSet['skill']=$post['skill'];
+				$recordSet['class1st']=$post['class1st'];
+				$recordSet['class2nd']=$post['class2nd'];
+				$recordSet['diagnosis_code']=$post['code'];
+				$recordSet['method']=$post['method'];
+	
+				$situTb->updateRecordInfo($recordlWhere, $recordSet);	
+				$situTb->updateApplicantInfo($applicantWhere, $applicantSet);	
+				$recentPassword = $situTb->readById($applicantInfos);
+	
+				$this->mailByRequest($managerArray,$recentPassword);
+	
+				echo "
+				<script>
+				alert('依頼が完了しました。')
+				self.location.href='/admin/situation/list';
+				</script>
+				";	
+			}
+			elseif($editDatas == "btn_save"){
+				$recordlWhere['idx']=$post['recordindex'];
+				$applicantWhere['idx']=$post['applicantindex'];
+				$applicantSet['email']=$post['email'];
+				$applicantSet['password']=$post['password'];
+				$applicantSet['name']=$post['name'];
+				$applicantSet['kana']=$post['kana'];
+				$applicantSet['birth']=$post['birth'];
+				$applicantSet['gender']=$post['gender'];
+				$recordSet['case']=$post['case'];
+				$recordSet['education']=$post['education'];
+				$applicantSet['career']=$post['career'];
+				$applicantSet['certificates']=$post['certificates'];
+				$applicantSet['other']=$post['other'];
+				$recordSet['major']=$post['major'];
+				$recordSet['skill']=$post['skill'];
+				$recordSet['class1st']=$post['class1st'];
+				$recordSet['class2nd']=$post['class2nd'];
+				$recordSet['diagnosis_code']=$post['code'];
+				$recordSet['method']=$post['method'];
+				$situTb->saveRecordInfo($recordlWhere, $recordSet);	
+				$situTb->saveApplicantInfo($applicantWhere, $applicantSet);	
+			echo "
+			<script>
+			alert('保存が完了しました。')
+			self.location.href='/admin/situation/list';
+			</script>
+			";	
+			}
+		}
+
+		function GetOptionDatasForInput2() {
+			$optionTb = $this->getServiceLocator()->get("OptionTable");
+			$beforeOptionDatas = $optionTb->ReadValid();
+	
+			$afterOptionDatas = array();
+			$class1stDatas = array();
+			$class2ndDatas = array();
+			$other = array();
+			foreach ($beforeOptionDatas as $data) {
+				if ($data["type"] == "status") { continue; }
+				if ($data["type"] == "level") { continue; }
+				if ($data["text"] == "その他") {
+					$other = $data;
+					continue;
+				}
+				if ($data["type"] == "class1st") {
+					$class1stDatas[$data["idx"]] = $data["text"];
+				}
+				if ($data["type"] == "class2nd") {
+					array_push($class2ndDatas, $data);
+					continue;
+				}
+	
+				if (!isset($afterOptionDatas[$data["type"]])) {
+					$afterOptionDatas[$data["type"]] = array();
+				}
+				array_push($afterOptionDatas[$data["type"]], $data);
+			}
+	
+			array_push($afterOptionDatas["class1st"], $other);
+	
+			foreach ($class2ndDatas as $data) {
+				if (!isset($afterOptionDatas["class2nd"][$data["class_upper"]])) {
+					$afterOptionDatas["class2nd"][$data["class_upper"]] = array();
+				}
+				array_push($afterOptionDatas["class2nd"][$data["class_upper"]], $data);
+			}
+	
+			foreach ($class2ndDatas as $data) {
+				$class_upper = $data["class_upper"];
+				
+				// Debugging: Check if class_upper exists in $class1stDatas
+				if (!isset($class1stDatas[$class_upper])) {
+					// echo "Notice: Undefined index $class_upper in \$class1stDatas\n";
+					continue; // Skip this iteration if the index is not set
+				}
+			
+				$class1stValue = $class1stDatas[$class_upper];
+			
+				// Check if $class1stValue is set in $afterOptionDatas["class2nd"]
+				if (!isset($afterOptionDatas["class2nd"][$class1stValue])) {
+					$afterOptionDatas["class2nd"][$class1stValue] = array();
+				}
+			
+				array_push($afterOptionDatas["class2nd"][$class1stValue], $data);
+			}
+	
+			return $afterOptionDatas;
+		}	
+	
 }

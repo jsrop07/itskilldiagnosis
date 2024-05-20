@@ -94,7 +94,7 @@
 							<?php endforeach; ?>
 						<?php elseif ($searchKey == "class2nd"): ?>
 							<?php foreach ($class2ndDatas as $data): ?>
-								<option value="<?php echo $data; ?>"<?php echo ($data == $searchValue) ? " selected" : ""; ?>><?php echo $data; ?></option>
+								<option value="<?php echo $data; ?>"<?php echo ($data == $searchValue) ? " selected" : ""; ?>><?php echo ($data == "Cpp") ? "C++" : $data; ?></option>
 							<?php endforeach; ?>
 						<?php else: ?>
 							<?php for($i = 0; $i <= 3; $i++): ?>
@@ -201,7 +201,7 @@
 				<?php foreach ($class2ndDatas as $data): ?>
 					var option = document.createElement("option");
 					option.value = "<?php echo $data; ?>";
-					option.innerText = "<?php echo $data; ?>";
+					option.innerText = "<?php echo ($data == "Cpp") ? "C++" : $data; ?>";
 					selectSearch.appendChild(option);
 				<?php endforeach; ?>
 				break;
@@ -214,7 +214,7 @@
 			selectSearch.focus();
 			return false;
 		}
-		
+
 		let url = "<?= $url ?>?" + searchOption + "=" + selectSearch.value;
 		self.window.location = url;
 	}

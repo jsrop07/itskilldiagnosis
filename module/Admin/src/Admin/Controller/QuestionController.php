@@ -117,7 +117,7 @@ class QuestionController extends AbstractActionController
 		$this->ChkLogin();
 		$datas["breadcrumbData"] = ["ITスキル診断問項管理", "問題登録"];
 		$datas["title"] = "問題登録";
-		$datas["optionDatas"] = $this->GetOptionDatasForInput($datas);
+		$datas["optionDatas"] = $this->GetOptionDatasForInput();
 
 
 		// Check return from 登録確認　page

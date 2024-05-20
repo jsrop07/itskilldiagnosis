@@ -46,6 +46,7 @@ class DiagnosisController extends AbstractActionController {
 		$class2ndDatas = array();
 		foreach ($beforeClass2ndDatas as $data) {
 			if (!in_array($data["text"], $class2ndDatas)) {
+				if ($data["text"] == "C++") { $data["text"] = "Cpp"; }
 				array_push($class2ndDatas, $data["text"]);
 			}
 		}
@@ -65,19 +66,8 @@ class DiagnosisController extends AbstractActionController {
 		$diagnosisDatas = array();
 		if (!empty($query)) {
 			$datas["searchData"] = $query;
-			
-			$searchKey = array_keys($query)[0];
-			if ($searchKey == "class2nd") {
-				$optionTb = $this->getServiceLocator()->get("OptionTable");
-				$sqlWheres["text"] = $query["class2nd"];
-				try { $class2ndDatas = $optionTb->ReadByOption($sqlWheres); }
-				catch (\Exception $e) { print_r($e->getMessage()); exit; }
-
-				$sqlWhere["class2nd"] = array();
-				foreach ($class2ndDatas as $data) {
-					$sqlWhere["class2nd"][] = $data["idx"];
-				}
-				$query = $sqlWhere;
+			if (isset($query["class2nd"]) && $query["class2nd"] == "Cpp") {
+				$query["class2nd"] = "C++";
 			}
 			try { $diagnosisDatas = $diagnosisTb->GetListByOption($query); }
 			catch (\Exception $e) { print_r($e->getMessage()); exit; }
@@ -317,9 +307,6 @@ class DiagnosisController extends AbstractActionController {
 				die(json_encode($questionDatas));
 				break;
 			case "list":
-				// /* test */
-				// $post["question_num"] = 20;
-				// /* test */
 				$questionTb = $this->getServiceLocator()->get("QuestionTable");
 				$questionIdxsByScore = $this->ReadQuestionIdxsByScore($sqlWhere);
 

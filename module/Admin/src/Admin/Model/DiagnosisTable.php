@@ -54,24 +54,20 @@ class DiagnosisTable {
 	 * @param array $whereDatas [key => data]
 	 * @return mixed Records Array
 	*/
-	public function GetListByOption($whereDatas) {
+	public function GetListByOption($whereData) {
 		$where = new Where();
 		$where->isNull("date_end");
-		foreach ($whereDatas as $field => $whereData) {
-			if ($field == ["class2nd"]) {
-				$where->and->nest()->equalTo("class2nd", $whereData[0]);
-				unset($whereData[0]);
-				foreach ($whereData as $data) {
-					$where->and->equalTo($field, $data);
-				}
-				$where->unnest();
-			}
-			else {
-				$where->and->equalTo($field, $whereData);
-			}
+		$field = array_keys($whereData)[0];
+		if ($field == "class2nd") {
+			$where->and->equalTo("text", $whereData["class2nd"]);
+			$qry = $this->sql->select("diagnosis")->where($where);
+			$qry->join("option", "diagnosis.class2nd = option.idx", array("text" => "text"), "INNER");
+			$qry->order("date_start DESC");
 		}
-
-		$qry = $this->sql->select("diagnosis")->where($where)->order("date_start DESC");
+		else {
+			$where->and->equalTo($field, $whereData[$field]);
+			$qry = $this->sql->select("diagnosis")->where($where)->order("date_start DESC");
+		}
 		$paginatorAdapter = new DbSelect($qry, $this->adapter);
 		return new Paginator($paginatorAdapter);
 	}

@@ -72,13 +72,30 @@ class RecordTable {
 	}
 
 	public function ReadNewListBySearchnOffsetnAlign($whereDatas, $offset, $order) {
-		$qry = $this->sql->select("record")->where(["diagnosis_date" => null])->order($order)->limit(10)->offset($offset);
+		$where = new Where();
+		$where->isNull("diagnosis_date");
+		if (!empty($whereDatas)) {
+			$where->and->nest()->equalTo("applicant_idx", $whereDatas[0]);
+			unset($whereDatas[0]);
+			foreach ($whereDatas as $data) {
+				$where->or->equalTo("applicant_idx", $data);
+			}
+		}
+	
+		$qry = $this->sql->select("record")->where($where)->order($order)->limit(10)->offset($offset);
 		return iterator_to_array($this->sql->prepareStatementForSqlObject($qry)->execute());
 	}
 	
 	public function ReadRestListBySearchnOffsetnLimitnAlign($whereDatas, $offset, $limit, $order) {
 		$where = new Where();
 		$where->isNotNull("diagnosis_date");
+		if (!empty($whereDatas)) {
+			$where->and->nest()->equalTo("applicant_idx", $whereDatas[0]);
+			unset($whereDatas[0]);
+			foreach ($whereDatas as $data) {
+				$where->or->equalTo("applicant_idx", $data);
+			}
+		}
 
 		$qry = $this->sql->select("record")->where($where)->order($order)->limit($limit)->offset($offset);
 		return iterator_to_array($this->sql->prepareStatementForSqlObject($qry)->execute());

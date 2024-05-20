@@ -134,58 +134,34 @@
 	<button class="emegra cancel" onclick="self.location.href='../list';">戻る</button>
 	<?php if (!$isRequest): ?>
     <button class="emegra" style="background:orange;" onclick="self.location.href='../detailedit';">修正</button>
-		<button class="emegra" style="width:150px;" onclick="Regist();">ITスキル診断依頼</button>
+		<button class="emegra" style="width:150px;" onclick="Request();">ITスキル診断依頼</button>
 	<?php endif; ?>
 </div>
 
 <script type="text/javascript">
-	const smtp = document.getElementById("smtp");
-	const form = document.getElementById("form");
-	const pattern = /^[A-Za-z0-9_\.\-]+@[A-Za-z0-9\-]+\.[A-za-z0-9\-]+/;
+	const idx = <?php echo $recordData["idx"]; ?>
 
-	function ActiveSmtp(value) {
-		if (value == "y") { smtp.disabled = false; }
-		else { smtp.disabled = true; }
-	}
+	function Request() {
+		if (confirm("依頼しますか？") === false) { return false; }
 
-	function Regist() {
-		if (form.code.value == "") {
-			alert("職別コードを入力してください");
-			setTimeout("form.code.focus();", 100);
-			return false;
-		}
-		
-		if (form.id.value == "") {
-			alert("IDを入力してください");
-			setTimeout("form.id.focus()", 100);
-			return false;
-		}
-		
-		if (pattern.test(form.id.value) === false) {
-			alert("IDを確認してください");
-			setTimeout("form.id.focus()", 100);
-			return false;
-		}
-		
-		if (form.password.value == "") {
-			alert("パスワードを入力してください");
-			setTimeout("form.password.focus()", 100);
-			return false;
-		}
-		
-		if (form.name.value == "") {
-			alert("名前を入力してください");
-			setTimeout("form.name.focus()", 100);
-			return false;
-		}
-		
-		if (smtp.disabled == false && smtp.value == "") {
-			alert("SMTPを入力してください");
-			setTimeout("smtp.focus()", 100);
-			return false;
-		}
+		const postForm = new FormData();
+		postForm.append("idxs", idx);
+		const xhr = new XMLHttpRequest();
+		xhr.open("POST", "../request", true);
+		xhr.send(postForm);
+		xhr.onload = () => {
+			if (xhr.status == 200) {
+				const result = xhr.responseText;
 
-		form.submit();
+				if (result === "success") {
+					alert("依頼しました。");
+				}
+				else {
+					alert("error");
+					console.log(result);
+				}
+			}
+		}
 	}
 </script>
 

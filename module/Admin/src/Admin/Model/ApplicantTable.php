@@ -26,4 +26,12 @@ class ApplicantTable {
 		$qry = $this->sql->select("applicant")->where(["idx" => $idx]);
 		return $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
 	}
+
+	public function ReadByName($name) {
+		$where = new Where();
+		$where->like("name", "%" . $name . "%")->or->like("kana", "%" . $name . "%");
+
+		$qry = $this->sql->select("applicant")->where($where);
+		return iterator_to_array($this->sql->prepareStatementForSqlObject($qry)->execute());
+	}
 }

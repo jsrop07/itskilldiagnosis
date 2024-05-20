@@ -69,11 +69,13 @@
 		</div>
 
 		<div style="display: flex; justify-content: right;padding-top: 24px;">
-			<input class="form-control" type="text" id="search-name" style="width:15%; height:30px;margin-right:10px;" placeholder="診断者名">
+			<input class="form-control" type="text" id="search-name" style="width:15%; height:30px;margin-right:10px;" placeholder="診断者名" value="<?php echo (isset($searchDatas["name"])) ? $searchDatas["name"] : ""; ?>">
 			<div id="div-search" style="width: 150px; margin-right: 8px;">
 			<select class="form-select form-select-sm" id="search-align" style="width: 150px; margin-right: 8px;">
+			<!-- <?php /* ?>
 					<option value="status-DESC"<?php echo (isset($searchDatas["align"]) && $searchDatas["align"] == "status-DESC") ? " selected" : ""; ?>>ステータス（昇順）</option>
 					<option value="status-ASC"<?php echo (isset($searchDatas["align"]) && $searchDatas["align"] == "status-ASC") ? " selected" : ""; ?>>ステータス（降順）</option>
+					<?php */ ?> -->
 					<option value="case-DESC"<?php echo (isset($searchDatas["align"]) && $searchDatas["align"] == "case-DESC") ? " selected" : ""; ?>>応募区分（昇順）</option>
 					<option value="case-ASC"<?php echo (isset($searchDatas["align"]) && $searchDatas["align"] == "case-ASC") ? " selected" : ""; ?>>応募区分（降順）</option>
 					<option value="education-DESC"<?php echo (isset($searchDatas["align"]) && $searchDatas["align"] == "education-DESC") ? " selected" : ""; ?>>最終学歴（昇順）</option>

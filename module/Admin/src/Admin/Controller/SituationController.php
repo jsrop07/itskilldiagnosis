@@ -205,11 +205,16 @@ class SituationController extends AbstractActionController {
 		$recordTb = $this->getServiceLocator()->get("RecordTable-Admin");
 		$adminTb = $this->getServiceLocator()->get("AdminTable");
 
-		$PICDatas = $adminTb->ReadPIC();
+		try { $PICDatas = $adminTb->ReadPIC(); }
+		catch (\Exception $e) { die($e->getMessage()); }
+		
 		foreach ($PICDatas as $adminData) {
 			foreach ($recordIdxs as $idx) {
-				$recordData = $recordTb->ReadByIdx($idx);
-				$applicantData = $applicantTb->ReadByIdx($recordData["applicant_idx"]);
+				try { $recordData = $recordTb->ReadByIdx($idx); }
+				catch (\Exception $e) { die($e->getMessage()); }
+				
+				try { $applicantData = $applicantTb->ReadByIdx($recordData["applicant_idx"]); }
+				catch (\Exception $e) { die($e->getMessage()); }
 
 				$skillText = "無";
 				if ($recordData["skill"] == 0) { $skillText = "有"; } 
@@ -219,10 +224,14 @@ class SituationController extends AbstractActionController {
 
 				$this->mailByRequest($adminData, $applicantData);
 				$this->mailByAdmin($applicantData, $skillText, $caseText, $adminData, $applicantData);
+
+				try { $recordTb->RequestByIdx($idx); }
+				catch (\Exception $e) { die($e->getMessage()); }
+				
 			}
 		}
 
-		return "success";
+		die("success");
 	}
 
 	/** Set Layout & Make ViewModel with datas and template 
@@ -351,11 +360,11 @@ class SituationController extends AbstractActionController {
 	
 
 		// 수신자 이메일과 이름 설정
-		$param['managerEmail']=$managerArray[0];
+		$param['managerEmail']=$managerArray["id"];
 		$param['email']=$recentPassword["email"];;
-		$param['password']="$managerArray[1]";
-		$param['name']="$managerArray[2]";
-		$param['smtp_password']="$managerArray[3]";
+		$param['password']= $managerArray["password"];
+		$param['name']= $managerArray["name"];
+		$param['smtp_password']=$managerArray["smtp_password"];
 	
 		// 전송
 		$result = $mail->mailsender($param);
@@ -372,6 +381,7 @@ class SituationController extends AbstractActionController {
 				// 그외의 것은 모두 실패로 처리한다.
 				default:
 					$status = 'FALSE';
+					die($result);
 						break;
 		}
 	  }
@@ -394,12 +404,12 @@ class SituationController extends AbstractActionController {
       // $param['content']=str_replace("{{user_name}}","変換する試験受け者名",$param['content']);
       $param['content']=str_replace("{{URL}}","テスト",$param['content']);
     
-    
       // 수신자 이메일과 이름 설정
-      $param['email']=$managerArray[0];
-      $param['password']="$managerArray[1]";
-      $param['name']="$managerArray[2]";
-      $param['smtp_password']="$managerArray[3]";
+			$param['email']=$managerArray["id"];;
+			$param['password']= $managerArray["password"];
+			$param['name']= $managerArray["name"];
+			$param['smtp_password']=$managerArray["smtp_password"];
+
       // 전송
       $result = $mail->mailAdmin($param);
       // $result = $this->getServiceLocator()->get("mailsender");
@@ -415,6 +425,7 @@ class SituationController extends AbstractActionController {
           // 그외의 것은 모두 실패로 처리한다.
           default:
             $status = 'FALSE';
+						die($result);
               break;
       }
       }

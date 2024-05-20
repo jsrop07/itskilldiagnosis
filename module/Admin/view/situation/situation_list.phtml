@@ -1,5 +1,6 @@
 <?php
 	$caseTexts = ["新卒", "中途"];
+	$levelTexts = array("0級", "初級", "中級", "高級");
 
 	$url = explode("?", $_SERVER["REQUEST_URI"])[0];
 	if (!isset($_SESSION)) { session_start(); }
@@ -135,7 +136,7 @@
 						<td><?php echo ($data["major"] != null) ? $data["major"] : "無"; ?></td>
 						<td><?php echo ($data["career"] != null) ? $data["career"] . "年" : "無"; ?></td>
 						<td><?php echo ($data["request_date"] != null) ? date("y.m.d", strtotime($data["request_date"])) : "未依頼"; ?></td>
-						<td><?php echo ($optionDatas[$data["level"]] != null) ? $optionDatas[$data["level"]] : "未設定"; ?></td>
+						<td><?php echo (isset($data["level"])) ? $levelTexts[$data["level"]] : "未設定"; ?></td>
 						<td><?php echo ($data["diagnosis_code"] != null) ? $data["diagnosis_code"] : "未設定"; ?></td>
 						<?php if ($data["execute_date"] != null): ?>
 							<td><?php echo date("y.m.d", strtotime($data["execute_date"])); ?></td>
@@ -162,7 +163,7 @@
 	<div></div>
 	
 	<div>
-		<button class="emegra" style="width:150px; margin-right:10px;" onclick="self.window.location='./regist'">ITスキル診断依頼</button>
+		<button class="emegra" style="width:150px; margin-right:10px;" onclick="Request()">ITスキル診断依頼</button>
 		<button class="emegra" onclick="self.window.location='../situ/input'">新規登録</button>
 		</div>	
 	</div>
@@ -201,5 +202,45 @@
 			url += "&name=" + seachName.value;
 		}
 		self.window.location = url;
+	}
+
+	function Request() {
+		idxs = [];
+		isChecked = false;
+		for (let i = 0; i < check_idxs.length; i++) {
+			if (check_idxs[i].checked == true) {
+				isChecked = true;
+
+				idxs.push(check_idxs[i].value);
+			}
+		}
+
+		if (!isChecked) {
+			alert("依頼するデータを選んでください。");
+			return false;
+		}
+		idxs = idxs.join(",");
+
+		if (confirm("依頼しますか？") === false) { return false; }
+
+		const postForm = new FormData();
+		postForm.append("idxs", idxs);
+		const xhr = new XMLHttpRequest();
+		xhr.open("POST", "./request", true);
+		xhr.send(postForm);
+		xhr.onload = () => {
+			if (xhr.status == 200) {
+				const result = xhr.responseText;
+
+				if (result === "success") {
+					alert("依頼しました。");
+					location.reload(true);
+				}
+				else {
+					alert("error");
+					console.log(result);
+				}
+			}
+		}
 	}
 </script>

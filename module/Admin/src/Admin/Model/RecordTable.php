@@ -116,4 +116,9 @@ class RecordTable {
 		$qry = $this->sql->select("record")->where($where)->columns(array('COUNT'=>new \Zend\Db\Sql\Expression('COUNT(*)')));
 		return $this->sql->prepareStatementForSqlObject($qry)->execute()->current()["COUNT"];
 	}
+
+	public function RequestByIdx($idx) {
+		$qry = $this->sql->update("record")->where(["idx" => $idx])->set(["request_date" => date("Y-m-d H:i:s")]);
+		return $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
+	}
 }

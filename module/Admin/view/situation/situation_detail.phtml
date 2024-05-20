@@ -30,8 +30,7 @@
 		<style type="text/css">
 			dl.emegra.info { grid-template-columns:  repeat(2, 170px 1fr) }
 		</style>
-		<dl class="emegra info">
-			<dt>ID</dt>
+		<dl class="emegra info">			<dt>ID</dt>
 			<dd><?php echo $recordData["email"]; ?></dd>
 
 			<dt>応募区分</dt>
@@ -55,9 +54,17 @@
 			<dt>学歴</dt>
 			<dd><?php echo $recordData["education"]; ?></dd>
 
+			<dt>IT関連資格</dt>
+			<dd><?php echo ($recordData["certificates"] == null) ? "未設定" : $recordData["certificates"]; ?></dd>
+
 			<dt>生年月日</dt>
 			<dd><?php echo date("Y.m.d", strtotime($recordData["birth"])); ?></dd>
 
+			<dt>専攻</dt>
+			<dd><?php echo ($recordData["major"] == null) ? "未設定" : $recordData["major"]; ?></dd>
+
+			<dt>その他</dt>
+			<dd><?php echo $recordData["other"]; ?></dd>
 		</dl>
 	</div>
 </div>
@@ -155,6 +162,7 @@
 
 				if (result === "success") {
 					alert("依頼しました。");
+					self.location.href = "../list";
 				}
 				else {
 					alert("error");

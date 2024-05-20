@@ -91,13 +91,32 @@ class RecordTable {
 			->or->like("kana", "%" . $whereDatas . "%")->unnest();
 		}
 
-		$qry = $this->sql->select("record")->where($where)->order($order)->limit(10)->offset($offset);
+		/*
+		　作成：朴昰成
+			修正：朴昰成
+			修正日：24/05/20
+		*/
+
+		/*　修正前：
+			$qry = $this->sql->select("record")->where($where)->order($order)->limit(10)->offset($offset);
+		*/
+
+		/*　修正後：　*/
+		$qry = $this->sql->select("record")->where($where)->order($order)->limit($limit)->offset($offset);
+		/*　ここまで　*/
 		$qry->join("applicant", "record.applicant_idx = applicant.idx", array("name" => "name", "kana" => "kana"), "INNER");
 		return iterator_to_array($this->sql->prepareStatementForSqlObject($qry)->execute());
 	}
 	public function GetListBySearch($whereDatas) {
 		$where = new Where();
-		$where->isNotNull("diagnosis_date");
+		/* 
+			作成：朴昰成
+			削除：朴昰成
+			削除日：24/05/20
+
+		削除前：
+			$where->isNotNull("diagnosis_date");
+		ここまで */
 		if (!empty($whereDatas)) {
 			$where->and->nest()->like("name", "%" . $whereDatas . "%")
 			->or->like("kana", "%" . $whereDatas . "%")->unnest();

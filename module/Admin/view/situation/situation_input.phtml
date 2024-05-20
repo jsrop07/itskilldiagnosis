@@ -47,7 +47,7 @@ function InitStyle() { return " font-style: italic; color: ;"; }
             <option value="大学院卒">大学院卒</option>
             <option value="その他">その他</option>
           </select>
-          <div id="otherEducationInput" style=" margin-top:-15px; display:none;">
+          <div id="otherEducationInput" style=" margin-left: 10px; display:none; width:200px;">
               <input class="form-control" type="text" placeholder="その他の場合の、記入" id="otherEducation" name="education" maxlength='20'>
           </div>
 				</dd>      
@@ -59,9 +59,9 @@ function InitStyle() { return " font-style: italic; color: ;"; }
         <dt>性別</dt>
 				<dd> 
           <select class="form-select" name="gender" style="width:220px" >
-              <option value="" selected hidden>選択</option>
-              <option value="0">男</option>
-              <option value="1">女</option>
+            <option selected disabled hidden>選択</option>
+            <option value="0">男</option>
+            <option value="1">女</option>
           </select>
 				</dd>
 
@@ -75,7 +75,7 @@ function InitStyle() { return " font-style: italic; color: ;"; }
             <option value="IT・ソフトウェア専攻">IT・ソフトウェア専攻</option>
             <option value="IT・ソフトウェア以外">IT・ソフトウェア以外</option>
           </select>
-          <div id="otherMajorInput" style=" margin-top:-15px; display:none;">
+          <div id="otherMajorInput" style=" margin-left: 10px; display:none;  width:200px;">
             <input class="form-control" type="text" placeholder="その他の場合の、記入" id="otherMajor" name="major" maxlength='20'>
           </div>
 				</dd>
@@ -103,7 +103,7 @@ function InitStyle() { return " font-style: italic; color: ;"; }
 			<dl class="emegra setting">
         <dt class="essential" id="ITskillTitle">ITスキル有無</dt>
 				<dd>
-          <select class="form-select" name="skill" style="width:220px" >
+          <select class="form-select" name="skill" id="ITskillId" style="width:220px" >
             <option value="" selected hidden>選択</option>
             <option value="0">有</option>
             <option value="1">無</option>
@@ -120,7 +120,7 @@ function InitStyle() { return " font-style: italic; color: ;"; }
                   <?php endforeach; ?>
               <?php endforeach; ?>
           </select>
-          <div id="otherclass1stInput" style="margin-top:-15px; display:none;">
+          <div id="otherclass1stInput" style="margin-left: 10px; display:none;  width:200px;">
             <input class="form-control" type="text" placeholder="その他の場合の、記入" id="otherclass1st" name="class1st" maxlength='20'>
           </div>
 				</dd>
@@ -133,7 +133,7 @@ function InitStyle() { return " font-style: italic; color: ;"; }
 				</dd>
 
 				<dt class="essential" id="careerTitle">IT経験年数</dt>
-				<dd><input class="form-control" id="career" name="career" type="text" placeholder="経歴を記入してください。" style="font-size:15px; width:220px;" maxlength='2'></dd> 
+				<dd><input class="form-control" id="careerId" name="career" type="text" placeholder="経歴を記入してください。" style="font-size:15px; width:220px;" maxlength='2'></dd> 
 		</dl>
 	</div>
 </div>
@@ -210,11 +210,28 @@ function InitStyle() { return " font-style: italic; color: ;"; }
 
 <div class="btn-place" style="margin-top: 32px;">
 	<button type="button" class="emegra cancel" onclick="self.location.href='.././situation/list';">戻る</button>
-  <button class="emegra"  id="btn_save" name="inputDatas" value="btn_save"  style="width:150px;" onclick=savaConfirm()>一時保存</button>
-
+  <button class="emegra"  id="btn_save" name="inputDatas" value="btn_save"  style="width:150px;" onclick=saveConfirm()>一時保存</button>
 	<button class="emegra"  id="btn_submit" name="inputDatas" value="btn_submit"  style="width:150px;" onclick=inputConfirm()>ITスキル診断依頼</button>
 </div>
 </form>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.0/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/locales/bootstrap-datepicker.ja.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
+<script>
+    $(document).ready(function(){
+      var birth = document.getElementById("birth");
+      $(birth).datepicker({
+        format: 'yyyy-mm-dd',
+        autohide: true,
+        language: 'ja',
+        startDate: '1980-01-01',
+        endDate: '2010-12-31'
+      });
+    });
+  </script>
 
 <script>
 	function ChangeInputStyle(element) {
@@ -247,13 +264,16 @@ function InitStyle() { return " font-style: italic; color: ;"; }
 <script>
 	let skillSelect = document.getElementById('ITskillId');
 	let class1stSelect = document.getElementById('class1stId')
+  let class1stOtherSelect = document.getElementById('otherclass1st')
+
 	var class2ndSelect = document.getElementById('class2ndId')
 	let careerSelect = document.getElementById('careerId')
 	skillSelect.addEventListener('change', function() {
     var selectedValue = this.value;
 			if (selectedValue === '1') {
 				class1stSelect.value="その他";
-				class2ndSelect.innerText=""
+        class1stOtherSelect.value="その他";
+				class2ndSelect.innerText="";
 				var option = document.createElement("option");
 				option.value = "33";
 				option.innerText = "テキスト";
@@ -267,30 +287,30 @@ function InitStyle() { return " font-style: italic; color: ;"; }
 </script>
 
 <script>
-document.getElementById('educationId').addEventListener('change', function(event) {
-    var selectedOption = event.target.value;
+// document.getElementById('educationId').addEventListener('change', function(event) {
+//     var selectedOption = event.target.value;
 
-    if (selectedOption === "その他") {
-		form.education.value = "";
-        form.education.hidden = false;
-    } else if(selectedOption != "その他") {
-        form.education.hidden = true;
-		// form.education.style.display = 'none';
-    }
-});
+//     if (selectedOption === "その他") {
+// 		  form.education.value = "";
+//       form.education.hidden = false;
+//     } else if(selectedOption != "その他") {
+//         form.education.hidden = true;
+// 		// form.education.style.display = 'none';
+//     }
+// });
 
 
-document.getElementById('majorId').addEventListener('change', function(event) {
-    var selectedOption = event.target.value;
+// document.getElementById('majorId').addEventListener('change', function(event) {
+//     var selectedOption = event.target.value;
 
-    if (selectedOption === "other") {
-		form.major.value = "";
-        form.major.hidden = false;
-    } else {
-        form.major.hidden = true;
-		form.major.style.display = 'none';
-    }
-});
+//     if (selectedOption === "other") {
+// 		form.major.value = "";
+//         form.major.hidden = false;
+//     } else {
+//         form.major.hidden = true;
+// 		form.major.style.display = 'none';
+//     }
+// });
 
 document.getElementById('class1stId').addEventListener('change', function(event) {
 	var selectedOption = event.target.value;
@@ -490,31 +510,29 @@ function checkKana(input) {
             return false;
         }
 
-        if (!class1stSelect.disabled && form.class1stSelect.value === "") {
-            alert("経験分野を入力してくださいsd。");
-            setTimeout("form.class1stSelect.focus()",100);
+        if (form.class1stId.value === "") {
+            alert("経験分野を入力してください。");
+            setTimeout("form.class1stId.focus()",100);
             event.preventDefault();
             return false;
         }
 
-        if (form.class1stSelect.value == "その他" && form.otherclass1st.value=="") {
-            alert("その他の場合の、記入してください");
-            setTimeout("form.class1stSelect.focus()",100);
-            event.preventDefault();
+        // if (form.class1stId.value == "その他" && form.otherclass1st.value=="") {
+        //     alert("その他の場合の、記入してください");
+        //     setTimeout("form.class1stId.focus()",100);
+        //     return false;
+        // }
 
+        if (form.class2ndId.value == "") {
+            alert("問題種別を入力してください。");
+            setTimeout("form.class2ndId.focus()",100);
+            event.preventDefault();
             return false;
         }
-
-        if (!careerInput.disabled && (isNaN(form.career.value) || form.career.value === "")) {
+        // console.log(class2nd.value);
+        if ((isNaN(form.careerId.value) || form.careerId.value === "")) {
             alert("IT経験年数を入力してください。");
             setTimeout("form.careerInput.focus()",100);
-            event.preventDefault();
-            return false;
-        }
-
-        if (!typeSelect.disabled && form.typeSelect.value == "") {
-            alert("問題種別を入力してください。");
-            setTimeout("form.typeSelect.focus()",100);
             event.preventDefault();
             return false;
         }
@@ -524,28 +542,92 @@ function checkKana(input) {
             event.preventDefault();
             return false;
         }
-
-
     }
 </script>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.0/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/locales/bootstrap-datepicker.ja.min.js"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
-
 <script>
-  function editConfirm(){
-		var submitConfirm=confirm("依頼しますか？");
-		if (!submitConfirm){
+  function saveConfirm(){
+    if (form.email.value == "" || !emailValidationCheck(form.email.value)) {
+            alert("メールアドレスを入力してください。");
+            setTimeout("form.email.focus()",100);
             event.preventDefault();
             return false;
         }
-    form.submit();
-		
-	}
-  function savaConfirm(){
+
+        if (form.name.value == "" || !checkKanji(form.name.value)) {
+            alert("漢字を入力してください。");
+            setTimeout("form.name.focus()",100);
+            event.preventDefault();
+            return false;
+        }
+
+        if (form.kana.value == "" || !checkKana(form.kana.value)) {
+            alert("カナを入力してください。");
+            setTimeout("form.kana.focus()",100);
+            event.preventDefault();
+            return false;
+        }
+
+        if (form.birth.value == "" ) {
+            alert("生年月日を入力してください。");
+            setTimeout("form.birth.focus()",100);
+            event.preventDefault();
+            return false;
+        }
+        if (form.case.value == "") {
+            alert("応募区分を入力してください。");
+            setTimeout("form.case.focus()",100);
+            event.preventDefault();
+            return false;
+        }
+        if (form.educationSelect.value == "") {
+            alert("学歴入力してください。");
+            setTimeout("form.educationSelect.focus()",100);
+            event.preventDefault();
+            return false;
+        }
+
+        if (form.educationSelect.value == "その他" && form.otherEducation.value=="") {
+            alert("その他の場合の、記入してください。");
+            setTimeout("form.educationSelect.focus()",100);
+            event.preventDefault();
+            return false;
+        }
+
+        if (form.skill.value == "") {
+            alert("ITスキル有無を入力してください。");
+            setTimeout("form.skill.focus()",100);
+            event.preventDefault();
+            return false;
+        }
+
+        if (form.class1stId.value === "") {
+            alert("経験分野を入力してください。");
+            setTimeout("form.class1stId.focus()",100);
+            event.preventDefault();
+            return false;
+        }
+
+        // if (form.class1stId.value == "その他" && form.otherclass1st.value=="") {
+        //     alert("その他の場合の、記入してください");
+        //     setTimeout("form.class1stId.focus()",100);
+        //     return false;
+        // }
+
+        if (form.class2ndId.value == "") {
+            alert("問題種別を入力してください。");
+            setTimeout("form.class2ndId.focus()",100);
+            event.preventDefault();
+            return false;
+        }
+        // console.log(class2nd.value);
+        if ((isNaN(form.careerId.value) || form.careerId.value === "")) {
+            alert("IT経験年数を入力してください。");
+            setTimeout("form.careerInput.focus()",100);
+            event.preventDefault();
+            return false;
+        }
+
 		var submitConfirm=confirm("保存しますか？");
     if (!submitConfirm){
             event.preventDefault();
@@ -553,18 +635,6 @@ function checkKana(input) {
         }
     form.submit();
   }
-</script>
-<script>
-  $(document).ready(function(){
-    var birth = document.getElementById("birth");
-    $(birth).datepicker({
-      format: 'yyyy-mm-dd',
-      autohide: true,
-      language: 'ja',
-      startDate: '1980-01-01',
-      endDate: '2010-12-31'
-    });
-  });
 </script>
 
 <script>

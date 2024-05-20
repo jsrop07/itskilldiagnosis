@@ -63,6 +63,12 @@ class ApplicationTable
         return $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
     }
 
+    public function ReadValid() {
+		$qry = $this->sql->select("option")->where(["del_flag" => "N"])->order("text");
+		return $this->sql->prepareStatementForSqlObject($qry)->execute();
+	}
+
+
     public function getApplicantByEmail($email) {
         $qry = new Sql($this->adapter);
         $select = $qry->select('applicant');

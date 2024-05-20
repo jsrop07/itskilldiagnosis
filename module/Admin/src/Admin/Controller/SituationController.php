@@ -32,8 +32,9 @@ class SituationController extends AbstractActionController {
 
 		// Number of data to output on one page
 		$printDataNum = 10;
+		
 		$datas = $this->GetOptionDatasForInput($datas);
-
+		
 		// Get Current Page
 		$page = $this->params()->fromQuery("page", 1);
 
@@ -242,7 +243,7 @@ class SituationController extends AbstractActionController {
 	*/
 	function GetOptionDatas($datas) {
 		$optionTb = $this->getServiceLocator()->get("OptionTable");
-		$optionDatas = iterator_to_array($optionTb->ReadAll());
+		$optionDatas = ($optionTb->ReadAll());
 
 		foreach ($optionDatas as $data) {
 			$datas["optionDatas"][$data["idx"]] = $data["text"];
@@ -257,7 +258,7 @@ class SituationController extends AbstractActionController {
 	*/
 	function GetOptionDatasForInput($datas) {
 		$optionTb = $this->getServiceLocator()->get("OptionTable");
-		$optionDatas = iterator_to_array($optionTb->ReadValid());
+		$optionDatas = ($optionTb->ReadValid());
 
 		if (!isset($datas["optionDatas"])) { $data["optionDatas"] = array(); }
 		$other = array();

@@ -84,7 +84,7 @@
 
                     <span  id="spanTypeSelect">問題種別</span>
                     <select class="" name="class2nd" style="width:40%" id="typeSelect">
-                    <option value="" selected disabled hidden >選択してください。</option>
+                    <option value="" selected  hidden >選択してください。</option>
                     </select>
 
                     <span class="no_after_style" id='spanCertificates'>IT関連資格</span>
@@ -170,7 +170,8 @@ skillSelect.addEventListener('change', function() {
         class1stSelect.disabled = true;
         otherclass1stInput.querySelector('input').disabled = true;
         careerInput.disabled = true;
-        certificatesInput.disabled = true;
+        // certificatesInput.disabled = true;
+
     } else {
         class2ndSelect.style.display='block';    
         class2ndSpanSelect.style.display='block'; 
@@ -333,7 +334,7 @@ function checkKana(input) {
         }
 
         if (!class1stSelect.disabled && form.class1stSelect.value === "") {
-            alert("経験分野を入力してくださいsd。");
+            alert("経験分野を入力してください。");
             setTimeout("form.class1stSelect.focus()",100);
             return false;
         }

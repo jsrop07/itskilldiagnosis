@@ -67,7 +67,6 @@ class SituController extends AbstractActionController {
 		// $applicantInfo = $situTb->readById($post['recordindex']);
 
 		if($inputDatas == "btn_submit"){
-
 			$email = $this->params()->fromPost('email');
       $password = $this->params()->fromPost('password');
 			$name = $this->params()->fromPost('name');
@@ -116,7 +115,6 @@ class SituController extends AbstractActionController {
         'code' => $code,
         'method' => $method
 			];      
-      
       $situTb->insertAndUpdateApplication($arr);
        
       $applicantInfo = $situTb->getRecord();
@@ -124,7 +122,7 @@ class SituController extends AbstractActionController {
       $this->mailByAdmin($arr,$skillText,$caseText,$managerArray,$applicantInfo);
 		  echo "
 			<script>
-			alert('依頼が完了しました。')
+			alert('依頼が完了しました')
 			self.location.href='/admin/situation/list';
 			</script>
 			";	
@@ -132,28 +130,45 @@ class SituController extends AbstractActionController {
 			exit;
 		}
 		elseif($inputDatas == "btn_save"){
+      $email = $this->params()->fromPost('email');
+      $password = $this->params()->fromPost('password');
+			$name = $this->params()->fromPost('name');
+			$kana = $this->params()->fromPost('kana');
+      $gender = $this->params()->fromPost('gender');
+			$birth = $this->params()->fromPost('birth');
+			$case = $this->params()->fromPost('case');
+			$education = $this->params()->fromPost('education');
+			$major = $this->params()->fromPost('major');
+			$skill = $this->params()->fromPost('skill');
+			$class1st = $this->params()->fromPost('class1st');
+      $class2nd = $this->params()->fromPost('class2nd');
+			$career = $this->params()->fromPost('career');
+			$certificates = $this->params()->fromPost('certificates');
+			$other = $this->params()->fromPost('other');	
+      $code = $this->params()->fromPost('code');	
+      $method = $this->params()->fromPost('method');	
      $saveArr=[
-        'email' => $post['email'],
-		    'password' => $post['password'],
-			  'name' => $post['name'], 
-        'kana' => $post['kana'],
-			  'birth' => $post['birth'],
-        'gender' =>$post['gender'],
-			  'case' => $post['case'],
-        'education'=> $post['education'],
-        'career' => $post['career'],
-        'certificates' => $post['certificates'],
-        'other' => $post['other'],
-        'major' => $post['major'],
-        'skill' => $post['skill'],
-        'class1st' => $post['class1st'],
-        'class2nd' => $post['class2nd'],
-        'diagnosis_code' => $post['code'],      
-        'method' => $post['method']
+        'email' => $email,
+        'password' => $password,
+				'name' => $name,
+				'kana' => $kana,
+				'gender' => $gender,
+				'birth' => $birth,
+				'case' => $case,
+				'education' => $education,
+				'major' => $major,
+				'skill' => $skill,
+				'class1st' => $class1st,
+				'class2nd' => $class2nd,
+				'career' => $career,
+				'certificates' => $certificates,
+				'other' => $other,
+        'code' => $code,
+        'method' => $method,
+        'save' => "save"
       ];
 
       $situTb->insertAndUpdateApplication($saveArr);
-
       echo "
       <script>
       alert('保存が完了しました。')
@@ -191,8 +206,9 @@ class SituController extends AbstractActionController {
 			
 		}
 		$diagnosisData = $diagnosisTb->ReadByCode($recordData["diagnosis_code"]);
+    
 		$datas["optionDatas"] = $this->GetOptionDatasForInput();
-
+    
 		$class1st=$situTb->getclass1st();
 		$class2nd=$situTb->getclass2nd();
 
@@ -240,6 +256,7 @@ class SituController extends AbstractActionController {
 			$recordSet['class2nd']=$post['class2nd'];
 			$recordSet['diagnosis_code']=$post['code'];
       $recordSet['method']=$post['method'];
+
 			$situTb->updateRecordInfo($recordlWhere, $recordSet);	
 			$situTb->updateApplicantInfo($applicantWhere, $applicantSet);	
 			$recentPassword = $situTb->readById($applicantInfos);
@@ -275,7 +292,6 @@ class SituController extends AbstractActionController {
       $recordSet['method']=$post['method'];
 			$situTb->saveRecordInfo($recordlWhere, $recordSet);	
 			$situTb->saveApplicantInfo($applicantWhere, $applicantSet);	
-					
 		echo "
 		<script>
 		alert('保存が完了しました。')
@@ -338,7 +354,7 @@ class SituController extends AbstractActionController {
       // 메일 제목 지정 (일반적으로 DB에 메일폼 테이블을 만들어서 그것을 가져와서 아래의 title contents에 넣지만, 이건 샘플이므로 간단히.)
       // 사람마다 변환해야 할 부분은 {{이렇게}} 메일폼에 넣어놓는다.
       $param['title']="{{user_name}}様、新しい試験診断の申し込みがあります。";
-      $param["content"] = "以下の申込者の情報をご参照ください。\n\nお名前（漢字）：{$arr["name"]}\nお名前（カナ）：{$arr["kana"]}\n応募区分：{$caseText}\nITスキル：{$skillText}\n\n診断者ページ：http://gngitskill:84/admin/situ/edit/{$applicantInfo["idx"]}";
+      $param["content"] = "以下の申込者の情報をご参照ください。\n\nお名前（漢字）：{$arr["name"]}\nお名前（カナ）：{$arr["kana"]}\n応募区分：{$caseText}\nITスキル：{$skillText}\n\n診断者ページ：http://gngitskill:84/admin/situation/detail/{$applicantInfo["idx"]}";
     
       // 사람이름이나, URL등 고유하게 변경해야 하는 것은 이렇게 처리한다.
       // 메일 제목과 내용 부분 모두 변환처리.
@@ -408,7 +424,7 @@ class SituController extends AbstractActionController {
 	*/
 	function GetOptionDatasForInput() {
 		$optionTb = $this->getServiceLocator()->get("OptionTable");
-		$beforeOptionDatas = iterator_to_array($optionTb->ReadValid());
+		$beforeOptionDatas = $optionTb->ReadValid();
 
 		$afterOptionDatas = array();
 		$class1stDatas = array();
@@ -462,11 +478,6 @@ class SituController extends AbstractActionController {
 		
 			array_push($afterOptionDatas["class2nd"][$class1stValue], $data);
 		}
-		// Optional: Debugging output
-
-		// print_r($afterOptionDatas);
-		// print_r($afterOptionDatas["class2nd"][$class1stDatas[$data["class_upper"]]]);
-		// exit;
 
 		return $afterOptionDatas;
 	}	

@@ -315,7 +315,7 @@ class SituationController extends AbstractActionController {
 	}
 
 
-	function mailByRequest($managerArray,$recentPassword){
+	function mailByRequest($managerInfo,$recentPassword){
 		$mail = new MailRequest();
 
 		// 기본 메일 전송 관련 설정 로드
@@ -335,12 +335,12 @@ class SituationController extends AbstractActionController {
 	
 
 		// 수신자 이메일과 이름 설정
-		$param['managerEmail']=$managerArray["id"];
+		$param['managerEmail']=$managerInfo["id"];
 		$param['email']=$recentPassword["email"];;
-		$param['password']= $managerArray["password"];
-		$param['name']= $managerArray["name"];
-		$param['smtp_password']=$managerArray["smtp_password"];
-	
+		$param['password']= $managerInfo["password"];
+		$param['name']= $managerInfo["name"];
+		$param['smtp_password']=$managerInfo["smtp_password"];
+
 		// 전송
 		$result = $mail->mailsender($param);
 		// $result = $this->getServiceLocator()->get("mailsender");
@@ -621,7 +621,7 @@ class SituationController extends AbstractActionController {
 			$recordTb = $this->getServiceLocator()->get("RecordTable-Admin");
 			$situTb = $this->getServiceLocator()->get("situTable");
 			$managerInfo=$situTb->readByManagerInfo();
-			$managerArray=[$managerInfo["id"], $managerInfo["password"],$managerInfo["name"],$managerInfo["smtp_password"]];		
+
 			$applicantInfo = $recordTb->ReadByIdx($post['recordindex']);
 	
 			$applicantInfos = $situTb->readById($applicantInfo['applicant_idx']);
@@ -651,7 +651,7 @@ class SituationController extends AbstractActionController {
 				$situTb->updateApplicantInfo($applicantWhere, $applicantSet);	
 				$recentPassword = $situTb->readById($applicantInfos);
 	
-				$this->mailByRequest($managerArray,$recentPassword);
+				$this->mailByRequest($managerInfo,$recentPassword);
 	
 				echo "
 				<script>

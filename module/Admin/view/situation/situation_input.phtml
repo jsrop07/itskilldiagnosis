@@ -10,7 +10,7 @@ function InitStyle() { return " font-style: italic; color: ;"; }
 <form id="form" method="post" action=".././situ/inputok">
 	<style type="text/css">
 		option { color: black; }
-		/* input::placeholder { font-style: italic; } */
+		input::placeholder { font-style: italic; }
 	</style>
 
 	<div class="emegra card">
@@ -22,7 +22,7 @@ function InitStyle() { return " font-style: italic; color: ;"; }
 			</style>
 			<dl class="emegra info">
 				<dt class="essential">ID</dt>
-				<dd><input class="form-control" name="email" type="text" style="width:220px;"></dd>
+				<dd><input class="form-control" name="email" type="text" style="width:220px;" placeholder="その他の場合の、記入"></dd>
           
         <dt class="essential">応募区分</dt>
         <dd>
@@ -83,10 +83,10 @@ function InitStyle() { return " font-style: italic; color: ;"; }
 				<dd><input class="form-control" id="birth" name="birth" type="text" placeholder="YYYY-MM-DD" autocomplete="off"  style="width:220px" value=""></dd>
 
         <dt>IT関連資格</dt>
-				<dd><input class="form-control" id="certificatesId" name="certificates" type="text"  style="width:220px"></dd> 
+				<dd><input class="form-control" id="certificatesId" name="certificates" type="text"  placeholder="その他の場合の、記入" style="width:220px"></dd> 
 
 				<dt>その他</dt>
-				<dd><input class="form-control" id="other" name="other" type="text"  style="width:220px" ></dd> 
+				<dd><input class="form-control" id="other" name="other" type="text"  style="width:220px" placeholder="その他の場合の、記入" ></dd> 
 			</dl>
 		</div>
 	</div>
@@ -212,6 +212,18 @@ function InitStyle() { return " font-style: italic; color: ;"; }
   <button class="emegra"  id="btn_save" name="inputDatas" value="btn_save"  style="width:150px;" onclick=saveConfirm()>一時保存</button>
 	<button class="emegra"  id="btn_submit" name="inputDatas" value="btn_submit"  style="width:150px;" onclick=inputConfirm()>ITスキル診断依頼</button>
 </div>
+
+<!-- Request send modal -->
+<div class="modal" tabindex="-1" role="dialog" id="submitLoading">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <h3 style="text-align:center;">依頼転送中です。</h3>
+            </div>
+        </div>
+    </div>
+</div>
+
 </form>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -546,6 +558,9 @@ function checkKana(input) {
         if (!submitConfirm){
             event.preventDefault();
             return false;
+        }
+        else if(submitConfirm==true){
+          $('#submitLoading').modal('show');
         }
     }
 </script>

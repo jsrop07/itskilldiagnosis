@@ -107,11 +107,11 @@
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(100%);"></button>
                         </div>
                         <div class="modal-body fs-5" style="padding-bottom:0; text-align:center">
-                        申し込みますか？
+                        <div id="requestMessage">申し込みますか？</div>
                         </div>
                         <div class="modal-footer  border-top-0" style="margin-bottom:8px; justify-content:center;">
                             <button type="button" class="applicant_cancel" data-bs-dismiss="modal">キャンセル</button>
-                            <button id="btn_submit" name="mode" value="btn_submit" class="applicant_button">申込</button>
+                            <button id="btn_submitId" name="mode" value="btn_submit" class="applicant_button" onclick="requestSubmit()">申込</button>
 
                         </div>
                     </div>
@@ -362,7 +362,14 @@ function checkKana(input) {
         });
         myModal.show();
     }
+
+    function requestSubmit(){
+        const requestbtn= document.getElementById('requestMessage');
+        requestbtn.innertext="登録中です。"
+    }
 </script>
+
+
 
 <!-- selectbox 選択時の　色 -->
 <script>

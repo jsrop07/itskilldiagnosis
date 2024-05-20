@@ -83,7 +83,7 @@ switch ($recordArray["class1st"]) {
 
 <h1 class="title">ITスキル診断状況管理</h1>
 
-<form id="form" method="post" action="../../situ/editok"onsubmit="return handleSubmit()">
+<form id="form" method="post" action="../../situ/editok" onsubmit="return handleSubmit()">
 	<style type="text/css">
 		option { color: black; }
 		/* input::placeholder { font-style: italic; } */
@@ -151,11 +151,11 @@ switch ($recordArray["class1st"]) {
                         <input class="form-control"  style="margin-left: 10px; width:200px;" type="text" placeholder="その他の場合" id="educationInput" name="education" maxlength='20' value="<?php echo ($recordArray['education']) ?>">
 				</dd>
 
-                <dt>生年月日</dt>
-				<dd><input class="form-control" id="birth" name="birth" type="text" placeholder="YYYY-MM-DD" autocomplete="off"  style="width:220px" value="<?php echo $applicantArray["birth"] ?>"></dd> 
-
 				<dt>IT関連資格</dt>
 				<dd><input class="form-control" id="certificatesId" name="certificates" type="text"  style="width:220px" value="<?php echo $applicantArray["certificates"] ?>"></dd> 
+
+        <dt class="essential">生年月日</dt>
+				<dd><input class="form-control" id="birth" name="birth" type="text" placeholder="YYYY-MM-DD" autocomplete="off"  style="width:220px" value="<?php echo $applicantArray["birth"] ?>"></dd> 
 
 				<dt>専攻</dt>
 				<dd> 
@@ -401,10 +401,9 @@ switch ($recordArray["class1st"]) {
             if (selectElement.value !== "その他") {
                 otherInput.value = selectElement.value;
             }
-            return true; // 폼 제출을 계속함
+            return true; 
         }
 
-        // 페이지가 로드될 때 초기 상태를 설정
         document.addEventListener('DOMContentLoaded', function() {
             ChangeClass1stValue(document.getElementById('class1stId'));
         });
@@ -485,11 +484,12 @@ document.getElementById('majorId').addEventListener('change', function(event) {
     var selectedOption = event.target.value;
 
     if (selectedOption === "other") {
-		form.major.value = "";
+		    form.major.value = "";
+        form.major.style.display = 'block';
         form.major.hidden = false;
     } else {
         form.major.hidden = true;
-		form.major.style.display = 'none';
+		    form.major.style.display = 'none';
     }
 });
 
@@ -533,6 +533,80 @@ switch (element.value) {
 
 <script>
 	function editConfirm(){
+        if (form.name.value == "" || !checkKanji(form.name.value)) {
+            alert("漢字を入力してください。");
+            setTimeout("form.name.focus()",100);
+            event.preventDefault();
+            return false;
+        }
+
+        if (form.kana.value == "" || !checkKana(form.kana.value)) {
+            alert("カナを入力してください。");
+            setTimeout("form.kana.focus()",100);
+            event.preventDefault();
+            return false;
+        }
+
+        if (form.birth.value == "" ) {
+            alert("生年月日を入力してください。");
+            setTimeout("form.birth.focus()",100);
+            event.preventDefault();
+            return false;
+        }
+        if (form.case.value == "") {
+            alert("応募区分を入力してください。");
+            setTimeout("form.case.focus()",100);
+            event.preventDefault();
+            return false;
+        }
+        if (form.educationSelect.value == "") {
+            alert("学歴入力してください。");
+            setTimeout("form.educationSelect.focus()",100);
+            event.preventDefault();
+            return false;
+        }
+
+        if (form.educationSelect.value == "その他" && form.otherEducation.value=="") {
+            alert("その他の場合の、記入してください。");
+            setTimeout("form.educationSelect.focus()",100);
+            event.preventDefault();
+            return false;
+        }
+
+        if (form.skill.value == "") {
+            alert("ITスキル有無を入力してください。");
+            setTimeout("form.skill.focus()",100);
+            event.preventDefault();
+            return false;
+        }
+
+        if (form.class1stId.value === "") {
+            alert("経験分野を入力してください。");
+            setTimeout("form.class1stId.focus()",100);
+            event.preventDefault();
+            return false;
+        }
+
+        // if (form.class1stId.value == "その他" && form.otherclass1st.value=="") {
+        //     alert("その他の場合の、記入してください");
+        //     setTimeout("form.class1stId.focus()",100);
+        //     return false;
+        // }
+
+        if (form.class2ndId.value == "") {
+            alert("問題種別を入力してください。");
+            setTimeout("form.class2ndId.focus()",100);
+            event.preventDefault();
+            return false;
+        }
+        // console.log(class2nd.value);
+        if ((isNaN(form.careerId.value) || form.careerId.value === "")) {
+            alert("IT経験年数を入力してください。");
+            setTimeout("form.careerInput.focus()",100);
+            event.preventDefault();
+            return false;
+        }
+
 		var submitConfirm=confirm("依頼しますか？");
 		if (!submitConfirm){
             event.preventDefault();

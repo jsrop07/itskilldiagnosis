@@ -77,13 +77,12 @@ switch ($recordArray["class1st"]) {
         $isClass1st5 = true;
         break;
 }
-
 ?>
 
 
 <h1 class="title">ITスキル診断状況管理</h1>
 
-<form id="form" method="post" action="../../situ/editok" onsubmit="return handleSubmit()">
+<form id="form" method="post" action="../editok" onsubmit="return handleSubmit()">
 	<style type="text/css">
 		option { color: black; }
 		/* input::placeholder { font-style: italic; } */
@@ -131,7 +130,7 @@ switch ($recordArray["class1st"]) {
                 <dt>性別</dt>
 				<dd> 
 				<select class="form-select"  name="gender" id="gender" style="width:220px">
-					<option value="" <?php echo ($isGenderNull) ? "selected" : "なし" ?>>なし</option>
+					<option value="" <?php echo ($isGenderNull) ? "selected" : "未依頼" ?>>未依頼</option>
 					<option value="0" <?php echo (!$isGenderNull && $isGender) ? "selected" : "" ?>>男</option>
 					<option value="1" <?php echo (!$isGenderNull && !$isGender) ? "selected" : "" ?>>女</option>
 				</select>
@@ -152,7 +151,7 @@ switch ($recordArray["class1st"]) {
 				</dd>
 
 				<dt>IT関連資格</dt>
-				<dd><input class="form-control" id="certificatesId" name="certificates" type="text"  style="width:220px" value="<?php echo ($applicantArray["certificates"] == null) ? "なし" : $applicantArray["certificates"]; ?>"></dd> 
+				<dd><input class="form-control" id="certificatesId" name="certificates" type="text"  style="width:220px" value="<?php echo ($applicantArray["certificates"] == null) ? "未設定" : $applicantArray["certificates"]; ?>"></dd> 
 
         <dt class="essential">生年月日</dt>
 				<dd><input class="form-control" id="birth" name="birth" type="text" placeholder="YYYY-MM-DD" autocomplete="off"  style="width:220px" value="<?php echo $applicantArray["birth"] ?>"></dd> 
@@ -160,7 +159,7 @@ switch ($recordArray["class1st"]) {
 				<dt>専攻</dt>
 				<dd> 
 					<select class="form-select" id="majorId" style="width:220px;" onchange="ChangeMajor(this)">
-						<option value="" >なし</option>
+						<option value="" >未依頼</option>
                         <option value="IT・ソフトウェア専攻"<?php echo ($isITMajor) ? " selected" : ""; ?>>IT・ソフトウェア専攻</option>
                         <option value="other"<?php echo ($recordArray["major"] != null && !$isITMajor) ? " selected" : ""; ?>>IT・ソフトウェア以外</option>
                     </select>
@@ -168,7 +167,7 @@ switch ($recordArray["class1st"]) {
 				</dd>
 
 				<dt>その他</dt>
-				<dd><input class="form-control" id="other" name="other" type="text"  style="width:220px" value="<?php echo ($applicantArray["other"] == null) ? "なし" : $applicantArray["other"]; ?>"></dd> 
+				<dd><input class="form-control" id="other" name="other" type="text"  style="width:220px" value="<?php echo ($applicantArray["other"] == null) ? "未設定" : $applicantArray["other"]; ?>"></dd> 
 			</dl>
 		</div>
 	</div>
@@ -252,8 +251,8 @@ switch ($recordArray["class1st"]) {
 
 				<dt class="essential">診断問項ID</dt>
 				<dd>
-					<input name="code" type="hidden" style="width:220px; ">
-          <div id="codeDisplay" style="padding-right:5px"></div>
+					<input name="code" type="hidden" style="width:220px;" value="<?php echo $recordArray['diagnosis_code'] !=NULL ?  $recordArray['diagnosis_code'] : "" ?>">
+                    <div id="codeDisplay" name="codeName" style="padding-right:5px;cursur:pointer;" onclick="self.location.href='../../diagnosis/detail/<?php echo $diagnosisArray['idx'] ?>';"><?php echo $recordArray['diagnosis_code'] !=NULL ? $recordArray['diagnosis_code'] : "未登録" ?></div>
 					<button type="button" data-bs-toggle="modal" data-bs-target="#staticBackdrop" style="padding: 0px 10px ;border-radius: 8px; background:linear-gradient(111deg, #50D7C7 0%, #40ADF0 100%); color:white;" onclick="diagnosisData();">検索</button>
 				</dd> 
 				
@@ -287,16 +286,16 @@ switch ($recordArray["class1st"]) {
 			</div>
 				<dt class="essential">レベル</dt>
 				<dd><select class="form-select" name="level" type="text" style="width:100px;">
-					<option value="0">０級</option>
-					<option value="1">初級</option>
-					<option value="2">中級</option>
-					<option value="3">高級</option>
+					<option value="0" <?php echo $diagnosisArray['level']==0 ? "selected" : "" ?>>０級</option>
+					<option value="1"<?php echo $diagnosisArray['level']==1 ? "selected" : "" ?>>初級</option>
+					<option value="2"<?php echo $diagnosisArray['level']==2 ? "selected" : "" ?>>中級</option>
+					<option value="3"<?php echo $diagnosisArray['level']==3 ? "selected" : "" ?>>高級</option>
 					</select>
 					
 				</dd>
 
 				<dt class="essential">問項数別</dt>
-				<dd><input class="form-control" name="question_num" type="text" style="width:50px;text-align:center;">問</dd>
+				<dd><input class="form-control" type="text" style="width:50px;text-align:center;" value="<?php echo $diagnosisArray['question_num'] !=NULL ? $diagnosisArray['question_num'] : "" ?>" readonly>問</dd>
 		
 				<dt class="essential">診断方法</dt>
                 <dd style="grid-column: 2 / 5;">
@@ -333,6 +332,18 @@ switch ($recordArray["class1st"]) {
   <button class="emegra"  id="btn_save" name="editDatas" value="btn_save"  style="width:150px;" onclick=saveConfirm()>一時保存</button>
 	<button class="emegra"  id="btn_submit" name="editDatas" value="btn_submit"  style="width:150px;" onclick=editConfirm()>ITスキル診断依頼</button>
 </div>
+
+<!-- Request send modal -->
+<div class="modal" tabindex="-1" role="dialog" id="submitLoading">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <h3 style="text-align:center;">依頼転送中です。</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </form>
 
 <script type="text/javascript">
@@ -578,7 +589,13 @@ switch (element.value) {
             event.preventDefault();
             return false;
         }
-    form.submit();
+        else if(submitConfirm==true){
+        form.submit();
+        $('#submitLoading').modal('show');
+
+        }
+        // form.submit();
+
 		
 	}
   function saveConfirm(){
@@ -621,13 +638,13 @@ switch (element.value) {
             event.preventDefault();
             return false;
         }
-
-		var submitConfirm=confirm("保存しますか？");
-    if (!submitConfirm){
-            event.preventDefault();
-            return false;
-        }
-    form.submit();
+       
+        var submitConfirm=confirm("保存しますか？");
+            if (!submitConfirm){
+                    event.preventDefault();
+                    return false;
+                }
+        form.submit();
   }
 	function randomPW(){
 		const pwLength = 8;

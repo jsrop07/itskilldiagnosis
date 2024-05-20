@@ -1,5 +1,8 @@
 <?php
 	$caseTexts = ["新卒", "中途"];
+
+	$url = explode("?", $_SERVER["REQUEST_URI"])[0];
+	if (!isset($_SESSION)) { session_start(); }
 ?>
 <?php echo $this->partial("breadcrumb", ["datas" => $breadcrumbData]); ?>
 
@@ -66,17 +69,24 @@
 		</div>
 
 		<div style="display: flex; justify-content: right;padding-top: 24px;">
-			<input class="form-control" type="text" style="width:15%; height:30px;margin-right:10px;" placeholder="診断者名">
+			<input class="form-control" type="text" id="search-name" style="width:15%; height:30px;margin-right:10px;" placeholder="診断者名" value="<?php echo (isset($searchDatas["name"])) ? $searchDatas["name"] : ""; ?>">
 			<div id="div-search" style="width: 150px; margin-right: 8px;">
-			<select class="form-select form-select-sm" style="width: 150px; margin-right: 8px;" onchange="ChangeSearch(this.value)">
-					<option value="status">ステータス</option>
-					<option value="class1st">応募区分</option>
-					<option value="class2nd">最終学歴</option>
-					<option value="level">経験分野</option>
-					<option value="class2nd">試験結果</option>
+			<select class="form-select form-select-sm" id="search-align" style="width: 150px; margin-right: 8px;">
+			<!-- <?php /* ?>
+					<option value="status-DESC"<?php echo (isset($searchDatas["align"]) && $searchDatas["align"] == "status-DESC") ? " selected" : ""; ?>>ステータス（昇順）</option>
+					<option value="status-ASC"<?php echo (isset($searchDatas["align"]) && $searchDatas["align"] == "status-ASC") ? " selected" : ""; ?>>ステータス（降順）</option>
+					<?php */ ?> -->
+					<option value="case-DESC"<?php echo (isset($searchDatas["align"]) && $searchDatas["align"] == "case-DESC") ? " selected" : ""; ?>>応募区分（昇順）</option>
+					<option value="case-ASC"<?php echo (isset($searchDatas["align"]) && $searchDatas["align"] == "case-ASC") ? " selected" : ""; ?>>応募区分（降順）</option>
+					<option value="education-DESC"<?php echo (isset($searchDatas["align"]) && $searchDatas["align"] == "education-DESC") ? " selected" : ""; ?>>最終学歴（昇順）</option>
+					<option value="education-ASC"<?php echo (isset($searchDatas["align"]) && $searchDatas["align"] == "education-ASC") ? " selected" : ""; ?>>最終学歴（降順）</option>
+					<option value="class1st-DESC"<?php echo (isset($searchDatas["align"]) && $searchDatas["align"] == "class1st-DESC") ? " selected" : ""; ?>>経験分野（昇順）</option>
+					<option value="class1st-ASC"<?php echo (isset($searchDatas["align"]) && $searchDatas["align"] == "class1st-ASC") ? " selected" : ""; ?>>経験分野（降順）</option>
+					<option value="rank-DESC"<?php echo (isset($searchDatas["align"]) && $searchDatas["align"] == "rank-DESC") ? " selected" : ""; ?>>試験結果（昇順）</option>
+					<option value="rank-ASC"<?php echo (isset($searchDatas["align"]) && $searchDatas["align"] == "rank-ASC") ? " selected" : ""; ?>>試験結果（降順）</option>
 				</select>
 			</div>
-			<button class="emegra search confirm" onclick="SearchRegister()">検索</button>
+			<button class="emegra search confirm" onclick="Search()">検索</button>
 		</div>
 	</div>
 
@@ -95,7 +105,7 @@
 					<th style="grid-area: applicant_info">IT診断者情報</th>
 					<th style="grid-area: dianosis_detail ">診断問項詳細</th>
 					<th style="grid-area: dianosis_status  ">診断状況</th>
-					<th style="grid-area: check;"><input class="form-check-input" type="checkbox" value="" id=""></th>
+					<th style="grid-area: check;"><input id="checkAll" type="checkbox" onclick="Checking(this);" style="cursor: pointer;"></th>
 
 					<th style="grid-area: applicant_date">申込日</th>
 					<th style="grid-area: application_category">応募区分</th>
@@ -120,19 +130,13 @@
 						<td><?php echo $data["status"]; ?></td>
 						<td><?php echo date("y.m.d", strtotime($data["apply_date"])); ?></td>
 						<td><?php echo $caseTexts[$data["case"]]; ?></td>
-						<td class="link" onclick="self.location.href='./detail/<?php echo $data['idx']; ?>';" style="text-align: center; color: blue"><?php echo $data["name"]; ?></td>
+						<td class="link" onclick="self.location.href='./<?php echo ($data['diagnosis_date'] == null) ? 'edit' : 'detail'; ?>/<?php echo $data['idx']; ?>';" style="text-align: center; color: blue"><?php echo $data["name"]; ?></td>
 						<td><?php echo $data["education"]; ?></td>
 						<td><?php echo ($data["major"] != null) ? $data["major"] : "無"; ?></td>
 						<td><?php echo ($data["career"] != null) ? $data["career"] . "年" : "無"; ?></td>
-						<?php if ($data["request_date"] != null): ?>
-							<td><?php echo ($data["request_date"] != null) ? date("y.m.d", strtotime($data["request_date"])) : "未実行"; ?></td>
-							<td><?php echo $optionDatas[$data["level"]]; ?></td>
-							<td><?php echo $data["diagnosis_code"]; ?></td>
-						<?php else: ?>
-							<td>未依頼</td>
-							<td>未設定</td>
-							<td>未設定</td>
-						<?php endif; ?>
+						<td><?php echo ($data["request_date"] != null) ? date("y.m.d", strtotime($data["request_date"])) : "未依頼"; ?></td>
+						<td><?php echo ($optionDatas[$data["level"]] != null) ? $optionDatas[$data["level"]] : "未設定"; ?></td>
+						<td><?php echo ($data["diagnosis_code"] != null) ? $data["diagnosis_code"] : "未設定"; ?></td>
 						<?php if ($data["execute_date"] != null): ?>
 							<td><?php echo date("y.m.d", strtotime($data["execute_date"])); ?></td>
 							<td><?php echo $data["get_point"]; ?>/100</td>
@@ -142,7 +146,7 @@
 							<td>未実行</td>
 							<td>未実行</td>
 						<?php endif; ?>
-						<td><input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"></td>
+						<td><input name="checkIdx" type="checkbox" value="<?php echo $data["idx"]; ?>" onclick="Checking(this);" style="cursor: pointer;"<?php echo ($data["request_date"] == null) ? "" : " disabled"; ?>></td>
 					</tr>
 				<?php endforeach; ?>
 			</tbody>
@@ -165,95 +169,37 @@
 </content>
 
 <script type="text/javascript">
+	const seachName = document.getElementById("search-name");
+	const seachAlign = document.getElementById("search-align");
+	const check_all = document.getElementById("checkAll");
+	const check_idxs = document.getElementsByName("checkIdx");
 
-	function ChangeSearch(value) {
-		searchChildren = Array.from(divSearch.children);
-		searchChildren.forEach(element => { element.remove(); });
-
-		if (value == "applicant") {
-			var input = document.createElement("input");
-			input.classList.add("form-control");
-			input.classList.add("form-control-sm");
-			divSearch.appendChild(input);
+	function Checking(element) {
+		if (element == check_all) {
+			if (element.checked) {
+				check_idxs.forEach(e => {
+					if (!e.disabled) { e.checked = true; }
+				});
+			}
+			else {
+				check_idxs.forEach(e => { e.checked = false; });
+			}
 		}
-		else {
-			var select = document.createElement("select");
-			select.classList.add("form-select");
-			select.classList.add("form-select-sm");
-			divSearch.appendChild(select);
+
+		if (element != check_all) {
+			check_all.checked = false;
+
+			check_idxs.forEach(e => {
+				if (e.checked) { check_all.checked = true; return true; }
+			});
 		}
-
-		var option = document.createElement("option");
-		option.value = "";
-		option.innerText = "選択";
-		option.hidden = true;
-		correct.appendChild(option);
-		for (let i = 0; i < answerCount; i++) {
-			let dt = document.createElement("dt");
-			dt.classList.add("essential");
-			dt.innerText = numTexts[i];
-			answers.appendChild(dt);
-
-			let dd = document.createElement("dd");
-			let input = document.createElement("input");
-			input.classList.add("form-control");
-			input.name = "answer" + Number(i + 1);
-			input.type = "text";
-			dd.appendChild(input);
-			answers.appendChild(dd);
-
-			var option = document.createElement("option");
-			option.value = Number(i) + 1;
-			option.innerText = numTexts[i];
-			correct.appendChild(option);
-}
 	}
-</script>
 
-
-<script type="text/javascript">
-	const divSearch = document.getElementById("div-search");
-
-	function ChangeSearch(value) {
-		searchChildren = Array.from(divSearch.children);
-		searchChildren.forEach(element => { element.remove(); });
-
-		if (value == "applicant") {
-			var input = document.createElement("input");
-			input.classList.add("form-control");
-			input.classList.add("form-control-sm");
-			divSearch.appendChild(input);
+	function Search(value) {
+		let url = "<?= $url ?>?align=" + seachAlign.value;
+		if (seachName.value.trim() != "") {
+			url += "&name=" + seachName.value;
 		}
-		else {
-			var select = document.createElement("select");
-			select.classList.add("form-select");
-			select.classList.add("form-select-sm");
-			divSearch.appendChild(select);
-		}
-
-		var option = document.createElement("option");
-		option.value = "";
-		option.innerText = "選択";
-		option.hidden = true;
-		correct.appendChild(option);
-		for (let i = 0; i < answerCount; i++) {
-			let dt = document.createElement("dt");
-			dt.classList.add("essential");
-			dt.innerText = numTexts[i];
-			answers.appendChild(dt);
-
-			let dd = document.createElement("dd");
-			let input = document.createElement("input");
-			input.classList.add("form-control");
-			input.name = "answer" + Number(i + 1);
-			input.type = "text";
-			dd.appendChild(input);
-			answers.appendChild(dd);
-
-			var option = document.createElement("option");
-			option.value = Number(i) + 1;
-			option.innerText = numTexts[i];
-			correct.appendChild(option);
-}
+		self.window.location = url;
 	}
 </script>

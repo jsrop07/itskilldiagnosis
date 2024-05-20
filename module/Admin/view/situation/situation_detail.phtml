@@ -2,6 +2,16 @@
 	$caseTexts = ["新卒", "中途"];
 	$genderTexts = ["男", "女"];
 	$skillTexts = ["有", "無"];
+	$levelTexts = array("0級", "初級", "中級", "高級");
+
+	$isRequest = false;
+	$isExecute = false;
+	if ($recordData["request_date"] != null) {
+		$isRequest = true;
+		if ($recordData["execute_date"] != null) {
+			$isExecute = true;
+		}
+	}
 ?>
 
 <?php echo $this->partial("breadcrumb", ["datas" => $breadcrumbData]); ?>
@@ -40,7 +50,7 @@
 			<dd><?php echo $recordData["kana"]; ?></dd>
 
 			<dt>性別</dt>
-			<dd>なし</dd>
+			<dd><?php echo ($recordData["gender"] == null) ? "未設定" : $genderTexts[$recordData["gender"]]; ?></dd>
 
 			<dt>学歴</dt>
 			<dd><?php echo $recordData["education"]; ?></dd>
@@ -53,13 +63,13 @@
 </div>
 
 <div class="emegra card" style="margin-top: 32px;">
-	<div class="card-header">診断者ITスキル有無</div>
+	<div class="card-header">ITスキル診断問項詳細</div>
 
 	<div class="card-body">
 		<style type="text/css">
-			dl.emegra.skill { grid-template-columns: repeat(1, 170px 1fr); }
+			dl.emegra.setting { grid-template-columns: repeat(2, 170px 1fr); }
 		</style>
-		<dl class="emegra skill">
+		<dl class="emegra setting">
 			<dt>ITスキル有無</dt>
 			<dd><?php echo $skillTexts[$recordData["skill"]]; ?></dd>
 
@@ -71,32 +81,21 @@
 
 			<dt>問題種別</dt>
 			<dd><?php echo $optionDatas[$recordData["class2nd"]]; ?></dd>
-		</dl>
-	</div>
-</div>
-
-<div class="emegra card" style="margin-top: 32px;">
-	<div class="card-header">ITスキル診断問項詳細</div>
-
-	<div class="card-body">
-		<style type="text/css">
-			dl.emegra.setting { grid-template-columns: repeat(2, 170px 1fr); }
-		</style>
-		<dl class="emegra setting">
-			<dt>診断依頼</dt>
-			<dd><?php echo ($recordData["request_date"] != null) ? date("y.m.d", strtotime($recordData["request_date"])) : "未依頼"; ?></dd>
 
 			<dt>診断問項ID</dt>
 			<dd><?php echo $recordData["diagnosis_code"]; ?></dd>
 
 			<dt>レベル</dt>
-			<dd><?php echo $optionDatas[$recordData["level"]]; ?></dd>
+			<dd><?php echo $levelTexts[$recordData["level"]]; ?></dd>
 
 			<dt>問項数別</dt>
 			<dd><?php echo $recordData["question_num"]; ?>問項</dd>
 
 			<dt>診断方法</dt>
-			<dd>WEB</dd>
+			<dd><?php echo $recordData["method"]; ?></dd>
+	
+			<dt>診断依頼</dt>
+			<dd><?php echo ($recordData["request_date"] != null) ? date("y.m.d", strtotime($recordData["request_date"])) : "未依頼"; ?></dd>
 		</dl>
 	</div>
 </div>
@@ -109,7 +108,7 @@
 			dl.emegra.detail { grid-template-columns: repeat(2, 150px 1fr); }
 		</style>
 		<dl class="emegra detail">
-			<?php if ($recordData["get_point"] != null): ?>
+			<?php if ($isExecute): ?>
 				<dt>診断実施日</dt>
 				<dd><?php echo date("y.m.d", strtotime($recordData["execute_date"])); ?></dd>
 
@@ -133,58 +132,36 @@
 
 <div class="btn-place" style="margin-top: 32px;">
 	<button class="emegra cancel" onclick="self.location.href='../list';">戻る</button>
+	<?php if (!$isRequest): ?>
     <button class="emegra" style="background:orange;" onclick="self.location.href='../detailedit';">修正</button>
-	<button class="emegra" style="width:150px;" onclick="Regist();">ITスキル診断依頼</button>
+		<button class="emegra" style="width:150px;" onclick="Request();">ITスキル診断依頼</button>
+	<?php endif; ?>
 </div>
 
 <script type="text/javascript">
-	const smtp = document.getElementById("smtp");
-	const form = document.getElementById("form");
-	const pattern = /^[A-Za-z0-9_\.\-]+@[A-Za-z0-9\-]+\.[A-za-z0-9\-]+/;
+	const idx = <?php echo $recordData["idx"]; ?>
 
-	function ActiveSmtp(value) {
-		if (value == "y") { smtp.disabled = false; }
-		else { smtp.disabled = true; }
-	}
+	function Request() {
+		if (confirm("依頼しますか？") === false) { return false; }
 
-	function Regist() {
-		if (form.code.value == "") {
-			alert("職別コードを入力してください");
-			setTimeout("form.code.focus();", 100);
-			return false;
-		}
-		
-		if (form.id.value == "") {
-			alert("IDを入力してください");
-			setTimeout("form.id.focus()", 100);
-			return false;
-		}
-		
-		if (pattern.test(form.id.value) === false) {
-			alert("IDを確認してください");
-			setTimeout("form.id.focus()", 100);
-			return false;
-		}
-		
-		if (form.password.value == "") {
-			alert("パスワードを入力してください");
-			setTimeout("form.password.focus()", 100);
-			return false;
-		}
-		
-		if (form.name.value == "") {
-			alert("名前を入力してください");
-			setTimeout("form.name.focus()", 100);
-			return false;
-		}
-		
-		if (smtp.disabled == false && smtp.value == "") {
-			alert("SMTPを入力してください");
-			setTimeout("smtp.focus()", 100);
-			return false;
-		}
+		const postForm = new FormData();
+		postForm.append("idxs", idx);
+		const xhr = new XMLHttpRequest();
+		xhr.open("POST", "../request", true);
+		xhr.send(postForm);
+		xhr.onload = () => {
+			if (xhr.status == 200) {
+				const result = xhr.responseText;
 
-		form.submit();
+				if (result === "success") {
+					alert("依頼しました。");
+				}
+				else {
+					alert("error");
+					console.log(result);
+				}
+			}
+		}
 	}
 </script>
 

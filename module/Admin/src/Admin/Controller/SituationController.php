@@ -4,6 +4,7 @@ namespace Admin\Controller;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Zend\Session\Container;
+use Admin\Model\MailRequest;
 
 class SituationController extends AbstractActionController {
 	function ChkLogin() {
@@ -42,68 +43,95 @@ class SituationController extends AbstractActionController {
 		unset($query["page"]);
 
 		$recordTb = $this->getServiceLocator()->get("RecordTable-Admin");
-		$totalRecordDatas = "";
-		$paginationData = "";
+		$paginationData = $recordTb->GetAllList();
+
+		$recordDatas = array();
+		$offset = ($page - 1) * 10;
 		if (!empty($query)) {
-			try {
-				$totalNewRecordDatas = $recordTb->ReadAllNewList();
-				$totalRestRecordDatas = $recordTb->ReadAllRestList();
-				$totalRecordDatas = array_merge($totalNewRecordDatas, $totalRestRecordDatas);
-				$paginationData = $recordTb->GetAllList();
-			} catch (\Exception $e) {
-				print_r($e->getMessage());
-				exit;
+			$sqlWhere = array();
+			if (isset($query["name"])) {
+				$applicantTb = $this->getServiceLocator()->get("ApplicantTable-Admin");
+				try { $applicantDatas = $applicantTb->ReadByName($query["name"]); }
+				catch (\Exception $e) { print_r($e->getMessage()); exit; }
+
+				foreach ($applicantDatas as $data) {
+					$sqlWhere[] = $data["idx"];
+				}
 			}
-			$datas["searchData"] = $query;
+
+			$sqlOrder["apply_date"] = "DESC";
+			if (isset($query["align"])) {
+				unset($sqlOrder["apply_date"]);
+				$sqlOrder[explode("-", $query["align"])[0]] = explode("-", $query["align"])[1];
+			}
+
+			try { $newRecordDatas = $recordTb->ReadNewListBySearchnOffsetnAlign($sqlWhere, $offset, $sqlOrder); }
+			catch (\Exception $e) { print_r($e->getMessage()); exit; }
+
+			if (count($newRecordDatas) <= 10) {
+				$offset += count($newRecordDatas);
+				$limit = 10 - count($newRecordDatas);
+				try { $restRecordDatas = $recordTb->ReadRestListBySearchnOffsetnLimitnAlign($sqlWhere, $offset, $limit, $sqlOrder); }
+				catch (\Exception $e) { print_r($e->getMessage()); exit; }
+				
+				$recordDatas = array_merge($newRecordDatas, $restRecordDatas);
+			}
+			else {
+				$recordDatas = $newRecordDatas;
+			}
+			$datas["searchDatas"] = $query;
 		}
 		else {
-			try {
-				$totalNewRecordDatas = $recordTb->ReadAllNewList();
-				$totalRestRecordDatas = $recordTb->ReadAllRestList();
-				$totalRecordDatas = array_merge($totalNewRecordDatas, $totalRestRecordDatas);
-				$paginationData = $recordTb->GetAllList();
-			} catch (\Exception $e) {
-				print_r($e->getMessage());
-				exit;
+			try { $newRecordDatas = $recordTb->ReadNewListByOffset($offset); }
+			catch (\Exception $e) { print_r($e->getMessage()); exit; }
+
+			if (count($newRecordDatas) <= 10) {
+				$offset += count($newRecordDatas);
+				$limit = 10 - count($newRecordDatas);
+				try { $restRecordDatas = $recordTb->ReadRestListByOffsetnLimit($offset, $limit); }
+				catch (\Exception $e) { print_r($e->getMessage()); exit; }
+
+				$recordDatas = array_merge($newRecordDatas, $restRecordDatas);
+			}
+			else {
+				$recordDatas = $newRecordDatas;
 			}
 		}
 
-		$datas["totalApply"] = count($recordTb->ReadApplyData());
-		$datas["totalRequest"] = count($recordTb->ReadRequestData());
-		$datas["totalData"] = count($totalRecordDatas);
+		try {
+			$datas["totalApply"] = $recordTb->CountApplyData();
+			$datas["totalRequest"] = $recordTb->CountRequestData();
+			$datas["totalData"] = $recordTb->CountRecordData();
+		} catch (\Exception $e) {
+			print_r($e->getMessage());
+			exit;
+		}
 
 		$applicantTb = $this->getServiceLocator()->get("ApplicantTable-Admin");
 		$diagnosisTb = $this->getServiceLocator()->get("DiagnosisTable-Admin");
 		// Extract output datas and Add numbering
-		if (!empty($totalRecordDatas)) {
-			$recordDatas = array();
-			$startIdx = ($page - 1) * $printDataNum;
-			$endIdx = ($page * $printDataNum);
 
-			for ($i = 0; $startIdx + $i < $endIdx; $i++) {
-				if (!isset($totalRecordDatas[$startIdx + $i])) { break; }
+			foreach ($recordDatas as $index => $data) {
+				try { $applicantData = $applicantTb->ReadByIdx($data["applicant_idx"]); }
+				catch (\Exception $e) { print_r($e->getMessage()); exit; }
+				$data = array_merge($applicantData, $data);
 
-				$recordData = $totalRecordDatas[$startIdx + $i];
-
-				$applicantData = $applicantTb->ReadByIdx($recordData["applicant_idx"]);
-				$recordData = array_merge($applicantData, $recordData);
-
-				if (($recordData["diagnosis_code"]) != null) {
-					$diagnosisData = $diagnosisTb->ReadByCode($recordData["diagnosis_code"]);
-					$recordData = array_merge($diagnosisData, $recordData);
+				if (($data["diagnosis_code"]) != null) {
+					try { $diagnosisData = $diagnosisTb->ReadByCode($data["diagnosis_code"]); }
+					catch (\Exception $e) { print_r($e->getMessage()); exit; }
+					$data = array_merge($diagnosisData, $data);
 				}
 
-				if ($recordData["request_date"] == null) { $recordData["status"] = "新規"; }
-				else if ($recordData["execute_date"] == null) { $recordData["status"] = "診断"; }
-				else { $recordData["status"] = "終了"; }
+				if ($data["request_date"] == null) { $data["status"] = "新規"; }
+				else if ($data["execute_date"] == null) { $data["status"] = "診断"; }
+				else { $data["status"] = "終了"; }
 
-				$recordData["num"] = count($totalRecordDatas) - ($startIdx + $i);
-
-				$recordDatas[$i] = $recordData;
+				$data["num"] = $datas["totalData"] - (($page - 1) * 10) - $index;
+				
+				$recordDatas[$index] = $data;
 			}
 
 			$datas["recordDatas"] = $recordDatas;
-		}
 
 		$datas = $this->GetOptionDatas($datas);
 
@@ -167,6 +195,34 @@ class SituationController extends AbstractActionController {
 		$datas["password"] = $password;
 
 		return $this->SetViewModel($datas, "/situation/situation_input.phtml");
+	}
+
+	function requestAction() {
+		$idxs = $this->params()->fromPost("idxs");
+		$recordIdxs = explode(",", $idxs);
+
+		$applicantTb = $this->getServiceLocator()->get("ApplicantTable-Admin");
+		$recordTb = $this->getServiceLocator()->get("RecordTable-Admin");
+		$adminTb = $this->getServiceLocator()->get("AdminTable");
+
+		$PICDatas = $adminTb->ReadPIC();
+		foreach ($PICDatas as $adminData) {
+			foreach ($recordIdxs as $idx) {
+				$recordData = $recordTb->ReadByIdx($idx);
+				$applicantData = $applicantTb->ReadByIdx($recordData["applicant_idx"]);
+
+				$skillText = "無";
+				if ($recordData["skill"] == 0) { $skillText = "有"; } 
+		
+				$caseText = "中途（経歴職）";
+				if($recordData["case"] == 0){ $caseText = "新卒"; }
+
+				$this->mailByRequest($adminData, $applicantData);
+				$this->mailByAdmin($applicantData, $skillText, $caseText, $adminData, $applicantData);
+			}
+		}
+
+		return "success";
 	}
 
 	/** Set Layout & Make ViewModel with datas and template 
@@ -273,4 +329,106 @@ class SituationController extends AbstractActionController {
 
 		return json_encode($questionDatas);
 	}
+
+
+	function mailByRequest($managerArray,$recentPassword){
+		$mail = new MailRequest();
+
+		// 기본 메일 전송 관련 설정 로드
+		$param['config']=$this->getConfig();
+		// 메일 제목 지정 (일반적으로 DB에 메일폼 테이블을 만들어서 그것을 가져와서 아래의 title contents에 넣지만, 이건 샘플이므로 간단히.)
+		// 사람마다 변환해야 할 부분은 {{이렇게}} 메일폼에 넣어놓는다.
+
+		$param['title']="{$recentPassword["name"]}様、株式会社ジエンジサービスから、ITスキル診断依頼が到着しています。";
+		$param["content"] = "以下URLより「ITスキル診断サイト」にログインし診断を行ってください。\n\nログインID：{$recentPassword["email"]}\nログインPWD：{$recentPassword["password"]}\n\n＜ITスキル診断URL＞\nhttp://gngitskill:84/applicant/login\n\n\n※このメールに返信しないでください。";
+	
+		// 사람이름이나, URL등 고유하게 변경해야 하는 것은 이렇게 처리한다.
+		// 메일 제목과 내용 부분 모두 변환처리.
+		$param['title']=str_replace("{{user_name}}","担当者",$param['title']);
+		// print_r($param['title']);
+		// $param['content']=str_replace("{{user_name}}","変換する試験受け者名",$param['content']);
+		$param['content']=str_replace("{{URL}}","テスト",$param['content']);
+	
+
+		// 수신자 이메일과 이름 설정
+		$param['managerEmail']=$managerArray[0];
+		$param['email']=$recentPassword["email"];;
+		$param['password']="$managerArray[1]";
+		$param['name']="$managerArray[2]";
+		$param['smtp_password']="$managerArray[3]";
+	
+		// 전송
+		$result = $mail->mailsender($param);
+		// $result = $this->getServiceLocator()->get("mailsender");
+	
+		$result_row = $result['transport']->getConnection()->getResponse();
+	
+		$results = str_replace("\r","",str_replace("\n","",str_replace(" ","",$result_row[0])));
+		switch(substr(strtolower($results),0,5)){
+			// 250ok 가 나오면 전송 의뢰 성공이다.
+				case "250ok":
+					$status = 'OK';
+						break;
+				// 그외의 것은 모두 실패로 처리한다.
+				default:
+					$status = 'FALSE';
+						break;
+		}
+	  }
+
+    function mailByAdmin($arr,$skillText,$caseText,$managerArray,$applicantInfo){
+      $mail = new MailRequest();
+      
+
+      // 기본 메일 전송 관련 설정 로드
+      $param['config']=$this->getConfig();
+      // 메일 제목 지정 (일반적으로 DB에 메일폼 테이블을 만들어서 그것을 가져와서 아래의 title contents에 넣지만, 이건 샘플이므로 간단히.)
+      // 사람마다 변환해야 할 부분은 {{이렇게}} 메일폼에 넣어놓는다.
+      $param['title']="{{user_name}}様、新しい試験診断の申し込みがあります。";
+      $param["content"] = "以下の申込者の情報をご参照ください。\n\nお名前（漢字）：{$arr["name"]}\nお名前（カナ）：{$arr["kana"]}\n応募区分：{$caseText}\nITスキル：{$skillText}\n\n診断者ページ：http://gngitskill:84/admin/situation/detail/{$applicantInfo["idx"]}";
+    
+      // 사람이름이나, URL등 고유하게 변경해야 하는 것은 이렇게 처리한다.
+      // 메일 제목과 내용 부분 모두 변환처리.
+      $param['title']=str_replace("{{user_name}}","申し込み担当者",$param['title']);
+      // print_r($param['config']);
+      // $param['content']=str_replace("{{user_name}}","変換する試験受け者名",$param['content']);
+      $param['content']=str_replace("{{URL}}","テスト",$param['content']);
+    
+    
+      // 수신자 이메일과 이름 설정
+      $param['email']=$managerArray[0];
+      $param['password']="$managerArray[1]";
+      $param['name']="$managerArray[2]";
+      $param['smtp_password']="$managerArray[3]";
+      // 전송
+      $result = $mail->mailAdmin($param);
+      // $result = $this->getServiceLocator()->get("mailsender");
+    
+      $result_row = $result['transport']->getConnection()->getResponse();
+    
+      $results = str_replace("\r","",str_replace("\n","",str_replace(" ","",$result_row[0])));
+      switch(substr(strtolower($results),0,5)){
+        // 250ok 가 나오면 전송 의뢰 성공이다.
+          case "250ok":
+            $status = 'OK';
+              break;
+          // 그외의 것은 모두 실패로 처리한다.
+          default:
+            $status = 'FALSE';
+              break;
+      }
+      }
+			public function getConfig(){
+				if(isset($_SERVER['DOCUMENT_ROOT']) && $_SERVER['DOCUMENT_ROOT']!=''){
+						$droot = $_SERVER['DOCUMENT_ROOT'];
+				}else{
+						$droot = "abc";
+				}
+				if(is_file($droot.'/../config/autoload/local.php')){
+						$config = require $droot.'/../config/autoload/local.php';
+				}else{
+						$config = require $droot.'/../config/autoload/global.php';
+				}
+				return $config;
+		}
 }

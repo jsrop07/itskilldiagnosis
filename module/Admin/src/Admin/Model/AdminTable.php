@@ -116,6 +116,11 @@ class AdminTable {
 		return $this->sql->prepareStatementForSqlObject($qry)->execute();
 	}
 
+	public function ReadPic() { 
+		$qry = $this->sql->select("admin")->where(["pic" => "y", "date_end" => null]);
+		return iterator_to_array($this->sql->prepareStatementForSqlObject($qry)->execute());	
+	}
+
 	/** Update date_login data To Current time By Code */
 	public function UpdateDateLogin($code)
 	{

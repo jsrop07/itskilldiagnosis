@@ -57,4 +57,63 @@ class RecordTable {
 		$qry = $this->sql->select("record")->where(["idx" => $idx]);
 		return $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
 	}
+
+	public function ReadNewListByOffset($offset) {
+		$qry = $this->sql->select("record")->where(["diagnosis_date" => null])->order(["apply_date" => "DESC"])->limit(10)->offset($offset);
+		return iterator_to_array($this->sql->prepareStatementForSqlObject($qry)->execute());
+	}
+	
+	public function ReadRestListByOffsetnLimit($offset, $limit) {
+		$where = new Where();
+		$where->isNotNull("diagnosis_date");
+
+		$qry = $this->sql->select("record")->where($where)->order(["apply_date" => "DESC"])->limit($limit)->offset($offset);
+		return iterator_to_array($this->sql->prepareStatementForSqlObject($qry)->execute());
+	}
+
+	public function ReadNewListBySearchnOffsetnAlign($whereDatas, $offset, $order) {
+		$where = new Where();
+		$where->isNull("diagnosis_date");
+		if (!empty($whereDatas)) {
+			$where->and->nest()->equalTo("applicant_idx", $whereDatas[0]);
+			unset($whereDatas[0]);
+			foreach ($whereDatas as $data) {
+				$where->or->equalTo("applicant_idx", $data);
+			}
+		}
+	
+		$qry = $this->sql->select("record")->where($where)->order($order)->limit(10)->offset($offset);
+		return iterator_to_array($this->sql->prepareStatementForSqlObject($qry)->execute());
+	}
+	
+	public function ReadRestListBySearchnOffsetnLimitnAlign($whereDatas, $offset, $limit, $order) {
+		$where = new Where();
+		$where->isNotNull("diagnosis_date");
+		if (!empty($whereDatas)) {
+			$where->and->nest()->equalTo("applicant_idx", $whereDatas[0]);
+			unset($whereDatas[0]);
+			foreach ($whereDatas as $data) {
+				$where->or->equalTo("applicant_idx", $data);
+			}
+		}
+
+		$qry = $this->sql->select("record")->where($where)->order($order)->limit($limit)->offset($offset);
+		return iterator_to_array($this->sql->prepareStatementForSqlObject($qry)->execute());
+	}
+
+	public function CountRecordData() {
+		$qry = $this->sql->select("record")->columns(array('COUNT'=>new \Zend\Db\Sql\Expression('COUNT(*)')));
+		return $this->sql->prepareStatementForSqlObject($qry)->execute()->current()["COUNT"];
+	}
+	public function CountApplyData() {
+		$qry = $this->sql->select("record")->where(["request_date" => null])->columns(array('COUNT'=>new \Zend\Db\Sql\Expression('COUNT(*)')));
+		return $this->sql->prepareStatementForSqlObject($qry)->execute()->current()["COUNT"];
+	}
+	public function CountRequestData() {
+		$where = new Where();
+		$where->isNotNull("request_date")->and->isNull("execute_date");
+
+		$qry = $this->sql->select("record")->where($where)->columns(array('COUNT'=>new \Zend\Db\Sql\Expression('COUNT(*)')));
+		return $this->sql->prepareStatementForSqlObject($qry)->execute()->current()["COUNT"];
+	}
 }

@@ -330,7 +330,7 @@ switch ($recordArray["class1st"]) {
 	</div>
 <div class="btn-place" style="margin-top: 32px;">
 	<button type="button" class="emegra cancel" onclick="self.location.href='../../situation/list';">戻る</button>
-  <button class="emegra"  id="btn_save" name="editDatas" value="btn_save"  style="width:150px;" onclick=savaConfirm()>一時保存</button>
+  <button class="emegra"  id="btn_save" name="editDatas" value="btn_save"  style="width:150px;" onclick=saveConfirm()>一時保存</button>
 	<button class="emegra"  id="btn_submit" name="editDatas" value="btn_submit"  style="width:150px;" onclick=editConfirm()>ITスキル診断依頼</button>
 </div>
 </form>
@@ -581,7 +581,7 @@ switch (element.value) {
     form.submit();
 		
 	}
-  function savaConfirm(){
+  function saveConfirm(){
     if (form.skill.value == "") {
             alert("ITスキル有無を入力してください。");
             setTimeout("form.skill.focus()",100);

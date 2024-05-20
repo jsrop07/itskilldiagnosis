@@ -199,7 +199,7 @@ class SituationController extends AbstractActionController {
 				if($recordData["case"] == 0){ $caseText = "新卒"; }
 
 				$this->mailByRequest($adminData, $applicantData);
-				$this->mailByAdmin($applicantData, $skillText, $caseText, $adminData, $applicantData);
+				$this->mailByAdmin($applicantData, $skillText, $caseText, $adminData, $recordData);
 
 				try { $recordTb->RequestByIdx($idx); }
 				catch (\Exception $e) { die($e->getMessage()); }

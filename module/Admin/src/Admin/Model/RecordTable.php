@@ -75,33 +75,41 @@ class RecordTable {
 		$where = new Where();
 		$where->isNull("diagnosis_date");
 		if (!empty($whereDatas)) {
-			$where->and->nest()->equalTo("applicant_idx", $whereDatas[0]);
-			unset($whereDatas[0]);
-			foreach ($whereDatas as $data) {
-				$where->or->equalTo("applicant_idx", $data);
-			}
+			$where->and->nest()->like("name", "%" . $whereDatas . "%")
+			->or->like("kana", "%" . $whereDatas . "%")->unnest();
 		}
-	
+
 		$qry = $this->sql->select("record")->where($where)->order($order)->limit(10)->offset($offset);
+		$qry->join("applicant", "record.applicant_idx = applicant.idx", array("name" => "name", "kana" => "kana"), "INNER");
 		return iterator_to_array($this->sql->prepareStatementForSqlObject($qry)->execute());
 	}
-	
 	public function ReadRestListBySearchnOffsetnLimitnAlign($whereDatas, $offset, $limit, $order) {
 		$where = new Where();
 		$where->isNotNull("diagnosis_date");
 		if (!empty($whereDatas)) {
-			$where->and->nest()->equalTo("applicant_idx", $whereDatas[0]);
-			unset($whereDatas[0]);
-			foreach ($whereDatas as $data) {
-				$where->or->equalTo("applicant_idx", $data);
-			}
+			$where->and->nest()->like("name", "%" . $whereDatas . "%")
+			->or->like("kana", "%" . $whereDatas . "%")->unnest();
 		}
 
-		$qry = $this->sql->select("record")->where($where)->order($order)->limit($limit)->offset($offset);
+		$qry = $this->sql->select("record")->where($where)->order($order)->limit(10)->offset($offset);
+		$qry->join("applicant", "record.applicant_idx = applicant.idx", array("name" => "name", "kana" => "kana"), "INNER");
 		return iterator_to_array($this->sql->prepareStatementForSqlObject($qry)->execute());
 	}
+	public function GetListBySearch($whereDatas) {
+		$where = new Where();
+		$where->isNotNull("diagnosis_date");
+		if (!empty($whereDatas)) {
+			$where->and->nest()->like("name", "%" . $whereDatas . "%")
+			->or->like("kana", "%" . $whereDatas . "%")->unnest();
+		}
 
-	public function CountRecordData() {
+		$qry = $this->sql->select("record")->where($where);
+		$qry->join("applicant", "record.applicant_idx = applicant.idx", array("name" => "name", "kana" => "kana"), "INNER");
+		$paginatorAdapter = new DbSelect($qry, $this->adapter);
+		return new Paginator($paginatorAdapter);
+	}
+
+	public function CountAllData() {
 		$qry = $this->sql->select("record")->columns(array('COUNT'=>new \Zend\Db\Sql\Expression('COUNT(*)')));
 		return $this->sql->prepareStatementForSqlObject($qry)->execute()->current()["COUNT"];
 	}
@@ -119,6 +127,6 @@ class RecordTable {
 
 	public function RequestByIdx($idx) {
 		$qry = $this->sql->update("record")->where(["idx" => $idx])->set(["request_date" => date("Y-m-d H:i:s")]);
-		return $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
+		return $this->sql->prepareStatementForSqlObject($qry)->execute();
 	}
 }

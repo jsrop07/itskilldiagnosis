@@ -199,7 +199,7 @@ switch ($recordArray["class1st"]) {
             <option value="インフラ" <?php echo($isClass1st5) ? "selected" : "" ;?>>インフラ</option>
             <option value="その他"<?php echo ($isClass1st1 || $isClass1st2 || $isClass1st3 || $isClass1st4 || $isClass1st5) ? "" : "selected"; ?>>その他</option>
           </select>
-					<input class="form-control w-50" style="margin-left: 10px;" type="text" placeholder="その他の場合" id="otherclass1st"  name="class1st" maxlength='20' value='<?php echo ($recordArray['class1st']) ?>'  hidden/>
+					<input class="form-control w-50" style="margin-left: 10px;" type="text" placeholder="その他の場合" id="otherclass1st"  name="class1st" maxlength='20' value='<?php echo ($recordArray['class1st']) == null ? "その他" : "" ?>'  hidden/>
 				</dd>
 
 				<dt class="essential" id=class2ndTitle>問題種別</dt>
@@ -221,11 +221,8 @@ switch ($recordArray["class1st"]) {
             }
         }
 					?>
-					<option value="<?php echo $recordArray["class2nd"]; ?>" hidden><?php echo $class2ndText; ?></option>
+					<option value="33" hidden><?php echo $class2ndText; ?></option>
 					<?php foreach ($optionDatas["class2nd"][$recordArray["class1st"]] as $data): ?>
-						<option value="<?php echo $data["idx"]; ?>">
-							<?php echo $data["text"]; ?>
-						</option>
 					<?php endforeach; ?>
 				<?php endif; ?>
 			</select>
@@ -252,7 +249,7 @@ switch ($recordArray["class1st"]) {
 				<dt class="essential">診断問項ID</dt>
 				<dd>
 					<input name="code" type="hidden" style="width:220px;" value="<?php echo $recordArray['diagnosis_code'] !=NULL ?  $recordArray['diagnosis_code'] : "" ?>">
-                    <div id="codeDisplay" name="codeName" style="padding-right:5px;cursur:pointer;" onclick="self.location.href='../../diagnosis/detail/<?php echo $diagnosisArray['idx'] ?>';"><?php echo $recordArray['diagnosis_code'] !=NULL ? $recordArray['diagnosis_code'] : "未登録" ?></div>
+            <div id="codeDisplay" name="codeName" style="padding-right:5px;cursur:pointer;" onclick="self.location.href='../../diagnosis/detail/<?php echo $diagnosisArray['idx'] ?>';"><?php echo $recordArray['diagnosis_code'] !=NULL ? $recordArray['diagnosis_code'] : "未登録" ?></div>
 					<button type="button" data-bs-toggle="modal" data-bs-target="#staticBackdrop" style="padding: 0px 10px ;border-radius: 8px; background:linear-gradient(111deg, #50D7C7 0%, #40ADF0 100%); color:white;" onclick="diagnosisData();">検索</button>
 				</dd> 
 				
@@ -465,7 +462,7 @@ switch ($recordArray["class1st"]) {
       class1stSelect.value="その他";
       class1stOtherSelect.value="その他";
       class1stSelect.setAttribute('disabled','disabled')
-      class2ndSelect.setAttribute('disabled', 'disabled');
+      // option.setAttribute('disabled', 'disabled');
       class2ndSelect.innerText=""
       var option = document.createElement("option");
       option.value = "33";
@@ -522,8 +519,8 @@ document.getElementById('class1stId').addEventListener('change', function(event)
 	var selectedOption = event.target.value;
 
 	if (selectedOption === "その他") {
-		form.class1st.value = "";
-        form.class1st.hidden = false;
+		  form.class1st.value = "";
+      form.class1st.hidden = false;
     } else if(selectedOption != "その他") {
         form.class1st.hidden = true;
 		// form.education.style.display = 'none';

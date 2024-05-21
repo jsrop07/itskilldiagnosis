@@ -192,14 +192,14 @@ switch ($recordArray["class1st"]) {
 				
 				<dd>
 					<select class="form-select"  id="class1stId" style="width:220px;" onchange="ChangeClass1stValue(this)"  onclick="ChangeClass1st(this)">
-					<option value="WEB" <?php echo($isClass1st1) ? "selected" : "" ;?>>WEB</option>
-					<option value="IT基礎" <?php echo($isClass1st2) ? "selected" : "" ;?>>IT基礎</option>
-					<option value="モバイル" <?php echo($isClass1st3) ? "selected" : "" ;?>>モバイル</option>
-					<option value="サーバ" <?php echo($isClass1st4) ? "selected" : "" ;?>>サーバ</option>
-					<option value="インフラ" <?php echo($isClass1st5) ? "selected" : "" ;?>>インフラ</option>
-					<option value="その他"<?php echo ($isClass1st1 || $isClass1st2 || $isClass1st3 || $isClass1st4 || $isClass1st5) ? "" : "selected"; ?>>その他</option>
-                    </select>
-					<input class="form-control w-50" style="margin-left: 10px;" type="text" placeholder="その他の場合" id="otherclass1st"  name="class1st" maxlength='20' value='<?php echo ($recordArray['class1st']) ?>'  />
+            <option value="WEB" <?php echo($isClass1st1) ? "selected" : "" ;?>>WEB</option>
+            <option value="IT基礎" <?php echo($isClass1st2) ? "selected" : "" ;?>>IT基礎</option>
+            <option value="モバイル" <?php echo($isClass1st3) ? "selected" : "" ;?>>モバイル</option>
+            <option value="サーバ" <?php echo($isClass1st4) ? "selected" : "" ;?>>サーバ</option>
+            <option value="インフラ" <?php echo($isClass1st5) ? "selected" : "" ;?>>インフラ</option>
+            <option value="その他"<?php echo ($isClass1st1 || $isClass1st2 || $isClass1st3 || $isClass1st4 || $isClass1st5) ? "" : "selected"; ?>>その他</option>
+          </select>
+					<input class="form-control w-50" style="margin-left: 10px;" type="text" placeholder="その他の場合" id="otherclass1st"  name="class1st" maxlength='20' value='<?php echo ($recordArray['class1st']) ?>'  hidden/>
 				</dd>
 
 				<dt class="essential" id=class2ndTitle>問題種別</dt>
@@ -464,13 +464,27 @@ switch ($recordArray["class1st"]) {
     if (selectedValue === '1') {
       class1stSelect.value="その他";
       class1stOtherSelect.value="その他";
-      // form.class1stOtherSelect.hidden=true;
+      class1stSelect.setAttribute('disabled','disabled')
+      class2ndSelect.setAttribute('disabled', 'disabled');
       class2ndSelect.innerText=""
       var option = document.createElement("option");
       option.value = "33";
       option.innerText = "テキスト";
       class2ndSelect.appendChild(option);
       class2ndSelect.value = "33";
+      class1stOtherSelect.style.display='none';
+      // class1stOtherSelect.querySelector('input').disabled = true;
+    }
+    else{
+        class2ndSelect.style.display='block';    
+        class1stSelect.style.display='block';
+        class1stOtherSelect.style.display='block';
+        class1stOtherSelect.value="";
+        console.log(class1stOtherSelect.value);
+
+        class2ndSelect.disabled=false;
+        class1stSelect.disabled = false;
+        // class1stOtherSelect.querySelector('input').disabled = false;
     }
   }	
 )

@@ -59,11 +59,6 @@ class SituController extends AbstractActionController {
 
 		$situTb = $this->getServiceLocator()->get("situTable");
 
-    
-		$managerInfo=$situTb->readByManagerInfo();
-    
-		$managerArray=[$managerInfo["id"], $managerInfo["password"],$managerInfo["name"],$managerInfo["smtp_password"]];		
-
 		// $applicantInfo = $situTb->readById($post['recordindex']);
 
 		if($inputDatas == "btn_submit"){
@@ -85,18 +80,7 @@ class SituController extends AbstractActionController {
       $code = $this->params()->fromPost('code');	
       $method = $this->params()->fromPost('method');	
 
-			if ($skill == 0) {
-				$skillText = '有';
-			} else {
-				$skillText = '無';
-			}
-
-			if($case == 0){
-				$caseText = "新卒";
-			}else{
-				$caseText = "中途（経歴職）";
-			}
-			$arr = [
+			$recordData = [
 				'email' => $email,
         'password' => $password,
 				'name' => $name,
@@ -115,11 +99,11 @@ class SituController extends AbstractActionController {
         'code' => $code,
         'method' => $method
 			];      
-      $situTb->insertAndUpdateApplication($arr);
+      $situTb->insertAndUpdateApplication($recordData);
        
-      $applicantInfo = $situTb->getRecord();
+      $applicantData = $situTb->getRecord();
        
-      $this->mailByAdmin($arr,$skillText,$caseText,$managerArray,$applicantInfo);
+      $this->mailByAdmin($recordData,$applicantData);
 		  echo "
 			<script>
 			alert('依頼が完了しました')
@@ -147,7 +131,7 @@ class SituController extends AbstractActionController {
 			$other = $this->params()->fromPost('other');	
       $code = $this->params()->fromPost('code');	
       $method = $this->params()->fromPost('method');	
-     $saveArr=[
+     	$savedData=[
         'email' => $email,
         'password' => $password,
 				'name' => $name,
@@ -168,7 +152,7 @@ class SituController extends AbstractActionController {
         'save' => "save"
       ];
 
-      $situTb->insertAndUpdateApplication($saveArr);
+      $situTb->insertAndUpdateApplication($savedData);
       echo "
       <script>
       alert('保存が完了しました。')
@@ -230,8 +214,6 @@ class SituController extends AbstractActionController {
 		$editDatas  = (isset($post['editDatas']) && $post['editDatas'] !='')  ? $post['editDatas'] : '';
 		$recordTb = $this->getServiceLocator()->get("RecordTable-Admin");
 		$situTb = $this->getServiceLocator()->get("situTable");
-		$managerInfo=$situTb->readByManagerInfo();
-		$managerArray=[$managerInfo["id"], $managerInfo["password"],$managerInfo["name"],$managerInfo["smtp_password"]];		
 		$applicantInfo = $recordTb->ReadByIdx($post['recordindex']);
 
 		$applicantInfos = $situTb->readById($applicantInfo['applicant_idx']);
@@ -261,7 +243,7 @@ class SituController extends AbstractActionController {
 			$situTb->updateApplicantInfo($applicantWhere, $applicantSet);	
 			$recentPassword = $situTb->readById($applicantInfos);
 
-			$this->mailByRequest($managerArray,$recentPassword);
+			$this->mailByRequest($recentPassword);
 
 			echo "
 			<script>
@@ -300,16 +282,17 @@ class SituController extends AbstractActionController {
 		";	
 		}
 	}
-	function mailByRequest($managerArray,$recentPassword){
+	function mailByRequest($applicantData){
 		$mail = new MailRequest();
 
+		$situTb = $this -> getServiceLocator() -> get('situTable');
 		// 기본 메일 전송 관련 설정 로드
 		$param['config']=$this->getConfig();
 		// 메일 제목 지정 (일반적으로 DB에 메일폼 테이블을 만들어서 그것을 가져와서 아래의 title contents에 넣지만, 이건 샘플이므로 간단히.)
 		// 사람마다 변환해야 할 부분은 {{이렇게}} 메일폼에 넣어놓는다.
 
-		$param['title']="{$recentPassword["name"]}様、株式会社ジエンジサービスから、ITスキル診断依頼が到着しています。";
-		$param["content"] = "以下URLより「ITスキル診断サイト」にログインし診断を行ってください。\n\nログインID：{$recentPassword["email"]}\nログインPWD：{$recentPassword["password"]}\n\n＜ITスキル診断URL＞\nhttp://gngitskill:84/applicant/login\n\n\n※このメールに返信しないでください。";
+		$param['title']="{$applicantData["name"]}様、株式会社ジエンジサービスから、ITスキル診断依頼が到着しています。";
+		$param["content"] = "以下URLより「ITスキル診断サイト」にログインし診断を行ってください。\n\nログインID：{$applicantData["email"]}\nログインPWD：{$applicantData["password"]}\n\n＜ITスキル診断URL＞\nhttp://gngitskill:84/applicant/login\n\n\n※このメールに返信しないでください。";
 	
 		// 사람이름이나, URL등 고유하게 변경해야 하는 것은 이렇게 처리한다.
 		// 메일 제목과 내용 부분 모두 변환처리.
@@ -320,12 +303,15 @@ class SituController extends AbstractActionController {
 	
 
 		// 수신자 이메일과 이름 설정
-		$param['managerEmail']=$managerArray[0];
-		$param['email']=$recentPassword["email"];;
-		$param['password']="$managerArray[1]";
-		$param['name']="$managerArray[2]";
-		$param['smtp_password']="$managerArray[3]";
+		$adminData = $situTb->readByManagerInfo();
 	
+
+		$param['managerEmail']=$adminData['id'];
+		$param['email']=$applicantData["email"];;
+		$param['password']=$adminData['password'];
+		$param['name']=$adminData['name'];
+		$param['smtp_password']=$adminData['smtp_password'];
+
 		// 전송
 		$result = $mail->mailsender($param);
 		// $result = $this->getServiceLocator()->get("mailsender");
@@ -345,17 +331,24 @@ class SituController extends AbstractActionController {
 		}
 	  }
 
-    function mailByAdmin($arr,$skillText,$caseText,$managerArray,$applicantInfo){
+    function mailByAdmin($recordData,$applicantData){
       $mail = new MailRequest();
-      
 
+			$situTb = $this -> getServiceLocator() -> get('situTable');
+
+			$skillText = "無";
+			if ($recordData["skill"] == 0) { $skillText = "有"; } 
+
+			$caseText = "中途（経歴職）";
+			if ($recordData["case"] == 0) { $caseText = "新卒"; } 
+		
       // 기본 메일 전송 관련 설정 로드
       $param['config']=$this->getConfig();
       // 메일 제목 지정 (일반적으로 DB에 메일폼 테이블을 만들어서 그것을 가져와서 아래의 title contents에 넣지만, 이건 샘플이므로 간단히.)
       // 사람마다 변환해야 할 부분은 {{이렇게}} 메일폼에 넣어놓는다.
       $param['title']="{{user_name}}様、新しい試験診断の申し込みがあります。";
-      $param["content"] = "以下の申込者の情報をご参照ください。\n\nお名前（漢字）：{$arr["name"]}\nお名前（カナ）：{$arr["kana"]}\n応募区分：{$caseText}\nITスキル：{$skillText}\n\n診断者ページ：http://gngitskill:84/admin/situation/detail/{$applicantInfo["idx"]}";
-    
+      $param["content"] = "以下の申込者の情報をご参照ください。\n\nお名前（漢字）：{$recordData["name"]}\nお名前（カナ）：{$recordData["kana"]}\npwd：{$recordData["password"]}\n応募区分：{$caseText}\nITスキル：{$skillText}\n診断方法：{$recordData['method']}\n\n診断者ページ：http://gngitskill:84/admin/situation/detail/{$applicantData["idx"]}\n\n＜ITスキル診断URL＞\nhttp://gngitskill:84/applicant/login";
+
       // 사람이름이나, URL등 고유하게 변경해야 하는 것은 이렇게 처리한다.
       // 메일 제목과 내용 부분 모두 변환처리.
       $param['title']=str_replace("{{user_name}}","申し込み担当者",$param['title']);
@@ -363,12 +356,13 @@ class SituController extends AbstractActionController {
       // $param['content']=str_replace("{{user_name}}","変換する試験受け者名",$param['content']);
       $param['content']=str_replace("{{URL}}","テスト",$param['content']);
     
-    
+			$adminData = $situTb->readByManagerInfo();
+
       // 수신자 이메일과 이름 설정
-      $param['email']=$managerArray[0];
-      $param['password']="$managerArray[1]";
-      $param['name']="$managerArray[2]";
-      $param['smtp_password']="$managerArray[3]";
+      $param['email']=$adminData['id'];
+      $param['password']=$adminData['password'];
+      $param['name']=$adminData['name'];
+      $param['smtp_password']=$adminData['smtp_password'];
       // 전송
       $result = $mail->mailAdmin($param);
       // $result = $this->getServiceLocator()->get("mailsender");

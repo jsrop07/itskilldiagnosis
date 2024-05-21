@@ -49,38 +49,120 @@ class SituationController extends AbstractActionController {
 		$offset = ($page - 1) * 10;
 		if (!empty($query)) {
 			$sqlWhere = array();
-			if (isset($query["name"])) {
-				$applicantTb = $this->getServiceLocator()->get("ApplicantTable-Admin");
-				try { $applicantDatas = $applicantTb->ReadByName($query["name"]); }
-				catch (\Exception $e) { print_r($e->getMessage()); exit; }
+			/*
+				作成：朴昰成
+				修正：朴昰成
+				修正日：24/05/21
+			*/
+	
+			/* 修正前：
+				if (isset($query["name"])) {
+					$applicantTb = $this->getServiceLocator()->get("ApplicantTable-Admin");
+					try { $applicantDatas = $applicantTb->ReadByName($query["name"]); }
+					catch (\Exception $e) { print_r($e->getMessage()); exit; }
 
-				foreach ($applicantDatas as $data) {
-					$sqlWhere[] = $data["idx"];
+					foreach ($applicantDatas as $data) {
+						$sqlWhere[] = $data["idx"];
+					}
+				}
+				$sqlWhere = $query["name"];
+
+				$sqlOrder["apply_date"] = "DESC";
+				if (isset($query["align"])) {
+					unset($sqlOrder["apply_date"]);
+					$sqlOrder[explode("-", $query["align"])[0]] = explode("-", $query["align"])[1];
+				}
+			*/
+
+			/* 修正後： */
+			$datas["searchDatas"] = $query;
+
+			if (isset($query["name"])) { $sqlWhere["name"] = $query["name"]; }
+
+			if (isset($query["pick"])) {
+				switch ($query["pick"]) {
+					case "apply":
+						$sqlWhere["request_date"] = "null";
+						break;
+					case "request":
+						$sqlWhere["request_date"] = "not null";
+						$sqlWhere["execute_date"] = "null";
+						break;
+					case "execute";
+						$sqlWhere["execute_date"] = "not null";
+						break;
+					default:
+						$dict = explode("-", $query["pick"]);
+						$sqlWhere[$dict[0]] = $dict[1];
+						break;
 				}
 			}
-			$sqlWhere = $query["name"];
+			/* ここまで */
 
-			$sqlOrder["apply_date"] = "DESC";
-			if (isset($query["align"])) {
-				unset($sqlOrder["apply_date"]);
-				$sqlOrder[explode("-", $query["align"])[0]] = explode("-", $query["align"])[1];
-			}
+			/*
+				作成：朴昰成
+				修正：朴昰成
+				修正日：24/05/21
+			*/
 
-			try { $newRecordDatas = $recordTb->ReadNewListBySearchnOffsetnAlign($sqlWhere, $offset, $sqlOrder); }
+			/* 修正前：
+				try { $newRecordDatas = $recordTb->ReadNewListBySearchnOffsetnAlign($sqlWhere, $offset, $sqlOrder); }
+				catch (\Exception $e) { print_r($e->getMessage()); exit; }
+
+				if (count($newRecordDatas) <= 10) {
+					$limit = 10 - count($newRecordDatas);
+					try { $restRecordDatas = $recordTb->ReadRestListBySearchnOffsetnLimitnAlign($sqlWhere, $offset, $limit, $sqlOrder); }
+					catch (\Exception $e) { print_r($e->getMessage()); exit; }
+					
+					$recordDatas = array_merge($newRecordDatas, $restRecordDatas);
+				}
+				else {
+					$recordDatas = $newRecordDatas;
+				}
+				$paginationData = $recordTb->GetListBySearch($sqlWhere);
+				$datas["searchDatas"] = $query;
+			*/
+
+			/* 修正後： */
+			try { $newRecordDatas = $recordTb->ReadNewListBySearchnOffset($sqlWhere, $offset); }
 			catch (\Exception $e) { print_r($e->getMessage()); exit; }
 
-			if (count($newRecordDatas) <= 10) {
-				$limit = 10 - count($newRecordDatas);
-				try { $restRecordDatas = $recordTb->ReadRestListBySearchnOffsetnLimitnAlign($sqlWhere, $offset, $limit, $sqlOrder); }
+			if (count($newRecordDatas) < 10) {
+				$offset -= $recordTb->CountNewData();
+				$limit = 10;
+				if ($offset < 0) {
+					$limit += $offset;
+					$offset = 0;
+				}
+
+				try { $offset -= $recordTb->CountNewDataBySearch($sqlWhere); }
 				catch (\Exception $e) { print_r($e->getMessage()); exit; }
-				
+				print_r("access"); exit;
+
+				try { $restRecordDatas = $recordTb->ReadRestListBySearchnOffsetnLimit($sqlWhere, $offset, $limit); }
+				catch (\Exception $e) { print_r($e->getMessage()); exit; }
+
 				$recordDatas = array_merge($newRecordDatas, $restRecordDatas);
 			}
 			else {
 				$recordDatas = $newRecordDatas;
 			}
-			$paginationData = $recordTb->GetListBySearch($sqlWhere);
-			$datas["searchDatas"] = $query;
+			try { $paginationData = $recordTb->GetListBySearch($sqlWhere); }
+			catch (\Exception $e) { print_r($e->getMessage()); exit; }
+			/* ここまで */
+
+			/*
+				作成：朴昰成
+				作成日：24/05/21
+			*/
+			try {
+				$datas["totalData"] = $recordTb->CountAllDataBySearch($sqlWhere);
+				$datas["totalApply"] = $recordTb->CountApplyDataBySearch($sqlWhere);
+				$datas["totalRequest"] = $recordTb->CountRequestDataBySearch($sqlWhere);
+			} catch (\Exception $e) {
+				print_r($e->getMessage());
+				exit;
+			}
 		}
 		else {
 			try { $newRecordDatas = $recordTb->ReadNewListByOffset($offset); }
@@ -88,6 +170,18 @@ class SituationController extends AbstractActionController {
 
 			if (count($newRecordDatas) <= 10) {
 				$limit = 10 - count($newRecordDatas);
+				/*
+					作成：朴昰成
+					作成日：朴昰成
+				*/
+				$offset -= $recordTb->CountNewData();
+				$limit = 10;
+				if ($offset < 0) {
+					$limit += $offset;
+					$offset = 0;
+				}
+				/* ここまで */
+
 				try { $restRecordDatas = $recordTb->ReadRestListByOffsetnLimit($offset, $limit); }
 				catch (\Exception $e) { print_r($e->getMessage()); exit; }
 
@@ -97,18 +191,38 @@ class SituationController extends AbstractActionController {
 				$recordDatas = $newRecordDatas;
 			}
 			$paginationData = $recordTb->GetAllList();
+			/*
+				作成：朴昰成
+				作成日：24/05/21
+			*/
+
+			try {
+				$datas["totalData"] = $recordTb->CountAllData();
+			} catch (\Exception $e) {
+				print_r($e->getMessage());
+				exit;
+			}
+			$datas["totalApply"] = $recordTb->CountApplyData();
+			$datas["totalRequest"] = $recordTb->CountRequestData();
+			/* ここまで */
 		}
 		// print_r($recordDatas); exit;
 
-		try {
-			$datas["totalApply"] = $recordTb->CountApplyData();
-			$datas["totalRequest"] = $recordTb->CountRequestData();
-			$datas["totalData"] = $recordTb->CountAllData();
-		} catch (\Exception $e) {
-			print_r($e->getMessage());
-			exit;
-		}
+		/*
+			作成：朴昰成
+			削除：朴昰成
+			削除日：24/05/21
 
+		削除前：
+			try {
+				$datas["totalApply"] = $recordTb->CountApplyData();
+				$datas["totalRequest"] = $recordTb->CountRequestData();
+				$datas["totalData"] = $recordTb->CountAllData();
+			} catch (\Exception $e) {
+				print_r($e->getMessage());
+				exit;
+			}
+		*/
 		$applicantTb = $this->getServiceLocator()->get("ApplicantTable-Admin");
 		$diagnosisTb = $this->getServiceLocator()->get("DiagnosisTable-Admin");
 		// Extract output datas and Add numbering

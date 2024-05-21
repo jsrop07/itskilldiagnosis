@@ -20,6 +20,8 @@ use Admin\Model\SituTable;
 use Admin\Model\MailRequest;
 
 use Zend\Mvc\ModuleRouteListener;
+use Zend\Db\ResultSet\ResultSet;
+use Zend\Db\TableGateway\TableGateway;
 use Zend\Mvc\MvcEvent;
 
 class Module {

@@ -90,6 +90,17 @@ class DiagnosisTable {
 		return $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
 	}
 
+	/*
+		作成：朴昰成
+	/** Read Table record By Code
+	 * @param string $code
+	 * @return mixed Record
+	 */
+	public function ReadForDiagnosisByCodenDate($code, $date) {
+		$qry = $this->sql->select("diagnosis")->where(["code" => $code]);
+		return $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
+	}
+
 	/** Update date_end By idx
 	 * @param int $idx
 	*/

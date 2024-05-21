@@ -8,8 +8,6 @@
 		作成：朴昰成
 		作成日：24/05/20
 	*/
-	$query = explode("?", $url)[1];
-
 	$selectDatas["apply"] = "新規";
 	$selectDatas["request"] = "診断";
 	$selectDatas["execute"] = "終了";
@@ -19,19 +17,17 @@
 	$selectDatas["education-専門卒"] = "専門卒";
 	$selectDatas["education-体格卒"] = "体格卒";
 	$selectDatas["education-大学院卒"] = "大学院卒";
-	$selectDatas["education-other"] = "その他（学歴）";
 	// foreach ($class1stDatas as $data) {
 	// 	$selectDatas["class1st-" . $data["text"]] = $data["text"];
 	// }
-	$selectDatas["class1st-other"] = "その他（分野）";
 	$selectDatas["rank-A"] = "等級A";
 	$selectDatas["rank-B"] = "等級B";
 	$selectDatas["rank-C"] = "等級C";
 	$selectDatas["rank-D"] = "等級D";
 
-	$isSelect = false;
-	if (isset($selectDatas["select"])) {
-		$isSelect = true;
+	$isPick = false;
+	if (isset($searchDatas["pick"])) {
+		$isPick = true;
 	}
 	/* ここまで */
 ?>
@@ -133,7 +129,7 @@
 					<option value="">全て</option>
 
 					<?php foreach ($selectDatas as $value => $text): ?>
-						<option value="<?= $value; ?><?php echo ($isSelect && $serachDatas["select"] == $value) ? " selected" : ""; ?>"><?= $text; ?></option>
+						<option value="<?= $value; ?>"<?php echo ($isPick && $searchDatas["pick"] == $value) ? " selected" : ""; ?>><?= $text; ?></option>
 					<?php endforeach; ?>
 				</select>
 			</div>
@@ -176,18 +172,21 @@
 			</thead>
 			<tbody>
 				<?php foreach ($recordDatas as $data): ?>
-					<tr <?php echo ($data["diagnosis_code"] == null) ? "style='background: skyblue;'" : ""; ?>>
+					<tr <?php echo ($data["diagnosis_code"] == null) ? "style='background: lightcyan;'" : ""; ?>>
 						<td><?php echo $data["num"]; ?></td>
 						<td><?php echo $data["status"]; ?></td>
+
 						<td><?php echo date("y.m.d", strtotime($data["apply_date"])); ?></td>
 						<td><?php echo $caseTexts[$data["case"]]; ?></td>
 						<td class="link" onclick="self.location.href='./<?php echo ($data['diagnosis_date'] == null) ? 'edit' : 'detail'; ?>/<?php echo $data['idx']; ?>';" style="text-align: center; color: blue"><?php echo $data["name"]; ?></td>
 						<td><?php echo $data["education"]; ?></td>
 						<td><?php echo ($data["major"] != null) ? $data["major"] : "無"; ?></td>
 						<td><?php echo ($data["career"] != null) ? $data["career"] . "年" : "無"; ?></td>
+
 						<td><?php echo ($data["request_date"] != null) ? date("y.m.d", strtotime($data["request_date"])) : "未依頼"; ?></td>
 						<td><?php echo (isset($data["level"])) ? $levelTexts[$data["level"]] : "未設定"; ?></td>
 						<td><?php echo ($data["diagnosis_code"] != null) ? $data["diagnosis_code"] : "未設定"; ?></td>
+
 						<?php if ($data["execute_date"] != null): ?>
 							<td><?php echo date("y.m.d", strtotime($data["execute_date"])); ?></td>
 							<td><?php echo $data["get_point"]; ?>/100</td>
@@ -197,6 +196,7 @@
 							<td>未実行</td>
 							<td>未実行</td>
 						<?php endif; ?>
+
 						<td><input name="checkIdx" type="checkbox" value="<?php echo $data["idx"]; ?>" onclick="Checking(this);" style="cursor: pointer;"<?php echo ($data["request_date"] == null) ? "" : " disabled"; ?>></td>
 					</tr>
 				<?php endforeach; ?>
@@ -266,31 +266,32 @@
 			/* ここまで */
 		}
 	}
+
 	/*
 		作成：朴昰成
 		作成日：24/05/20
 	*/
-
 	function Select(value) {
 		<?php
+			$newQuery = "?";
+
 			if (!empty($query)) {
 				$queryDatas = explode("&", $query);
 
-				$newQueryDatas = array();
 				foreach ($queryDatas as $data) {
-					if ($explode("=", $data)[0] == "name") {
-						$newQueryDatas[] = $data;
-					}
-				}
+					if ($explode("=", $data)[0] == "page") { continue; }
 
-				$newQuery = implode("&", $newQueryDatas);
-				$url .= "?" . $newQuery;
+					$newQuery .= $data . "&";
+				}
 			}
+
+			$url .= $newQuery;
 		?>
 
-		let url = "<?= $url; ?>";
+		let url = "<?php echo $url; ?>";
 
-		if (value != "") { url += "&" + value; }
+		if (value == "") { url = url.slice(0, -1); }
+		else { url += "pick=" + value; }
 		self.window.location = url;
 	}
 	/* ここまで */

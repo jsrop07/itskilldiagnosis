@@ -248,7 +248,7 @@ class QuestionTable {
 	 */
 	public function UpdateByIdx($idx, $setDatas) {
 		$qry = $this->sql->update("question")->where(["idx" => $idx])->set($setDatas);
-		return $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
+		return $this->sql->prepareStatementForSqlObject($qry)->execute();
 	}
 
 	/** Delete data by index
@@ -259,7 +259,7 @@ class QuestionTable {
 	public function RemoveQuestion($idx, $setDatas) {
 		$setDatas["date_delete"] = date("Y-m-d H:i:s");
 		$qry = $this->sql->update("question")->where(["idx" => $idx])->set($setDatas);
-		return $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
+		return $this->sql->prepareStatementForSqlObject($qry)->execute();
 	}
 	
 	/** Read List by Search data 

@@ -61,6 +61,11 @@ public function readById($idx)
 	return $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
 }
 
+public function readByapplicantId($idx)
+{
+	$qry = $this->sql->select("applicant")->where(["idx" => $idx]);
+	return $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
+}
 public function ReadDiagnosis($class2ndAjax, $levelAjax)
 {
 		$qry = $this->sql->select("diagnosis")->where(

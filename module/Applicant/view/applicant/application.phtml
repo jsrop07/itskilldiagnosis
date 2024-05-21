@@ -13,20 +13,20 @@
                     <input class="form-control" name="email" type="email" placeholder="Emailを入力ください。" style="width:80%" maxlength='50'>
                     
                     <span>お名前（漢字）</span>
-                    <input class="form-control" id="userInput" name="name" type="text" placeholder="漢字を記入してください。"style="width:40%" maxlength='20'>
+                    <input class="form-control" name="name" type="text" placeholder="漢字を記入してください。"style="width:40%" maxlength='20'>
 
                     <span>お名前（カナ）</span>
                     <input class="form-control" name="kana" type="text" placeholder="カナを記入してください。"style="width:40%" maxlength='50'>
 
                     <span class="no_after_style">性別</span>
-                    <select  name="gender" style="width:20%" >
+                    <select name="gender" style="width:20%" >
                         <option selected disabled hidden>選択</option>
                         <option value="0">男</option>
                         <option value="1">女</option>
                     </select>
 
                     <span >生年月日</span>
-                    <input class="form-control" id="birth" name="birth" type="text" placeholder="YYYY-MM-DD" autocomplete="off"  style="width:30%">   
+                    <input class="form-control" id="birthId" name="birth" type="text" placeholder="YYYY-MM-DD" autocomplete="off"  style="width:30%">   
 
                     <span >応募区分</span>
                     <select class="" name="case" style="width:40%" >
@@ -59,7 +59,7 @@
                     </div>
 
                     <span>ITスキル有無</span>
-                    <select class="" name="skill" style="width:20%" >
+                    <select class="" name="skill" style="width:20%" onchange="SkillSelectChange(this.value)">
                         <option selected disabled hidden>選択</option>
                         <option value="0">有</option>
                         <option value="1">無</option>
@@ -79,14 +79,14 @@
                         <input class="form-control" type="text" placeholder="その他の場合の、記入" id="otherclass1st" name="class1st" maxlength='20'>
                     </div>
 
-                    <span id='spanCareer'>IT経験年数</span>
-                    <input class="form-control" id="career" name="career" type="text" placeholder="経歴を記入してください。" style="font-size:15px; width:40%" maxlength='2'>
-
                     <span  id="spanTypeSelect">問題種別</span>
                     <select class="" name="class2nd" style="width:40%" id="typeSelect">
-                    <option value="" selected  hidden >選択してください。</option>
+                    <option value="" selected disabled hidden  >選択してください。</option>
                     </select>
 
+                    <span id='spanCareer'>IT経験年数</span>
+                    <input class="form-control" id="career" name="career" type="text" placeholder="経歴を記入してください。" style="font-size:15px; width:40%" maxlength='2'>
+                    
                     <span class="no_after_style" id='spanCertificates'>IT関連資格</span>
                     <input class="form-control" name="certificates" type="text" placeholder="資格を記入してください。"style="width:80%" maxlength='50'>
 
@@ -149,28 +149,35 @@ var otherTextarea = document.querySelector('textarea[name="other"]');
 var ApplicantOtherTextarea = document.getElementById('spanOther');
 
 
-skillSelect.addEventListener('change', function() {
-    var selectedValue = this.value;
-    if (selectedValue === '1') {
-        class2ndSelect.style.display='none';        
-        class2ndSpanSelect.style.display='none';
+function SkillSelectChange(value){
+    form.skill.value = value;
+    console.log(form.skill.value);
+    if (form.skill.value  === '1') {
+        class1stSelect.value="その他";
+      // class1stOtherSelect.value="その他";
+      // form.class1stOtherSelect.hidden=true;
+      class2ndSelect.innerText=""
+      var option = document.createElement("option");
+      option.value = "33";
+      option.innerText = "テキスト";
+      class2ndSelect.appendChild(option);
+      class2ndSelect.value = "33";
+      careerInput.value='0';
+      // ApplicantCareerInput.style.display='none';
+      class1stSelect.setAttribute('disabled', 'disabled');
+      class2ndSelect.setAttribute('disabled', 'disabled');
 
-        Applicantclass1stSelect.style.display='none';
-        Applicantclass1stSpanSelect.style.display='none';
-        otherclass1stInput.style.display='none';
+      // certificatesInput.style.display='none';
+      // ApplicantCertificatesInput.style.display='none';
 
-        careerInput.style.display='none';
-        ApplicantCareerInput.style.display='none';
-        
-        certificatesInput.style.display='none';
-        ApplicantCertificatesInput.style.display='none';
+      // class2ndSelect.disabled=true;
+      // class1stSelect.disabled = true;
+      otherclass1stInput.querySelector('input').disabled = true;
+      otherclass1stInput.style.display='none';
+      console.log(otherclass1stInput.style.display);
 
-
-        class2ndSelect.disabled=true;
-        class1stSelect.disabled = true;
-        otherclass1stInput.querySelector('input').disabled = true;
-        careerInput.disabled = true;
-        // certificatesInput.disabled = true;
+      // careerInput.disabled = true;
+      // certificatesInput.disabled = true;
 
     } else {
         class2ndSelect.style.display='block';    
@@ -179,23 +186,15 @@ skillSelect.addEventListener('change', function() {
         Applicantclass1stSelect.style.display='block';
         Applicantclass1stSpanSelect.style.display='block';
         otherclass1stInput.style.display='block';
-        otherclass1stInput.style.display='none';
-
-        careerInput.style.display='block';
-        ApplicantCareerInput.style.display='block';
-
-        certificatesInput.style.display='block';
-        ApplicantCertificatesInput.style.display='block';
-
+        otherclass1st.value="";
 
         class2ndSelect.disabled=false;
         class1stSelect.disabled = false;
         otherclass1stInput.querySelector('input').disabled = false;
         careerInput.disabled = false;
         certificatesInput.disabled = false;
-    }
-    
-});
+    }   
+}
 </script>
 
 <!-- educationとclass1stのその他項目画面変化 -->
@@ -339,7 +338,7 @@ function checkKana(input) {
             return false;
         }
 
-        if (form.class1stSelect.value == "その他" && form.otherclass1st.value=="") {
+        if (form.skill.value==0 && form.class1stSelect.value == "その他" && form.otherclass1st.value=="") {
             alert("その他の場合の、記入してください");
             setTimeout("form.class1stSelect.focus()",100);
             return false;
@@ -388,29 +387,13 @@ selectElements.forEach(function(selectElement) {
     });
 });
 </script>
-<!-- <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.3/themes/base/jquery-ui.css">
-  <link rel="stylesheet" href="/resources/demos/style.css">
-  <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
-  <script src="https://code.jquery.com/ui/1.13.3/jquery-ui.js"></script>
-  <script>
-$(document).ready(function(){
-    var birth = document.getElementById("birth");
-    $(birth).datepicker({
-        changeMonth: true,
-      changeYear: true,
-      format: 'yyyy-mm-dd',
-      autohide: true,
-      language: 'ja'
-    });
-  });
-  </script> -->
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.0/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/locales/bootstrap-datepicker.ja.min.js"></script>
 <script>
   $(document).ready(function(){
-    var birth = document.getElementById("birth");
+    var birth = document.getElementById("birthId");
     $(birth).datepicker({
       format: 'yyyy-mm-dd',
       autohide: true,
@@ -426,7 +409,6 @@ $(document).ready(function(){
 
 		class2ndSelect.replaceChildren();
 		
-        console.log(class2ndSelect);
 		switch (element.value) {
         <?php foreach ($optionDatas["class2nd"] as $value => $class2nd): ?>
             case "<?php echo $optionDatas["class1st"][array_search($value, array_column($optionDatas["class1st"], "idx"))]["text"]; ?>":

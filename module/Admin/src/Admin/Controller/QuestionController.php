@@ -361,7 +361,7 @@ class QuestionController extends AbstractActionController
 
 		foreach ($idxDatas as $index => $idx) {
 			$sqlSet["note"] = $beforeNotes[$index] . $log;
-
+			
 			try { $questionTb->UpdateByIdx($idx, $sqlSet); }
 			catch (\Exception $e) { die($e->getMessage()); }
 		}

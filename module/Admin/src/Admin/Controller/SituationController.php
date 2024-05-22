@@ -128,16 +128,10 @@ class SituationController extends AbstractActionController {
 			catch (\Exception $e) { print_r($e->getMessage()); exit; }
 
 			if (count($newRecordDatas) < 10) {
+				$limit = 10 - count($newRecordDatas);
 				$offset -= $recordTb->CountNewData();
 				$limit = 10;
-				if ($offset < 0) {
-					$limit += $offset;
-					$offset = 0;
-				}
-
-				try { $offset -= $recordTb->CountNewDataBySearch($sqlWhere); }
-				catch (\Exception $e) { print_r($e->getMessage()); exit; }
-				print_r("access"); exit;
+				if ($offset < 0) { $offset = 0; }
 
 				try { $restRecordDatas = $recordTb->ReadRestListBySearchnOffsetnLimit($sqlWhere, $offset, $limit); }
 				catch (\Exception $e) { print_r($e->getMessage()); exit; }
@@ -150,19 +144,6 @@ class SituationController extends AbstractActionController {
 			try { $paginationData = $recordTb->GetListBySearch($sqlWhere); }
 			catch (\Exception $e) { print_r($e->getMessage()); exit; }
 			/* ここまで */
-
-			/*
-				作成：朴昰成
-				作成日：24/05/21
-			*/
-			try {
-				$datas["totalData"] = $recordTb->CountAllDataBySearch($sqlWhere);
-				$datas["totalApply"] = $recordTb->CountApplyDataBySearch($sqlWhere);
-				$datas["totalRequest"] = $recordTb->CountRequestDataBySearch($sqlWhere);
-			} catch (\Exception $e) {
-				print_r($e->getMessage());
-				exit;
-			}
 		}
 		else {
 			try { $newRecordDatas = $recordTb->ReadNewListByOffset($offset); }
@@ -175,15 +156,12 @@ class SituationController extends AbstractActionController {
 					作成日：朴昰成
 				*/
 				$offset -= $recordTb->CountNewData();
-				$limit = 10;
-				if ($offset < 0) {
-					$limit += $offset;
-					$offset = 0;
-				}
+				if ($offset < 0) { $offset = 0; }
 				/* ここまで */
 
 				try { $restRecordDatas = $recordTb->ReadRestListByOffsetnLimit($offset, $limit); }
-				catch (\Exception $e) { print_r($e->getMessage()); exit; }
+				catch (\Exception $e) { print_r($e->getMessage()); exit; 
+				}
 
 				$recordDatas = array_merge($newRecordDatas, $restRecordDatas);
 			}
@@ -191,29 +169,10 @@ class SituationController extends AbstractActionController {
 				$recordDatas = $newRecordDatas;
 			}
 			$paginationData = $recordTb->GetAllList();
-			/*
-				作成：朴昰成
-				作成日：24/05/21
-			*/
-
-			try {
-				$datas["totalData"] = $recordTb->CountAllData();
-			} catch (\Exception $e) {
-				print_r($e->getMessage());
-				exit;
-			}
-			$datas["totalApply"] = $recordTb->CountApplyData();
-			$datas["totalRequest"] = $recordTb->CountRequestData();
-			/* ここまで */
 		}
 		// print_r($recordDatas); exit;
 
-		/*
-			作成：朴昰成
-			削除：朴昰成
-			削除日：24/05/21
 
-		削除前：
 			try {
 				$datas["totalApply"] = $recordTb->CountApplyData();
 				$datas["totalRequest"] = $recordTb->CountRequestData();
@@ -222,7 +181,7 @@ class SituationController extends AbstractActionController {
 				print_r($e->getMessage());
 				exit;
 			}
-		*/
+
 		$applicantTb = $this->getServiceLocator()->get("ApplicantTable-Admin");
 		$diagnosisTb = $this->getServiceLocator()->get("DiagnosisTable-Admin");
 		// Extract output datas and Add numbering
@@ -277,7 +236,19 @@ class SituationController extends AbstractActionController {
 		$applicantData = $applicantTb->ReadByIdx($recordData["applicant_idx"]);
 		$recordData = array_merge($applicantData, $recordData);
 
-		$diagnosisData = $diagnosisTb->ReadByCode($recordData["diagnosis_code"]);
+		/*
+			作成：朴昰成
+			修正：朴昰成
+			修正日：24/05/22
+		*/
+		
+		/* 修正前：
+			$diagnosisData = $diagnosisTb->ReadByCode($recordData["diagnosis_code"]);
+		*/
+
+		/* 修正後： */
+		$diagnosisData = $diagnosisTb->ReadForRecordByCodenDate($recordData["diagnosis_code"], $recordData["diagnosis_date"]);
+		/* ここまで */
 		$recordData = array_merge($diagnosisData, $recordData);
 		
 		$datas = $this->GetOptionDatas($datas);

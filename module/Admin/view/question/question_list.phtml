@@ -110,7 +110,6 @@
 		<div class="table-empty" style="margin-top: 16px;">
 			データがありません。
 		</div>
-		
 	<?php else: ?>
 		<table class="emegra" style="margin-top: 8px;">
 			<thead>
@@ -189,11 +188,32 @@
 		}
 
 		if (element != check_all) {
-			check_all.checked = false;
+			/* 
+				作成：朴昰成
+				修正：朴昰成
+				修正日：24/05/20
+			*/
 
-			check_idxs.forEach(e => {
-				if (e.checked) { check_all.checked = true; return true; }
-			});
+			/* 修正前：
+				check_all.checked = false;
+
+				check_idxs.forEach(e => {
+					if (e.checked) { check_all.checked = true; return true; }
+				});
+			*/
+
+			/* 修正後： */
+			let allChecked = true;
+			for (let i = 0; i < check_idxs.length; i++) {
+				if (check_idxs[i].checked == false) {
+					if (check_idxs[i].disabled == true) { continue; }
+					allChecked = false;
+					break;
+				}
+			}
+
+			check_all.checked = allChecked;
+			/* ここまで */
 		}
 	}
 

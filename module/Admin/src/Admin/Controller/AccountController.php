@@ -4,6 +4,7 @@ namespace Admin\Controller;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Zend\Session\Container;
+use Zend\Crypt\Password\Bcrypt;
 
 class AccountController extends AbstractActionController
 {
@@ -24,10 +25,11 @@ class AccountController extends AbstractActionController
 	
 		if (isset($post["id"])) {
 			$adminTb = $this->getServiceLocator()->get("AdminTable");
+			// die($this->Encryption($post["password"]));
 
 			$result = $adminTb->ReadById($post["id"]);
 			// ログインを失敗した時
-			if (empty($result) || $result["password"] != $post["password"]) {
+			if (empty($result) || !$this->CheckPassword($post["password"], $result["password"])) {
 				die("fail");
 			}
 			
@@ -54,5 +56,28 @@ class AccountController extends AbstractActionController
 				self.location.href = '/admin/login';
 			</script>
 		";
+	}
+
+	/** Encryption password
+	 * @param string $password
+	 * @return string $Encrypted password
+	 */
+	function Encryption($password) {
+		$bcrypt = new Bcrypt();
+		return $bcrypt->create($password);
+	}
+
+	/** Compare Encryption password
+	 * @param string $password inputpassword
+	 * @param string $enPassword encrypted string
+	 * @return bool result
+	 */
+	function CheckPassword($password, $enPassword) {
+		$bcrypt = new Bcrypt();
+		if ($bcrypt->verify($password, $enPassword)) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 }

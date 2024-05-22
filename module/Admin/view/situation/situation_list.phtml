@@ -2,12 +2,24 @@
 	$caseTexts = ["新卒", "中途"];
 	$levelTexts = array("0級", "初級", "中級", "高級");
 
+	/*
+		作成：朴昰成
+		削除：朴昰成
+		削除日：24/05/22
+
 	$url = explode("?", $_SERVER["REQUEST_URI"])[0];
+	ここまで */
 	if (!isset($_SESSION)) { session_start(); }
 	/*
 		作成：朴昰成
 		作成日：24/05/20
 	*/
+	$url = explode("?", $_SERVER["REQUEST_URI"]);
+	$route = $url[0];
+	if (isset($url[1])) {
+		$queryDatas = explode("&", $url[1]);
+	}
+
 	$selectDatas["apply"] = "新規";
 	$selectDatas["request"] = "診断";
 	$selectDatas["execute"] = "終了";
@@ -15,7 +27,7 @@
 	$selectDatas["case-1"] = "中途";
 	$selectDatas["education-高卒"] = "高卒";
 	$selectDatas["education-専門卒"] = "専門卒";
-	$selectDatas["education-体格卒"] = "体格卒";
+	$selectDatas["education-大学卒"] = "大学卒";
 	$selectDatas["education-大学院卒"] = "大学院卒";
 	// foreach ($class1stDatas as $data) {
 	// 	$selectDatas["class1st-" . $data["text"]] = $data["text"];
@@ -24,6 +36,9 @@
 	$selectDatas["rank-B"] = "等級B";
 	$selectDatas["rank-C"] = "等級C";
 	$selectDatas["rank-D"] = "等級D";
+
+	$firstNo = $this->noticelist->getTotalItemCount();
+	$firstNo -= (($this->noticelist->getCurrentPageNumber() - 1) * $this->noticelist->getitemCountPerPage());
 
 	$isPick = false;
 	if (isset($searchDatas["pick"])) {
@@ -137,7 +152,19 @@
 		</div>
 	</div>
 
-	<?php if (false): ?>
+	<!--
+		作成：朴昰成
+		修正：朴昰成
+		修正日：24/05/22
+	-->
+
+	<!-- <?php /* ?> 修正前：
+		<?php if (false): ?>
+	<?php */ ?> -->
+
+	<!-- 修正後： -->
+	<?php if (empty($recordDatas)): ?>
+	<!-- ここまで -->
 		<div class="table-empty" style="margin-top: 16px;">
 			データがありません。
 		</div>
@@ -171,9 +198,9 @@
 				</tr>
 			</thead>
 			<tbody>
-				<?php foreach ($recordDatas as $data): ?>
+				<?php foreach ($recordDatas as $index => $data): ?>
 					<tr <?php echo ($data["diagnosis_code"] == null) ? "style='background: lightcyan;'" : ""; ?>>
-						<td><?php echo $data["num"]; ?></td>
+						<td><?php echo $firstNo - $index; ?></td>
 						<td><?php echo $data["status"]; ?></td>
 
 						<td><?php echo date("y.m.d", strtotime($data["apply_date"])); ?></td>
@@ -275,17 +302,16 @@
 		<?php
 			$newQuery = "?";
 
-			if (!empty($query)) {
-				$queryDatas = explode("&", $query);
-
+			if (!empty($queryDatas)) {
 				foreach ($queryDatas as $data) {
-					if ($explode("=", $data)[0] == "page") { continue; }
+					if (explode("=", $data)[0] == "page") { continue; }
+					if (explode("=", $data)[0] == "pick") { continue; }
 
 					$newQuery .= $data . "&";
 				}
 			}
 
-			$url .= $newQuery;
+			$url = $route . $newQuery;
 		?>
 
 		let url = "<?php echo $url; ?>";
@@ -296,6 +322,13 @@
 	}
 	/* ここまで */
 
+	/*
+		作成：朴昰成
+		修正：朴昰成
+		修正日：24/05/22
+	*/
+
+	/* <?php /* ?> 修正前：
 	function Search(value) {
 		let url = "<?= $url ?>?align=" + seachAlign.value;
 		if (seachName.value.trim() != "") {
@@ -303,6 +336,32 @@
 		}
 		self.window.location = url;
 	}
+	<?php */ ?> */
+
+	/* 修正後： */
+	function Search(value) {
+		<?php
+			$newQuery = "?";
+
+			if (!empty($queryDatas)) {
+				foreach ($queryDatas as $data) {
+					if (explode("=", $data)[0] == "page") { continue; }
+					if (explode("=", $data)[0] == "name") { continue; }
+
+					$newQuery .= $data . "&";
+				}
+			}
+
+			$url = $route . $newQuery;
+		?>
+
+		let url = "<?php echo $url; ?>";
+
+		if (seachName.value.trim() == "") { url = url.slice(0, -1); }
+		else { url += "name=" + seachName.value; }
+		self.window.location = url;
+	}
+	/* ここまで */
 
 	function Request() {
 		idxs = [];

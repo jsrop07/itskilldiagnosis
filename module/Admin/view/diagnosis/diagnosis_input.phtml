@@ -136,7 +136,19 @@
 								<th>問項タイトル</th>
 								<th>タイプ</th>
 								<th>点数</th>
-								<th><input type="checkbox"/></th>
+								<!--
+									作成：朴昰成
+									修正：朴昰成
+									修正日：24/05/22
+								-->
+
+								<!-- 修正前：
+									<th><input type="checkbox"/></th>
+								-->
+
+								<!-- 修正後： -->
+								<th><input type="checkbox" id="check-question_list" value="" onclick="CheckingList(this);"/></th>
+								<!-- ここまで -->
 							</tr>
 						</thead>
 						<tbody id="tbody-question_list">
@@ -170,7 +182,19 @@
 								<th>タイトル</th>
 								<th>タイプ</th>
 								<th>点数</th>
-								<th><input type="checkbox"/></th>
+								<!--
+									作成：朴昰成
+									修正：朴昰成
+									修正日：24/05/22
+								-->
+
+								<!-- 修正前：
+									<th><input type="checkbox"/></th>
+								-->
+
+								<!-- 修正後： -->
+								<th><input type="checkbox" id="check-question_select" value="" onclick="CheckingSelect(this);"/></th>
+								<!-- ここまで -->
 							</tr>
 						</thead>
 					</table>
@@ -283,11 +307,23 @@
 <script type="text/javascript">
 	const numTexts = ["①", "②", "③", "④", "⑤"];
 
+	/*
+		作成：朴昰成
+		作成日：24/05/21
+	*/
+	const listCheckbox = document.getElementById("check-question_list");
+	/* ここまで */
 	const questionListBody = document.getElementById("tbody-question_list");
 	const selectInputs = document.getElementsByTagName("select");
 
 	const modalDiv = document.getElementById("modal-question_select");
 	const modal = new bootstrap.Modal(modalDiv);
+	/*
+		作成：朴昰成
+		作成日：24/05/21 id="check-question_list"
+	*/
+	const selectCheckbox = document.getElementById("check-question_select");
+	/* ここまで */
 	const questionSelectBody = document.getElementById("tbody-question_select");
 
 	const form = document.getElementById("form");
@@ -311,6 +347,12 @@
 	modalDiv.addEventListener("show.bs.modal", function (event) {
 		let selectCheckboxs = questionSelectBody.getElementsByTagName("input");
 		questionIdxs = form.question_idxs.value.split(",");
+		/*
+			作成：朴昰成
+			作成日：24/05/21
+		*/
+		selectCheckbox.checked = false;
+		/* ここまで */
 
 		let no = 1;
 		for (let i = 0; i < selectCheckboxs.length; i++) {
@@ -586,6 +628,12 @@
 				questionListBody.childNodes[i].childNodes[0].innerText = i + 1;
 				totalPoint += Number(questionListBody.childNodes[i].childNodes[3].innerText);
 			}
+			/*
+				作成：朴昰成
+				作成日：24/05/21
+			*/
+			listCheckbox.checked = false;
+			/* ここまで */
 			questionListBody.lastChild.childNodes[1].innerText = totalPoint + "点";
 
 			form.question_idxs.value = questionIdxs.join(",");
@@ -679,11 +727,21 @@
 			let checkbox = document.createElement("input");
 			checkbox.type = "checkbox";
 			checkbox.value = questionDatas[i]["idx"];
+			/*
+				作成：朴昰成
+				作成日：24/05/21
+			*/
+			checkbox.setAttribute("onClick", "CheckingSelect(this)");
+			/* ここまで */
 			td.appendChild(checkbox);
 			tr.appendChild(td);
 
 			questionSelectBody.appendChild(tr);
 		}
+		/*
+			作成：朴昰成
+			作成日：24/05/21
+		*/
 		popoverTriggerList = document.querySelectorAll("[data-bs-toggle='popover']");
 		popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl));
 	}
@@ -693,6 +751,50 @@
 		string = string.replace(/>/g, "＞");
 		return string;
 	}
+
+	/*
+		作成：朴昰成
+		作成日：24/05/21
+	*/
+	function CheckingList(element) {
+		if (element.value == "") {
+			for (let i = 0; i < listCheckboxs.length; i++) {
+				listCheckboxs[i].checked = element.checked;
+			}
+			return true;
+		}
+
+		let isAllChecked = true;
+		for (let i = 0; i < listCheckboxs.length; i++) {
+			if (listCheckboxs[i].checked == false) {
+				isAllChecked = false;
+				break;
+			}
+		}
+
+		listCheckbox.checked = isAllChecked;
+	}
+
+	function CheckingSelect(element) {
+		if (element.value == "") {
+			for (let i = 0; i < selectCheckboxs.length; i++) {
+				selectCheckboxs[i].checked = element.checked;
+			}
+			return true;
+		}
+
+		let isAllChecked = true;
+		for (let i = 0; i < selectCheckboxs.length; i++) {
+			if (selectCheckboxs[i].checked == false) {
+				if (selectCheckboxs[i].parentNode.parentNode.hidden == true) { continue; }
+				isAllChecked = false;
+				break;
+			}
+		}
+
+		selectCheckbox.checked = isAllChecked;
+	}
+	/* ここまで */
 
 	function AddQuestionByIdxs(checkboxIdxs) {
 		console.log(checkboxIdxs);
@@ -706,6 +808,12 @@
 			row.hidden = false;
 			row.childNodes[0].innerText = i + 1;
 			row.childNodes[4].childNodes[0].checked = false;
+			/*
+				作成：朴昰成
+				作成日：24/05/21
+			*/
+			row.childNodes[4].childNodes[0].setAttribute("onClick", "CheckingList(this)");
+			/* ここまで */
 			questionListBody.appendChild(row);
 			totalPoint += Number(row.childNodes[3].innerText);
 
@@ -726,6 +834,12 @@
 		tr.appendChild(td);
 		questionListBody.appendChild(tr);
 
+		/*
+			作成：朴昰成
+			作成日：24/05/21
+		*/
+		listCheckboxs = questionListBody.getElementsByTagName("input");
+		/* ここまで */
 		popoverTriggerList = document.querySelectorAll("[data-bs-toggle='popover']");
 		popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl));
 

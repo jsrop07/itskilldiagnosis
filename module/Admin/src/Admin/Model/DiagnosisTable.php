@@ -45,7 +45,7 @@ class DiagnosisTable {
 		$where = new Where();
 		$where->isNull("date_end");
 
-		$qry = $this->sql->select("diagnosis")->where($where)->order("date_start DESC");;
+		$qry = $this->sql->select("diagnosis")->where($where)->order("date_start DESC");
 		$paginatorAdapter = new DbSelect($qry, $this->adapter);
 		return new Paginator($paginatorAdapter);
 	}
@@ -92,14 +92,22 @@ class DiagnosisTable {
 
 	/*
 		作成：朴昰成
+		作成日：24/05/22
+	*/
 	/** Read Table record By Code
-	 * @param string $code
+	 * @param string $code RecordTables diagnosis_code
+	 * @param string $date RecordTables diagnosis_date
 	 * @return mixed Record
 	 */
-	public function ReadForDiagnosisByCodenDate($code, $date) {
-		$qry = $this->sql->select("diagnosis")->where(["code" => $code]);
-		return $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
+	public function ReadForRecordByCodenDate($code, $date) {
+		$where = new Where();
+		$where->equalTo("code", $code)
+			->and->lessThanOrEqualTo("date_start", $date);
+		$qry = $this->sql->select("diagnosis")->where($where)->order("date_start DESC")->limit(1);
+		$result = $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
+		return $result;
 	}
+	/* ここまで */
 
 	/** Update date_end By idx
 	 * @param int $idx

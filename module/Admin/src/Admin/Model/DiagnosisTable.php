@@ -90,10 +90,6 @@ class DiagnosisTable {
 		return $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
 	}
 
-	/*
-		作成：朴昰成
-		作成日：24/05/22
-	*/
 	/** Read Table record By Code
 	 * @param string $code RecordTables diagnosis_code
 	 * @param string $date RecordTables diagnosis_date
@@ -107,7 +103,6 @@ class DiagnosisTable {
 		$result = $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
 		return $result;
 	}
-	/* ここまで */
 
 	/** Update date_end By idx
 	 * @param int $idx

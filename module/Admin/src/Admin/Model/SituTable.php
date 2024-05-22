@@ -254,11 +254,11 @@ public function getRecord(){
 			} else {
 					$applicantInsert = $qry->insert('applicant');
 					$applicantInsert->values([
-			'password' => $dataArray['password'],
+							'password' => $dataArray['password'],
 							'email' => $dataArray['email'],
 							'name' => $dataArray['name'],
 							'kana' => $dataArray['kana'],
-			'gender' => isset($dataArray['gender']) ? $dataArray['gender'] : null,
+							'gender' => isset($dataArray['gender']) ? $dataArray['gender'] : null,
 							'birth' => $dataArray['birth'],
 							'career' => $dataArray['career'],
 							'certificates' => $dataArray['certificates'],
@@ -276,7 +276,6 @@ public function getRecord(){
 					
 					$applicant_idx = $this->adapter->getDriver()->getLastGeneratedValue();
 			}
-			
 			$values = [
 		'apply_date' => date("Y-m-d H:i:s"),
 		'diagnosis_date' => date("Y-m-d H:i:s"),
@@ -288,13 +287,14 @@ public function getRecord(){
 		'class2nd' => $dataArray['class2nd'],
 		'diagnosis_code' => $dataArray['code'],
 		'method' => $dataArray['method'],
+		'language' => $dataArray['language'],
 		'applicant_idx' => $applicant_idx 
 	];
+
 
 	if (!isset($dataArray['save'])) {
 		$values['request_date'] = date("Y-m-d H:i:s");
 	}
-
 	$recordInsert = $qry->insert('record');
 	$recordInsert->values($values);
 

@@ -7,7 +7,7 @@ function InitStyle() { return " font-style: italic; color: ;"; }
 
 <h1 class="title">ITスキル診断状況管理</h1>
 
-<form id="form" method="post" action=".././situ/inputok">
+<form id="form" method="post" action=".././situation/inputok">
 	<style type="text/css">
 		option { color: black; }
 		input::placeholder { font-style: italic; }
@@ -197,10 +197,18 @@ function InitStyle() { return " font-style: italic; color: ;"; }
 				<dd><input class="form-control" name="question_num" type="text" style="width:50px;text-align:center;">問</dd>
 		
 				<dt class="essential">診断方法</dt>
-        <dd style="grid-column: 2 / 5;">
-          <select class="form-select" name="method" style="width:13%;" onchange="ChangeInputStyle(this)" >
+        <dd >
+          <select class="form-select" name="method" style="width:100px;" onchange="ChangeInputStyle(this)" >
             <option value="WEB">WEB</option>
             <option value="対面"selected>対面</option>
+          </select>
+				</dd>
+
+        <dt class="essential">言語選択</dt>
+        <dd>
+          <select class="form-select" name="language" style="width:100px;" onchange="ChangeInputStyle(this)" >
+            <option value="0" selected>日本語</option>
+            <option value="1">韓国語</option>
           </select>
 				</dd>
 		</dl>
@@ -290,7 +298,6 @@ function InitStyle() { return " font-style: italic; color: ;"; }
 				option.innerText = "テキスト";
 				class2ndSelect.appendChild(option);
 				class2ndSelect.value = "33";
-
 			}
 		}	
 	)
@@ -327,8 +334,8 @@ document.getElementById('class1stId').addEventListener('change', function(event)
 	var selectedOption = event.target.value;
 
 	if (selectedOption === "その他") {
-		form.class1st.value = "";
-        form.class1st.hidden = false;
+		  form.class1st.value = "";
+      form.class1st.hidden = false;
     } else if(selectedOption != "その他") {
         form.class1st.hidden = true;
 		// form.education.style.display = 'none';
@@ -375,9 +382,6 @@ switch (element.value) {
 			randomPw += pwEncoding.charAt(randomIndex);
 		}
 		form.password.value = randomPw;
-		// console.log(randomPW);
-
-
 	}
 </script>
 

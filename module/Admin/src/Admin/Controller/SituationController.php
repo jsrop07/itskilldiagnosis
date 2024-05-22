@@ -373,7 +373,7 @@ class SituationController extends AbstractActionController {
 		}
 	  }
 
-    function mailByAdmin($arr,$skillText,$caseText,$managerArray,$applicantInfo){
+    function mailByAdmin($arr,$skillText,$caseText,$managerInfo,$applicantInfo){
       $mail = new MailRequest();
       
 
@@ -391,11 +391,12 @@ class SituationController extends AbstractActionController {
       // $param['content']=str_replace("{{user_name}}","変換する試験受け者名",$param['content']);
       $param['content']=str_replace("{{URL}}","テスト",$param['content']);
     
+
       // 수신자 이메일과 이름 설정
-			$param['email']=$managerArray["id"];;
-			$param['password']= $managerArray["password"];
-			$param['name']= $managerArray["name"];
-			$param['smtp_password']=$managerArray["smtp_password"];
+			$param['email']=$managerInfo["id"];;
+			$param['password']= $managerInfo["password"];
+			$param['name']= $managerInfo["name"];
+			$param['smtp_password']=$managerInfo["smtp_password"];
 
       // 전송
       $result = $mail->mailAdmin($param);
@@ -465,7 +466,7 @@ class SituationController extends AbstractActionController {
 			
 			$managerInfo=$situTb->readByManagerInfo();
 			
-			$managerArray=[$managerInfo["id"], $managerInfo["password"],$managerInfo["name"],$managerInfo["smtp_password"]];		
+			// $managerArray=[$managerInfo["id"], $managerInfo["password"],$managerInfo["name"],$managerInfo["smtp_password"]];		
 	
 			// $applicantInfo = $situTb->readById($post['recordindex']);
 	
@@ -487,7 +488,8 @@ class SituationController extends AbstractActionController {
 				$other = $this->params()->fromPost('other');	
 				$code = $this->params()->fromPost('code');	
 				$method = $this->params()->fromPost('method');	
-	
+				$language = $this->params()->fromPost('language');	
+
 				if ($skill == 0) {
 					$skillText = '有';
 				} else {
@@ -516,13 +518,14 @@ class SituationController extends AbstractActionController {
 					'certificates' => $certificates,
 					'other' => $other,
 					'code' => $code,
-					'method' => $method
+					'method' => $method,
+					'language' => $language
 				];      
 				$situTb->insertAndUpdateApplication($arr);
 				 
 				$applicantInfo = $situTb->getRecord();
 				 
-				$this->mailByAdmin($arr,$skillText,$caseText,$managerArray,$applicantInfo);
+				$this->mailByAdmin($arr,$skillText,$caseText,$managerInfo,$applicantInfo);
 				echo "
 				<script>
 				alert('依頼が完了しました')
@@ -549,6 +552,7 @@ class SituationController extends AbstractActionController {
 				$other = $this->params()->fromPost('other');	
 				$code = $this->params()->fromPost('code');	
 				$method = $this->params()->fromPost('method');	
+				$language = $this->params()->fromPost('language');	
 			 $saveArr=[
 					'email' => $email,
 					'password' => $password,
@@ -567,10 +571,12 @@ class SituationController extends AbstractActionController {
 					'other' => $other,
 					'code' => $code,
 					'method' => $method,
+					'language' => $language,
 					'save' => "save"
 				];
-	
+
 				$situTb->insertAndUpdateApplication($saveArr);
+
 				echo "
 				<script>
 				alert('保存が完了しました。')
@@ -658,6 +664,8 @@ class SituationController extends AbstractActionController {
 				$recordSet['class2nd']=$post['class2nd'];
 				$recordSet['diagnosis_code']=$post['code'];
 				$recordSet['method']=$post['method'];
+				$recordSet['language']=$post['language'];
+
 	
 				$situTb->updateRecordInfo($recordlWhere, $recordSet);	
 				$situTb->updateApplicantInfo($applicantWhere, $applicantSet);	
@@ -692,6 +700,7 @@ class SituationController extends AbstractActionController {
 				$recordSet['class2nd']=$post['class2nd'];
 				$recordSet['diagnosis_code']=$post['code'];
 				$recordSet['method']=$post['method'];
+				$recordSet['language']=$post['language'];
 				$situTb->saveRecordInfo($recordlWhere, $recordSet);	
 				$situTb->saveApplicantInfo($applicantWhere, $applicantSet);	
 			echo "

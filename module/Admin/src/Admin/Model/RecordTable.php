@@ -160,7 +160,6 @@ class RecordTable {
 		$paginatorAdapter = new DbSelect($qry, $this->adapter);
 		return new Paginator($paginatorAdapter);
 	}
-	/*　ここまで　*/
 
 	public function CountAllData() {
 		$qry = $this->sql->select("record")->columns(array('COUNT'=>new \Zend\Db\Sql\Expression('COUNT(*)')));
@@ -180,10 +179,6 @@ class RecordTable {
 		$result = $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
 		return $result["COUNT"];
 	}
-	/*
-		作成：朴昰成
-		作成日：24/05/21
-	*/
 	public function CountNewData() {
 		$qry = $this->sql->select("record")->where(["diagnosis_date" => null])->columns(array('COUNT'=>new \Zend\Db\Sql\Expression('COUNT(*)')));
 		$result = $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
@@ -219,7 +214,7 @@ class RecordTable {
 	}
 	public function CountNewDataBySearch($whereDatas) {
 		$where = new Where();
-		$where->isNull("request_date");
+		$where->isNull("diagnosis_date");
 		foreach ($whereDatas as $field => $data) {
 			if ($field == "name") {
 				$where->and->nest()->like("name", "%" . $data . "%")
@@ -240,9 +235,8 @@ class RecordTable {
 			}
 		}
 
-		$qry = $this->sql->select("record")->where($where);
-		$qry->join("applicant", "record.applicant_idx = applicant.idx", array("name" => "name", "kana" => "kana"), "INNER");
-		$qry->columns(array('COUNT'=>new \Zend\Db\Sql\Expression('COUNT(*)')));
+		$qry = $this->sql->select("record")->where($where)->columns(array("COUNT" => new \Zend\Db\Sql\Expression("COUNT(*)")));	
+		$qry->join("applicant", "record.applicant_idx = applicant.idx", [], "INNER");
 		$result = $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
 		return $result["COUNT"];
 	}
@@ -300,7 +294,6 @@ class RecordTable {
 		$result = $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
 		return $result["COUNT"];
 	}
-	/*　ここまで　*/
 
 	public function RequestByIdx($idx) {
 		$qry = $this->sql->update("record")->where(["idx" => $idx])->set(["request_date" => date("Y-m-d H:i:s")]);

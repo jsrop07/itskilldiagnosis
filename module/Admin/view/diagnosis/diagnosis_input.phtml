@@ -136,19 +136,7 @@
 								<th>問項タイトル</th>
 								<th>タイプ</th>
 								<th>点数</th>
-								<!--
-									作成：朴昰成
-									修正：朴昰成
-									修正日：24/05/22
-								-->
-
-								<!-- 修正前：
-									<th><input type="checkbox"/></th>
-								-->
-
-								<!-- 修正後： -->
 								<th><input type="checkbox" id="check-question_list" value="" onclick="CheckingList(this);"/></th>
-								<!-- ここまで -->
 							</tr>
 						</thead>
 						<tbody id="tbody-question_list">
@@ -727,21 +715,12 @@
 			let checkbox = document.createElement("input");
 			checkbox.type = "checkbox";
 			checkbox.value = questionDatas[i]["idx"];
-			/*
-				作成：朴昰成
-				作成日：24/05/21
-			*/
 			checkbox.setAttribute("onClick", "CheckingSelect(this)");
-			/* ここまで */
 			td.appendChild(checkbox);
 			tr.appendChild(td);
 
 			questionSelectBody.appendChild(tr);
 		}
-		/*
-			作成：朴昰成
-			作成日：24/05/21
-		*/
 		popoverTriggerList = document.querySelectorAll("[data-bs-toggle='popover']");
 		popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl));
 	}
@@ -752,10 +731,6 @@
 		return string;
 	}
 
-	/*
-		作成：朴昰成
-		作成日：24/05/21
-	*/
 	function CheckingList(element) {
 		if (element.value == "") {
 			for (let i = 0; i < listCheckboxs.length; i++) {
@@ -794,7 +769,6 @@
 
 		selectCheckbox.checked = isAllChecked;
 	}
-	/* ここまで */
 
 	function AddQuestionByIdxs(checkboxIdxs) {
 		console.log(checkboxIdxs);
@@ -808,12 +782,7 @@
 			row.hidden = false;
 			row.childNodes[0].innerText = i + 1;
 			row.childNodes[4].childNodes[0].checked = false;
-			/*
-				作成：朴昰成
-				作成日：24/05/21
-			*/
 			row.childNodes[4].childNodes[0].setAttribute("onClick", "CheckingList(this)");
-			/* ここまで */
 			questionListBody.appendChild(row);
 			totalPoint += Number(row.childNodes[3].innerText);
 
@@ -834,12 +803,7 @@
 		tr.appendChild(td);
 		questionListBody.appendChild(tr);
 
-		/*
-			作成：朴昰成
-			作成日：24/05/21
-		*/
 		listCheckboxs = questionListBody.getElementsByTagName("input");
-		/* ここまで */
 		popoverTriggerList = document.querySelectorAll("[data-bs-toggle='popover']");
 		popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl));
 

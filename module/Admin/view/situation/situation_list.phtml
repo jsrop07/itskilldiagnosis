@@ -2,18 +2,7 @@
 	$caseTexts = ["新卒", "中途"];
 	$levelTexts = array("0級", "初級", "中級", "高級");
 
-	/*
-		作成：朴昰成
-		削除：朴昰成
-		削除日：24/05/22
-
-	$url = explode("?", $_SERVER["REQUEST_URI"])[0];
-	ここまで */
 	if (!isset($_SESSION)) { session_start(); }
-	/*
-		作成：朴昰成
-		作成日：24/05/20
-	*/
 	$url = explode("?", $_SERVER["REQUEST_URI"]);
 	$route = $url[0];
 	if (isset($url[1])) {
@@ -29,9 +18,6 @@
 	$selectDatas["education-専門卒"] = "専門卒";
 	$selectDatas["education-大学卒"] = "大学卒";
 	$selectDatas["education-大学院卒"] = "大学院卒";
-	// foreach ($class1stDatas as $data) {
-	// 	$selectDatas["class1st-" . $data["text"]] = $data["text"];
-	// }
 	$selectDatas["rank-A"] = "等級A";
 	$selectDatas["rank-B"] = "等級B";
 	$selectDatas["rank-C"] = "等級C";
@@ -44,7 +30,6 @@
 	if (isset($searchDatas["pick"])) {
 		$isPick = true;
 	}
-	/* ここまで */
 ?>
 <?php echo $this->partial("breadcrumb", ["datas" => $breadcrumbData]); ?>
 
@@ -111,32 +96,6 @@
 		</div>
 
 		<div style="display: flex; justify-content: right;padding-top: 24px;">
-			<!--
-				作成：朴昰成
-				修正：朴昰成
-				修正日：24/05/20
-			-->
-
-			<!-- <?php /* ?> 修正前：
-				<input class="form-control" type="text" id="search-name" style="width:15%; height:30px;margin-right:10px;" placeholder="診断者名" value="<?php echo (isset($searchDatas["name"])) ? $searchDatas["name"] : ""; ?>">
-				<div id="div-search" style="width: 150px; margin-right: 8px;">
-					<select class="form-select form-select-sm" id="search-align" style="width: 150px; margin-right: 8px;">
-						<option value="apply_date-DESC"<?php echo (isset($searchDatas["align"]) && $searchDatas["align"] == "apply_date-DESC") ? " selected" : ""; ?>>申込日（昇順）</option>
-						<option value="apply_date-ASC"<?php echo (isset($searchDatas["align"]) && $searchDatas["align"] == "apply_date-ASC") ? " selected" : ""; ?>>申込日（降順）</option>
-						<option value="case-DESC"<?php echo (isset($searchDatas["align"]) && $searchDatas["align"] == "case-DESC") ? " selected" : ""; ?>>応募区分（昇順）</option>
-						<option value="case-ASC"<?php echo (isset($searchDatas["align"]) && $searchDatas["align"] == "case-ASC") ? " selected" : ""; ?>>応募区分（降順）</option>
-						<option value="education-DESC"<?php echo (isset($searchDatas["align"]) && $searchDatas["align"] == "education-DESC") ? " selected" : ""; ?>>最終学歴（昇順）</option>
-						<option value="education-ASC"<?php echo (isset($searchDatas["align"]) && $searchDatas["align"] == "education-ASC") ? " selected" : ""; ?>>最終学歴（降順）</option>
-						<option value="class1st-DESC"<?php echo (isset($searchDatas["align"]) && $searchDatas["align"] == "class1st-DESC") ? " selected" : ""; ?>>経験分野（昇順）</option>
-						<option value="class1st-ASC"<?php echo (isset($searchDatas["align"]) && $searchDatas["align"] == "class1st-ASC") ? " selected" : ""; ?>>経験分野（降順）</option>
-						<option value="rank-DESC"<?php echo (isset($searchDatas["align"]) && $searchDatas["align"] == "rank-DESC") ? " selected" : ""; ?>>試験結果（昇順）</option>
-						<option value="rank-ASC"<?php echo (isset($searchDatas["align"]) && $searchDatas["align"] == "rank-ASC") ? " selected" : ""; ?>>試験結果（降順）</option>
-					</select>
-				</div>
-				<button class="emegra search confirm" onclick="Search()">検索</button>
-			<?php */ ?> -->
-			
-			<!-- 修正後： -->
 			<input class="form-control" type="text" id="search-name" style="width:15%; height:30px;margin-right:10px;" placeholder="診断者名" value="<?php echo (isset($searchDatas["name"])) ? $searchDatas["name"] : ""; ?>">
 			<button class="emegra search confirm" style="margin-right: 8px;" onclick="Search()">検索</button>
 			<div id="div-search" style="width: 150px;">
@@ -148,28 +107,13 @@
 					<?php endforeach; ?>
 				</select>
 			</div>
-			<!-- ここまで -->
 		</div>
 	</div>
 
-	<!--
-		作成：朴昰成
-		修正：朴昰成
-		修正日：24/05/22
-	-->
-
-	<!-- <?php /* ?> 修正前：
-		<?php if (false): ?>
-	<?php */ ?> -->
-
-	<!-- 修正後： -->
 	<?php if (empty($recordDatas)): ?>
-	<!-- ここまで -->
 		<div class="table-empty" style="margin-top: 16px;">
 			データがありません。
 		</div>
-		
-		<!-- 건드릴 부분 -->
 	<?php else: ?>
 		<table class="emegra" style="margin-top: 8px;">
 			<thead>
@@ -230,7 +174,6 @@
 			</tbody>
 		</table>
 	<?php endif; ?>
-<!-- 여기가끼 -->
 
 <div class="pagination-place" style="margin-top: 10px;">
 	<?php echo $this->paginationControl($this->noticelist, "sliding", array("pagination2", "Notice"), array("url" => "")); ?>
@@ -265,21 +208,6 @@
 		}
 
 		if (element != check_all) {
-			/* 
-				作成：朴昰成
-				修正：朴昰成
-				修正日：24/05/20
-			*/
-
-			/* 修正前：
-				check_all.checked = false;
-
-				check_idxs.forEach(e => {
-					if (e.checked) { check_all.checked = true; return true; }
-				});
-			*/
-
-			/* 修正後： */
 			let allChecked = true;
 			for (let i = 0; i < check_idxs.length; i++) {
 				if (check_idxs[i].checked == false) {
@@ -290,14 +218,9 @@
 			}
 
 			check_all.checked = allChecked;
-			/* ここまで */
 		}
 	}
 
-	/*
-		作成：朴昰成
-		作成日：24/05/20
-	*/
 	function Select(value) {
 		<?php
 			$newQuery = "?";
@@ -320,25 +243,6 @@
 		else { url += "pick=" + value; }
 		self.window.location = url;
 	}
-	/* ここまで */
-
-	/*
-		作成：朴昰成
-		修正：朴昰成
-		修正日：24/05/22
-	*/
-
-	/* <?php /* ?> 修正前：
-	function Search(value) {
-		let url = "<?= $url ?>?align=" + seachAlign.value;
-		if (seachName.value.trim() != "") {
-			url += "&name=" + seachName.value;
-		}
-		self.window.location = url;
-	}
-	<?php */ ?> */
-
-	/* 修正後： */
 	function Search(value) {
 		<?php
 			$newQuery = "?";
@@ -361,7 +265,6 @@
 		else { url += "name=" + seachName.value; }
 		self.window.location = url;
 	}
-	/* ここまで */
 
 	function Request() {
 		idxs = [];

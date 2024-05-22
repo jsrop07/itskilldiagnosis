@@ -49,32 +49,6 @@ class SituationController extends AbstractActionController {
 		$offset = ($page - 1) * 10;
 		if (!empty($query)) {
 			$sqlWhere = array();
-			/*
-				作成：朴昰成
-				修正：朴昰成
-				修正日：24/05/21
-			*/
-	
-			/* 修正前：
-				if (isset($query["name"])) {
-					$applicantTb = $this->getServiceLocator()->get("ApplicantTable-Admin");
-					try { $applicantDatas = $applicantTb->ReadByName($query["name"]); }
-					catch (\Exception $e) { print_r($e->getMessage()); exit; }
-
-					foreach ($applicantDatas as $data) {
-						$sqlWhere[] = $data["idx"];
-					}
-				}
-				$sqlWhere = $query["name"];
-
-				$sqlOrder["apply_date"] = "DESC";
-				if (isset($query["align"])) {
-					unset($sqlOrder["apply_date"]);
-					$sqlOrder[explode("-", $query["align"])[0]] = explode("-", $query["align"])[1];
-				}
-			*/
-
-			/* 修正後： */
 			$datas["searchDatas"] = $query;
 
 			if (isset($query["name"])) { $sqlWhere["name"] = $query["name"]; }
@@ -97,40 +71,12 @@ class SituationController extends AbstractActionController {
 						break;
 				}
 			}
-			/* ここまで */
-
-			/*
-				作成：朴昰成
-				修正：朴昰成
-				修正日：24/05/21
-			*/
-
-			/* 修正前：
-				try { $newRecordDatas = $recordTb->ReadNewListBySearchnOffsetnAlign($sqlWhere, $offset, $sqlOrder); }
-				catch (\Exception $e) { print_r($e->getMessage()); exit; }
-
-				if (count($newRecordDatas) <= 10) {
-					$limit = 10 - count($newRecordDatas);
-					try { $restRecordDatas = $recordTb->ReadRestListBySearchnOffsetnLimitnAlign($sqlWhere, $offset, $limit, $sqlOrder); }
-					catch (\Exception $e) { print_r($e->getMessage()); exit; }
-					
-					$recordDatas = array_merge($newRecordDatas, $restRecordDatas);
-				}
-				else {
-					$recordDatas = $newRecordDatas;
-				}
-				$paginationData = $recordTb->GetListBySearch($sqlWhere);
-				$datas["searchDatas"] = $query;
-			*/
-
-			/* 修正後： */
 			try { $newRecordDatas = $recordTb->ReadNewListBySearchnOffset($sqlWhere, $offset); }
 			catch (\Exception $e) { print_r($e->getMessage()); exit; }
 
 			if (count($newRecordDatas) < 10) {
 				$limit = 10 - count($newRecordDatas);
-				$offset -= $recordTb->CountNewData();
-				$limit = 10;
+				$offset -= $recordTb->CountNewDataBySearch($sqlWhere);
 				if ($offset < 0) { $offset = 0; }
 
 				try { $restRecordDatas = $recordTb->ReadRestListBySearchnOffsetnLimit($sqlWhere, $offset, $limit); }
@@ -143,7 +89,6 @@ class SituationController extends AbstractActionController {
 			}
 			try { $paginationData = $recordTb->GetListBySearch($sqlWhere); }
 			catch (\Exception $e) { print_r($e->getMessage()); exit; }
-			/* ここまで */
 		}
 		else {
 			try { $newRecordDatas = $recordTb->ReadNewListByOffset($offset); }
@@ -151,13 +96,8 @@ class SituationController extends AbstractActionController {
 
 			if (count($newRecordDatas) <= 10) {
 				$limit = 10 - count($newRecordDatas);
-				/*
-					作成：朴昰成
-					作成日：朴昰成
-				*/
 				$offset -= $recordTb->CountNewData();
 				if ($offset < 0) { $offset = 0; }
-				/* ここまで */
 
 				try { $restRecordDatas = $recordTb->ReadRestListByOffsetnLimit($offset, $limit); }
 				catch (\Exception $e) { print_r($e->getMessage()); exit; 
@@ -170,7 +110,6 @@ class SituationController extends AbstractActionController {
 			}
 			$paginationData = $recordTb->GetAllList();
 		}
-		// print_r($recordDatas); exit;
 
 
 			try {
@@ -236,19 +175,7 @@ class SituationController extends AbstractActionController {
 		$applicantData = $applicantTb->ReadByIdx($recordData["applicant_idx"]);
 		$recordData = array_merge($applicantData, $recordData);
 
-		/*
-			作成：朴昰成
-			修正：朴昰成
-			修正日：24/05/22
-		*/
-		
-		/* 修正前：
-			$diagnosisData = $diagnosisTb->ReadByCode($recordData["diagnosis_code"]);
-		*/
-
-		/* 修正後： */
 		$diagnosisData = $diagnosisTb->ReadForRecordByCodenDate($recordData["diagnosis_code"], $recordData["diagnosis_date"]);
-		/* ここまで */
 		$recordData = array_merge($diagnosisData, $recordData);
 		
 		$datas = $this->GetOptionDatas($datas);

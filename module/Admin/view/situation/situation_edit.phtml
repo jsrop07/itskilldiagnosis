@@ -676,10 +676,14 @@ switch (element.value) {
 
 <script>
 function diagnosisData() {
+  var skillElement = document.querySelector('select[name="skill"]');
   var levelElement = document.querySelector('select[name="level"]');
   var class2ndElement = document.querySelector('select[name="class2nd"]');
+  var skillValue = skillElement.options[skillElement.selectedIndex].value;
   var levelValue = levelElement.options[levelElement.selectedIndex].value;
   var class2ndValue = class2ndElement.options[class2ndElement.selectedIndex].value;
+  console.log(skillValue);
+
   const url = window.location.href;
   const postForm = new FormData();
   postForm.append("level", levelValue);

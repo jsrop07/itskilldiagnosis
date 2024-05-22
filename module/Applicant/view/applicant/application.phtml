@@ -82,6 +82,7 @@
                     <span  id="spanTypeSelect">問題種別</span>
                     <select class="" name="class2nd" style="width:40%" id="typeSelect">
                     <option value="" selected disabled hidden  >選択してください。</option>
+                    <input type="hidden" name="class2nd" style="width:40%" id="hiddentypeSelect">
                     </select>
 
                     <span id='spanCareer'>IT経験年数</span>
@@ -130,13 +131,14 @@
 <script>
 var skillSelect = document.querySelector('select[name="skill"]');
 
+var hiddentypeSelect= document.getElementById('hiddentypeSelect');
 var class2ndSelect = document.getElementById('typeSelect');
 var class2ndSpanSelect = document.getElementById('spanTypeSelect');
 
 var Applicantclass1stSelect = document.getElementById('class1stSelect');
 var Applicantclass1stSpanSelect=document.getElementById('spanclass1stSelect');
 
-var otherclass1stInput = document.getElementById('otherclass1stInput');
+var otherclass1stInput = document.getElementById('otherclass1st');
 
 var careerInput = document.getElementById('career');
 var ApplicantCareerInput = document.getElementById('spanCareer');
@@ -149,52 +151,46 @@ var otherTextarea = document.querySelector('textarea[name="other"]');
 var ApplicantOtherTextarea = document.getElementById('spanOther');
 
 
-function SkillSelectChange(value){
+function SkillSelectChange(value) {
     form.skill.value = value;
     console.log(form.skill.value);
-    if (form.skill.value  === '1') {
-        class1stSelect.value="その他";
-      // class1stOtherSelect.value="その他";
-      // form.class1stOtherSelect.hidden=true;
-      class2ndSelect.innerText=""
-      var option = document.createElement("option");
-      option.value = "33";
-      option.innerText = "テキスト";
-      class2ndSelect.appendChild(option);
-      class2ndSelect.value = "33";
-      careerInput.value='0';
-      // ApplicantCareerInput.style.display='none';
-      class1stSelect.setAttribute('disabled', 'disabled');
-      class2ndSelect.setAttribute('disabled', 'disabled');
-
-      // certificatesInput.style.display='none';
-      // ApplicantCertificatesInput.style.display='none';
-
-      // class2ndSelect.disabled=true;
-      // class1stSelect.disabled = true;
-      otherclass1stInput.querySelector('input').disabled = true;
-      otherclass1stInput.style.display='none';
-      console.log(otherclass1stInput.style.display);
-
-      // careerInput.disabled = true;
-      // certificatesInput.disabled = true;
-
+    
+    if (form.skill.value === '1') {
+        class1stSelect.value = "その他";
+        otherclass1stInput.value = "その他";
+        hiddentypeSelect.value = "33";
+        class2ndSelect.innerText = "";
+        var option = document.createElement("option");
+        option.value = "33";
+        option.innerText = "テキスト";
+        class2ndSelect.appendChild(option);
+        class2ndSelect.value = "33";
+        careerInput.value = '0';
+        class1stSelect.setAttribute('disabled', 'disabled');
+        class2ndSelect.setAttribute('disabled', 'disabled');
+        otherclass1stInput.style.display = 'none';
     } else {
-        class2ndSelect.style.display='block';    
-        class2ndSpanSelect.style.display='block'; 
-
-        Applicantclass1stSelect.style.display='block';
-        Applicantclass1stSpanSelect.style.display='block';
-        otherclass1stInput.style.display='block';
-        otherclass1st.value="";
-
-        class2ndSelect.disabled=false;
+        // 초기화 로직 추가
+        class1stSelect.value = "";
+        otherclass1stInput.value = "";
+        hiddentypeSelect.value = "";
+        class2ndSelect.innerText = "";
+        class2ndSelect.value = "";
+        careerInput.value = '';
+        class2ndSelect.innerText = "";
+        var defaultOption = document.createElement("option");
+        defaultOption.value = "";
+        defaultOption.innerText = "選択してください。";
+        class2ndSelect.appendChild(defaultOption);
+        class2ndSelect.value = "";
+        class2ndSelect.disabled = false;
+        hiddentypeSelect.disabled = true;
         class1stSelect.disabled = false;
-        otherclass1stInput.querySelector('input').disabled = false;
         careerInput.disabled = false;
         certificatesInput.disabled = false;
-    }   
+    }
 }
+
 </script>
 
 <!-- educationとclass1stのその他項目画面変化 -->
@@ -220,18 +216,20 @@ function SkillSelectChange(value){
     document.getElementById('class1stSelect').addEventListener('change', function(event) {
     var selectedOption = event.target.value;
     var otherclass1stInput = document.getElementById('otherclass1stInput');
+    var otherclass1st = document.getElementById('otherclass1st');
+    console.log("1");
 
     if (selectedOption === "その他") {
         otherclass1stInput.style.display = 'block';
+        otherclass1st.style.display = 'block';
+        otherclass1st.removeAttribute('disabled');
+        console.log("Aasdasdasd");
+
     } else {
         otherclass1stInput.style.display = 'none';
-    }
-
-    var otherclass1st = document.getElementById('otherclass1st');
-    if (selectedOption === "その他") {
-        otherclass1st.removeAttribute('disabled');
-    } else {
+        otherclass1st.style.display = 'none';
         otherclass1st.setAttribute('disabled', 'disabled');
+        console.log("2");
     }
 });
 
@@ -285,46 +283,46 @@ function checkKana(input) {
 <!-- 必須項目有効性検査 -->
 <script>
     function applicationConfirm() {
-        if (form.email.value == "" || !emailValidationCheck(form.email.value)) {
-            alert("メールアドレスを入力してください。");
-            setTimeout("form.email.focus()",100);
-            return false;
-        }
+        // if (form.email.value == "" || !emailValidationCheck(form.email.value)) {
+        //     alert("メールアドレスを入力してください。");
+        //     setTimeout("form.email.focus()",100);
+        //     return false;
+        // }
 
-        if (form.name.value == "" || !checkKanji(form.name.value)) {
-            alert("漢字を入力してください。");
-            setTimeout("form.name.focus()",100);
-            return false;
-        }
+        // if (form.name.value == "" || !checkKanji(form.name.value)) {
+        //     alert("漢字を入力してください。");
+        //     setTimeout("form.name.focus()",100);
+        //     return false;
+        // }
 
-        if (form.kana.value == "" || !checkKana(form.kana.value)) {
-            alert("カナを入力してください。");
-            setTimeout("form.kana.focus()",100);
-            return false;
-        }
+        // if (form.kana.value == "" || !checkKana(form.kana.value)) {
+        //     alert("カナを入力してください。");
+        //     setTimeout("form.kana.focus()",100);
+        //     return false;
+        // }
 
-        if (form.birth.value == "" ) {
-            alert("生年月日を入力してください。");
-            setTimeout("form.birth.focus()",100);
-            return false;
-        }
+        // if (form.birth.value == "" ) {
+        //     alert("生年月日を入力してください。");
+        //     setTimeout("form.birth.focus()",100);
+        //     return false;
+        // }
     
-        if (form.case.value == "") {
-            alert("応募区分を入力してください。");
-            setTimeout("form.case.focus()",100);
-            return false;
-        }
-        if (form.educationSelect.value == "") {
-            alert("学歴入力してください。");
-            setTimeout("form.educationSelect.focus()",100);
-            return false;
-        }
+        // if (form.case.value == "") {
+        //     alert("応募区分を入力してください。");
+        //     setTimeout("form.case.focus()",100);
+        //     return false;
+        // }
+        // if (form.educationSelect.value == "") {
+        //     alert("学歴入力してください。");
+        //     setTimeout("form.educationSelect.focus()",100);
+        //     return false;
+        // }
 
-        if (form.educationSelect.value == "その他" && form.otherEducation.value=="") {
-            alert("その他の場合の、記入してください。");
-            setTimeout("form.educationSelect.focus()",100);
-            return false;
-        }
+        // if (form.educationSelect.value == "その他" && form.otherEducation.value=="") {
+        //     alert("その他の場合の、記入してください。");
+        //     setTimeout("form.educationSelect.focus()",100);
+        //     return false;
+        // }
 
         if (form.skill.value == "") {
             alert("ITスキル有無を入力してください。");

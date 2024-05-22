@@ -80,8 +80,9 @@ class ApplicantController extends AbstractActionController
 			'other' => $other,
 		];
 
-	   $tbl->insertAndUpdateApplication($arr);
+		$tbl->insertAndUpdateApplication($arr);
 	   $applicantInfo = $tbl->getRecord();
+		 exit;
 	   $this->mailByApplicantation($arr,$skillText,$caseText,$managerArray,$applicantInfo);
 
 	   echo "

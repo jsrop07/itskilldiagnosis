@@ -283,46 +283,46 @@ function checkKana(input) {
 <!-- 必須項目有効性検査 -->
 <script>
     function applicationConfirm() {
-        // if (form.email.value == "" || !emailValidationCheck(form.email.value)) {
-        //     alert("メールアドレスを入力してください。");
-        //     setTimeout("form.email.focus()",100);
-        //     return false;
-        // }
+        if (form.email.value == "" || !emailValidationCheck(form.email.value)) {
+            alert("メールアドレスを入力してください。");
+            setTimeout("form.email.focus()",100);
+            return false;
+        }
 
-        // if (form.name.value == "" || !checkKanji(form.name.value)) {
-        //     alert("漢字を入力してください。");
-        //     setTimeout("form.name.focus()",100);
-        //     return false;
-        // }
+        if (form.name.value == "" || !checkKanji(form.name.value)) {
+            alert("漢字を入力してください。");
+            setTimeout("form.name.focus()",100);
+            return false;
+        }
 
-        // if (form.kana.value == "" || !checkKana(form.kana.value)) {
-        //     alert("カナを入力してください。");
-        //     setTimeout("form.kana.focus()",100);
-        //     return false;
-        // }
+        if (form.kana.value == "" || !checkKana(form.kana.value)) {
+            alert("カナを入力してください。");
+            setTimeout("form.kana.focus()",100);
+            return false;
+        }
 
-        // if (form.birth.value == "" ) {
-        //     alert("生年月日を入力してください。");
-        //     setTimeout("form.birth.focus()",100);
-        //     return false;
-        // }
+        if (form.birth.value == "" ) {
+            alert("生年月日を入力してください。");
+            setTimeout("form.birth.focus()",100);
+            return false;
+        }
     
-        // if (form.case.value == "") {
-        //     alert("応募区分を入力してください。");
-        //     setTimeout("form.case.focus()",100);
-        //     return false;
-        // }
-        // if (form.educationSelect.value == "") {
-        //     alert("学歴入力してください。");
-        //     setTimeout("form.educationSelect.focus()",100);
-        //     return false;
-        // }
+        if (form.case.value == "") {
+            alert("応募区分を入力してください。");
+            setTimeout("form.case.focus()",100);
+            return false;
+        }
+        if (form.educationSelect.value == "") {
+            alert("学歴入力してください。");
+            setTimeout("form.educationSelect.focus()",100);
+            return false;
+        }
 
-        // if (form.educationSelect.value == "その他" && form.otherEducation.value=="") {
-        //     alert("その他の場合の、記入してください。");
-        //     setTimeout("form.educationSelect.focus()",100);
-        //     return false;
-        // }
+        if (form.educationSelect.value == "その他" && form.otherEducation.value=="") {
+            alert("その他の場合の、記入してください。");
+            setTimeout("form.educationSelect.focus()",100);
+            return false;
+        }
 
         if (form.skill.value == "") {
             alert("ITスキル有無を入力してください。");

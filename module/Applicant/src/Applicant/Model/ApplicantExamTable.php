@@ -60,11 +60,17 @@ class ApplicantExamTable
           'idx',
           'point',
           'question',
+          'question_ko',
           'answer1',
+          'answer1_ko',
           'answer2',
+          'answer2_ko',
           'answer3',
+          'answer3_ko',
           'answer4',
+          'answer4_ko',
           'answer5',
+          'answer5_ko',
           'correct'
           // 'wdate' => new Expression("DATE_FORMAT(wdate, '%Y-%m-%d %H:%i')")
       ]);

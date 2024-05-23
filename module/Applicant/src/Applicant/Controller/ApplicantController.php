@@ -196,8 +196,6 @@ class ApplicantController extends AbstractActionController
         }
 	  }
 
-
-
 	  // 아이디 값 불러오기
 	  $applicantExamTbl = $this->getServiceLocator()->get("ApplicantExamTable");
 	  $applicantInfo    = $applicantExamTbl->readById($emailId);
@@ -222,7 +220,7 @@ class ApplicantController extends AbstractActionController
 	  // 정답값 비교하기
 	  $findQuestionData      = $applicantExamTbl->findCompareIdx($post);
 	  $selectedQuestion_idxs = ['question_idxs'=>isset($diagnosisInfo['question_idxs'])? $diagnosisInfo['question_idxs']:null];
-	  
+
 	  $matchedData=[];
 	  foreach(explode(',',$selectedQuestion_idxs["question_idxs"]) as $value)
 	  {
@@ -235,8 +233,7 @@ class ApplicantController extends AbstractActionController
 		}
 	  }
 	  $datas["matchedData"]=$matchedData;
-	//   print_r($matchedData);
-	//   exit;
+	  // exit;
 
 	  $output = [];
 		foreach ($matchedData as $item) {
@@ -321,7 +318,7 @@ class ApplicantController extends AbstractActionController
 			$sqlSet['diagnosis_comment']=$recordExamResult;
 			$applicantExamTbl->updateExam($sqlWhere, $sqlSet);			
 			$examRecordRecent =  $applicantExamTbl->readByApplicantIdx($applicantInfo);
-
+			
 			$applicantExamTbl->deletePasswordByIdx($applicantInfo["idx"]);
 			$this->mailByApplicantExam($applicantInfo,$sqlSet,$managerArray,$recordIdx);
 			$this->mailByAdminToApplicant($applicantInfo,$examRecordRecent,$caseText,$majorText,$managerArray);

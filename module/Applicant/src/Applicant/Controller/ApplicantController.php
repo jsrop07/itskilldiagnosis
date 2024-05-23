@@ -196,54 +196,62 @@ class ApplicantController extends AbstractActionController
         }
 	  }
 
-	  // 아이디 값 불러오기
+	  // Read applicant info
 	  $applicantExamTbl = $this->getServiceLocator()->get("ApplicantExamTable");
 	  $applicantInfo    = $applicantExamTbl->readById($emailId);
 		$situTbl= $this->getServiceLocator()->get("SituTable");
 		$recordIdx = $situTbl->getRecord();
 
-	  // 담당자 정보 불러오기
+	  // Read manager info
 	  $managerInfo=$applicantExamTbl->readByManagerInfo();
 	  $managerArray=[$managerInfo["id"], $managerInfo["password"],$managerInfo["name"],$managerInfo["smtp_password"]];
 
-	  // applicant의 id값과 record의 idx값 비교해서 불러오기
+	  // Read $applicantinfo's record
 	  $examRecordInfo =  $applicantExamTbl->readByApplicantIdx($applicantInfo);
 	  $datas["name"]  =  $applicantInfo["name"];
-	  	  
-	  // code diagnosis테이블의 code와 question_num, time_limit값 불러오기
+
+	  // Read record's diagnosis_code & Read selected diagnosis_code's info
 	  $recordCode    = $examRecordInfo["diagnosis_code"];
 	  $diagnosisInfo = $applicantExamTbl->readByDiagnosisCode($recordCode);
 
+    // Read diagnosis's question_num field data & time_limit data
 	  $datas["question_num"] = $diagnosisInfo["question_num"];
 	  $datas["time_limit"]   = $diagnosisInfo["time_limit"];
 
 	  // 정답값 비교하기
-	  $findQuestionData      = $applicantExamTbl->findCompareIdx($post);
+	  $findQuestionData      = $applicantExamTbl->readByQuestion($post);
+
+    //selected diagnosis_code's question_idxs data
 	  $selectedQuestion_idxs = ['question_idxs'=>isset($diagnosisInfo['question_idxs'])? $diagnosisInfo['question_idxs']:null];
 
 	  $matchedData=[];
 	  foreach(explode(',',$selectedQuestion_idxs["question_idxs"]) as $value)
 	  {
-		foreach($findQuestionData as $data)
-		{
-			if($data['idx']==$value)
-			{
-				$matchedData[] = $data;
-			}
-		}
+      foreach($findQuestionData as $data)
+      {
+        if($data['idx']==$value)
+        {
+          $matchedData[] = $data;    
+        }
+      }
 	  }
+    // Read diagnosis code's selected code's info
 	  $datas["matchedData"]=$matchedData;
-	  // exit;
 
+    //Read selected data's correct_idxs
 	  $output = [];
 		foreach ($matchedData as $item) {
 			$output[] = $item['correct'];
 
-		}
 	  $outputPoint=[];
 		foreach ($matchedData as $item) {
 			$outputPoint[] = $item['point'];
 
+    }
+    print_r($outputPoint);
+    print_r("<br>");
+    // print_r($data);
+    exit;
 		}
 		$result = implode(',', $output);
 		$answerDataArray = explode(',',$answer_data);
@@ -318,7 +326,8 @@ class ApplicantController extends AbstractActionController
 			$sqlSet['diagnosis_comment']=$recordExamResult;
 			$applicantExamTbl->updateExam($sqlWhere, $sqlSet);			
 			$examRecordRecent =  $applicantExamTbl->readByApplicantIdx($applicantInfo);
-			
+      print_r($matchedData);
+exit;
 			$applicantExamTbl->deletePasswordByIdx($applicantInfo["idx"]);
 			$this->mailByApplicantExam($applicantInfo,$sqlSet,$managerArray,$recordIdx);
 			$this->mailByAdminToApplicant($applicantInfo,$examRecordRecent,$caseText,$majorText,$managerArray);

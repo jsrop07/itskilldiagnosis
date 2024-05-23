@@ -53,7 +53,7 @@ class ApplicantExamTable
     return $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
   }
 
-  public function findCompareIdx($p)
+  public function readByQuestion($p)
   {
       $select = $this->sql->select('question');
       $select->columns([

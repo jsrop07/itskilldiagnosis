@@ -34,7 +34,7 @@ if ($ses_id) {
         <div style="padding:0px 50px;">
           <p style="margin-top:20px;font-weight:bold;">問題数　　<?php echo $question_num; ?>問				</p>				  
           <?php $count = 1; foreach ($matchedData as $idx => $row) : ?>
-            <?php print_r($matchedData) ?>
+            <!-- <?php print_r($matchedData) ?> -->
         <div class="examBox" style="width:100%; display: <?= $count === 1 ? 'block' : 'none' ?>;" id="exam<?= $count ?>">
           <div class="question" style="margin-left:50px;font-weight:bold;" id="<?= $row['idx'] ?>">問題 <?= $idx + 1 . ". " . $row["question"] ?></div>
             <div class="card-body" style="margin-left: 100px;">

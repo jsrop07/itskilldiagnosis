@@ -120,11 +120,17 @@ class QuestionController extends AbstractActionController
 		$datas["optionDatas"] = $this->GetOptionDatasForInput();
 
 
-		// Check return from 登録確認　page
-		$post = $this->params()->fromPost();
-		if (isset($post["title"])) {
-			$datas["questionData"] = $post;
-		}
+		/* Useless Function
+			削除：朴昰成
+			削除日：24/05/23
+		
+		削除前：
+			// Check return from 登録確認　page
+			$post = $this->params()->fromPost();
+			if (isset($post["title"])) {
+				$datas["questionData"] = $post;
+			}
+		*/
 
 		$adminTb = $this->getServiceLocator()->get("AdminTable");
 		try { $datas["adminDatas"] = $adminTb->ReadAllList(); }
@@ -382,9 +388,15 @@ class QuestionController extends AbstractActionController
 			}
 
 			$keys = $csvStrings[0];
-			foreach ($keys as $idx => $data) {
-				$keys[$idx] = preg_replace("/[^A-Za-z0-9-]/", "", $data);
-			}
+			/*
+				削除：朴昰成
+				削除日：24/05/23
+
+			削除前：
+				foreach ($keys as $idx => $data) {
+					$keys[$idx] = $data;
+				}
+			*/
 			unset($csvStrings[0]);
 
 			$questionTb = $this->getServiceLocator()->get("QuestionTable");

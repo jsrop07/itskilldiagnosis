@@ -109,42 +109,113 @@
 			<dl class="emegra question">
 				<dt class="essential">問題</dt>
 				<dd><input class="form-control" name="question" type="text" placeholder="問題を入力してください" value="<?php echo ($isSet) ? $questionData["question"] : ""; ?>"/></dd>
+        <!--
+          作成：朴昰成
+          作成日：24/05/22
+        -->
+				<dt>問題 (韓国)</dt>
+				<dd><input class="form-control" name="question_ko" type="text" placeholder="문제를 입력해주세요" value="<?php echo ($isSet) ? $questionData["question_ko"] : ""; ?>"/></dd>
+        <!-- ここまで -->
 
 				<dt class="essential">選択肢</dt>
 				<div class="grid answers" name="answers" id="answers">
-					<?php if ($isSet): ?>
-						<div class="answer_first" name="div_answer">
-							<dt class="essential">①</dt>
-							<dd><input class="form-control" name="answer1" type="text" placeholder="選択肢を入力してください" value="<?php echo $questionData["answer1"]; ?>"/></dd>
-						</div>
+          <!--
+            作成：朴昰成
+            修正：朴昰成
+            修正日：24/05/22
+          -->
 
-						<?php for ($i = 2; $i <= $answerNum; $i++): ?>
-							<div name="div_answer">
-								<dt class="essential"><?= $numTexts[$i - 1]; ?></dt>
-								<dd><input class="form-control" name="answer<?= $i; ?>" type="text" placeholder="選択肢を入力してください" value="<?php echo $questionData["answer" . $i]; ?>"></dd>
-							</div>
-						<?php endfor; ?>
-						<?php for ($i = $answerNum + 1; $i <= 5; $i++): ?>
-							<div name="div_answer" hidden>
-								<dt class="essential"><?= $numTexts[$i - 1]; ?></dt>
-								<dd><input class="form-control" name="answer<?= $i; ?>" type="text" placeholder="選択肢を入力してください" disabled/></dd>
-							</div>
-						<?php endfor; ?>
-					<?php else: ?>
-						<div class="answer_first" id="div_notice" style="display: flex; align-items: center;">タイプを選択してください。</div>
+          <!-- 修正前： <?php /* ?>
+            <?php if ($isSet): ?>
+              <div class="answer_first" name="div_answer">
+                <dt class="essential">①</dt>
+                <dd><input class="form-control" name="answer1" type="text" placeholder="選択肢を入力してください" value="<?php echo $questionData["answer1"]; ?>"/></dd>
+              </div>
 
-						<div class="answer_first" name="div_answer" hidden>
-							<dt class="essential">①</dt>
-							<dd><input class="form-control" name="answer1" type="text" placeholder="選択肢を入力してください" disabled/></dd>
-						</div>
-						
-						<?php for ($i = 2; $i <= 5; $i++): ?>
-							<div name="div_answer" hidden>
-								<dt class="essential"><?= $numTexts[$i - 1]; ?></dt>
-								<dd><input class="form-control" name="answer<?= $i; ?>" type="text" placeholder="選択肢を入力してください" disabled/></dd>
-							</div>
-						<?php endfor; ?>
-					<?php endif; ?>
+              <?php for ($i = 2; $i <= $answerNum; $i++): ?>
+                <div name="div_answer">
+                  <dt class="essential"><?= $numTexts[$i - 1]; ?></dt>
+                  <dd><input class="form-control" name="answer<?= $i; ?>" type="text" placeholder="選択肢を入力してください" value="<?php echo $questionData["answer" . $i]; ?>"></dd>
+                </div>
+              <?php endfor; ?>
+              <?php for ($i = $answerNum + 1; $i <= 5; $i++): ?>
+                <div name="div_answer" hidden>
+                  <dt class="essential"><?= $numTexts[$i - 1]; ?></dt>
+                  <dd><input class="form-control" name="answer<?= $i; ?>" type="text" placeholder="選択肢を入力してください" disabled/></dd>
+                </div>
+              <?php endfor; ?>
+            <?php else: ?>
+              <div class="answer_first" id="div_notice" style="display: flex; align-items: center;">タイプを選択してください。</div>
+
+              <div class="answer_first" name="div_answer" hidden>
+                <dt class="essential">①</dt>
+                <dd><input class="form-control" name="answer1" type="text" placeholder="選択肢を入力してください" disabled/></dd>
+              </div>
+              
+              <?php for ($i = 2; $i <= 5; $i++): ?>
+                <div name="div_answer" hidden>
+                  <dt class="essential"><?= $numTexts[$i - 1]; ?></dt>
+                  <dd><input class="form-control" name="answer<?= $i; ?>" type="text" placeholder="選択肢を入力してください" disabled/></dd>
+                </div>
+              <?php endfor; ?>
+            <?php endif; ?>
+          <?php */ ?> -->
+
+          <!-- 修正後： -->
+          <?php if ($isSet): ?>
+            <div class="first">
+              <dt class="essential">①</dt>
+              <dd><input class="form-control" name="answer1" type="text" placeholder="選択肢を入力してください" value="<?php echo $questionData["answer1"]; ?>"/></dd>
+            </div>
+            <div>
+              <dt>①韓国語</dt>
+              <dd><input class="form-control" name="answer1_ko" type="text" placeholder="선택지를 입력해주세요" value="<?php echo $questionData["answer1_ko"]; ?>"/></dd>
+            </div>
+
+            <?php for ($i = 2; $i <= $answerNum; $i++): ?>
+              <div>
+                <dt class="essential"><?= $numTexts[$i - 1]; ?></dt>
+                <dd><input class="form-control" name="answer<?= $i; ?>" type="text" placeholder="選択肢を入力してください" value="<?php echo $questionData["answer" . $i]; ?>"></dd>
+              </div>
+              <div>
+                <dt><?= $numTexts[$i - 1]; ?>韓国語</dt>
+                <dd><input class="form-control" name="answer<?= $i; ?>_ko" type="text" placeholder="선택지를 입력해주세요" value="<?php echo $questionData["answer" . $i . "_ko"]; ?>"/></dd>
+              </div>
+            <?php endfor; ?>
+            <?php for ($i = $answerNum + 1; $i <= 5; $i++): ?>
+              <div hidden>
+                <dt class="essential"><?= $numTexts[$i - 1]; ?></dt>
+                <dd><input class="form-control" name="answer<?= $i; ?>" type="text" placeholder="選択肢を入力してください" disabled/></dd>
+              </div>
+              <div hidden>
+                <dt><?= $numTexts[$i - 1]; ?>韓国語</dt>
+                <dd><input class="form-control" name="answer<?= $i; ?>_ko" type="text" placeholder="選択肢を入力してください（韓国語）" disabled/></dd>
+              </div>
+            <?php endfor; ?>
+          <?php else: ?>
+            <div class="first" id="div_notice" style="display: flex; align-items: center;">タイプを選択してください。</div>
+
+            <div class="first" hidden>
+              <dt class="essential">①</dt>
+              <dd><input class="form-control" name="answer1" type="text" placeholder="選択肢を入力してください" disabled/></dd>
+            </div>
+            <div hidden>
+              <dt>①韓国語</dt>
+              <dd><input class="form-control" name="answer1_ko" type="text" placeholder="選択肢を入力してください（韓国語）" disabled/></dd>
+            </div>
+
+            <?php for ($i = 2; $i <= 5; $i++): ?>
+              <div hidden>
+                <dt class="essential"><?= $numTexts[$i - 1]; ?></dt>
+                <dd><input class="form-control" name="answer<?= $i; ?>" type="text" placeholder="選択肢を入力してください" disabled/></dd>
+              </div>
+              <div hidden>
+                <dt><?= $numTexts[$i - 1]; ?>韓国語</dt>
+                <dd><input class="form-control" name="answer<?= $i; ?>_ko" type="text" placeholder="選択肢を入力してください（韓国語）" disabled/></dd>
+              </div>
+            <?php endfor; ?>
+          <?php endif; ?>
+          <!-- ここまで -->
 				</div>
 
 				<dt class="essential" id="correct-title">正解番号</dt>
@@ -307,8 +378,24 @@
 		// Show 答え&正解番号
 		if (answerCount > beforeAnswerCount) {
 			for (let i = beforeAnswerCount; i < answerCount; i++) {
-				answerDivs[i].hidden = false;
-				answers[i].disabled = false;
+        /*
+          作成：朴昰成
+          修正：朴昰成
+          修正日：24/05/23
+        */
+
+        /* 修正前：
+          answerDivs[i].hidden = false;
+          answers[i].disabled = false;
+        */
+
+        /* 修正後： */
+        form.elements["answer" + Number(i + 1)].disabled = false;
+        form.elements["answer" + Number(i + 1)].parentNode.parentNode.hidden = false;
+
+        form.elements["answer" + Number(i + 1) + "_ko"].disabled = false;
+        form.elements["answer" + Number(i + 1) + "_ko"].parentNode.parentNode.hidden = false;
+        /* ここまで */
 
 				var option = document.createElement("option");
 				option.value = Number(i + 1);
@@ -318,9 +405,27 @@
 		} else { // Hide 答え&正解番号
 			let correctChildren = Array.from(correct.children);
 			for (let i = beforeAnswerCount - 1; i >= answerCount; i--) {
-				answerDivs[i].hidden = true;
-				answers[i].disabled = true;
-				answers[i].value = "";
+        /*
+          作成：朴昰成
+          修正：朴昰成
+          修正日：24/05/23
+        */
+
+        /* 修正前：
+          answerDivs[i].hidden = true;
+          answers[i].disabled = true;
+          answers[i].value = "";
+        */
+
+        /* 修正後： */
+        form.elements["answer" + Number(i + 1)].parentNode.parentNode.hidden = true;
+        form.elements["answer" + Number(i + 1)].disabled = true;
+        form.elements["answer" + Number(i + 1)].value = "";
+
+        form.elements["answer" + Number(i + 1) + "_ko"].parentNode.parentNode.hidden = true;
+        form.elements["answer" + Number(i + 1) + "_ko"].disabled = true;
+        form.elements["answer" + Number(i + 1) + "_ko"].value = "";
+        /* ここまで */
 
 				if (form.correct.value == i + 1) {
 					form.correct.dataset.value = "";
@@ -394,13 +499,31 @@
 		}
 
 		for (let i = 0; i < answerCount; i++) {
-			if (answers[i].disabled == true) { break; }
+      /*
+        作成：朴昰成
+        修正：朴昰成
+        修正日：24/05/23
+      */
 
-			if (answers[i].value.trim() == "") {
-				alert("選択肢" + (Number(i) + 1) + "を入力してください");
-				setTimeout("form.answer" + (Number(i) + 1) + ".focus()", 100);
-				return false;
-			}
+      /* 修正前：
+        if (answers[i].disabled == true) { break; }
+
+        if (answers[i].value.trim() == "") {
+          alert("選択肢" + (Number(i) + 1) + "を入力してください");
+          setTimeout("form.answer" + (Number(i) + 1) + ".focus()", 100);
+          return false;
+        }
+      */
+
+      /* 修正後： */
+      if (form.elements["answer" + Number(i + 1)].disabled == true) { break; }
+
+      if (form.elements["answer" + Number(i + 1)].value.trim() == "") {
+        alert("選択肢" + (Number(i) + 1) + "を入力してください");
+        setTimeout("form.answer" + (Number(i) + 1) + ".focus()", 100);
+        return false;
+      }
+      /* ここまで */
 		}
 
 		if (form.correct.value == "") {

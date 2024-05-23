@@ -91,8 +91,8 @@ class DiagnosisTable {
 	}
 
 	/** Read Table record By Code
-	 * @param string $code RecordTables diagnosis_code
-	 * @param string $date RecordTables diagnosis_date
+	 * @param string $code RecordTable's diagnosis_code
+	 * @param string $date RecordTable's diagnosis_date
 	 * @return mixed Record
 	 */
 	public function ReadForRecordByCodenDate($code, $date) {

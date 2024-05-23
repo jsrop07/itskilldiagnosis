@@ -253,7 +253,7 @@ class QuestionTable {
 
 	/** Delete data by index
 	 * @param int $idx index
-	 * @param mixed $setDatasW
+	 * @param mixed $setDatas
 	 * @return mixed data
 	 */
 	public function RemoveQuestion($idx, $setDatas) {

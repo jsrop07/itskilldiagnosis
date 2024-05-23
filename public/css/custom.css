@@ -17,7 +17,8 @@ option {
 	grid-template-columns: 80px 1fr;
 	grid-gap: 0 16px;
 }
-.grid.answers > .answer_first {
+
+.grid.answers > .first {
 	margin-top: 0;
 }
 

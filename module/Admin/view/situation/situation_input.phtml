@@ -7,7 +7,7 @@ function InitStyle() { return " font-style: italic; color: ;"; }
 
 <h1 class="title">ITスキル診断状況管理</h1>
 
-<form id="form" method="post" action=".././situ/inputok">
+<form id="form" method="post" action=".././situation/inputok">
 	<style type="text/css">
 		option { color: black; }
 		input::placeholder { font-style: italic; }
@@ -102,7 +102,7 @@ function InitStyle() { return " font-style: italic; color: ;"; }
 			<dl class="emegra setting">
         <dt class="essential" id="ITskillTitle">ITスキル有無</dt>
 				<dd>
-          <select class="form-select" name="skill" id="ITskillId" style="width:220px" >
+          <select class="form-select" name="skill" id="ITskillId" style="width:220px" onchange="SkillSelectChange(this.value)">
             <option value="" selected hidden>選択</option>
             <option value="0">有</option>
             <option value="1">無</option>
@@ -197,15 +197,27 @@ function InitStyle() { return " font-style: italic; color: ;"; }
 				<dd><input class="form-control" name="question_num" type="text" style="width:50px;text-align:center;">問</dd>
 		
 				<dt class="essential">診断方法</dt>
-        <dd style="grid-column: 2 / 5;">
-          <select class="form-select" name="method" style="width:13%;" onchange="ChangeInputStyle(this)" >
+        <dd >
+          <select class="form-select" name="method" style="width:100px;" onchange="ChangeInputStyle(this)" >
             <option value="WEB">WEB</option>
             <option value="対面"selected>対面</option>
+          </select>
+				</dd>
+
+        <dt class="essential">言語選択</dt>
+        <dd>
+          <select class="form-select" name="language" style="width:100px;" onchange="ChangeInputStyle(this)" >
+            <option value="0" selected>日本語</option>
+            <option value="1">韓国語</option>
           </select>
 				</dd>
 		</dl>
 	</div>
 </div>
+
+<input type="hidden" name="class1st" id="noSkillClass1st">
+<input type="hidden" name="class2nd" id="noSkillClass2nd">
+<input type="hidden" name="career" id="noSkillCareer">
 
 <div class="btn-place" style="margin-top: 32px;">
 	<button type="button" class="emegra cancel" onclick="self.location.href='.././situation/list';">戻る</button>
@@ -276,24 +288,51 @@ function InitStyle() { return " font-style: italic; color: ;"; }
 	let skillSelect = document.getElementById('ITskillId');
 	let class1stSelect = document.getElementById('class1stId')
   let class1stOtherSelect = document.getElementById('otherclass1st')
-
 	var class2ndSelect = document.getElementById('class2ndId')
 	let careerSelect = document.getElementById('careerId')
-	skillSelect.addEventListener('change', function() {
-    var selectedValue = this.value;
-			if (selectedValue === '1') {
-				class1stSelect.value="その他";
-        class1stOtherSelect.value="その他";
-				class2ndSelect.innerText="";
-				var option = document.createElement("option");
-				option.value = "33";
-				option.innerText = "テキスト";
-				class2ndSelect.appendChild(option);
-				class2ndSelect.value = "33";
+  var hiddenClass1st= document.getElementById('noSkillClass1st');
+  var hiddenClass2nd= document.getElementById('noSkillClass2nd');
+  var hiddenCareer= document.getElementById('noSkillCareer');
+  var noSkillClass2ndoption = document.createElement("option");
+  var yesSkillClass2ndoption = document.createElement("option");
 
-			}
-		}	
-	)
+  function SkillSelectChange(value){
+  form.skill.value = value;
+    if (form.skill.value === '1') {
+      class1stSelect.value="その他";
+      class2ndSelect.innerText="";
+      noSkillClass2ndoption.value = "33";
+      noSkillClass2ndoption.innerText = "テキスト";
+      class2ndSelect.appendChild(noSkillClass2ndoption);
+      class2ndSelect.value = "33";
+      careerSelect.value="0";
+      class1stSelect.setAttribute('disabled', 'disabled');
+      class2ndSelect.setAttribute('disabled', 'disabled');
+      class1stOtherSelect.setAttribute('disabled', 'disabled');
+      careerSelect.setAttribute('disabled', 'disabled');
+      class1stOtherSelect.style.display = "none";
+      hiddenClass1st.value = "その他";
+      hiddenClass2nd.value = "33";
+      hiddenCareer.value = "0";
+    }
+    else{
+      class1stSelect.value = "";
+      class1stOtherSelect.value="";
+      class1stOtherSelect.style.display = "block";
+      class2ndSelect.innerText="";
+      careerSelect.value = "";
+      yesSkillClass2ndoption.value = "";
+      yesSkillClass2ndoption.innerText = "選択してください。";
+      class2ndSelect.appendChild(yesSkillClass2ndoption);
+      class1stSelect.removeAttribute('disabled');
+      class2ndSelect.removeAttribute('disabled');
+      careerSelect.removeAttribute('disabled');
+      hiddenClass1st.setAttribute('disabled', 'disabled');
+      hiddenClass2nd.setAttribute('disabled', 'disabled');
+      hiddenCareer.setAttribute('disabled', 'disabled');
+    }
+  }	
+
 
 </script>
 
@@ -323,17 +362,21 @@ function InitStyle() { return " font-style: italic; color: ;"; }
 //     }
 // });
 
-document.getElementById('class1stId').addEventListener('change', function(event) {
-	var selectedOption = event.target.value;
+// Delete 240524
+// 削除前： 下のコド保存
+// 削除後：
+// document.getElementById('class1stId').addEventListener('change', function(event) {
+// 	var selectedOption = event.target.value;
 
-	if (selectedOption === "その他") {
-		form.class1st.value = "";
-        form.class1st.hidden = false;
-    } else if(selectedOption != "その他") {
-        form.class1st.hidden = true;
-		// form.education.style.display = 'none';
-    }
-});
+// 	if (selectedOption === "その他") {
+// 		  form.class1st.value = "";
+//       form.class1st.hidden = false;
+//       console.log("1");
+//     } else if(selectedOption != "その他") {
+//         form.class1st.hidden = true;
+//         console.log("2");
+//     }
+// });
 </script>
 
 <script>
@@ -375,9 +418,6 @@ switch (element.value) {
 			randomPw += pwEncoding.charAt(randomIndex);
 		}
 		form.password.value = randomPw;
-		// console.log(randomPW);
-
-
 	}
 </script>
 

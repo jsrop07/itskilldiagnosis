@@ -82,7 +82,6 @@ class ApplicantController extends AbstractActionController
 
 		$tbl->insertAndUpdateApplication($arr);
 	   $applicantInfo = $tbl->getRecord();
-		 exit;
 	   $this->mailByApplicantation($arr,$skillText,$caseText,$managerArray,$applicantInfo);
 
 	   echo "
@@ -175,7 +174,7 @@ class ApplicantController extends AbstractActionController
 	 // Set layout
 	  $this->layout("layout/applicant/exam_layout");
 	  $post = $this->params()->fromPost();
-	  $submit_post        = (isset($post['submit_post'])         &&   $post['submit_post'] !='')         ? $post['submit_post']         : '';
+	  $submit_post = (isset($post['submit_post'])  &&   $post['submit_post'] !='')  ? $post['submit_post']  : '';
 	  $answer_data = (isset($post['answer_data'])  &&   $post['answer_data'] !='')  ? $post['answer_data']  : '';
 	  $comment     = (isset($post['comment'])      &&   $post['comment'] !='')      ? $post['comment']      : '';
 
@@ -196,58 +195,63 @@ class ApplicantController extends AbstractActionController
         }
 	  }
 
-
-
-	  // 아이디 값 불러오기
+	  // Read applicant info
 	  $applicantExamTbl = $this->getServiceLocator()->get("ApplicantExamTable");
 	  $applicantInfo    = $applicantExamTbl->readById($emailId);
 		$situTbl= $this->getServiceLocator()->get("SituTable");
 		$recordIdx = $situTbl->getRecord();
 
-	  // 담당자 정보 불러오기
+	  // Read manager info
 	  $managerInfo=$applicantExamTbl->readByManagerInfo();
 	  $managerArray=[$managerInfo["id"], $managerInfo["password"],$managerInfo["name"],$managerInfo["smtp_password"]];
 
-	  // applicant의 id값과 record의 idx값 비교해서 불러오기
+	  // Read $applicantinfo's record
 	  $examRecordInfo =  $applicantExamTbl->readByApplicantIdx($applicantInfo);
 	  $datas["name"]  =  $applicantInfo["name"];
-	  	  
-	  // code diagnosis테이블의 code와 question_num, time_limit값 불러오기
+		$datas['language'] = $examRecordInfo['language'];
+
+		// Read record's diagnosis_code & Read selected diagnosis_code's info
 	  $recordCode    = $examRecordInfo["diagnosis_code"];
 	  $diagnosisInfo = $applicantExamTbl->readByDiagnosisCode($recordCode);
 
+    // Read diagnosis's question_num field data & time_limit data
 	  $datas["question_num"] = $diagnosisInfo["question_num"];
 	  $datas["time_limit"]   = $diagnosisInfo["time_limit"];
 
 	  // 정답값 비교하기
-	  $findQuestionData      = $applicantExamTbl->findCompareIdx($post);
+	  $findQuestionData = $applicantExamTbl->readByQuestion($post);
+		// print_r($findQuestionData);
+		// exit;
+
+    //selected diagnosis_code's question_idxs data
 	  $selectedQuestion_idxs = ['question_idxs'=>isset($diagnosisInfo['question_idxs'])? $diagnosisInfo['question_idxs']:null];
-	  
+
 	  $matchedData=[];
 	  foreach(explode(',',$selectedQuestion_idxs["question_idxs"]) as $value)
 	  {
-		foreach($findQuestionData as $data)
-		{
-			if($data['idx']==$value)
-			{
-				$matchedData[] = $data;
-			}
-		}
+      foreach($findQuestionData as $data)
+      {
+        if($data['idx']==$value)
+        {
+          $matchedData[] = $data;    
+        }
+      }
 	  }
+    // Read diagnosis code's selected code's info
 	  $datas["matchedData"]=$matchedData;
-	//   print_r($matchedData);
-	//   exit;
-
+		// print_r($matchedData);
+    //Read selected data's correct_idxs
 	  $output = [];
 		foreach ($matchedData as $item) {
-			$output[] = $item['correct'];
+				$output[] = $item['correct'];
 
-		}
-	  $outputPoint=[];
-		foreach ($matchedData as $item) {
-			$outputPoint[] = $item['point'];
+			$outputPoint=[];
+			foreach ($matchedData as $item) {
+				$outputPoint[] = $item['point'];
 
+			}
 		}
+
 		$result = implode(',', $output);
 		$answerDataArray = explode(',',$answer_data);
 		$resultArray = explode(',', $result);
@@ -321,7 +325,8 @@ class ApplicantController extends AbstractActionController
 			$sqlSet['diagnosis_comment']=$recordExamResult;
 			$applicantExamTbl->updateExam($sqlWhere, $sqlSet);			
 			$examRecordRecent =  $applicantExamTbl->readByApplicantIdx($applicantInfo);
-
+//       print_r($matchedData);
+// exit;
 			$applicantExamTbl->deletePasswordByIdx($applicantInfo["idx"]);
 			$this->mailByApplicantExam($applicantInfo,$sqlSet,$managerArray,$recordIdx);
 			$this->mailByAdminToApplicant($applicantInfo,$examRecordRecent,$caseText,$majorText,$managerArray);
@@ -363,9 +368,9 @@ function mailByApplicantExam($applicantInfo,$sqlSet,$managerArray,$recordIdx){
 	// 수신자 이메일과 이름 설정
 	// $param['managerEmail']=$managerArray[0];
 	$param['email']=$managerArray[0];
-	$param['password']="$managerArray[1]";
-	$param['name']="$managerArray[2]";
-	$param['smtp_password']="$managerArray[3]";
+	$param['password']=$managerArray[1];
+	$param['name']=$managerArray[2];
+	$param['smtp_password']=$managerArray[3];
 
 	// 전송
 	$result = $mail->mailsender($param);
@@ -405,9 +410,9 @@ function mailByApplicantExam($applicantInfo,$sqlSet,$managerArray,$recordIdx){
 	// 수신자 이메일과 이름 설정
 	$param['managerEmail']=$managerArray[0];
 	$param['email']=$applicantInfo["email"];;
-	$param['password']="$managerArray[1]";
-	$param['name']="$managerArray[2]";
-	$param['smtp_password']="$managerArray[3]";
+	$param['password']=$managerArray[1];
+	$param['name']=$managerArray[2];
+	$param['smtp_password']=$managerArray[3];
 
 	// 전송
 	$result = $mail->mailApplicant($param);

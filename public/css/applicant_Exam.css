@@ -117,6 +117,19 @@ button.emegra {
     padding: 30px;
 }
 
+.questionNext{
+    height: 38px;
+    width: 80px;
+    border-radius: 4px;
+    background: var(--gradient);
+    color: white;
+    border:0;
+    float: right;
+    text-align: center;
+    line-height:40px;
+    cursor:pointer;
+}
+
 .button_box{
     gap: 8px;
     padding: 20px;

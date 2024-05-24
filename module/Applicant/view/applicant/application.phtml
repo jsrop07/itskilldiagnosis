@@ -152,9 +152,7 @@ var ApplicantOtherTextarea = document.getElementById('spanOther');
 
 
 function SkillSelectChange(value) {
-    form.skill.value = value;
-    console.log(form.skill.value);
-    
+    form.skill.value = value;    
     if (form.skill.value === '1') {
         class1stSelect.value = "その他";
         otherclass1stInput.value = "その他";
@@ -170,7 +168,6 @@ function SkillSelectChange(value) {
         class2ndSelect.setAttribute('disabled', 'disabled');
         otherclass1stInput.style.display = 'none';
     } else {
-        // 초기화 로직 추가
         class1stSelect.value = "";
         otherclass1stInput.value = "";
         hiddentypeSelect.value = "";
@@ -403,32 +400,32 @@ selectElements.forEach(function(selectElement) {
 </script>
 
 <script>
-    	function ChangeClass1st(element) {
+function ChangeClass1st(element) {
 
-		class2ndSelect.replaceChildren();
-		
-		switch (element.value) {
-        <?php foreach ($optionDatas["class2nd"] as $value => $class2nd): ?>
-            case "<?php echo $optionDatas["class1st"][array_search($value, array_column($optionDatas["class1st"], "idx"))]["text"]; ?>":
-                var option = document.createElement("option");
-                option.hidden = true;
-                option.innerText = "選択してください。";
-                class2ndSelect.appendChild(option);
+class2ndSelect.replaceChildren();
 
-                <?php foreach ($class2nd as $data): ?>
-                    var option = document.createElement("option");
-                    option.value = <?php echo $data["idx"]; ?>;
-                    option.innerText = "<?php echo $data["text"]; ?>";
-                    class2ndSelect.appendChild(option);
-                <?php endforeach; ?>
-                break;
-                <?php endforeach; ?>
-                default:
-                    var option = document.createElement("option");
-                    option.value = 7;
-                    option.innerText = "データがありません";
-                    class2ndSelect.appendChild(option);
-                    break;
-            }
-	}
+switch (element.value) {
+  <?php foreach ($optionDatas["class2nd"] as $value => $class2nd): ?>
+    case "<?php echo $optionDatas["class1st"][array_search($value, array_column($optionDatas["class1st"], "idx"))]["text"]; ?>":
+      var option = document.createElement("option");
+      option.hidden = true;
+      option.innerText = "選択してください。";
+      class2ndSelect.appendChild(option);
+
+      <?php foreach ($class2nd as $data): ?>
+        var option = document.createElement("option");
+        option.value = <?php echo $data["idx"]; ?>;
+        option.innerText = "<?php echo $data["text"]; ?>";
+        class2ndSelect.appendChild(option);
+      <?php endforeach; ?>
+      break;
+      <?php endforeach; ?>
+      default:
+        var option = document.createElement("option");
+        option.value = 7;
+        option.innerText = "データがありません";
+        class2ndSelect.appendChild(option);
+        break;
+      }
+}
 </script>

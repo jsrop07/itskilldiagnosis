@@ -9,6 +9,7 @@ if ($ses_id) {
 } else {
     $logged = false;
 }
+
 ?>
 <?php if ($logged == true): ?>
 <header>
@@ -21,6 +22,7 @@ if ($ses_id) {
     <button class=" btn btn-sm" id="stopBtn" style=" display:flex; align-items:center; text-align:center;color:yellow; border:none;"  data-bs-toggle="modal" data-bs-target="#staticBackdrop2">一時停止</button>
 </div>
 </header>	     
+
 <div class="container-fluid">
   <div class="card emegra" >
     <div class="card-body"style="margin-top:70px;">
@@ -29,53 +31,68 @@ if ($ses_id) {
           <p style="font-weight: bold; font-size: 20px; text-align:center;"><?php echo $name; ?>様</p>         
           <p>表示される問題に従って回答してください。</p>			
           <p style="color:red;">※ ページ上部の一時停止ボタンを押すと10分間停止し、1回のみ使用可能です。</p>	
-	
         </div>
         <div style="padding:0px 50px;">
-            <p  style="margin-top:20px;font-weight:bold;">問題数　　<?php echo $question_num; ?>問				</p>				  
-            <?php $count = 1; foreach ($matchedData as $idx => $row) : ?>
-        <div class="examBox" style="width:100%;">
-            <div class="question" style="margin-left:50px;font-weight:bold;" id="<?= $row['idx'] ?>">問題 <?= $idx + 1 . ". " . $row["question"] ?></div>
+          <p style="margin-top:20px;font-weight:bold;">問題数　　<?php echo $question_num; ?>問				</p>				  
+          <?php $count = 1; 
+          foreach ($matchedData as $idx => $row) : 
+          $question_ko = $idx + 1 . ". " . $row["question_ko"];
+          $question_jp = $idx + 1 . ". " . $row["question"];
+          ?>
+            
+        <div class="examBox" style="width:100%; display: <?= $count === 1 ? 'block' : 'none' ?>;" id="exam<?= $count ?>">
+          <div class="question" style="margin-left:50px;font-weight:bold;" id="<?= $row['idx'] ?>">問題 <?= $language==1 && $row["question_ko"] != null ?  $question_ko : $question_jp ?></div>
             <div class="card-body" style="margin-left: 100px;">
                 <div class="answers mt-2">
                     <ul class="list-unstyled">
                         <?php for ($i = 1; $i <= 5; $i++) : ?>
                             <?php 
                             $answerKey = "answer$i";
-                            if (!empty($row[$answerKey])) : // answer가 존재하는 경우에만 출력
+                            $answerKey_ko = "answer$i"."_ko";
+                            $answer_ko = htmlspecialchars($row[$answerKey_ko], ENT_QUOTES);
+                            $answer_jp = htmlspecialchars($row[$answerKey], ENT_QUOTES);
+                            if (!empty($row[$answerKey])) :
                             ?>
-                                <li style="padding: 10px 0">         
-                                    <input type="radio" name="answer<?=$idx + 1 ?>" value="<?= $i ?>"> <?php echo htmlspecialchars($row[$answerKey], ENT_QUOTES) ?>
+                                <li style="padding: 10px 0">
+                                    <input type="radio" name="answer<?= $idx + 1 ?>" value="<?= $i ?>"> <?php echo $language == 1 && $answer_ko != null? $answer_ko : $answer_jp ?>
                                 </li>
                             <?php endif; ?>
                         <?php endfor; ?>
                     </ul>
                 </div>
+                <div class="questionNext" id="nextId" onclick="showNextQuestion(<?= $count ?>)">次へ</div>
             </div>
-        </div>
-    <?php endforeach; ?>
-    <input type="hidden" id="answer_data" name="answer_data">
+          </div>
+        <?php $count++; ?>  
+      <?php endforeach; ?>
 
+<script>
+    let forms= document.getElementById('myForm');
+    let currentNumber =1;
+    let ischeck= true;
+    function showNextQuestion(current) {
+        const currentExam = document.getElementById('exam' + current);
+        const nextExam = document.getElementById('exam' + (current + 1));
+        if(forms.elements['answer' + currentNumber].value == ""){
+          alert("問題を全部入力してください。")
+          ischeck = false;
+          return false;
+        }
+        currentNumber++;
+        if (currentExam) currentExam.style.display = 'none';
+        if (nextExam) nextExam.style.display = 'block';
+        if (!nextExam) btn_submit.click();
+
+        }
+</script>
+    <input type="hidden" id="answer_data" name="answer_data">
         <div class="comment">
           <p style="margin-top:50px;font-weight:bold;">コメント　　　　　　　　 <input class="w-75" type="text" name="comment" id="comment" placeholder="自由に記載"></p>
         </div>
-      </div>
-        
-       
-
-      <br/><br/>
-     
-      
-    </div>
     <div class="button_box" style="margin-bottom: 32px; gap:30px">
       <button  class="applicant_cancel" id="cancel" name="submit_post"  value="cancel" onclick="window.location.href='../applicant/login';">キャンセル</button>
       <button type="button" class="exam_submit" id='btn_submit' name="submit_post"  value="btn_submit" >提出</button>
     </div>
-  </div>
-  
-</div>
-
-
 
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" style="margin-top:150px">
@@ -111,7 +128,7 @@ if ($ses_id) {
 					</div>
 					<div class="modal-body fs-5">
 					<p style="text-align:center; margin-top:1rem;">
-          <?php echo $name; ?>　様<br/><br/>
+          <?php echo $name; ?>様<br/><br/>
 					ITスキル診断の受検は一度限りとさせていただいております。<br/>
           スタートボタンを押すと診断が始まります。
           <br/>
@@ -135,7 +152,7 @@ if ($ses_id) {
 						<!-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
 					</div>
 					<div class="modal-body fs-5">
-					<div id='a' style="text-align:center; margin-top:20px;"></div>
+					<div id='timeLimit' style="text-align:center; margin-top:20px;"></div>
 					</div>
 					<div class="modal-footer flex-column border-top-0" style="margin-bottom:12px;">
 						<button type="button" id='lock_time' class="btn btn-lg  w-75 mx-0" data-bs-dismiss="modal" style="background: linear-gradient(111deg, #87D782 0%, #22BC8E 100%); color:white;">再開</button>
@@ -228,10 +245,10 @@ window.onload = function() {
         timeoutExam();
         document.querySelector('.timeout_submit').click();
       }else if(minuteToSecond <= 600 && !firstAlert){
-        alert("残り10分です。")
+        timerDisplay.style.color = "orange";
         firstAlert=true;
       }else if(minuteToSecond <= 300 && !secondAlert){
-        alert("残り5分です。")
+        timerDisplay.style.color = "red";
         secondAlert=true;
       }
       else{
@@ -258,7 +275,7 @@ window.onload = function() {
       if(lock == 'y'){
           var stopMinutes = Math.floor(stopMinuteToSecond / 60);
           var stopSeconds = stopMinuteToSecond % 60;
-          document.getElementById("a").innerHTML="残り時間: " + stopMinutes + "分 " + stopSeconds + "秒";
+          document.getElementById("timeLimit").innerHTML="残り時間: " + stopMinutes + "分 " + stopSeconds + "秒";
           stopMinuteToSecond--;
 
           if (stopMinuteToSecond < 0) {
@@ -297,7 +314,9 @@ document.addEventListener('keydown', notReload);
 <script>
 document.addEventListener("DOMContentLoaded", () => {
   const btn_submit = document.querySelector("#btn_submit");
+  const nextId = document.getElementById("nextId");
   var form = document.getElementById('myForm');
+
   btn_submit.addEventListener("click", () => {
     const matchedData = <?php echo json_encode($matchedData); ?>;
     <?php foreach ($matchedData as $questionIdx => $data) : ?>
@@ -313,9 +332,8 @@ document.addEventListener("DOMContentLoaded", () => {
           confirmExam(); 
 
         var myModal = new bootstrap.Modal(document.getElementById('exampleModal'), {
-    keyboard: false
-  });
-
+           keyboard: false
+        });
   myModal.show();
   });
 });
@@ -374,7 +392,7 @@ document.addEventListener("DOMContentLoaded", () => {
         var selectedRadio = document.querySelector('input[name="' + pair[0] + '"]:checked');
         if (selectedRadio) {
             var radioId = selectedRadio.value;
-            answersArray[questionIdx - 1] = radioId; // 질문 인덱스가 1부터 시작한다고 가정
+            answersArray[questionIdx - 1] = radioId; // question index start 1
         }
     }
 

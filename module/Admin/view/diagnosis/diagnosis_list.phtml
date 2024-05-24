@@ -76,7 +76,19 @@
 <content class="main">
 	<div style="width: 100%; display: flex; align-items: end; justify-content: space-between;">
 		<div class="info-num">
-			<div class="count">診断書総計<div class="num"><?php echo $diagnosisDatas->getTotalItemCount(); ?></div>部</div>
+      <!--
+        作成：朴昰成
+        修正：朴昰成
+        修正日：24/05/24
+      -->
+
+      <!-- 修正前： <?php /* ?>
+        <div class="count">診断書総計<div class="num"><?php echo $diagnosisDatas->getTotalItemCount(); ?></div>部</div>
+      <?php */ ?> -->
+
+      <!-- 修正後： -->
+      <div class="count">診断書総計<div class="num"><?php echo $totalNum; ?></div>部</div>
+      <!-- ここまで -->
 		</div>
 
 		<div style="display: flex;">

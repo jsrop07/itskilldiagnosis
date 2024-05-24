@@ -44,7 +44,7 @@ class QuestionController extends AbstractActionController
 			unset($query["page"]);
 		}
 
-		// Save Search data
+		// Set Search data
 		$sqlWhere = array();
 		if (isset($query["approver"])) {
 			$adminTb = $this->getServiceLocator()->get("AdminTable");
@@ -58,7 +58,7 @@ class QuestionController extends AbstractActionController
 			$datas["searchDatas"]["title"] = $query["title"];
 		}
 
-		// Save Align data
+		// Set Align data
 		$sqlOrder = array();
 		if (isset($query["align"])) {
 			$sqlOrder["field"] = explode("-", $query["align"])[0];
@@ -69,6 +69,13 @@ class QuestionController extends AbstractActionController
 		$questionDatas = "";
 		// Check User Level
 		if ($userLevel >= 1) {
+			/*
+				作成：朴昰成
+				作成日：24/05/24
+			*/
+			$datas["totalNum"] = $questionTb->CountAllList();
+
+			/* ここまで */
 			// Check Search data and Align data
 			if (!empty($sqlOrder) && !empty($sqlWhere)) {
 				try { $questionDatas = $questionTb->GetListBySearchnAlign($sqlWhere, $sqlOrder); }
@@ -88,6 +95,14 @@ class QuestionController extends AbstractActionController
 			}
 		} else {
 			$userCode = $session["code"];
+			/*
+				作成：朴昰成
+				作成日：24/05/24
+			*/
+
+			$datas["totalNum"] = $questionTb->CountAllValid($userCode);
+
+			/* ここまで */
 			if (!empty($sqlOrder) && !empty($sqlWhere)) {
 				try { $questionDatas = $questionTb->GetListValidBySearchnAlign($userCode, $sqlWhere, $sqlOrder); }
 				catch (\Exception $e) { print_r($e->getMessage()); exit; }

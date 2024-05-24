@@ -113,8 +113,8 @@
           作成：朴昰成
           作成日：24/05/22
         -->
-				<dt>問題 (韓国)</dt>
-				<dd><input class="form-control" name="question_ko" type="text" placeholder="문제를 입력해주세요" value="<?php echo ($isSet) ? $questionData["question_ko"] : ""; ?>"/></dd>
+        <dt>問題 (韓国)</dt>
+        <dd><input class="form-control" name="question_ko" type="text" placeholder="問題を入力してください（韓国語）" value="<?php echo ($isSet) ? $questionData["question_ko"] : ""; ?>"/></dd>
         <!-- ここまで -->
 
 				<dt class="essential">選択肢</dt>
@@ -169,7 +169,7 @@
             </div>
             <div>
               <dt>①韓国語</dt>
-              <dd><input class="form-control" name="answer1_ko" type="text" placeholder="선택지를 입력해주세요" value="<?php echo $questionData["answer1_ko"]; ?>"/></dd>
+              <dd><input class="form-control" name="answer1_ko" type="text" placeholder="選択肢を入力してください（韓国語）" value="<?php echo $questionData["answer1_ko"]; ?>"/></dd>
             </div>
 
             <?php for ($i = 2; $i <= $answerNum; $i++): ?>
@@ -179,7 +179,7 @@
               </div>
               <div>
                 <dt><?= $numTexts[$i - 1]; ?>韓国語</dt>
-                <dd><input class="form-control" name="answer<?= $i; ?>_ko" type="text" placeholder="선택지를 입력해주세요" value="<?php echo $questionData["answer" . $i . "_ko"]; ?>"/></dd>
+                <dd><input class="form-control" name="answer<?= $i; ?>_ko" type="text" placeholder="選択肢を入力してください（韓国語）" value="<?php echo $questionData["answer" . $i . "_ko"]; ?>"/></dd>
               </div>
             <?php endfor; ?>
             <?php for ($i = $answerNum + 1; $i <= 5; $i++): ?>

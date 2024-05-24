@@ -11,7 +11,7 @@
 	$query = explode("?", $url)[1];
 
 	$firstNo = $questionDatas->getTotalItemCount();
-	$firstNo - (($questionDatas->getCurrentPageNumber() - 1) * $questionDatas->getitemCountPerPage());
+	$firstNo -= (($questionDatas->getCurrentPageNumber() - 1) * $questionDatas->getitemCountPerPage());
 
 	// Check authority
 	$isApprover = false;
@@ -76,7 +76,19 @@
 <content class="header">
 	<div class="title">ITスキル診断問項管理</div>
 	<div class="info-num">
-		<div class="count">問項総計<div class="num"><?php echo $questionDatas->getTotalItemCount(); ?></div>問題</div>
+    <!--
+      作成：朴昰成
+      修正：朴昰成
+      修正日：24/05/24
+    -->
+
+    <!-- 修正前： <?php /* ?>
+      <div class="count">問項総計<div class="num"><?php echo $questionDatas->getTotalItemCount(); ?></div>問題</div>
+    <?php */ ?> -->
+
+    <!-- 修正後： -->
+    <div class="count">問項総計<div class="num"><?php echo $totalNum; ?></div>問題</div>
+    <!-- ここまで -->
 	</div>
 </content>
 

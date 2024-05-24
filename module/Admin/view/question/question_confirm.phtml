@@ -49,26 +49,16 @@
 			<dl class="emegra question">
 				<dt>問題</dt>
 				<dd><?php echo htmlspecialchars($questionData["question"], ENT_QUOTES); ?></dd>
-        <!--
-          作成：朴昰成
-          作成日：24/05/23
-        -->
 				<dt></dt>
 				<dd><?php echo htmlspecialchars($questionData["question_ko"], ENT_QUOTES); ?></dd>
-        <!-- ここまで -->
 
 				<dt>選択肢</dt>
 				<dd class="expand">
 					<?php for ($i = 1; $i <= $answerNum; $i++): ?>
 						<?= $numTexts[$i - 1]; ?>
 						<?php echo htmlspecialchars($questionData["answer" . $i], ENT_QUOTES); ?> </br>
-            <!--
-              作成：朴昰成
-              作成日：24/05/23
-            -->
             &nbsp;&nbsp;&nbsp;&nbsp;
             <?php echo htmlspecialchars($questionData["answer" . $i . "_ko"], ENT_QUOTES); ?></br>
-            <!-- ここまで -->
 					<?php endfor; ?>
 				</dd>
 

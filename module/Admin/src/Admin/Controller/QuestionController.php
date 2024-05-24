@@ -69,13 +69,8 @@ class QuestionController extends AbstractActionController
 		$questionDatas = "";
 		// Check User Level
 		if ($userLevel >= 1) {
-			/*
-				作成：朴昰成
-				作成日：24/05/24
-			*/
 			$datas["totalNum"] = $questionTb->CountAllList();
 
-			/* ここまで */
 			// Check Search data and Align data
 			if (!empty($sqlOrder) && !empty($sqlWhere)) {
 				try { $questionDatas = $questionTb->GetListBySearchnAlign($sqlWhere, $sqlOrder); }
@@ -95,14 +90,9 @@ class QuestionController extends AbstractActionController
 			}
 		} else {
 			$userCode = $session["code"];
-			/*
-				作成：朴昰成
-				作成日：24/05/24
-			*/
 
 			$datas["totalNum"] = $questionTb->CountAllValid($userCode);
 
-			/* ここまで */
 			if (!empty($sqlOrder) && !empty($sqlWhere)) {
 				try { $questionDatas = $questionTb->GetListValidBySearchnAlign($userCode, $sqlWhere, $sqlOrder); }
 				catch (\Exception $e) { print_r($e->getMessage()); exit; }
@@ -133,19 +123,6 @@ class QuestionController extends AbstractActionController
 		$datas["breadcrumbData"] = ["ITスキル診断問項管理", "問題登録"];
 		$datas["title"] = "問題登録";
 		$datas["optionDatas"] = $this->GetOptionDatasForInput();
-
-
-		/* Useless Function
-			削除：朴昰成
-			削除日：24/05/23
-		
-		削除前：
-			// Check return from 登録確認　page
-			$post = $this->params()->fromPost();
-			if (isset($post["title"])) {
-				$datas["questionData"] = $post;
-			}
-		*/
 
 		$adminTb = $this->getServiceLocator()->get("AdminTable");
 		try { $datas["adminDatas"] = $adminTb->ReadAllList(); }
@@ -403,15 +380,6 @@ class QuestionController extends AbstractActionController
 			}
 
 			$keys = $csvStrings[0];
-			/*
-				削除：朴昰成
-				削除日：24/05/23
-
-			削除前：
-				foreach ($keys as $idx => $data) {
-					$keys[$idx] = $data;
-				}
-			*/
 			unset($csvStrings[0]);
 
 			$questionTb = $this->getServiceLocator()->get("QuestionTable");
@@ -499,66 +467,4 @@ class QuestionController extends AbstractActionController
 
 		return $arr;
 	}
-
-	/*
-	public function estimateAction(){
-
-
-		// 메일 센더 초기화
-	$mail = new MailSender();
-
-	$this->layout("layout/none");
-	// 기본 메일 전송 관련 설정 로드
-			$param['config']=$this->getConfig();
-
-			// 메일 제목 지정 (일반적으로 DB에 메일폼 테이블을 만들어서 그것을 가져와서 아래의 title contents에 넣지만, 이건 샘플이므로 간단히.)
-			// 사람마다 변환해야 할 부분은 {{이렇게}} 메일폼에 넣어놓는다.
-			$param['title']="{{user_name}}様、株式会社ジエンジサービスでございます。";
-			$param['content']="送信する内容\n\n以下のURLから情報を登録してください。\n\n{{URL}}";
-
-			// 사람이름이나, URL등 고유하게 변경해야 하는 것은 이렇게 처리한다.
-			// 메일 제목과 내용 부분 모두 변환처리.
-			$param['title']=str_replace("{{user_name}}","testTitle",$param['title']);
-
-			// $param['content']=str_replace("{{user_name}}","変換する試験受け者名",$param['content']);
-			$param['content']=str_replace("{{URL}}","個人の試験URL",$param['content']);
-
-
-			// 수신자 이메일과 이름 설정
-			$param['email']='spredempt@gmail.com';
-			$param['name']="temp";
-
-			// 전송
-			$result = $mail->mailsender($param);
-			$result_row = $result['transport']->getConnection()->getResponse();
-
-			$results = str_replace("\r","",str_replace("\n","",str_replace(" ","",$result_row[0])));
-			switch(substr(strtolower($results),0,5)){
-				// 250ok 가 나오면 전송 의뢰 성공이다.
-					case "250ok":
-						$status = 'OK';
-							break;
-					// 그외의 것은 모두 실패로 처리한다.
-					default:
-						$status = 'FALSE';
-							break;
-			}
-
-
-			return $vm;
-	}
-	public function getConfig(){
-		if(isset($_SERVER['DOCUMENT_ROOT']) && $_SERVER['DOCUMENT_ROOT']!=''){
-				$droot = $_SERVER['DOCUMENT_ROOT'];
-		}else{
-				$droot = "abc";
-		}
-		if(is_file($droot.'/../config/autoload/local.php')){
-				$config = require $droot.'/../config/autoload/local.php';
-		}else{
-				$config = require $droot.'/../config/autoload/global.php';
-		}
-		return $config;
-}
-*/
 }

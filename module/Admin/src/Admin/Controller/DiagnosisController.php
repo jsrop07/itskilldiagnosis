@@ -94,23 +94,7 @@ class DiagnosisController extends AbstractActionController {
 		$post = $this->params()->fromPost();
 		if (isset($post["idx"])) {
 			$datas["diagnosisData"] = $post;
-		} 
-		/* Delete 24/05/17
-		削除前： else {
-			$diagnosisTb = $this->getServiceLocator()->get("DiagnosisTable-Admin");
-
-			// Make Code
-			$code = "";
-			$result = array();
-			do {
-				$code = chr(rand(65, 90)) . "-" . date("ymd") . str_pad(rand(0, 99), 2, "0", STR_PAD_LEFT);
-				try { $result = $diagnosisTb->ReadByCode($code);}
-				catch (\Exception $e) { print_r($e->getMessage()); exit; }
-			} while (!empty($result));
-
-			$datas["code"] = $code;
 		}
-		*/
 
 		return $this->SetViewModel($datas, "/diagnosis/diagnosis_input.phtml");
 	}

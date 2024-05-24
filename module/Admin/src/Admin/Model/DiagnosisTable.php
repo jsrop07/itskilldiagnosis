@@ -31,24 +31,6 @@ class DiagnosisTable {
 		return $this->sql->prepareStatementForSqlObject($qry)->execute();
 	}
 
-	/* Disused Function
-		作成：朴昰成
-		削除：朴昰成
-		削除日：朴昰成
-
-	削除前：
-		** Read Table records for List
-		* @return mixed Records
-		*
-
-		public function ReadAllList() {
-			$where = new Where();
-			$where->isNull("date_end");
-
-			$qry = $this->sql->select("diagnosis")->where($where)->order("date_start DESC");
-			return iterator_to_array($this->sql->prepareStatementForSqlObject($qry)->execute());
-		}
-	*/
 	public function GetAllList() {
 		$where = new Where();
 		$where->isNull("date_end");
@@ -112,10 +94,6 @@ class DiagnosisTable {
 		return $result;
 	}
 
-	/*
-		作成：朴昰成
-		作成日：24/05/24
-	*/
 	/** Count List Data
 	 * @return int
 	*/
@@ -128,7 +106,6 @@ class DiagnosisTable {
 		return $result["COUNT"];
 	}
 
-	/* ここまで */
 	/** Update date_end By idx
 	 * @param int $idx
 	*/

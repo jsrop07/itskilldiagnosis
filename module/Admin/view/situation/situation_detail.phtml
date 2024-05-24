@@ -3,6 +3,12 @@
 	$genderTexts = ["男", "女"];
 	$skillTexts = ["有", "無"];
 	$levelTexts = array("0級", "初級", "中級", "高級");
+  /*
+    作成：朴昰成
+    作成日：24/05/24
+  */
+  $languageTexts = ["日本語", "韓国語"];
+  /* ここまで */
 
 	$isRequest = false;
 	$isExecute = false;
@@ -103,6 +109,14 @@
 	
 			<dt>診断依頼</dt>
 			<dd><?php echo ($recordData["request_date"] != null) ? date("y.m.d", strtotime($recordData["request_date"])) : "未依頼"; ?></dd>
+
+      <!--
+        作成：朴昰成
+        作成日：24/05/24
+      -->
+      <dt>言語</dt>
+			<dd><?php echo ($recordData["language"] == null) ? "未設定" : $languageTexts[$recordData["language"]]; ?></dd>
+      <!-- ここまで -->
 		</dl>
 	</div>
 </div>

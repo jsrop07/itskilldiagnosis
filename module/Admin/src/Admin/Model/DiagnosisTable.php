@@ -31,16 +31,24 @@ class DiagnosisTable {
 		return $this->sql->prepareStatementForSqlObject($qry)->execute();
 	}
 
-	/** Read Table records for List
-	 * @return mixed Records
-	*/
-	public function ReadAllList() {
-		$where = new Where();
-		$where->isNull("date_end");
+	/* Disused Function
+		作成：朴昰成
+		削除：朴昰成
+		削除日：朴昰成
 
-		$qry = $this->sql->select("diagnosis")->where($where)->order("date_start DESC");
-		return iterator_to_array($this->sql->prepareStatementForSqlObject($qry)->execute());
-	}
+	削除前：
+		** Read Table records for List
+		* @return mixed Records
+		*
+
+		public function ReadAllList() {
+			$where = new Where();
+			$where->isNull("date_end");
+
+			$qry = $this->sql->select("diagnosis")->where($where)->order("date_start DESC");
+			return iterator_to_array($this->sql->prepareStatementForSqlObject($qry)->execute());
+		}
+	*/
 	public function GetAllList() {
 		$where = new Where();
 		$where->isNull("date_end");
@@ -91,8 +99,8 @@ class DiagnosisTable {
 	}
 
 	/** Read Table record By Code
-	 * @param string $code RecordTables diagnosis_code
-	 * @param string $date RecordTables diagnosis_date
+	 * @param string $code RecordTable's diagnosis_code
+	 * @param string $date RecordTable's diagnosis_date
 	 * @return mixed Record
 	 */
 	public function ReadForRecordByCodenDate($code, $date) {
@@ -104,6 +112,23 @@ class DiagnosisTable {
 		return $result;
 	}
 
+	/*
+		作成：朴昰成
+		作成日：24/05/24
+	*/
+	/** Count List Data
+	 * @return int
+	*/
+	public function CountAllList() {
+		$where = new Where();
+		$where->isNull("date_end");
+
+		$qry = $this->sql->select("diagnosis")->where($where)->columns(array("COUNT" => new \Zend\Db\Sql\Expression("COUNT(*)")));
+		$result = $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
+		return $result["COUNT"];
+	}
+
+	/* ここまで */
 	/** Update date_end By idx
 	 * @param int $idx
 	*/

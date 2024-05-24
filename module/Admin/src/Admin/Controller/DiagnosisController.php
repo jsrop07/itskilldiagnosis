@@ -21,15 +21,8 @@ class DiagnosisController extends AbstractActionController {
 
 	public function indexAction() {
 		$this->ChkLogin();
-		// header("Location: ./diagnosis/list");
-		// exit;
-		$questionTb = $this->getServiceLocator()->get("QuestionTable");
-		$sqlWhere["level"] = 1;
-		$sqlWhere["class1st"] = 7;
-		$sqlWhere["class2nd"] = 13;
-		try { $datas["questionDatas"] = $questionTb->ReadForDiagnosis($sqlWhere); }
-		catch (\Exception $e) { print_r($e->getMessage()); exit; }
-		return $this->SetViewModel($datas, "/diagnosis/test.phtml");
+		header("Location: ./diagnosis/list");
+		exit;
 	}
 
 	public function listAction() {
@@ -62,6 +55,12 @@ class DiagnosisController extends AbstractActionController {
 		}
 
 		$diagnosisTb = $this->getServiceLocator()->get("DiagnosisTable-Admin");
+		/*
+			作成：朴昰成
+			作成日：24/05/24
+		*/
+		$datas["totalNum"] = $diagnosisTb->CountAllList();
+		/* ここまで */
 
 		$diagnosisDatas = array();
 		if (!empty($query)) {

@@ -241,6 +241,36 @@ class QuestionTable {
 		return $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
 	}
 
+	/*
+		作成：朴昰成
+		作成日：24/05/24
+	*/
+	/** Count List Data
+	 * @return int
+	*/
+	public function CountAllList() {
+		$qry = $this->sql->select("question")->where(["date_delete" => null])->columns(array("COUNT" => new \Zend\Db\Sql\Expression("COUNT(*)")));
+		$result = $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
+		return $result["COUNT"];
+	}
+	/** Count Valid Data
+	 * @param string $code admin_code
+	 * @return int
+	*/
+	public function CountAllValid($code) {
+		$where = new Where();
+		$where->isNull("date_delete")
+			->and->nest()
+				->isNotNull("date_approve")
+				->or->equalTo("admin_regist", $code)
+			->unnest();
+
+		$qry = $this->sql->select("question")->where($where)->columns(array("COUNT" => new \Zend\Db\Sql\Expression("COUNT(*)")));
+		$result = $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
+		return $result["COUNT"];
+	}
+
+	/* ここまで */
 	/** Update data by index
 	 * @param int $idx index
 	 * @param mixed $setDatas
@@ -253,7 +283,7 @@ class QuestionTable {
 
 	/** Delete data by index
 	 * @param int $idx index
-	 * @param mixed $setDatasW
+	 * @param mixed $setDatas
 	 * @return mixed data
 	 */
 	public function RemoveQuestion($idx, $setDatas) {

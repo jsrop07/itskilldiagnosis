@@ -241,10 +241,6 @@ class QuestionTable {
 		return $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
 	}
 
-	/*
-		作成：朴昰成
-		作成日：24/05/24
-	*/
 	/** Count List Data
 	 * @return int
 	*/
@@ -270,7 +266,6 @@ class QuestionTable {
 		return $result["COUNT"];
 	}
 
-	/* ここまで */
 	/** Update data by index
 	 * @param int $idx index
 	 * @param mixed $setDatas

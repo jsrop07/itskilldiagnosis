@@ -9,6 +9,7 @@ if ($ses_id) {
 } else {
     $logged = false;
 }
+
 ?>
 <?php if ($logged == true): ?>
 <header>
@@ -33,20 +34,27 @@ if ($ses_id) {
         </div>
         <div style="padding:0px 50px;">
           <p style="margin-top:20px;font-weight:bold;">問題数　　<?php echo $question_num; ?>問				</p>				  
-          <?php $count = 1; foreach ($matchedData as $idx => $row) : ?>
-            <!-- <?php print_r($matchedData) ?> -->
+          <?php $count = 1; 
+          foreach ($matchedData as $idx => $row) : 
+          $question_ko = $idx + 1 . ". " . $row["question_ko"];
+          $question_jp = $idx + 1 . ". " . $row["question"];
+          ?>
+            
         <div class="examBox" style="width:100%; display: <?= $count === 1 ? 'block' : 'none' ?>;" id="exam<?= $count ?>">
-          <div class="question" style="margin-left:50px;font-weight:bold;" id="<?= $row['idx'] ?>">問題 <?= $idx + 1 . ". " . $row["question"] ?></div>
+          <div class="question" style="margin-left:50px;font-weight:bold;" id="<?= $row['idx'] ?>">問題 <?= $language==1 && $row["question_ko"] != null ?  $question_ko : $question_jp ?></div>
             <div class="card-body" style="margin-left: 100px;">
                 <div class="answers mt-2">
                     <ul class="list-unstyled">
                         <?php for ($i = 1; $i <= 5; $i++) : ?>
                             <?php 
                             $answerKey = "answer$i";
+                            $answerKey_ko = "answer$i"."_ko";
+                            $answer_ko = htmlspecialchars($row[$answerKey_ko], ENT_QUOTES);
+                            $answer_jp = htmlspecialchars($row[$answerKey], ENT_QUOTES);
                             if (!empty($row[$answerKey])) :
                             ?>
                                 <li style="padding: 10px 0">
-                                    <input type="radio" name="answer<?= $idx + 1 ?>" value="<?= $i ?>"> <?php echo htmlspecialchars($row[$answerKey], ENT_QUOTES) ?>
+                                    <input type="radio" name="answer<?= $idx + 1 ?>" value="<?= $i ?>"> <?php echo $language == 1 && $answer_ko != null? $answer_ko : $answer_jp ?>
                                 </li>
                             <?php endif; ?>
                         <?php endfor; ?>
@@ -120,7 +128,7 @@ if ($ses_id) {
 					</div>
 					<div class="modal-body fs-5">
 					<p style="text-align:center; margin-top:1rem;">
-          <?php echo $name; ?>　様<br/><br/>
+          <?php echo $name; ?>様<br/><br/>
 					ITスキル診断の受検は一度限りとさせていただいております。<br/>
           スタートボタンを押すと診断が始まります。
           <br/>
@@ -237,10 +245,10 @@ window.onload = function() {
         timeoutExam();
         document.querySelector('.timeout_submit').click();
       }else if(minuteToSecond <= 600 && !firstAlert){
-        alert("残り10分です。")
+        timerDisplay.style.color = "orange";
         firstAlert=true;
       }else if(minuteToSecond <= 300 && !secondAlert){
-        alert("残り5分です。")
+        timerDisplay.style.color = "red";
         secondAlert=true;
       }
       else{
@@ -384,7 +392,7 @@ document.addEventListener("DOMContentLoaded", () => {
         var selectedRadio = document.querySelector('input[name="' + pair[0] + '"]:checked');
         if (selectedRadio) {
             var radioId = selectedRadio.value;
-            answersArray[questionIdx - 1] = radioId; // 질문 인덱스가 1부터 시작한다고 가정
+            answersArray[questionIdx - 1] = radioId; // question index start 1
         }
     }
 

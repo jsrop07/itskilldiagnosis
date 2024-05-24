@@ -82,7 +82,6 @@ class ApplicantController extends AbstractActionController
 
 		$tbl->insertAndUpdateApplication($arr);
 	   $applicantInfo = $tbl->getRecord();
-		 exit;
 	   $this->mailByApplicantation($arr,$skillText,$caseText,$managerArray,$applicantInfo);
 
 	   echo "
@@ -175,7 +174,7 @@ class ApplicantController extends AbstractActionController
 	 // Set layout
 	  $this->layout("layout/applicant/exam_layout");
 	  $post = $this->params()->fromPost();
-	  $submit_post        = (isset($post['submit_post'])         &&   $post['submit_post'] !='')         ? $post['submit_post']         : '';
+	  $submit_post = (isset($post['submit_post'])  &&   $post['submit_post'] !='')  ? $post['submit_post']  : '';
 	  $answer_data = (isset($post['answer_data'])  &&   $post['answer_data'] !='')  ? $post['answer_data']  : '';
 	  $comment     = (isset($post['comment'])      &&   $post['comment'] !='')      ? $post['comment']      : '';
 
@@ -209,8 +208,9 @@ class ApplicantController extends AbstractActionController
 	  // Read $applicantinfo's record
 	  $examRecordInfo =  $applicantExamTbl->readByApplicantIdx($applicantInfo);
 	  $datas["name"]  =  $applicantInfo["name"];
+		$datas['language'] = $examRecordInfo['language'];
 
-	  // Read record's diagnosis_code & Read selected diagnosis_code's info
+		// Read record's diagnosis_code & Read selected diagnosis_code's info
 	  $recordCode    = $examRecordInfo["diagnosis_code"];
 	  $diagnosisInfo = $applicantExamTbl->readByDiagnosisCode($recordCode);
 
@@ -219,7 +219,9 @@ class ApplicantController extends AbstractActionController
 	  $datas["time_limit"]   = $diagnosisInfo["time_limit"];
 
 	  // 정답값 비교하기
-	  $findQuestionData      = $applicantExamTbl->readByQuestion($post);
+	  $findQuestionData = $applicantExamTbl->readByQuestion($post);
+		// print_r($findQuestionData);
+		// exit;
 
     //selected diagnosis_code's question_idxs data
 	  $selectedQuestion_idxs = ['question_idxs'=>isset($diagnosisInfo['question_idxs'])? $diagnosisInfo['question_idxs']:null];
@@ -237,22 +239,19 @@ class ApplicantController extends AbstractActionController
 	  }
     // Read diagnosis code's selected code's info
 	  $datas["matchedData"]=$matchedData;
-
+		// print_r($matchedData);
     //Read selected data's correct_idxs
 	  $output = [];
 		foreach ($matchedData as $item) {
-			$output[] = $item['correct'];
+				$output[] = $item['correct'];
 
-	  $outputPoint=[];
-		foreach ($matchedData as $item) {
-			$outputPoint[] = $item['point'];
+			$outputPoint=[];
+			foreach ($matchedData as $item) {
+				$outputPoint[] = $item['point'];
 
-    }
-    print_r($outputPoint);
-    print_r("<br>");
-    // print_r($data);
-    exit;
+			}
 		}
+
 		$result = implode(',', $output);
 		$answerDataArray = explode(',',$answer_data);
 		$resultArray = explode(',', $result);
@@ -326,8 +325,8 @@ class ApplicantController extends AbstractActionController
 			$sqlSet['diagnosis_comment']=$recordExamResult;
 			$applicantExamTbl->updateExam($sqlWhere, $sqlSet);			
 			$examRecordRecent =  $applicantExamTbl->readByApplicantIdx($applicantInfo);
-      print_r($matchedData);
-exit;
+//       print_r($matchedData);
+// exit;
 			$applicantExamTbl->deletePasswordByIdx($applicantInfo["idx"]);
 			$this->mailByApplicantExam($applicantInfo,$sqlSet,$managerArray,$recordIdx);
 			$this->mailByAdminToApplicant($applicantInfo,$examRecordRecent,$caseText,$majorText,$managerArray);
@@ -369,9 +368,9 @@ function mailByApplicantExam($applicantInfo,$sqlSet,$managerArray,$recordIdx){
 	// 수신자 이메일과 이름 설정
 	// $param['managerEmail']=$managerArray[0];
 	$param['email']=$managerArray[0];
-	$param['password']="$managerArray[1]";
-	$param['name']="$managerArray[2]";
-	$param['smtp_password']="$managerArray[3]";
+	$param['password']=$managerArray[1];
+	$param['name']=$managerArray[2];
+	$param['smtp_password']=$managerArray[3];
 
 	// 전송
 	$result = $mail->mailsender($param);
@@ -411,9 +410,9 @@ function mailByApplicantExam($applicantInfo,$sqlSet,$managerArray,$recordIdx){
 	// 수신자 이메일과 이름 설정
 	$param['managerEmail']=$managerArray[0];
 	$param['email']=$applicantInfo["email"];;
-	$param['password']="$managerArray[1]";
-	$param['name']="$managerArray[2]";
-	$param['smtp_password']="$managerArray[3]";
+	$param['password']=$managerArray[1];
+	$param['name']=$managerArray[2];
+	$param['smtp_password']=$managerArray[3];
 
 	// 전송
 	$result = $mail->mailApplicant($param);

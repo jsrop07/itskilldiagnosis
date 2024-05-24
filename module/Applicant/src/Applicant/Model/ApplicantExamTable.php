@@ -74,7 +74,7 @@ class ApplicantExamTable
           'correct'
           // 'wdate' => new Expression("DATE_FORMAT(wdate, '%Y-%m-%d %H:%i')")
       ]);
-  
+
       if (!empty($p['idx'])) {
           $select->where(['idx' => $p['idx']]);
       }

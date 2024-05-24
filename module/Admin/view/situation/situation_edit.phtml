@@ -292,7 +292,7 @@ switch ($recordArray["class1st"]) {
 				</dd>
 
 				<dt class="essential">問項数別</dt>
-				<dd><input class="form-control" type="text" style="width:50px;text-align:center;" value="<?php echo $diagnosisArray['question_num'] !=NULL ? $diagnosisArray['question_num'] : selectQuestionNum() ?>" readonly>問</dd>
+				<dd><input class="form-control" type="text" style="width:50px;text-align:center;" value="<?php echo $diagnosisArray['question_num'] !=NULL ? $diagnosisArray['question_num'] : "" ?>" readonly>問</dd>
 		
                 
 				<dt class="essential">診断方法</dt>
@@ -340,14 +340,14 @@ switch ($recordArray["class1st"]) {
 
 <!-- Request send modal -->
 <div class="modal" tabindex="-1" role="dialog" id="submitLoading">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-body">
-                    <h3 style="text-align:center;">依頼転送中です。</h3>
-                </div>
-            </div>
-        </div>
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <h3 style="text-align:center;">依頼転送中です。</h3>
+      </div>
     </div>
+  </div>
+</div>
 
 </form>
 

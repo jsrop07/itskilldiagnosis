@@ -315,7 +315,7 @@ class ApplicantController extends AbstractActionController
 			$majorText=$examRecordInfo['major'];
 		}
 
-		//제출하기
+		//submit
 		if($submit_post=='btn_submit'){
 			$sqlWhere["idx"] = $examRecordInfo['idx'];
 			$sqlSet["answer_data"] = $answer_data;
@@ -325,8 +325,6 @@ class ApplicantController extends AbstractActionController
 			$sqlSet['diagnosis_comment']=$recordExamResult;
 			$applicantExamTbl->updateExam($sqlWhere, $sqlSet);			
 			$examRecordRecent =  $applicantExamTbl->readByApplicantIdx($applicantInfo);
-//       print_r($matchedData);
-// exit;
 			$applicantExamTbl->deletePasswordByIdx($applicantInfo["idx"]);
 			$this->mailByApplicantExam($applicantInfo,$sqlSet,$managerArray,$recordIdx);
 			$this->mailByAdminToApplicant($applicantInfo,$examRecordRecent,$caseText,$majorText,$managerArray);

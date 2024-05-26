@@ -176,7 +176,6 @@ class ApplicantController extends AbstractActionController
 	  $post = $this->params()->fromPost();
 	  $submit_post = (isset($post['submit_post'])  &&   $post['submit_post'] !='')  ? $post['submit_post']  : '';
 	  $answer_data = (isset($post['answer_data'])  &&   $post['answer_data'] !='')  ? $post['answer_data']  : '';
-	  $comment     = (isset($post['comment'])      &&   $post['comment'] !='')      ? $post['comment']      : '';
 
 
 	  $session = new Container("applicant");
@@ -320,7 +319,6 @@ class ApplicantController extends AbstractActionController
 			$sqlWhere["idx"] = $examRecordInfo['idx'];
 			$sqlSet["answer_data"] = $answer_data;
 			$sqlSet["get_point"] = $get_point;
-			$sqlSet["comment"] = $comment;
 			$sqlSet['rank']=$recordRank;
 			$sqlSet['diagnosis_comment']=$recordExamResult;
 			$applicantExamTbl->updateExam($sqlWhere, $sqlSet);			

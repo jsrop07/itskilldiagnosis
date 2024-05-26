@@ -19,7 +19,6 @@ if ($ses_id) {
     <div id="date-container" style="display:flex; align-items:center"></div>
     <div style="text-align:center;display:flex; align-items:center;margin-left: 10px; "><?php echo $name; ?></div>
     <div id="timerDisplay" style=" display:flex; align-items:center"></div>
-    <button class=" btn btn-sm" id="stopBtn" style=" display:flex; align-items:center; text-align:center;color:yellow; border:none;"  data-bs-toggle="modal" data-bs-target="#staticBackdrop2">一時停止</button>
 </div>
 </header>	     
 
@@ -27,9 +26,9 @@ if ($ses_id) {
   <div class="card emegra" >
     <div class="card-body"style="margin-top:70px;">
     <form id="myForm" name="input_form" action="/applicant/exam" method="post">
-        <div  class="welcomeText">
+        <div class="welcomeText" id="welcomeId">
           <p>表示される問題に従って回答してください。</p>			
-          <p style="color:red;">※ ページ上部の一時停止ボタンを押すと10分間停止し、1回のみ使用可能です。</p>	
+          <p style="color:red;">※ ページ下部の一時停止ボタンを押すと10分間停止し、1回のみ使用可能です。</p>	
         </div>
         <div style="padding:0px 50px;">
           <?php $count = 1; 
@@ -59,42 +58,23 @@ if ($ses_id) {
                         <?php endfor; ?>
                     </ul>
                 </div>
-                <div class="questionNext" id="nextId" onclick="showNextQuestion(<?= $count ?>)">次へ</div>
             </div>
           </div>
         <?php $count++; ?>  
       <?php endforeach; ?>
-
-<script>
-    let forms= document.getElementById('myForm');
-    let currentNumber =1;
-    let ischeck= true;
-    function showNextQuestion(current) {
-        const currentExam = document.getElementById('exam' + current);
-        const nextExam = document.getElementById('exam' + (current + 1));
-        if(forms.elements['answer' + currentNumber].value == ""){
-          alert("問題を全部入力してください。")
-          ischeck = false;
-          return false;
-        }
-        currentNumber++;
-        if (currentExam) currentExam.style.display = 'none';
-        if (nextExam) nextExam.style.display = 'block';
-        if (!nextExam) btn_submit.click();
-
-        }
-</script>
     <input type="hidden" id="answer_data" name="answer_data">
     <div class="button_box" style="margin-bottom: 32px; gap:30px">
       <button  class="applicant_cancel" id="cancel" name="submit_post"  value="cancel" onclick="window.location.href='../applicant/login';">キャンセル</button>
-      <button type="button" class="exam_submit" id='btn_submit' name="submit_post"  value="btn_submit" >提出</button>
+      <button class="exam_submit" id="stopBtn" style=" display:flex; align-items:center; text-align:center; border:none;"  data-bs-toggle="modal" data-bs-target="#staticBackdrop2">一時停止</button>
+      <button type="button" class="exam_submit" id='nextId' name="submit_post"  value="btn_submit" onclick="showNextQuestion()" >次へ</button>
     </div>
+
 
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" style="margin-top:150px">
     <div class="modal-content rounded-4">
       <div class="modal-header" style="background:linear-gradient(111deg, #87D782 0%, #22BC8E 100%);color:white; height: 40px;border-top-left-radius:13px;border-top-right-radius:13px">
-        <h5 class="modal-title" id="exampleModalLabel">正答確認</h5>
+        <h5 class="modal-title" id="exampleModalLabel">提出</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(100%);"></button>
       </div>
       <div class="modal-body fs-5" style="padding-bottom:0">
@@ -103,7 +83,7 @@ if ($ses_id) {
       </div>
       <div class="modal-footer  border-top-0" style="margin-bottom:8px; justify-content:center;">
     <button type="button" class="applicant_cancel" data-bs-dismiss="modal">キャンセル</button>
-    <button type="submit" class="exam_submit" name="submit_post" value="btn_submit">登録</button>
+    <button type="submit" class="exam_submit" name="submit_post" value="btn_submit">提出</button>
     </div>
   </div>
   </div>
@@ -167,6 +147,37 @@ if ($ses_id) {
     </div>
   </div>
 </div>
+
+
+<script>
+    let forms= document.getElementById('myForm');
+    let currentNumber =1;
+    let ischeck= true;
+    function showNextQuestion() {
+        const currentExam = document.getElementById('exam' + currentNumber);
+        const nextExam = document.getElementById('exam' + (currentNumber + 1));
+        if(forms.elements['answer' + currentNumber].value == ""){
+          alert("答えを選択してください。")
+          ischeck = false;
+          return false;
+        }
+        currentNumber++;
+        if (currentExam) currentExam.style.display = 'none';
+        if (nextExam) nextExam.style.display = 'block';
+        if (!nextExam) {
+          const submitButton = document.getElementById('nextId');
+          submitButton.innerText = '提出';
+          submitButton.id ='btn_submit'
+          stopBtn.hidden = true;
+          // welcomeId.hidden = true;
+          btn_submit.addEventListener("click", () => {
+          confirmExam(); 
+            var myModal = new bootstrap.Modal(document.getElementById('exampleModal'), {keyboard: false});
+            myModal.show();
+          }); 
+        }
+      }
+</script>
 
 <script>
 function getDayOfWeek(day) {
@@ -307,34 +318,6 @@ document.addEventListener('keydown', notReload);
 
 </script> -->
 
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  const btn_submit = document.querySelector("#btn_submit");
-  const nextId = document.getElementById("nextId");
-  var form = document.getElementById('myForm');
-
-  btn_submit.addEventListener("click", () => {
-    const matchedData = <?php echo json_encode($matchedData); ?>;
-    <?php foreach ($matchedData as $questionIdx => $data) : ?>
-          var selected = Array.from(form.answer<?= $questionIdx + 1 ?>).find(radio => radio.checked);
-          if (selected == null) {
-            alert("問題を全部入力してください。");
-            event.preventDefault(); // Form submit prevent
-            form.answer<?= $questionIdx +1 ?>[0].focus();
-            return false; 
-          } 
-        <?php endforeach; ?>
-        var selected = Array.from(form.answer<?= $questionIdx + 1 ?>).find(radio => radio.checked);
-          confirmExam(); 
-
-        var myModal = new bootstrap.Modal(document.getElementById('exampleModal'), {
-           keyboard: false
-        });
-  myModal.show();
-  });
-});
-</script>
-
 <!-- Do not press EnterKey -->
 <script>
   document.addEventListener("DOMContentLoaded", function() {
@@ -357,7 +340,7 @@ document.addEventListener("DOMContentLoaded", () => {
       var selectedRadio = document.querySelector('input[name="' + questionIdx + '"]:checked');
       if (selectedRadio) {
         var radioId = selectedRadio.value;
-        confirmContent.innerHTML = '試験を提出しますか？';
+        confirmContent.innerHTML = '診断を提出しますか？';
         formData.append('answer_data', radioId);
         radioIdsArray.push(radioId);
       }      
@@ -380,8 +363,8 @@ document.addEventListener("DOMContentLoaded", () => {
     var formData = new FormData(document.getElementById('myForm'));
     var totalQuestions = <?= count($matchedData) ?>;
     var answersArray = new Array(totalQuestions).fill('');
-    var confirmContent = document.getElementById('confirmContent');
-    confirmContent.innerHTML = '試験を提出しますか？';
+    // var confirmContent = document.getElementById('confirmContent');
+    // confirmContent.innerHTML = '試験を提出しますか？';
 
     for (var pair of formData.entries()) {
         var questionIdx = parseInt(pair[0].replace('answer', ''), 10); // 'answer' 제거 후 숫자로 변환

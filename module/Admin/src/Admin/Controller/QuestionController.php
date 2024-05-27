@@ -123,6 +123,12 @@ class QuestionController extends AbstractActionController
 		$datas["breadcrumbData"] = ["ITスキル診断問項管理", "問題登録"];
 		$datas["title"] = "問題登録";
 		$datas["optionDatas"] = $this->GetOptionDatasForInput();
+		/*
+			作成：朴昰成
+			作成日：24/05/27
+		*/
+		$datas["languageCodeDatas"] = ["ko" => "韓国語"];
+		/* ここまで */
 
 		$adminTb = $this->getServiceLocator()->get("AdminTable");
 		try { $datas["adminDatas"] = $adminTb->ReadAllList(); }
@@ -163,6 +169,13 @@ class QuestionController extends AbstractActionController
 		catch (\Exception $e) { print_r($e->getMessage()); exit; }
 		$datas["questionData"] = $questionData;
 
+		/*
+			作成：朴昰成
+			作成日：24/05/27
+		*/
+		$datas["languageCodeDatas"] = ["ko" => "韓国語"];
+
+		/* ここまで */
 		// Save register name
 		$adminTb = $this->getServiceLocator()->get("AdminTable");
 		try { $datas["register"] = $adminTb->ReadByCode($questionData["admin_regist"])["name"]; }
@@ -398,7 +411,19 @@ class QuestionController extends AbstractActionController
 				}
 
 				switch($questionData["level"]) {
-					case "0級":
+					/* テキスト変更
+						作成：朴昰成
+						修正：朴昰成
+						修正日：24/05/27
+					*/
+				
+					/* 修正前：
+						case "0級":
+					*/
+				
+					/* 修正後： */
+					case "無級":
+					/* ここまで */
 						$questionData["level"] = 0;
 						break;
 					case "初級":

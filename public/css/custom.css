@@ -10,16 +10,15 @@ option {
 	color: black;
 }
 
+.grid.answers {
+	display: grid;
+	grid-gap: 24px 0;
+}
 .grid.answers > div {
 	height: 38px;
-	margin-top: 24px;
 	display: grid;
 	grid-template-columns: 80px 1fr;
 	grid-gap: 0 16px;
-}
-
-.grid.answers > .first {
-	margin-top: 0;
 }
 
 .info-num {

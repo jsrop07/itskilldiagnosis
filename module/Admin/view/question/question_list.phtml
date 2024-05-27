@@ -1,5 +1,17 @@
 <?php
-	$levelTexts = array("0級", "初級", "中級", "高級");
+  /* テキスト変更
+    作成：朴昰成
+    修正：朴昰成
+    修正日：24/05/27
+  */
+
+  /* 修正前：
+    $levelTexts = array("0級", "初級", "中級", "高級");
+  */
+
+  /* 修正後： */
+  $levelTexts = array("無級", "初級", "中級", "高級");
+  /* ここまで */
 
 	function ChkDeleter($data, $optionDatas) {
 		if ($optionDatas[$data["status"]] == "新規") { return true; }
@@ -50,15 +62,35 @@
 		font-weight: 400;
 	}
 
-	table.emegra tr { grid-template-columns: 50px 100px repeat(2, 60px) 60px 1fr 70px 50px repeat(2, 60px) 30px; }
-	table.emegra tr.index {
-		padding-top: 8px;
-		padding-bottom: 4px;
-		grid-template-columns: 50px 100px repeat(2, 60px) 60px 1fr 70px 50px repeat(2, 60px) 30px;
-		grid-template-areas:
-		"no status  class   class  level title type point confirm update select"
-		"no status class_l class_s level title type point confirm update select";
-	}
+  /* データに合わせて変更
+    作成：朴昰成
+    修正：朴昰成
+    修正日：24/05/27
+  */
+
+  /* 修正前：
+    table.emegra tr { grid-template-columns: 50px 100px repeat(2, 60px) 60px 1fr 70px 50px repeat(2, 60px) 30px; }
+    table.emegra tr.index {
+      padding-top: 8px;
+      padding-bottom: 4px;
+      grid-template-columns: 50px 100px repeat(2, 60px) 60px 1fr 70px 50px repeat(2, 60px) 30px;
+      grid-template-areas:
+      "no status  class   class  level title type point confirm update select"
+      "no status class_l class_s level title type point confirm update select";
+    }
+  */
+
+  /* 修正後： */
+  table.emegra tr { grid-template-columns: 50px 100px repeat(2, 80px) 60px 1fr 70px 50px repeat(2, 60px) 30px; }
+  table.emegra tr.index {
+    padding-top: 8px;
+    padding-bottom: 4px;
+    grid-template-columns: 50px 100px repeat(2, 80px) 60px 1fr 70px 50px repeat(2, 60px) 30px;
+    grid-template-areas:
+    "no status  class   class  level title type point confirm update select"
+    "no status class_l class_s level title type point confirm update select";
+  }
+  /* ここまで */
 	table.emegra tr.index > th {
 		padding: 0;
 		display: flex;

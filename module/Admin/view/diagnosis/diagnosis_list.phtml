@@ -1,5 +1,17 @@
 <?php
-	$levelTexts = array("0級", "初級", "中級", "高級");
+  /* テキスト変更
+    作成：朴昰成
+    修正：朴昰成
+    修正日：24/05/27
+  */
+
+  /* 修正前：
+    $levelTexts = array("0級", "初級", "中級", "高級");
+  */
+
+  /* 修正後： */
+  $levelTexts = array("無級", "初級", "中級", "高級");
+  /* ここまで */
 
 	$url = explode("?", $_SERVER["REQUEST_URI"])[0];
 	if (!isset($_SESSION)) { session_start(); }

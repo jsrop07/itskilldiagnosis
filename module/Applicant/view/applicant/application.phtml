@@ -7,119 +7,115 @@
             </h3>
         </div>
         <form id="form" name="input_form" enctype="multipart/form-data" action="/applicant/application" method="post">
-            <div class="diagnosis_main">
+          <div class="diagnosis_main">
+              <span for="email">メール </span>
+              <input class="form-control" name="email" type="email" placeholder="Emailを入力ください。" style="width:80%" maxlength='50'>
+              
+              <span>お名前（漢字）</span>
+              <input class="form-control" name="name" type="text" placeholder="漢字を記入してください。"style="width:40%" maxlength='20'>
 
-                    <span for="email">メール </span>
-                    <input class="form-control" name="email" type="email" placeholder="Emailを入力ください。" style="width:80%" maxlength='50'>
-                    
-                    <span>お名前（漢字）</span>
-                    <input class="form-control" name="name" type="text" placeholder="漢字を記入してください。"style="width:40%" maxlength='20'>
+              <span>お名前（カナ）</span>
+              <input class="form-control" name="kana" type="text" placeholder="カナを記入してください。"style="width:40%" maxlength='50'>
 
-                    <span>お名前（カナ）</span>
-                    <input class="form-control" name="kana" type="text" placeholder="カナを記入してください。"style="width:40%" maxlength='50'>
+              <span class="no_after_style">性別</span>
+              <select name="gender" style="width:20%" >
+                  <option selected disabled hidden>選択</option>
+                  <option value="0">男</option>
+                  <option value="1">女</option>
+              </select>
 
-                    <span class="no_after_style">性別</span>
-                    <select name="gender" style="width:20%" >
-                        <option selected disabled hidden>選択</option>
-                        <option value="0">男</option>
-                        <option value="1">女</option>
-                    </select>
+              <span >生年月日</span>
+              <input class="form-control" id="birthId" name="birth" type="text" placeholder="YYYY-MM-DD" autocomplete="off"  style="width:30%">   
 
-                    <span >生年月日</span>
-                    <input class="form-control" id="birthId" name="birth" type="text" placeholder="YYYY-MM-DD" autocomplete="off"  style="width:30%">   
+              <span >応募区分</span>
+              <select class="" name="case" style="width:40%" >
+                  <option selected disabled hidden>選択してください。</option>
+                  <option value="0">新卒</option>
+                  <option value="1">中途（経歴職）</option>
+              </select>
 
-                    <span >応募区分</span>
-                    <select class="" name="case" style="width:40%" >
-                        <option selected disabled hidden>選択してください。</option>
-                        <option value="0">新卒</option>
-                        <option value="1">中途（経歴職）</option>
-                    </select>
+              <span>学歴</span>
+              <select class="" name="education" style="width:40%" id="educationSelect" >
+                  <option selected disabled hidden>選択してください。</option>
+                  <option value="高卒">高卒</option>
+                  <option value="専門卒">専門卒</option>
+                  <option value="大卒">大卒</option>
+                  <option value="大学院卒">大学院卒</option>
+                  <option value="その他">その他</option>
+              </select>
+              <div id="otherEducationInput" style=" margin-top:-15px; display:none;">
+                  <input class="form-control" type="text" placeholder="その他の場合の、記入" id="otherEducation" name="education" maxlength='20'>
+              </div>
 
-                    <span>学歴</span>
-                    <select class="" name="education" style="width:40%" id="educationSelect" >
-                        <option selected disabled hidden>選択してください。</option>
-                        <option value="高卒">高卒</option>
-                        <option value="専門卒">専門卒</option>
-                        <option value="大卒">大卒</option>
-                        <option value="大学院卒">大学院卒</option>
-                        <option value="その他">その他</option>
-                    </select>
-                    <div id="otherEducationInput" style=" margin-top:-15px; display:none;">
-                        <input class="form-control" type="text" placeholder="その他の場合の、記入" id="otherEducation" name="education" maxlength='20'>
-                    </div>
+              <span class="no_after_style">専攻</span>
+              <select class="" name="major" style="width:40%" id="majorSelect" >
+                  <option selected disabled hidden>選択してください。</option>
+                  <option value="IT・ソフトウェア専攻">IT・ソフトウェア専攻</option>
+                  <option value="IT・ソフトウェア以外">IT・ソフトウェア以外</option>
+              </select>
+              <div id="otherMajorInput" style=" margin-top:-15px; display:none;">
+                  <input class="form-control" type="text" placeholder="その他の場合の、記入" id="otherMajor" name="major" maxlength='20'>
+              </div>
 
-                    <span class="no_after_style">専攻</span>
-                    <select class="" name="major" style="width:40%" id="majorSelect" >
-                        <option selected disabled hidden>選択してください。</option>
-                        <option value="IT・ソフトウェア専攻">IT・ソフトウェア専攻</option>
-                        <option value="IT・ソフトウェア以外">IT・ソフトウェア以外</option>
-                    </select>
-                    <div id="otherMajorInput" style=" margin-top:-15px; display:none;">
-                        <input class="form-control" type="text" placeholder="その他の場合の、記入" id="otherMajor" name="major" maxlength='20'>
-                    </div>
+              <span>ITスキル有無</span>
+              <select class="" name="skill" style="width:20%" onchange="SkillSelectChange(this.value)">
+                  <option selected disabled hidden>選択</option>
+                  <option value="0">有</option>
+                  <option value="1">無</option>
+              </select>
 
-                    <span>ITスキル有無</span>
-                    <select class="" name="skill" style="width:20%" onchange="SkillSelectChange(this.value)">
-                        <option selected disabled hidden>選択</option>
-                        <option value="0">有</option>
-                        <option value="1">無</option>
-                    </select>
+              <span id="spanclass1stSelect">経験分野</span>
+              <select class="" name="class1st" style="width:40%" id="class1stSelect" onclick="ChangeClass1st(this)">
+              <option value="" selected disabled hidden  >選択してください。</option>
+                  <?php foreach ($this->class1st as $row): ?>
+                      <?php $texts = explode(',', $row['text']); ?>
+                      <?php foreach ($texts as $text): ?>
+                          <option value="<?php echo $text; ?>"><?php echo $text; ?></option>
+                      <?php endforeach; ?>
+                  <?php endforeach; ?>
+              </select>
+              <input type="hidden" name="class1st" style="width:40%" id="hiddenClass1st">
 
-                    <span id="spanclass1stSelect">経験分野</span>
-                    <select class="" name="class1st" style="width:40%" id="class1stSelect" onclick="ChangeClass1st(this)">
-                    <option value="" selected disabled hidden  >選択してください。</option>
-                        <?php foreach ($this->class1st as $row): ?>
-                            <?php $texts = explode(',', $row['text']); ?>
-                            <?php foreach ($texts as $text): ?>
-                                <option value="<?php echo $text; ?>"><?php echo $text; ?></option>
-                            <?php endforeach; ?>
-                        <?php endforeach; ?>
-                    </select>
-                    <div id="otherclass1stInput" style="margin-top:-15px; display:none;">
-                        <input class="form-control" type="text" placeholder="その他の場合の、記入" id="otherclass1st" name="class1st" maxlength='20'>
-                    </div>
+              <span  id="spanTypeSelect">問題種別</span>
+              <select class="" name="class2nd" style="width:40%" id="typeSelect">
+              <option value="" selected disabled hidden  >選択してください。</option>
+              <input type="hidden" name="class2nd" style="width:40%" id="hiddentypeSelect">
+              </select>
 
-                    <span  id="spanTypeSelect">問題種別</span>
-                    <select class="" name="class2nd" style="width:40%" id="typeSelect">
-                    <option value="" selected disabled hidden  >選択してください。</option>
-                    <input type="hidden" name="class2nd" style="width:40%" id="hiddentypeSelect">
-                    </select>
+              <span id='spanCareer'>IT経験年数</span>
+              <input class="form-control" id="career" name="career" type="text" placeholder="経歴を記入してください。" style="font-size:15px; width:40%" maxlength='2'>
+              <input type="hidden" name="career" style="width:40%" id="hiddenCareer">
 
-                    <span id='spanCareer'>IT経験年数</span>
-                    <input class="form-control" id="career" name="career" type="text" placeholder="経歴を記入してください。" style="font-size:15px; width:40%" maxlength='2'>
-                    
-                    <span class="no_after_style" id='spanCertificates'>IT関連資格</span>
-                    <input class="form-control" name="certificates" type="text" placeholder="資格を記入してください。"style="width:80%" maxlength='50'>
+              <span class="no_after_style" id='spanCertificates'>IT関連資格</span>
+              <input class="form-control" name="certificates" type="text" placeholder="資格を記入してください。"style="width:80%" maxlength='50'>
 
-                    <span class="no_after_style" id='spanOther'>その他</span>
-                    <textarea class="form-control" name="other" type="textarea" placeholder="その他を記入してください。"style="width:80%" maxlength=500' ></textarea>
-                
+              <span class="no_after_style" id='spanOther'>その他</span>
+              <textarea class="form-control" name="other" type="textarea" placeholder="その他を記入してください。"style="width:80%" maxlength='500' ></textarea>
+          
+          </div>
+          <div class="button_box">
+              <button class="applicant_cancel" onclick="window.location.href='../applicant/application';">キャンセル</button>
+              <button type="button" class="applicant_button" onclick="applicationConfirm();">登録</button>
+          </div>
+          
+          <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog" style="margin-top:150px">
+              <div class="modal-content rounded-4">
+                <div class="modal-header" style="background:linear-gradient(111deg, #87D782 0%, #22BC8E 100%);color:white; height: 40px;border-top-left-radius:13px;border-top-right-radius:13px">
+                  <h5 class="modal-title" id="exampleModalLabel">申し込み案内</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(100%);"></button>
                 </div>
-                <div class="button_box">
-                    <button class="applicant_cancel" onclick="window.location.href='../applicant/application';">キャンセル</button>
-                    <button type="button" class="applicant_button" onclick="applicationConfirm();">登録</button>
+                <div class="modal-body fs-5" style="padding-bottom:0; text-align:center">
+                <div id="requestMessage">申し込みますか？</div>
                 </div>
-               
-                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog" style="margin-top:150px">
-                    <div class="modal-content rounded-4">
-                        <div class="modal-header" style="background:linear-gradient(111deg, #87D782 0%, #22BC8E 100%);color:white; height: 40px;border-top-left-radius:13px;border-top-right-radius:13px">
-                            <h5 class="modal-title" id="exampleModalLabel">申し込み案内</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(100%);"></button>
-                        </div>
-                        <div class="modal-body fs-5" style="padding-bottom:0; text-align:center">
-                        <div id="requestMessage">申し込みますか？</div>
-                        </div>
-                        <div class="modal-footer  border-top-0" style="margin-bottom:8px; justify-content:center;">
-                            <button type="button" class="applicant_cancel" data-bs-dismiss="modal">キャンセル</button>
-                            <button id="btn_submitId" name="mode" value="btn_submit" class="applicant_button" onclick="requestSubmit()">申込</button>
-
-                        </div>
-                    </div>
+                <div class="modal-footer  border-top-0" style="margin-bottom:8px; justify-content:center;">
+                  <button type="button" class="applicant_cancel" data-bs-dismiss="modal">キャンセル</button>
+                  <button id="btn_submitId" name="mode" value="btn_submit" class="applicant_button" onclick="requestSubmit()">申込</button>
                 </div>
-            </div>
-
-            </form>
+              </div>
+          </div>
+        </div>
+        </form>
     </div>
     
 <footer><a>GOMS Order・Received・Service.</a> Copyright G&GService. All Right Reserved.</footer>
@@ -134,29 +130,21 @@ var skillSelect = document.querySelector('select[name="skill"]');
 var hiddentypeSelect= document.getElementById('hiddentypeSelect');
 var class2ndSelect = document.getElementById('typeSelect');
 var class2ndSpanSelect = document.getElementById('spanTypeSelect');
-
-var Applicantclass1stSelect = document.getElementById('class1stSelect');
-var Applicantclass1stSpanSelect=document.getElementById('spanclass1stSelect');
-
 var otherclass1stInput = document.getElementById('otherclass1st');
-
 var careerInput = document.getElementById('career');
-var ApplicantCareerInput = document.getElementById('spanCareer');
-
 var certificatesInput = document.querySelector('input[name="certificates"]');
-var ApplicantCertificatesInput = document.getElementById('spanCertificates');
-
-
 var otherTextarea = document.querySelector('textarea[name="other"]');
-var ApplicantOtherTextarea = document.getElementById('spanOther');
 
 
 function SkillSelectChange(value) {
     form.skill.value = value;    
     if (form.skill.value === '1') {
         class1stSelect.value = "その他";
-        otherclass1stInput.value = "その他";
+        class1stSelect.disabled = true;
+
+        hiddenClass1st.value = "その他";
         hiddentypeSelect.value = "33";
+        hiddenCareer.value = "0";
         class2ndSelect.innerText = "";
         var option = document.createElement("option");
         option.value = "33";
@@ -164,12 +152,11 @@ function SkillSelectChange(value) {
         class2ndSelect.appendChild(option);
         class2ndSelect.value = "33";
         careerInput.value = '0';
-        class1stSelect.setAttribute('disabled', 'disabled');
-        class2ndSelect.setAttribute('disabled', 'disabled');
-        otherclass1stInput.style.display = 'none';
+        class2ndSelect.disabled = true;
+        careerInput.disabled = true;
     } else {
         class1stSelect.value = "";
-        otherclass1stInput.value = "";
+        hiddenClass1st.value = "";
         hiddentypeSelect.value = "";
         class2ndSelect.innerText = "";
         class2ndSelect.value = "";
@@ -181,6 +168,7 @@ function SkillSelectChange(value) {
         class2ndSelect.appendChild(defaultOption);
         class2ndSelect.value = "";
         class2ndSelect.disabled = false;
+        hiddenClass1st.disabled = true;
         hiddentypeSelect.disabled = true;
         class1stSelect.disabled = false;
         careerInput.disabled = false;

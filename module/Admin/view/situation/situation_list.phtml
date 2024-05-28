@@ -9,19 +9,45 @@
 		$queryDatas = explode("&", $url[1]);
 	}
 
-	$selectDatas["apply"] = "新規";
-	$selectDatas["request"] = "診断";
-	$selectDatas["execute"] = "終了";
-	$selectDatas["case-0"] = "新卒";
-	$selectDatas["case-1"] = "中途";
-	$selectDatas["education-高卒"] = "高卒";
-	$selectDatas["education-専門卒"] = "専門卒";
-	$selectDatas["education-大学卒"] = "大学卒";
-	$selectDatas["education-大学院卒"] = "大学院卒";
-	$selectDatas["rank-A"] = "等級A";
-	$selectDatas["rank-B"] = "等級B";
-	$selectDatas["rank-C"] = "等級C";
-	$selectDatas["rank-D"] = "等級D";
+  /*
+    作成：朴昰成
+    修正：朴昰成
+    修正日：24/05/28
+  */
+
+  /* 修正前：
+    $selectDatas["apply"] = "新規";
+    $selectDatas["request"] = "診断";
+    $selectDatas["execute"] = "終了";
+    $selectDatas["case-0"] = "新卒";
+    $selectDatas["case-1"] = "中途";
+    $selectDatas["education-高卒"] = "高卒";
+    $selectDatas["education-専門卒"] = "専門卒";
+    $selectDatas["education-大学卒"] = "大学卒";
+    $selectDatas["education-大学院卒"] = "大学院卒";
+    $selectDatas["rank-A"] = "等級A";
+    $selectDatas["rank-B"] = "等級B";
+    $selectDatas["rank-C"] = "等級C";
+    $selectDatas["rank-D"] = "等級D";
+  */
+
+  /* 修正後： */
+  $selectDatas = array(
+    "apply" => "新規",
+    "request" => "診断",
+    "execute" => "終了",
+    "case-0" => "新卒",
+    "case-1" => "中途",
+    "education-高卒" => "高卒", 
+    "education-専門卒" => "専門卒",
+    "education-大学卒" => "大学卒",
+    "education-大学院卒" => "大学院卒",
+    "rank-A" => "等級A",
+    "rank-B" => "等級B",
+    "rank-C" => "等級C",
+    "rank-D" => "等級D"
+  );
+  /* ここまで */
 
 	$firstNo = $this->noticelist->getTotalItemCount();
 	$firstNo -= (($this->noticelist->getCurrentPageNumber() - 1) * $this->noticelist->getitemCountPerPage());
@@ -195,6 +221,7 @@
 	<div></div>
 	
 	<div>
+		<button class="emegra" style="margin-right:10px;" onclick="">メール送信</button>
 		<button class="emegra" style="width:150px; margin-right:10px;" onclick="Request()">ITスキル診断依頼</button>
 		<button class="emegra" onclick="self.window.location='./input'">新規登録</button>
 		</div>	

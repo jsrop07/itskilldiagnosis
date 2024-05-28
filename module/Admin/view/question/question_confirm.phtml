@@ -1,6 +1,18 @@
 <?php
 	$numTexts = array("①", "②", "③", "④", "⑤");
-	$levelTexts = array("0級", "初級", "中級", "高級");
+  /* テキスト変更
+    作成：朴昰成
+    修正：朴昰成
+    修正日：24/05/27
+  */
+
+  /* 修正前：
+    $levelTexts = array("0級", "初級", "中級", "高級");
+  */
+
+  /* 修正後： */
+  $levelTexts = array("無級", "初級", "中級", "高級");
+  /* ここまで */
 
 	$answerNum = 0;
 	for ($i = 1; $i <= 5; $i++) {
@@ -47,20 +59,75 @@
 				dl.emegra.question { grid-template-columns: 90px 1fr; }
 			</style>
 			<dl class="emegra question">
-				<dt>問題</dt>
-				<dd><?php echo htmlspecialchars($questionData["question"], ENT_QUOTES); ?></dd>
-				<dt></dt>
-				<dd><?php echo htmlspecialchars($questionData["question_ko"], ENT_QUOTES); ?></dd>
+				<!--
+					作成：朴昰成
+					修正：朴昰成
+					修正日：24/05/27
+				-->
 
-				<dt>選択肢</dt>
-				<dd class="expand">
-					<?php for ($i = 1; $i <= $answerNum; $i++): ?>
-						<?= $numTexts[$i - 1]; ?>
-						<?php echo htmlspecialchars($questionData["answer" . $i], ENT_QUOTES); ?> </br>
-            &nbsp;&nbsp;&nbsp;&nbsp;
-            <?php echo htmlspecialchars($questionData["answer" . $i . "_ko"], ENT_QUOTES); ?></br>
-					<?php endfor; ?>
-				</dd>
+				<!-- 修正前： <?php /* ?>
+					<dt>問題</dt>
+					<dd><?php echo htmlspecialchars($questionData["question"], ENT_QUOTES); ?></dd>
+					<dt>問題 (韓国)</dt>
+					<dd><?php echo htmlspecialchars($questionData["question_ko"], ENT_QUOTES); ?></dd>
+
+					<dt>選択肢</dt>
+					<dd class="expand">
+						<?php for ($i = 1; $i <= $answerNum; $i++): ?>
+							<?= $numTexts[$i - 1]; ?>
+							<?php echo htmlspecialchars($questionData["answer" . $i], ENT_QUOTES); ?></br>
+							&nbsp;&nbsp;&nbsp;&nbsp;
+							<?php echo htmlspecialchars($questionData["answer" . $i . "_ko"], ENT_QUOTES); ?></br>
+						<?php endfor; ?>
+					</dd>
+				<?php */ ?> -->
+
+				<!-- 修正後： -->
+				<div style="grid-column: 1 / 3;">
+					<nav style="margin-bottom: 30px;">
+						<div class="nav nav-tabs" id="nav-tab" role="tablist">
+							<button class="nav-link active" id="nav-tab" data-bs-toggle="tab" data-bs-target="#nav" type="button" role="tab" aria-controls="nav" aria-selected="true">日本語</button>
+
+							<?php foreach ($languageCodeDatas as $code => $text): ?>
+								<button class="nav-link" id="nav-<?php echo $code; ?>-tab" data-bs-toggle="tab" data-bs-target="#nav-<?php echo $code; ?>" type="button" role="tab" aria-controls="nav-<?php echo $code; ?>" aria-selected="false"><?php echo $text; ?></button>
+							<?php endforeach; ?>
+						</div>
+					</nav>
+					<div class="tab-content" id="nav-tabContent">
+						<div class="tab-pane show active" id="nav" role="tabpanel" aria-labelledby="nav-tab">
+							<dl class="emegra question">
+								<dt>問題</dt>
+								<dd><?php echo htmlspecialchars($questionData["question"], ENT_QUOTES); ?></dd>
+
+								<dt>選択肢</dt>
+								<dd class="expand">
+									<?php for ($i = 1; $i <= $answerNum; $i++): ?>
+										<?= $numTexts[$i - 1]; ?>
+										<?php echo htmlspecialchars($questionData["answer" . $i], ENT_QUOTES); ?></br>
+									<?php endfor; ?>
+								</dd>
+							</dl>
+						</div>
+
+						<?php foreach ($languageCodeDatas as $code => $text): ?>
+							<div class="tab-pane" id="nav-<?php echo $code; ?>" role="tabpanel" aria-labelledby="nav-<?php echo $code; ?>-tab">
+								<dl class="emegra question">
+									<dt>問題</dt>
+									<dd><?php echo htmlspecialchars($questionData["question_" . $code], ENT_QUOTES); ?></dd>
+
+									<dt>選択肢</dt>
+									<dd class="expand">
+										<?php for ($i = 1; $i <= $answerNum; $i++): ?>
+											<?= $numTexts[$i - 1]; ?>
+											<?php echo htmlspecialchars($questionData["answer" . $i . "_" . $code], ENT_QUOTES); ?></br>
+										<?php endfor; ?>
+									</dd>
+								</dl>
+							</div>
+						<?php endforeach; ?>
+					</div>
+				</div>
+				<!-- ここまで -->
 
 				<dt>正解番号</dt>
 				<dd><?php echo $numTexts[$questionData["correct"] - 1]; ?></dd>

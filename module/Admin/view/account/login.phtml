@@ -42,11 +42,27 @@
 				<div class="card-header">G&G Service 診断管理</div>
 
 				<div class="card-body">
-					<span>ログインID</span>
-					<input class="form-control" id="id" type="text" placeholder="IDを入力ください（自分のメール）">
+          <!-- Add Enter Event
+            作成：朴昰成
+            修正：朴昰成
+            修正日：24/05/27
+          -->
 
-					<span style="margin-top: 24px">パスワード</span>
-					<input class="form-control" id="password" type="password" placeholder="パスワードを入力ください">
+          <!-- 修正前： <?php /* ?>
+            <span>ログインID</span>
+            <input class="form-control" id="id" type="text" placeholder="IDを入力ください（自分のメール）">
+
+            <span style="margin-top: 24px">パスワード</span>
+            <input class="form-control" id="password" type="password" placeholder="パスワードを入力ください">
+          <?php */ ?> -->
+
+          <!-- 修正後： -->
+          <span>ログインID</span>
+          <input class="form-control" id="id" type="text" placeholder="IDを入力ください（自分のメール）" onkeypress="Enter(event);">
+
+          <span style="margin-top: 24px">パスワード</span>
+          <input class="form-control" id="password" type="password" placeholder="パスワードを入力ください" onkeypress="Enter(event);">
+          <!-- ここまで -->
 
 					<style type="text/css">
 						button.emegra { background: linear-gradient(111deg, #50D7C7 0%, #40ADF0 100%); }
@@ -65,6 +81,15 @@
 			const password = document.getElementById("password");
 			const url = window.location.href.split("/");
 
+      /* Add Enter Event
+        作成：朴昰成
+        作成日：24/05/27
+      */
+      function Enter(event) {
+        if (event.code == "Enter") { submit(); }
+      }
+
+      /* ここまで */
 			function submit() {
 				if (id.value == "") {
 					alert("IDを入力ください");

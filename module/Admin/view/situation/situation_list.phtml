@@ -1,6 +1,18 @@
 <?php
 	$caseTexts = ["新卒", "中途"];
-	$levelTexts = array("0級", "初級", "中級", "高級");
+  /* テキスト変更
+    作成：朴昰成
+    修正：朴昰成
+    修正日：24/05/27
+  */
+
+  /* 修正前：
+    $levelTexts = array("0級", "初級", "中級", "高級");
+  */
+
+  /* 修正後： */
+  $levelTexts = array("無級", "初級", "中級", "高級");
+  /* ここまで */
 
 	if (!isset($_SESSION)) { session_start(); }
 	$url = explode("?", $_SERVER["REQUEST_URI"]);
@@ -143,7 +155,19 @@
 			</thead>
 			<tbody>
 				<?php foreach ($recordDatas as $index => $data): ?>
-					<tr <?php echo ($data["diagnosis_code"] == null) ? "style='background: lightcyan;'" : ""; ?>>
+          <!-- Debug: color change do not apply
+            作成：朴昰成
+            修正：朴昰成
+            修正日：24/05/24
+          -->
+
+          <!-- 修正前： <?php /* ?>
+            <tr <?php echo ($data["diagnosis_code"] == null) ? "style='background: lightcyan;'" : ""; ?>>
+          <?php */ ?> -->
+
+          <!-- 修正後： -->
+          <tr <?php echo ($data["diagnosis_date"] == null) ? "style='background: lightcyan;'" : ""; ?>>
+          <!-- ここまで -->
 						<td><?php echo $firstNo - $index; ?></td>
 						<td><?php echo $data["status"]; ?></td>
 

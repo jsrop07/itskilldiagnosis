@@ -600,9 +600,9 @@ class SituationController extends AbstractActionController {
 			$recordData = $recordTb->ReadByIdx($index);
 	
 			$applicantData = $applicantTb->ReadByIdx($recordData["applicant_idx"]);
+
 			$recordData = array_merge($applicantData, $recordData);
-	
-	
+
 			if (($recordData["diagnosis_code"]) != null) {
 				$diagnosisData = $diagnosisTb->ReadByCode($recordData["diagnosis_code"]);
 				$recordData = array_merge($diagnosisData, $recordData);
@@ -611,9 +611,9 @@ class SituationController extends AbstractActionController {
 			if (isset($post["class2nd"]) && isset($post['level'])) {
 				$result = $situTb->ReadDiagnosis($post["class2nd"], $post["level"]);
 				die(json_encode($result));
-				
 			}
-			$diagnosisData = $diagnosisTb->ReadByCode($recordData["diagnosis_code"]);
+			
+			// $diagnosisData = $diagnosisTb->ReadByCode($recordData["diagnosis_code"]);
 			
 			$datas["optionDatas"] = $this->GetOptionDatasForInput2();
 			
@@ -627,8 +627,9 @@ class SituationController extends AbstractActionController {
 	
 			$datas["applicantArray"] = $applicantData;
 			$datas["recordArray"] = $recordData;
+			
 			$datas["diagnosisArray"] = $diagnosisData;
-	
+			$datas["diagnosisData"] = $diagnosisTb->ReadForRecordByCodenDate($recordData["diagnosis_code"], $recordData["diagnosis_date"]);
 	
 			return $this->SetViewModel($datas, "/situation/situation_edit.phtml");
 		}

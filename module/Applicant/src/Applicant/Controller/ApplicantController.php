@@ -79,16 +79,15 @@ class ApplicantController extends AbstractActionController
 			'certificates' => $certificates,
 			'other' => $other,
 		];
-
 		$tbl->insertAndUpdateApplication($arr);
-	   $applicantInfo = $tbl->getRecord();
-	   $this->mailByApplicantation($arr,$skillText,$caseText,$managerArray,$applicantInfo);
+		$applicantInfo = $tbl->getRecord();
+		$this->mailByApplicantation($arr,$skillText,$caseText,$managerArray,$applicantInfo);
 
-	   echo "
-	   <script>
-	   self.location.href='/applicant/applicationclear';
-	   </script>
-	   ";
+		echo "
+		<script>
+		self.location.href='/applicant/applicationclear';
+		</script>
+		";
 
 		exit;
 	}
@@ -176,7 +175,6 @@ class ApplicantController extends AbstractActionController
 	  $post = $this->params()->fromPost();
 	  $submit_post = (isset($post['submit_post'])  &&   $post['submit_post'] !='')  ? $post['submit_post']  : '';
 	  $answer_data = (isset($post['answer_data'])  &&   $post['answer_data'] !='')  ? $post['answer_data']  : '';
-	  $comment     = (isset($post['comment'])      &&   $post['comment'] !='')      ? $post['comment']      : '';
 
 
 	  $session = new Container("applicant");
@@ -199,20 +197,24 @@ class ApplicantController extends AbstractActionController
 	  $applicantExamTbl = $this->getServiceLocator()->get("ApplicantExamTable");
 	  $applicantInfo    = $applicantExamTbl->readById($emailId);
 		$situTbl= $this->getServiceLocator()->get("SituTable");
+		$diagnosisTb = $this->getServiceLocator()->get("DiagnosisTable-Admin");
 		$recordIdx = $situTbl->getRecord();
 
 	  // Read manager info
 	  $managerInfo=$applicantExamTbl->readByManagerInfo();
 	  $managerArray=[$managerInfo["id"], $managerInfo["password"],$managerInfo["name"],$managerInfo["smtp_password"]];
 
-	  // Read $applicantinfo's record
+	  // Read $applicantinfo's to record
 	  $examRecordInfo =  $applicantExamTbl->readByApplicantIdx($applicantInfo);
 	  $datas["name"]  =  $applicantInfo["name"];
 		$datas['language'] = $examRecordInfo['language'];
+		$examRecordIdx = $examRecordInfo['idx'];
 
 		// Read record's diagnosis_code & Read selected diagnosis_code's info
 	  $recordCode    = $examRecordInfo["diagnosis_code"];
-	  $diagnosisInfo = $applicantExamTbl->readByDiagnosisCode($recordCode);
+
+	  // $diagnosisInfo = $applicantExamTbl->readByDiagnosisCode($recordCode);
+		$diagnosisInfo = $diagnosisTb->ReadForRecordByCodenDate($recordCode, $examRecordInfo["diagnosis_date"]);
 
     // Read diagnosis's question_num field data & time_limit data
 	  $datas["question_num"] = $diagnosisInfo["question_num"];
@@ -220,8 +222,6 @@ class ApplicantController extends AbstractActionController
 
 	  // 정답값 비교하기
 	  $findQuestionData = $applicantExamTbl->readByQuestion($post);
-		// print_r($findQuestionData);
-		// exit;
 
     //selected diagnosis_code's question_idxs data
 	  $selectedQuestion_idxs = ['question_idxs'=>isset($diagnosisInfo['question_idxs'])? $diagnosisInfo['question_idxs']:null];
@@ -259,8 +259,8 @@ class ApplicantController extends AbstractActionController
 		$length = count($answerDataArray);
 		$get_point = 0;
 		for ($i = 0; $i < $length; $i++) {
-			if ($resultArray[$i] == $answerDataArray[$i]) { //정답데이터와 답이 맞으면
-				$get_point+=$outputPoint[$i];// 포인트를 더한다 
+			if ($resultArray[$i] == $answerDataArray[$i]) { //if answer and correct answer is true
+				$get_point+=$outputPoint[$i];// plus point 
 
 			}
 
@@ -271,7 +271,7 @@ class ApplicantController extends AbstractActionController
 		$recordResults = explode(',', $diagnosisInfo["result_comments"]);
 
 		foreach ($resultPoints as $index => $points) {
-			// $resultPoints와 $resultTexts의 각 인덱스에 해당하는 값을 가져와서 배열에 추가합니다.
+			// bring $resultPoints and $resultTexts's  each index value and add array 
 			$selectedRank[] = [
 				'result_points' => $points,
 				'result_texts' => $resultTexts[$index],
@@ -280,8 +280,8 @@ class ApplicantController extends AbstractActionController
 		}
 		foreach ($selectedRank as $item) {
 			if ($get_point > $selectedRank[0]['result_points']) {
-				 $recordRank="A";
-				 $recordExamResult=$selectedRank[0]['result_comments'];
+				$recordRank="A";
+				$recordExamResult=$selectedRank[0]['result_comments'];
 			}
 			elseif($get_point <= $selectedRank[0]['result_points'] && $get_point > $selectedRank[1]['result_points']){
 				$recordRank="B";
@@ -315,22 +315,18 @@ class ApplicantController extends AbstractActionController
 			$majorText=$examRecordInfo['major'];
 		}
 
-		//제출하기
+		//submit
 		if($submit_post=='btn_submit'){
 			$sqlWhere["idx"] = $examRecordInfo['idx'];
 			$sqlSet["answer_data"] = $answer_data;
 			$sqlSet["get_point"] = $get_point;
-			$sqlSet["comment"] = $comment;
 			$sqlSet['rank']=$recordRank;
 			$sqlSet['diagnosis_comment']=$recordExamResult;
 			$applicantExamTbl->updateExam($sqlWhere, $sqlSet);			
 			$examRecordRecent =  $applicantExamTbl->readByApplicantIdx($applicantInfo);
-//       print_r($matchedData);
-// exit;
 			$applicantExamTbl->deletePasswordByIdx($applicantInfo["idx"]);
-			$this->mailByApplicantExam($applicantInfo,$sqlSet,$managerArray,$recordIdx);
+			$this->mailByApplicantExam($applicantInfo,$sqlSet,$managerArray,$examRecordIdx);
 			$this->mailByAdminToApplicant($applicantInfo,$examRecordRecent,$caseText,$majorText,$managerArray);
-
 			session_unset(); 
 			echo "
 			<script>
@@ -347,7 +343,7 @@ class ApplicantController extends AbstractActionController
 	  return $viewModel;
   }
 
-function mailByApplicantExam($applicantInfo,$sqlSet,$managerArray,$recordIdx){
+function mailByApplicantExam($applicantInfo,$sqlSet,$managerArray,$examRecordIdx){
 	$mail = new MailSender();
 
 	// 기본 메일 전송 관련 설정 로드
@@ -355,7 +351,7 @@ function mailByApplicantExam($applicantInfo,$sqlSet,$managerArray,$recordIdx){
 	// 메일 제목 지정 (일반적으로 DB에 메일폼 테이블을 만들어서 그것을 가져와서 아래의 title contents에 넣지만, 이건 샘플이므로 간단히.)
 	// 사람마다 변환해야 할 부분은 {{이렇게}} 메일폼에 넣어놓는다.
 	$param['title']="{{user_name}}様、{$applicantInfo["name"]}診断者の試験結果が出ました。";
-	$param["content"] = "以下の診断者の試験結果をご参照ください。\n\nお名前（漢字）：{$applicantInfo["name"]}\nお名前（カナ）：{$applicantInfo["kana"]}\nメールアドレス：{$applicantInfo["email"]}\n得点：{$sqlSet["get_point"]}\n評価：{$sqlSet["rank"]}\n評価結果：{$sqlSet["diagnosis_comment"]}\n\n診断者ページ：http://gngitskill:84/admin/situation/detail/{$recordIdx["idx"]}";
+	$param["content"] = "以下の診断者の試験結果をご参照ください。\n\nお名前（漢字）：{$applicantInfo["name"]}\nお名前（カナ）：{$applicantInfo["kana"]}\nメールアドレス：{$applicantInfo["email"]}\n得点：{$sqlSet["get_point"]}\n評価：{$sqlSet["rank"]}\n評価結果：{$sqlSet["diagnosis_comment"]}\n\n診断者ページ：http://gngitskill:84/admin/situation/detail/{$examRecordIdx}";
 
 	// 사람이름이나, URL등 고유하게 변경해야 하는 것은 이렇게 처리한다.
 	// 메일 제목과 내용 부분 모두 변환처리.

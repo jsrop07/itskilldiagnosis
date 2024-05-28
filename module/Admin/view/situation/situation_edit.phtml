@@ -80,8 +80,6 @@ switch ($recordArray["class1st"]) {
 
 // editHTML show question_num
 $question_num = isset($diagnosisArray['question_num']) ? $diagnosisArray['question_num'] : null;
-
-print_r($diganosisData);
 ?>
 
 
@@ -253,8 +251,8 @@ print_r($diganosisData);
 
 				<dt class="essential">診断問項ID</dt>
 				<dd>
-					<input name="code" type="hidden" style="width:220px;" value="<?php echo $diganosisData['code'] !=NULL ?  $diganosisData['code'] : "" ?>">
-            <div id="codeDisplay" name="codeName" style="padding-right:5px;cursur:pointer;" onclick="self.location.href='../../diagnosis/detail/<?php echo $diganosisData['idx'] ?>';"><?php echo $diganosisData['code'] !=NULL ? $diganosisData['code'] : "未登録" ?></div>
+					<input name="code" type="hidden" style="width:220px;" value="<?php echo $diagnosisData['code'] !=NULL ?  $diagnosisData['code'] : "" ?>">
+            <div id="codeDisplay" name="codeName" style="padding-right:5px;cursur:pointer;" onclick="self.location.href='../../diagnosis/detail/<?php echo $diagnosisData['idx'] ?>';"><?php echo $diagnosisData['code'] !=NULL ? $diagnosisData['code'] : "未登録" ?></div>
 					<button type="button" data-bs-toggle="modal" data-bs-target="#staticBackdrop" style="padding: 0px 10px ;border-radius: 8px; background:linear-gradient(111deg, #50D7C7 0%, #40ADF0 100%); color:white;" onclick="diagnosisData();">検索</button>
 				</dd> 
 				

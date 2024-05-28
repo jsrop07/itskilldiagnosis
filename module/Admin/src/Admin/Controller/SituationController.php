@@ -613,7 +613,7 @@ class SituationController extends AbstractActionController {
 				die(json_encode($result));
 			}
 			
-			$diagnosisData = $diagnosisTb->ReadByCode($recordData["diagnosis_code"]);
+			// $diagnosisData = $diagnosisTb->ReadByCode($recordData["diagnosis_code"]);
 			
 			$datas["optionDatas"] = $this->GetOptionDatasForInput2();
 			
@@ -629,8 +629,7 @@ class SituationController extends AbstractActionController {
 			$datas["recordArray"] = $recordData;
 			
 			$datas["diagnosisArray"] = $diagnosisData;
-			$datas["diganosisData"] = $diagnosisTb->ReadForRecordByCodenDate($recordData["diagnosis_code"], $recordData["diagnosis_date"]);
-			
+			$datas["diagnosisData"] = $diagnosisTb->ReadForRecordByCodenDate($recordData["diagnosis_code"], $recordData["diagnosis_date"]);
 	
 			return $this->SetViewModel($datas, "/situation/situation_edit.phtml");
 		}
@@ -673,7 +672,7 @@ class SituationController extends AbstractActionController {
 				$situTb->updateApplicantInfo($applicantWhere, $applicantSet);	
 				$recentPassword = $situTb->readById($applicantInfos);
 	
-				// $this->mailByRequest($managerInfo,$recentPassword);
+				$this->mailByRequest($managerInfo,$recentPassword);
 	
 				echo "
 				<script>

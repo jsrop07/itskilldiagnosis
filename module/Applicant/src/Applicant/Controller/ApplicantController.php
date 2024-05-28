@@ -79,16 +79,15 @@ class ApplicantController extends AbstractActionController
 			'certificates' => $certificates,
 			'other' => $other,
 		];
-		exit;
 		$tbl->insertAndUpdateApplication($arr);
-	   $applicantInfo = $tbl->getRecord();
-	   $this->mailByApplicantation($arr,$skillText,$caseText,$managerArray,$applicantInfo);
+		$applicantInfo = $tbl->getRecord();
+		$this->mailByApplicantation($arr,$skillText,$caseText,$managerArray,$applicantInfo);
 
-	   echo "
-	   <script>
-	   self.location.href='/applicant/applicationclear';
-	   </script>
-	   ";
+		echo "
+		<script>
+		self.location.href='/applicant/applicationclear';
+		</script>
+		";
 
 		exit;
 	}
@@ -198,6 +197,7 @@ class ApplicantController extends AbstractActionController
 	  $applicantExamTbl = $this->getServiceLocator()->get("ApplicantExamTable");
 	  $applicantInfo    = $applicantExamTbl->readById($emailId);
 		$situTbl= $this->getServiceLocator()->get("SituTable");
+		$diagnosisTb = $this->getServiceLocator()->get("DiagnosisTable-Admin");
 		$recordIdx = $situTbl->getRecord();
 
 	  // Read manager info
@@ -212,7 +212,9 @@ class ApplicantController extends AbstractActionController
 
 		// Read record's diagnosis_code & Read selected diagnosis_code's info
 	  $recordCode    = $examRecordInfo["diagnosis_code"];
-	  $diagnosisInfo = $applicantExamTbl->readByDiagnosisCode($recordCode);
+
+	  // $diagnosisInfo = $applicantExamTbl->readByDiagnosisCode($recordCode);
+		$diagnosisInfo = $diagnosisTb->ReadForRecordByCodenDate($recordCode, $examRecordInfo["diagnosis_date"]);
 
     // Read diagnosis's question_num field data & time_limit data
 	  $datas["question_num"] = $diagnosisInfo["question_num"];
@@ -220,8 +222,6 @@ class ApplicantController extends AbstractActionController
 
 	  // 정답값 비교하기
 	  $findQuestionData = $applicantExamTbl->readByQuestion($post);
-		// print_r($findQuestionData);
-		// exit;
 
     //selected diagnosis_code's question_idxs data
 	  $selectedQuestion_idxs = ['question_idxs'=>isset($diagnosisInfo['question_idxs'])? $diagnosisInfo['question_idxs']:null];
@@ -280,8 +280,8 @@ class ApplicantController extends AbstractActionController
 		}
 		foreach ($selectedRank as $item) {
 			if ($get_point > $selectedRank[0]['result_points']) {
-				 $recordRank="A";
-				 $recordExamResult=$selectedRank[0]['result_comments'];
+				$recordRank="A";
+				$recordExamResult=$selectedRank[0]['result_comments'];
 			}
 			elseif($get_point <= $selectedRank[0]['result_points'] && $get_point > $selectedRank[1]['result_points']){
 				$recordRank="B";
@@ -327,7 +327,6 @@ class ApplicantController extends AbstractActionController
 			$applicantExamTbl->deletePasswordByIdx($applicantInfo["idx"]);
 			$this->mailByApplicantExam($applicantInfo,$sqlSet,$managerArray,$examRecordIdx);
 			$this->mailByAdminToApplicant($applicantInfo,$examRecordRecent,$caseText,$majorText,$managerArray);
-			exit;
 			session_unset(); 
 			echo "
 			<script>

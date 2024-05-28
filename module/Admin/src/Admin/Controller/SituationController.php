@@ -628,7 +628,7 @@ class SituationController extends AbstractActionController {
 			$datas["applicantArray"] = $applicantData;
 			$datas["recordArray"] = $recordData;
 			
-			$datas["diagnosisArray"] = $diagnosisData;
+			// $datas["diagnosisArray"] = $diagnosisData;
 			$datas["diagnosisData"] = $diagnosisTb->ReadForRecordByCodenDate($recordData["diagnosis_code"], $recordData["diagnosis_date"]);
 	
 			return $this->SetViewModel($datas, "/situation/situation_edit.phtml");

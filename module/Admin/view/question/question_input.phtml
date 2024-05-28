@@ -1,17 +1,5 @@
 <?php
-  /* テキスト変更
-    作成：朴昰成
-    修正：朴昰成
-    修正日：24/05/27
-  */
-
-  /* 修正前：
-    $levelTexts = array("0級", "初級", "中級", "高級");
-  */
-
-  /* 修正後： */
   $levelTexts = ["無級", "初級", "中級", "高級"];
-  /* ここまで */
 	$numTexts = array("①", "②", "③", "④", "⑤");
 	
 	if (!isset($_SESSION)) { session_start(); }
@@ -119,77 +107,6 @@
 				dl.emegra.question { grid-template-columns: 140px 1fr; }
 			</style>
 			<dl class="emegra question">
-        <!--
-          作成：朴昰成
-          修正：朴昰成
-          修正日：24/05/27
-        -->
-
-        <!-- 修正前： <?php /* ?>
-				<dt class="essential">問題</dt>
-				<dd><input class="form-control" name="question" type="text" placeholder="問題を入力してください" value="<?php echo ($isSet) ? $questionData["question"] : ""; ?>"/></dd>
-        <dt>問題 (韓国)</dt>
-        <dd><input class="form-control" name="question_ko" type="text" placeholder="問題を入力してください（韓国語）" value="<?php echo ($isSet) ? $questionData["question_ko"] : ""; ?>"/></dd>
-
-				<dt class="essential">選択肢</dt>
-				<div class="grid answers" name="answers" id="answers">
-          <?php if ($isSet): ?>
-            <div class="first">
-              <dt class="essential">①</dt>
-              <dd><input class="form-control" name="answer1" type="text" placeholder="選択肢を入力してください" value="<?php echo $questionData["answer1"]; ?>"/></dd>
-            </div>
-            <div>
-              <dt>①韓国語</dt>
-              <dd><input class="form-control" name="answer1_ko" type="text" placeholder="選択肢を入力してください（韓国語）" value="<?php echo $questionData["answer1_ko"]; ?>"/></dd>
-            </div>
-
-            <?php for ($i = 2; $i <= $answerNum; $i++): ?>
-              <div>
-                <dt class="essential"><?= $numTexts[$i - 1]; ?></dt>
-                <dd><input class="form-control" name="answer<?= $i; ?>" type="text" placeholder="選択肢を入力してください" value="<?php echo $questionData["answer" . $i]; ?>"></dd>
-              </div>
-              <div>
-                <dt><?= $numTexts[$i - 1]; ?>韓国語</dt>
-                <dd><input class="form-control" name="answer<?= $i; ?>_ko" type="text" placeholder="選択肢を入力してください（韓国語）" value="<?php echo $questionData["answer" . $i . "_ko"]; ?>"/></dd>
-              </div>
-            <?php endfor; ?>
-            <?php for ($i = $answerNum + 1; $i <= 5; $i++): ?>
-              <div hidden>
-                <dt class="essential"><?= $numTexts[$i - 1]; ?></dt>
-                <dd><input class="form-control" name="answer<?= $i; ?>" type="text" placeholder="選択肢を入力してください" disabled/></dd>
-              </div>
-              <div hidden>
-                <dt><?= $numTexts[$i - 1]; ?>韓国語</dt>
-                <dd><input class="form-control" name="answer<?= $i; ?>_ko" type="text" placeholder="選択肢を入力してください（韓国語）" disabled/></dd>
-              </div>
-            <?php endfor; ?>
-          <?php else: ?>
-            <div class="first" id="div_notice" style="display: flex; align-items: center;">タイプを選択してください。</div>
-
-            <div class="first" hidden>
-              <dt class="essential">①</dt>
-              <dd><input class="form-control" name="answer1" type="text" placeholder="選択肢を入力してください" disabled/></dd>
-            </div>
-            <div hidden>
-              <dt>①韓国語</dt>
-              <dd><input class="form-control" name="answer1_ko" type="text" placeholder="選択肢を入力してください（韓国語）" disabled/></dd>
-            </div>
-
-            <?php for ($i = 2; $i <= 5; $i++): ?>
-              <div hidden>
-                <dt class="essential"><?= $numTexts[$i - 1]; ?></dt>
-                <dd><input class="form-control" name="answer<?= $i; ?>" type="text" placeholder="選択肢を入力してください" disabled/></dd>
-              </div>
-              <div hidden>
-                <dt><?= $numTexts[$i - 1]; ?>韓国語</dt>
-                <dd><input class="form-control" name="answer<?= $i; ?>_ko" type="text" placeholder="選択肢を入力してください（韓国語）" disabled/></dd>
-              </div>
-            <?php endfor; ?>
-          <?php endif; ?>
-				</div>
-        <?php */ ?> -->
-
-        <!-- 修正後： -->
         <div style="grid-column: 1 / 3;">
           <nav style="margin-bottom: 30px;">
             <div class="nav nav-tabs" id="nav-tab" role="tablist">
@@ -354,19 +271,7 @@
 <script type="text/javascript">
 	const numTexts = ["①", "②", "③", "④", "⑤"];
 
-  /*
-    作成：朴昰成
-    修正：朴昰成
-    修正日：24/05/27
-  */
-
-  /* 修正前：
-    const noticeDiv = document.getElementById("div_notice");
-  */
-
-  /* 修正後： */
   const noticeDivs = document.getElementsByName("div_notice");
-  /* ここまで */
 	const answerDivs = document.getElementsByName("div_answer");
 	const selectInputs = document.getElementsByTagName("select");
 	const form = document.getElementById("form");
@@ -425,23 +330,11 @@
 
 	// Change 答え
 	function ChangeType(element) {
-    /*
-      作成：朴昰成
-      修正：朴昰成
-      修正日：24/05/27
-    */
-
-    /* 修正前：
-      if (answerCount == 0) { noticeDiv.hidden = true; }
-    */
-
-    /* 修正後： */
     if (answerCount == 0) {
       for (let i = 0; i < noticeDivs.length; i++) {
         noticeDivs[i].hidden = true;
       }
     }
-    /* ここまで */
 		ChangeValue(element);
 
 		let beforeAnswerCount = answerCount;
@@ -466,23 +359,10 @@
         console.log(form.elements["answer" + Number(i + 1)]);
         form.elements["answer" + Number(i + 1)].parentNode.parentNode.hidden = false;
 
-        /*
-          作成：朴昰成
-          修正：朴昰成
-          修正日：24/05/27
-        */
-
-        /* 修正前：
-          form.elements["answer" + Number(i + 1) + "_ko"].disabled = false;
-          form.elements["answer" + Number(i + 1) + "_ko"].parentNode.parentNode.hidden = false;
-        */
-
-        /* 修正後： */
         <?php foreach ($languageCodeDatas as $code => $text): ?>
           form.elements["answer" + Number(i + 1) + "_<?php echo $code; ?>"].disabled = false;
           form.elements["answer" + Number(i + 1) + "_<?php echo $code; ?>"].parentNode.parentNode.hidden = false;
         <?php endforeach; ?>
-        /* ここまで */
 
 				var option = document.createElement("option");
 				option.value = Number(i + 1);
@@ -496,25 +376,11 @@
         form.elements["answer" + Number(i + 1)].disabled = true;
         form.elements["answer" + Number(i + 1)].value = "";
 
-        /*
-          作成：朴昰成
-          修正：朴昰成
-          修正日：24/05/27
-        */
-
-        /* 修正前：
-          form.elements["answer" + Number(i + 1) + "_ko"].parentNode.parentNode.hidden = true;
-          form.elements["answer" + Number(i + 1) + "_ko"].disabled = true;
-          form.elements["answer" + Number(i + 1) + "_ko"].value = "";
-        */
-
-        /* 修正後： */
         <?php foreach ($languageCodeDatas as $code => $text): ?>
           form.elements["answer" + Number(i + 1) + "_<?php echo $code; ?>"].parentNode.parentNode.hidden = true;
           form.elements["answer" + Number(i + 1) + "_<?php echo $code; ?>"].disabled = true;
           form.elements["answer" + Number(i + 1) + "_<?php echo $code; ?>"].value = "";
         <?php endforeach; ?>
-        /* ここまで */
 
 				if (form.correct.value == i + 1) {
 					form.correct.dataset.value = "";

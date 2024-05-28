@@ -123,12 +123,7 @@ class QuestionController extends AbstractActionController
 		$datas["breadcrumbData"] = ["ITスキル診断問項管理", "問題登録"];
 		$datas["title"] = "問題登録";
 		$datas["optionDatas"] = $this->GetOptionDatasForInput();
-		/*
-			作成：朴昰成
-			作成日：24/05/27
-		*/
 		$datas["languageCodeDatas"] = ["ko" => "韓国語"];
-		/* ここまで */
 
 		$adminTb = $this->getServiceLocator()->get("AdminTable");
 		try { $datas["adminDatas"] = $adminTb->ReadAllList(); }
@@ -143,12 +138,7 @@ class QuestionController extends AbstractActionController
 		$datas["breadcrumbData"] = ["ITスキル診断問項管理", "問題登録", "登録確認"];
 		$datas["title"] = "登録確認";
 		$datas["optionDatas"] = $this->GetOptionDatas();
-		/*
-			作成：朴昰成
-			作成日：24/05/27
-		*/
 		$datas["languageCodeDatas"] = ["ko" => "韓国語"];
-		/* ここまで */
 
 		$post = $this->params()->fromPost();
 		$datas["questionData"] = $post;
@@ -174,14 +164,8 @@ class QuestionController extends AbstractActionController
 		try { $questionData = $questionTable->ReadByIdx($index); }
 		catch (\Exception $e) { print_r($e->getMessage()); exit; }
 		$datas["questionData"] = $questionData;
-
-		/*
-			作成：朴昰成
-			作成日：24/05/27
-		*/
 		$datas["languageCodeDatas"] = ["ko" => "韓国語"];
 
-		/* ここまで */
 		// Save register name
 		$adminTb = $this->getServiceLocator()->get("AdminTable");
 		try { $datas["register"] = $adminTb->ReadByCode($questionData["admin_regist"])["name"]; }
@@ -205,12 +189,7 @@ class QuestionController extends AbstractActionController
 		$datas["breadcrumbData"] = ["ITスキル診断問項管理", "問題詳細", "問題修正"];
 		$datas["title"] = "問題修正";
 		$datas["optionDatas"] = $this->GetOptionDatasForInput();
-		/*
-			作成：朴昰成
-			作成日：24/05/27
-		*/
 		$datas["languageCodeDatas"] = ["ko" => "韓国語"];
-		/* ここまで */
 
 		$optionTb = $this->getServiceLocator()->get("OptionTable");
 		try { $datas["updateStatus"] = $optionTb->ReadByText("承認依頼")["idx"]; }
@@ -423,19 +402,7 @@ class QuestionController extends AbstractActionController
 				}
 
 				switch($questionData["level"]) {
-					/* テキスト変更
-						作成：朴昰成
-						修正：朴昰成
-						修正日：24/05/27
-					*/
-				
-					/* 修正前：
-						case "0級":
-					*/
-				
-					/* 修正後： */
 					case "無級":
-					/* ここまで */
 						$questionData["level"] = 0;
 						break;
 					case "初級":

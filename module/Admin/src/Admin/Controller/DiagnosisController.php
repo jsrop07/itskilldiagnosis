@@ -55,12 +55,7 @@ class DiagnosisController extends AbstractActionController {
 		}
 
 		$diagnosisTb = $this->getServiceLocator()->get("DiagnosisTable-Admin");
-		/*
-			作成：朴昰成
-			作成日：24/05/24
-		*/
 		$datas["totalNum"] = $diagnosisTb->CountAllList();
-		/* ここまで */
 
 		$diagnosisDatas = array();
 		if (!empty($query)) {

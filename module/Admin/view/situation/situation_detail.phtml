@@ -2,19 +2,7 @@
 	$caseTexts = ["新卒", "中途"];
 	$genderTexts = ["男", "女"];
 	$skillTexts = ["有", "無"];
-  /* テキスト変更
-    作成：朴昰成
-    修正：朴昰成
-    修正日：24/05/27
-  */
-
-  /* 修正前：
-    $levelTexts = array("0級", "初級", "中級", "高級");
-  */
-
-  /* 修正後： */
-  $levelTexts = array("無級", "初級", "中級", "高級");
-  /* ここまで */
+  $levelTexts = ["無級", "初級", "中級", "高級"];
   $languageTexts = ["日本語", "韓国語"];
 
 	$isRequest = false;
@@ -146,6 +134,9 @@
 
 				<dt>備考</dt>
 				<dd><?php echo $recordData["comment"]; ?></dd>
+
+        <dt>メール送信日</dt>
+        <dd><?php echo date("y.m.d", strtotime($recordData["execute_date"])); ?></dd>
 			<?php else: ?>
 				<div style="grid-column: 1 / 6; display: flex; align-items: center; justify-content: center;">未受験</div>
 			<?php endif; ?>

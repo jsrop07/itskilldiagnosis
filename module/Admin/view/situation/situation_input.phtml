@@ -119,9 +119,6 @@ function InitStyle() { return " font-style: italic; color: ;"; }
                   <?php endforeach; ?>
               <?php endforeach; ?>
           </select>
-          <div id="otherclass1stInput" style="margin-left: 10px; display:none;  width:200px;">
-            <input class="form-control" type="text" placeholder="その他の場合の、記入" id="otherclass1st" name="class1st" maxlength='20'>
-          </div>
 				</dd>
 
 				<dt class="essential" id=class2ndTitle>問題種別</dt>
@@ -215,8 +212,6 @@ function InitStyle() { return " font-style: italic; color: ;"; }
 	</div>
 </div>
 
-<input type="hidden" name="class1st" id="noSkillClass1st">
-<input type="hidden" name="class2nd" id="noSkillClass2nd">
 <input type="hidden" name="career" id="noSkillCareer">
 
 <div class="btn-place" style="margin-top: 32px;">
@@ -269,67 +264,51 @@ function InitStyle() { return " font-style: italic; color: ;"; }
 		randomPW();
 	}
 </script>
-
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/datepicker/1.0.10/datepicker.min.js"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/datepicker/1.0.10/datepicker.min.css">
-
-  <script>
-    $(document).ready(function(){
-      var birth = document.getElementById("birth");
-      $(birth).datepicker({
-        format: 'yyyy-mm-dd',
-        autohide: true
-      });
-    });
-  </script>
-
 <script>
 	let skillSelect = document.getElementById('ITskillId');
-	let class1stSelect = document.getElementById('class1stId')
-  let class1stOtherSelect = document.getElementById('otherclass1st')
+  var class1stBox = document.getElementById('class1stId');
 	var class2ndSelect = document.getElementById('class2ndId')
 	let careerSelect = document.getElementById('careerId')
-  var hiddenClass1st= document.getElementById('noSkillClass1st');
-  var hiddenClass2nd= document.getElementById('noSkillClass2nd');
+
   var hiddenCareer= document.getElementById('noSkillCareer');
-  var noSkillClass2ndoption = document.createElement("option");
-  var yesSkillClass2ndoption = document.createElement("option");
 
   function SkillSelectChange(value){
-  form.skill.value = value;
     if (form.skill.value === '1') {
-      class1stSelect.value="その他";
-      class2ndSelect.innerText="";
-      noSkillClass2ndoption.value = "33";
-      noSkillClass2ndoption.innerText = "テキスト";
-      class2ndSelect.appendChild(noSkillClass2ndoption);
-      class2ndSelect.value = "33";
-      careerSelect.value="0";
-      class1stSelect.setAttribute('disabled', 'disabled');
-      class2ndSelect.setAttribute('disabled', 'disabled');
-      class1stOtherSelect.setAttribute('disabled', 'disabled');
-      careerSelect.setAttribute('disabled', 'disabled');
-      class1stOtherSelect.style.display = "none";
-      hiddenClass1st.value = "その他";
-      hiddenClass2nd.value = "33";
+      for (var i = 0; i < class1stBox.options.length - 1; i++) {
+        class1stBox.options[i].style.display = 'none';
+      }
+      class2ndId.value = "";
+      class1stId.value = "";
+      var Option = document.createElement("option");
+      Option.value = "";
+      Option.innerText = "選択してください。";
+      class2ndSelect.appendChild(Option);
+      careerSelect.value = '';
       hiddenCareer.value = "0";
-    }
-    else{
-      class1stSelect.value = "";
-      class1stOtherSelect.value="";
-      class1stOtherSelect.style.display = "block";
-      class2ndSelect.innerText="";
-      careerSelect.value = "";
-      yesSkillClass2ndoption.value = "";
-      yesSkillClass2ndoption.innerText = "選択してください。";
-      class2ndSelect.appendChild(yesSkillClass2ndoption);
-      class1stSelect.removeAttribute('disabled');
-      class2ndSelect.removeAttribute('disabled');
-      careerSelect.removeAttribute('disabled');
-      hiddenClass1st.setAttribute('disabled', 'disabled');
-      hiddenClass2nd.setAttribute('disabled', 'disabled');
-      hiddenCareer.setAttribute('disabled', 'disabled');
+      careerSelect.value = '0';
+      careerSelect.disabled = true;
+      class2ndSelect.replaceChildren();
+
+      console.log(class2ndId);
+    } else {
+      for (var i = 0; i < class1stBox.options.length - 1; i++) {
+        class1stBox.options[i].style.display = 'block';
+      }
+      class1stId.value = "";
+      class2ndSelect.innerText = "";
+      class2ndSelect.value = "";
+      careerSelect.value = '';
+      var defaultOption = document.createElement("option");
+      defaultOption.value = "";
+      defaultOption.innerText = "選択してください。";
+      class2ndSelect.appendChild(defaultOption);
+      class2ndSelect.value = "";
+      hiddenCareer.disabled = true;
+      careerSelect.value = '';
+      careerSelect.disabled = false;
+
+      // class2ndSelect.replaceChildren();
+      console.log(class2ndId);
     }
   }	
 
@@ -383,8 +362,6 @@ function InitStyle() { return " font-style: italic; color: ;"; }
 	function ChangeClass1st(element) {
 
 class2ndSelect.replaceChildren();
-
-console.log(class2ndSelect);
 switch (element.value) {
 <?php foreach ($optionDatas["class2nd"] as $value => $class2nd): ?>
 	case "<?php echo $optionDatas["class1st"][array_search($value, array_column($optionDatas["class1st"], "idx"))]["text"]; ?>":
@@ -437,24 +414,6 @@ switch (element.value) {
         otherEducation.removeAttribute('disabled');
     } else {
         otherEducation.setAttribute('disabled', 'disabled');
-    }
-});
-
-    document.getElementById('class1stId').addEventListener('change', function(event) {
-    var selectedOption = event.target.value;
-    var otherclass1stInput = document.getElementById('otherclass1stInput');
-
-    if (selectedOption === "その他") {
-        otherclass1stInput.style.display = 'block';
-    } else {
-        otherclass1stInput.style.display = 'none';
-    }
-
-    var otherclass1st = document.getElementById('otherclass1st');
-    if (selectedOption === "その他") {
-        otherclass1st.removeAttribute('disabled');
-    } else {
-        otherclass1st.setAttribute('disabled', 'disabled');
     }
 });
 
@@ -708,7 +667,6 @@ function checkKana(input) {
 
 		class2ndSelect.replaceChildren();
 		
-        console.log(class2ndSelect);
 		switch (element.value) {
         <?php foreach ($optionDatas["class2nd"] as $value => $class2nd): ?>
             case "<?php echo $optionDatas["class1st"][array_search($value, array_column($optionDatas["class1st"], "idx"))]["text"]; ?>":

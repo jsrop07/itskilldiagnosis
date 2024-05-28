@@ -1,0 +1,51 @@
+
+<select id="test2" onchange="tt(this.value)">
+<option value="0">0</option>
+<option value="1">1</option>
+</select>
+
+<select id="test3">
+<option value="" hidden>선택</option>
+
+</select>
+
+<script>
+  const test = document.getElementById("test");
+  const test3 = document.getElementById("test3");
+    // var newDiv = document.createElement('div');
+    // var newText = document.createTextNode('hello world');
+    // newDiv.appendChild(newText);
+    // // document.appendChild(newDiv);
+    // test.appendChild(newDiv);
+
+    // var newDiv = document.createElement('option');
+    // var newText = document.createTextNode('hello world');
+    // newDiv.appendChild(newText);
+    // // document.appendChild(newDiv);
+    // test2.appendChild(newDiv);
+    
+    function tt(value){
+      test3.replaceChildren();
+
+    if(value == 0){
+    console.log(value);
+    var newDiv = document.createElement('option');
+    var newText = document.createTextNode('선택');
+    newDiv.hidden = true;
+
+    newDiv.appendChild(newText);
+    test3.appendChild(newDiv);
+
+    }
+    else if(value == 1){
+      console.log(value);
+    var newDiv = document.createElement('option');
+    var newText = document.createTextNode('test');
+    var newText2 = document.createTextNode('test2');
+    newDiv.appendChild(newText, newText2);
+    test3.appendChild(newDiv);
+    // test3.hidden = true;
+
+    }
+  }
+</script>

@@ -21,9 +21,11 @@ class SituationController extends AbstractActionController {
 	}
 
 	public function indexAction() {
-		$this->ChkLogin();
-		header("Location: ./situation/list");
-		exit;
+		// $this->ChkLogin();
+		// header("Location: ./situation/list");
+		// exit;
+
+		return $this->SetViewModel($datas, "/situation/situation_test.phtml");
 	}
 
 	public function listAction() {
@@ -751,26 +753,9 @@ class SituationController extends AbstractActionController {
 				array_push($afterOptionDatas["class2nd"][$data["class_upper"]], $data);
 			}
 	
-			foreach ($class2ndDatas as $data) {
-				$class_upper = $data["class_upper"];
-				
-				// Debugging: Check if class_upper exists in $class1stDatas
-				if (!isset($class1stDatas[$class_upper])) {
-					// echo "Notice: Undefined index $class_upper in \$class1stDatas\n";
-					continue; // Skip this iteration if the index is not set
-				}
-			
-				$class1stValue = $class1stDatas[$class_upper];
-			
-				// Check if $class1stValue is set in $afterOptionDatas["class2nd"]
-				if (!isset($afterOptionDatas["class2nd"][$class1stValue])) {
-					$afterOptionDatas["class2nd"][$class1stValue] = array();
-				}
-			
-				array_push($afterOptionDatas["class2nd"][$class1stValue], $data);
-			}
-	
+		
 			return $afterOptionDatas;
 		}	
+
 	
 }

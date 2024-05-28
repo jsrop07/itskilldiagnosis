@@ -52,7 +52,9 @@ if ($ses_id) {
                             if (!empty($row[$answerKey])) :
                             ?>
                                 <li style="padding: 10px 0">
+                                <label>
                                     <input type="radio" name="answer<?= $idx + 1 ?>" value="<?= $i ?>"> <?php echo $language == 1 && $answer_ko != null? $answer_ko : $answer_jp ?>
+                                    </label>
                                 </li>
                             <?php endif; ?>
                         <?php endfor; ?>

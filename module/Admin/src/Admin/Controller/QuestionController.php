@@ -143,6 +143,12 @@ class QuestionController extends AbstractActionController
 		$datas["breadcrumbData"] = ["ITスキル診断問項管理", "問題登録", "登録確認"];
 		$datas["title"] = "登録確認";
 		$datas["optionDatas"] = $this->GetOptionDatas();
+		/*
+			作成：朴昰成
+			作成日：24/05/27
+		*/
+		$datas["languageCodeDatas"] = ["ko" => "韓国語"];
+		/* ここまで */
 
 		$post = $this->params()->fromPost();
 		$datas["questionData"] = $post;
@@ -199,6 +205,12 @@ class QuestionController extends AbstractActionController
 		$datas["breadcrumbData"] = ["ITスキル診断問項管理", "問題詳細", "問題修正"];
 		$datas["title"] = "問題修正";
 		$datas["optionDatas"] = $this->GetOptionDatasForInput();
+		/*
+			作成：朴昰成
+			作成日：24/05/27
+		*/
+		$datas["languageCodeDatas"] = ["ko" => "韓国語"];
+		/* ここまで */
 
 		$optionTb = $this->getServiceLocator()->get("OptionTable");
 		try { $datas["updateStatus"] = $optionTb->ReadByText("承認依頼")["idx"]; }

@@ -10,7 +10,7 @@
   */
 
   /* 修正後： */
-  $levelTexts = array("無級", "初級", "中級", "高級");
+  $levelTexts = ["無級", "初級", "中級", "高級"];
   /* ここまで */
 	$numTexts = array("①", "②", "③", "④", "⑤");
 	
@@ -234,24 +234,25 @@
                 </div>
               </dl>
             </div>
+
             <?php foreach ($languageCodeDatas as $code => $text): ?>
               <div class="tab-pane" id="nav-<?php echo $code; ?>" role="tabpanel" aria-labelledby="nav-<?php echo $code; ?>-tab">
                 <dl class="emegra question">
-                  <dt class="essential">問題</dt>
+                  <dt>問題</dt>
                   <dd><input class="form-control" name="question_<?php echo $code; ?>" type="text" placeholder="問題を入力してください（<?php echo $text; ?>）" value="<?php echo ($isSet) ? htmlspecialchars($questionData["question_" . $code], ENT_QUOTES) : ""; ?>"/></dd>
 
-                  <dt class="essential">選択肢</dt>
+                  <dt>選択肢</dt>
                   <div class="grid answers" name="answers" id="answers">
                     <?php if ($isSet): ?>
                       <?php for ($i = 1; $i <= $answerNum; $i++): ?>
                         <div>
-                          <dt class="essential"><?= $numTexts[$i - 1]; ?></dt>
+                          <dt><?= $numTexts[$i - 1]; ?></dt>
                           <dd><input class="form-control" name="answer<?= $i; ?>_<?php echo $code; ?>" type="text" placeholder="選択肢を入力してください（<?php echo $text; ?>）" value="<?php echo htmlspecialchars($questionData["answer" . $i . "_" . $code], ENT_QUOTES); ?>"></dd>
                         </div>
                       <?php endfor; ?>
                       <?php for ($i = $answerNum + 1; $i <= 5; $i++): ?>
                         <div hidden>
-                          <dt class="essential"><?= $numTexts[$i - 1]; ?></dt>
+                          <dt><?= $numTexts[$i - 1]; ?></dt>
                           <dd><input class="form-control" name="answer<?= $i; ?>_<?php echo $code; ?>" type="text" placeholder="選択肢を入力してください（<?php echo $text; ?>）" disabled/></dd>
                         </div>
                       <?php endfor; ?>
@@ -260,7 +261,7 @@
 
                       <?php for ($i = 1; $i <= 5; $i++): ?>
                         <div hidden>
-                          <dt class="essential"><?= $numTexts[$i - 1]; ?></dt>
+                          <dt><?= $numTexts[$i - 1]; ?></dt>
                           <dd><input class="form-control" name="answer<?= $i; ?>_<?php echo $code; ?>" type="text" placeholder="選択肢を入力してください（<?php echo $text; ?>）" disabled/></dd>
                         </div>
                       <?php endfor; ?>
@@ -353,8 +354,19 @@
 <script type="text/javascript">
 	const numTexts = ["①", "②", "③", "④", "⑤"];
 
-	// const noticeDiv = document.getElementById("div_notice");
-	const noticeDiv = document.getElementsByName("div_notice");
+  /*
+    作成：朴昰成
+    修正：朴昰成
+    修正日：24/05/27
+  */
+
+  /* 修正前：
+    const noticeDiv = document.getElementById("div_notice");
+  */
+
+  /* 修正後： */
+  const noticeDivs = document.getElementsByName("div_notice");
+  /* ここまで */
 	const answerDivs = document.getElementsByName("div_answer");
 	const selectInputs = document.getElementsByTagName("select");
 	const form = document.getElementById("form");
@@ -413,12 +425,23 @@
 
 	// Change 答え
 	function ChangeType(element) {
-		// if (answerCount == 0) { noticeDiv.hidden = true; }
-		if (answerCount == 0) {
-      for (let i = 0; i < noticeDiv.length; i++) {
-        noticeDiv[i].hidden = true;
+    /*
+      作成：朴昰成
+      修正：朴昰成
+      修正日：24/05/27
+    */
+
+    /* 修正前：
+      if (answerCount == 0) { noticeDiv.hidden = true; }
+    */
+
+    /* 修正後： */
+    if (answerCount == 0) {
+      for (let i = 0; i < noticeDivs.length; i++) {
+        noticeDivs[i].hidden = true;
       }
     }
+    /* ここまで */
 		ChangeValue(element);
 
 		let beforeAnswerCount = answerCount;
@@ -443,8 +466,23 @@
         console.log(form.elements["answer" + Number(i + 1)]);
         form.elements["answer" + Number(i + 1)].parentNode.parentNode.hidden = false;
 
-        form.elements["answer" + Number(i + 1) + "_ko"].disabled = false;
-        form.elements["answer" + Number(i + 1) + "_ko"].parentNode.parentNode.hidden = false;
+        /*
+          作成：朴昰成
+          修正：朴昰成
+          修正日：24/05/27
+        */
+
+        /* 修正前：
+          form.elements["answer" + Number(i + 1) + "_ko"].disabled = false;
+          form.elements["answer" + Number(i + 1) + "_ko"].parentNode.parentNode.hidden = false;
+        */
+
+        /* 修正後： */
+        <?php foreach ($languageCodeDatas as $code => $text): ?>
+          form.elements["answer" + Number(i + 1) + "_<?php echo $code; ?>"].disabled = false;
+          form.elements["answer" + Number(i + 1) + "_<?php echo $code; ?>"].parentNode.parentNode.hidden = false;
+        <?php endforeach; ?>
+        /* ここまで */
 
 				var option = document.createElement("option");
 				option.value = Number(i + 1);
@@ -458,9 +496,25 @@
         form.elements["answer" + Number(i + 1)].disabled = true;
         form.elements["answer" + Number(i + 1)].value = "";
 
-        form.elements["answer" + Number(i + 1) + "_ko"].parentNode.parentNode.hidden = true;
-        form.elements["answer" + Number(i + 1) + "_ko"].disabled = true;
-        form.elements["answer" + Number(i + 1) + "_ko"].value = "";
+        /*
+          作成：朴昰成
+          修正：朴昰成
+          修正日：24/05/27
+        */
+
+        /* 修正前：
+          form.elements["answer" + Number(i + 1) + "_ko"].parentNode.parentNode.hidden = true;
+          form.elements["answer" + Number(i + 1) + "_ko"].disabled = true;
+          form.elements["answer" + Number(i + 1) + "_ko"].value = "";
+        */
+
+        /* 修正後： */
+        <?php foreach ($languageCodeDatas as $code => $text): ?>
+          form.elements["answer" + Number(i + 1) + "_<?php echo $code; ?>"].parentNode.parentNode.hidden = true;
+          form.elements["answer" + Number(i + 1) + "_<?php echo $code; ?>"].disabled = true;
+          form.elements["answer" + Number(i + 1) + "_<?php echo $code; ?>"].value = "";
+        <?php endforeach; ?>
+        /* ここまで */
 
 				if (form.correct.value == i + 1) {
 					form.correct.dataset.value = "";

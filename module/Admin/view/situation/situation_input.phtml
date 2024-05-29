@@ -1,6 +1,8 @@
 <?php 
 echo $this->partial("breadcrumb", ["datas" => $breadcrumbData]); 
 $currentDate = date("Y-m-d H:i:s");
+$dateSchedule = date("Y-m-d H:i");
+
 function InitStyle() { return " font-style: italic; color: ;"; }
 ?>
 
@@ -132,6 +134,7 @@ function InitStyle() { return " font-style: italic; color: ;"; }
 				<dd><input class="form-control" id="careerId" name="career" type="text" placeholder="経歴を記入してください。" style="font-size:15px; width:220px;" maxlength='2'></dd> 
 		</dl>
 	</div>
+
 </div>
 
     <div class="emegra card" style="margin-top: 32px;">
@@ -183,7 +186,7 @@ function InitStyle() { return " font-style: italic; color: ;"; }
 				<dt class="essential">レベル</dt>
 				<dd>
           <select class="form-select" name="level" type="text" style="width:100px;">
-            <option value="0">０級</option>
+            <option value="0">無級</option>
             <option value="1">初級</option>
             <option value="2">中級</option>
             <option value="3">高級</option>
@@ -208,11 +211,20 @@ function InitStyle() { return " font-style: italic; color: ;"; }
             <option value="1">韓国語</option>
           </select>
 				</dd>
+
+        <dt class="essential">メール転送</dt>
+        <dd>
+          <select class="form-select" name="mail_delay" style="width:100px;" onchange="ChangeInputStyle(this)" >
+            <option value="" selected>手動</option>
+            <option value="0">自動</option>
+          </select>
+				</dd>
+
+        <dt class="essential">診断日</dt>
+        <dd><input class="form-control" name="schedule" type="text" style="width:220px;" value="<?php echo $dateSchedule?>"></dd>
 		</dl>
 	</div>
 </div>
-
-<input type="hidden" name="career" id="noSkillCareer">
 
 <div class="btn-place" style="margin-top: 32px;">
 	<button type="button" class="emegra cancel" onclick="self.location.href='.././situation/list';">戻る</button>
@@ -270,26 +282,20 @@ function InitStyle() { return " font-style: italic; color: ;"; }
 	var class2ndSelect = document.getElementById('class2ndId')
 	let careerSelect = document.getElementById('careerId')
 
-  var hiddenCareer= document.getElementById('noSkillCareer');
-
   function SkillSelectChange(value){
+    class2ndSelect.replaceChildren();
     if (form.skill.value === '1') {
       for (var i = 0; i < class1stBox.options.length - 1; i++) {
         class1stBox.options[i].style.display = 'none';
       }
       class2ndId.value = "";
       class1stId.value = "";
-      var Option = document.createElement("option");
-      Option.value = "";
-      Option.innerText = "選択してください。";
-      class2ndSelect.appendChild(Option);
-      careerSelect.value = '';
-      hiddenCareer.value = "0";
-      careerSelect.value = '0';
-      careerSelect.disabled = true;
-      class2ndSelect.replaceChildren();
-
-      console.log(class2ndId);
+      var option = document.createElement("option");
+      option.hidden = true;
+      option.innerText = "選択してください。";
+      class2ndSelect.appendChild(option);
+      careerSelect.value = "0";
+      careerId.readOnly =  true;
     } else {
       for (var i = 0; i < class1stBox.options.length - 1; i++) {
         class1stBox.options[i].style.display = 'block';
@@ -303,12 +309,7 @@ function InitStyle() { return " font-style: italic; color: ;"; }
       defaultOption.innerText = "選択してください。";
       class2ndSelect.appendChild(defaultOption);
       class2ndSelect.value = "";
-      hiddenCareer.disabled = true;
-      careerSelect.value = '';
-      careerSelect.disabled = false;
-
-      // class2ndSelect.replaceChildren();
-      console.log(class2ndId);
+      careerId.readOnly =  false;
     }
   }	
 
@@ -356,31 +357,6 @@ function InitStyle() { return " font-style: italic; color: ;"; }
 //         console.log("2");
 //     }
 // });
-</script>
-
-<script>
-	function ChangeClass1st(element) {
-
-class2ndSelect.replaceChildren();
-switch (element.value) {
-<?php foreach ($optionDatas["class2nd"] as $value => $class2nd): ?>
-	case "<?php echo $optionDatas["class1st"][array_search($value, array_column($optionDatas["class1st"], "idx"))]["text"]; ?>":
-		var option = document.createElement("option");
-		option.hidden = true;
-		option.innerText = "選択してください。";
-		class2ndSelect.appendChild(option);
-
-		<?php foreach ($class2nd as $data): ?>
-			var option = document.createElement("option");
-			option.value = <?php echo $data["idx"]; ?>;
-			option.innerText = "<?php echo $data["text"]; ?>";
-			class2ndSelect.appendChild(option);
-		<?php endforeach; ?>
-		break;
-		<?php endforeach; ?>
-		
-	}
-}
 </script>
 
 <script>
@@ -567,7 +543,7 @@ function checkKana(input) {
 <script>
   function saveConfirm(){
         if (form.email.value == "" || !emailValidationCheck(form.email.value)) {
-             alert("メールアドレスを入力してください。");
+            alert("メールアドレスを入力してください。");
             setTimeout("form.email.focus()",100);
             event.preventDefault();
             return false;

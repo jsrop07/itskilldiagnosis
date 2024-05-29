@@ -115,7 +115,7 @@ if ($ses_id) {
 					</p>
 					</div>
 					<div class="modal-footer flex-column border-top-0" style="padding-bottom:32px;">
-						<button type="button" class="btn btn-lg  w-75 mx-0" id="startBtn" data-bs-dismiss="modal" style="background: linear-gradient(111deg, #87D782 0%, #22BC8E 100%); color:white; ">スタート</button>
+						<button type="button" class="btn btn-lg  w-75 mx-0" id="startBtn" data-bs-dismiss="modal" style="background: linear-gradient(111deg, #87D782 0%, #22BC8E 100%); color:white; " onclick="executeTime()">スタート</button>
 					</div>
 					</div>
 				</div>
@@ -416,6 +416,34 @@ document.addEventListener('keydown', notReload);
 }
 </script> -->
 
+<script>
+  function executeTime() {
+  const url = window.location.href;
+  const postForm = new FormData();
+  const examIdx = <?= json_encode($examIdx) ?>;
+  postForm.append("idx", examIdx);
+
+  const xhr = new XMLHttpRequest();
+  xhr.open("POST", url, true);
+  xhr.send(postForm);
+  xhr.onload = () => {
+    if (xhr.status == 200) {
+        try {
+            const result = JSON.parse(xhr.responseText);
+            // console.log(result);
+            if (result === "wrong") {
+            console.log(result);
+            return;
+            }
+            console.log(result);
+          } catch (e) {
+            console.error("Failed to parse response", e);
+            alert("サーバー応答の解析に失敗しました");
+        }
+    }
+}
+}
+</script>
 
 <script>
   function requestSubmit(){

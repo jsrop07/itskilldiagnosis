@@ -81,6 +81,7 @@ class ApplicantController extends AbstractActionController
 		];
 		$tbl->insertAndUpdateApplication($arr);
 		$applicantInfo = $tbl->getRecord();
+		exit;
 		$this->mailByApplicantation($arr,$skillText,$caseText,$managerArray,$applicantInfo);
 
 		echo "
@@ -193,6 +194,7 @@ class ApplicantController extends AbstractActionController
         }
 	  }
 
+
 	  // Read applicant info
 	  $applicantExamTbl = $this->getServiceLocator()->get("ApplicantExamTable");
 	  $applicantInfo    = $applicantExamTbl->readById($emailId);
@@ -206,10 +208,17 @@ class ApplicantController extends AbstractActionController
 
 	  // Read $applicantinfo's to record
 	  $examRecordInfo =  $applicantExamTbl->readByApplicantIdx($applicantInfo);
-	  $datas["name"]  =  $applicantInfo["name"];
-		$datas['language'] = $examRecordInfo['language'];
 		$examRecordIdx = $examRecordInfo['idx'];
+	  $datas['name']  =  $applicantInfo["name"];
+		$datas['language'] = $examRecordInfo['language'];
+		$datas['examIdx'] = $examRecordIdx;
 
+		
+		if (isset($post["idx"])) {
+			$result = $applicantExamTbl->executeExam($post["idx"]);
+			die(json_encode($result));
+		}
+		
 		// Read record's diagnosis_code & Read selected diagnosis_code's info
 	  $recordCode    = $examRecordInfo["diagnosis_code"];
 

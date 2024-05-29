@@ -120,23 +120,24 @@ public function updateRecordInfo($recordlWhere, $recordSet){
 	$qry=new sql($this->adapter);
 	$update=$qry->update('record');
 
+	if($recordSet["mail_delay"] == ""){
+		$recordSet["mail_delay"] = null;
+	}
 	$recordSet["request_date"] = date("Y-m-d H:i:s");
 	$recordSet["diagnosis_date"] = date("Y-m-d H:i:s");
+	// $recordSet["date_mail"] = date("Y-m-d H:i:s");
 
 	$update->set($recordSet);
 	$update->where($recordlWhere);
 
 	$sqlString = $qry->getSqlStringForSqlObject($update);
 
-	// $result = $this->adapter->query($sqlString, Adapter::QUERY_MODE_EXECUTE);
-	try {
-		$result = $this->adapter->query($sqlString, Adapter::QUERY_MODE_EXECUTE);
-	} catch (\Exception $e) {
-		echo 'Caught exception: ',  $e->getMessage(), "\n";
-	}	
+	try {$result = $this->adapter->query($sqlString, Adapter::QUERY_MODE_EXECUTE);} 
+	catch (\Exception $e) {echo 'Caught exception: ',  $e->getMessage(), "\n";}	
 
 	return $result;   
 	}
+	
 	public function updateApplicantInfo($applicantWhere, $applicantSet){
 	if (!isset($applicantSet['gender']) || $applicantSet['gender'] === '') {
 		$applicantSet['gender'] = null;
@@ -162,13 +163,15 @@ public function updateRecordInfo($recordlWhere, $recordSet){
 	}
 
 	public function saveRecordInfo($recordlWhere, $recordSet){
-	if (!isset($recordSet['class2nd']) || $recordSet['class2nd'] === '') {
-		$recordSet['class1st'] = "その他";
-		$recordSet['class2nd'] = "33";
-	}
+	// if (!isset($recordSet['class2nd']) || $recordSet['class2nd'] === '') {
+	// 	$recordSet['class1st'] = "その他";
+	// 	$recordSet['class2nd'] = "33";
+	// }
 	$qry=new sql($this->adapter);
 	$update=$qry->update('record');
-	
+	if($recordSet["mail_delay"] == ""){
+		$recordSet["mail_delay"] = null;
+	}
 
 	$recordSet["diagnosis_date"] = date("Y-m-d H:i:s");
 
@@ -225,86 +228,82 @@ public function getRecord(){
 			return $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
 	}
 
-	public function insertAndUpdateApplication($dataArray){
-			$qry = new Sql($this->adapter);
-			$existingRecord = $this->getApplicantByEmail($dataArray['email']);
+	public function insertAndUpdateApplication($dataArray) {
+		$qry = new Sql($this->adapter);
+		$existingRecord = $this->getApplicantByEmail($dataArray['email']);
 
-			if ($existingRecord) {
-					$applicantUpdate = $qry->update('applicant');
-					$applicantUpdate->set([
-						'password' => $dataArray['password'],
-						'name' => $dataArray['name'],
-						'kana' => $dataArray['kana'],
-						'gender' => isset($dataArray['gender']) ? $dataArray['gender'] : null,                
-						'birth' => $dataArray['birth'],
-						'career' => $dataArray['career'],
-						'certificates' => $dataArray['certificates'],
-						'other' => $dataArray['other'],
-						'apply_date' => date("Y-m-d H:i:s")
-					]);
-					$applicantUpdate->where(['email' => $dataArray['email']]);
-					$applicantSqlString = $qry->getSqlStringForSqlObject($applicantUpdate);
-		try {
-			$result = $this->adapter->query($applicantSqlString, Adapter::QUERY_MODE_EXECUTE);
-		} catch (\Exception $e) {
-			echo 'Caught exception: ',  $e->getMessage(), "\n";
-		}	
-					$applicant_idx = $existingRecord['idx'];
+		if ($existingRecord) {
+			$setDatas = array(
+				'password' => $dataArray['password'],
+				'name' => $dataArray['name'],
+				'kana' => $dataArray['kana'],
+				'gender' => isset($dataArray['gender']) ? $dataArray['gender'] : null,                
+				'birth' => $dataArray['birth'],
+				'career' => $dataArray['career'],
+				'certificates' => $dataArray['certificates'],
+				'other' => $dataArray['other'],
+				'apply_date' => date("Y-m-d H:i:s")
+			);
+			$sql = $qry->update('applicant')->where(['email' => $dataArray['email']])->set($setDatas);
+			$sqlString = $qry->getSqlStringForSqlObject($sql);
 
-			} else {
-					$applicantInsert = $qry->insert('applicant');
-					$applicantInsert->values([
-							'password' => $dataArray['password'],
-							'email' => $dataArray['email'],
-							'name' => $dataArray['name'],
-							'kana' => $dataArray['kana'],
-							'gender' => isset($dataArray['gender']) ? $dataArray['gender'] : null,
-							'birth' => $dataArray['birth'],
-							'career' => $dataArray['career'],
-							'certificates' => $dataArray['certificates'],
-							'other' => $dataArray['other'],
-							'apply_date' => date("Y-m-d H:i:s")
-					]);
+			try { $result = $this->adapter->query($sqlString, Adapter::QUERY_MODE_EXECUTE); }
+			catch (\Exception $e) { echo 'Caught exception: ',  $e->getMessage(), "\n"; }
+
+			$applicant_idx = $existingRecord['idx'];
+
+		} else {
+			$applicantInsert = $qry->insert('applicant');
+			$applicantInsert->values([
+				'password' => $dataArray['password'],
+				'email' => $dataArray['email'],
+				'name' => $dataArray['name'],
+				'kana' => $dataArray['kana'],
+				'gender' => isset($dataArray['gender']) ? $dataArray['gender'] : null,
+				'birth' => $dataArray['birth'],
+				'career' => $dataArray['career'],
+				'certificates' => $dataArray['certificates'],
+				'other' => $dataArray['other'],
+				'apply_date' => date("Y-m-d H:i:s")
+			]);
 		
-					$applicantSqlString = $qry->getSqlStringForSqlObject($applicantInsert);
+			$applicantSqlString = $qry->getSqlStringForSqlObject($applicantInsert);
 		
-		try {
-			$result = $this->adapter->query($applicantSqlString, Adapter::QUERY_MODE_EXECUTE);
-		} catch (\Exception $e) {
-			echo 'Caught exception: ',  $e->getMessage(), "\n";
-		}	
-					
-					$applicant_idx = $this->adapter->getDriver()->getLastGeneratedValue();
-			}
-			$values = [
-		'apply_date' => date("Y-m-d H:i:s"),
-		'diagnosis_date' => date("Y-m-d H:i:s"),
-		'case' => $dataArray['case'],
-		'education' => $dataArray['education'],
-		'major' => $dataArray['major'],
-		'skill' => $dataArray['skill'],
-		'class1st' => $dataArray['class1st'],
-		'class2nd' => $dataArray['class2nd'],
-		'diagnosis_code' => $dataArray['code'],
-		'method' => $dataArray['method'],
-		'language' => $dataArray['language'],
-		'applicant_idx' => $applicant_idx 
-	];
+			try { $result = $this->adapter->query($applicantSqlString, Adapter::QUERY_MODE_EXECUTE); } 
+			catch (\Exception $e) { echo 'Caught exception: ',  $e->getMessage(), "\n"; }	
+			$applicant_idx = $this->adapter->getDriver()->getLastGeneratedValue();
+		}
 
+		$values = array(
+			'apply_date' => date("Y-m-d H:i:s"),
+			'diagnosis_date' => date("Y-m-d H:i:s"),
+			// 'date_mail' => date("Y-m-d H:i:s"),
+			'case' => $dataArray['case'],
+			'education' => $dataArray['education'],
+			'major' => $dataArray['major'],
+			'skill' => $dataArray['skill'],
+			'class1st' => $dataArray['class1st'],
+			'class2nd' => $dataArray['class2nd'],
+			'diagnosis_code' => $dataArray['code'],
+			'method' => $dataArray['method'],
+			'language' => $dataArray['language'],
+			'date_schedule' => $dataArray['schedule'],
+			'applicant_idx' => $applicant_idx 
+		);
+		if ($dataArray['mail_delay'] != "") {
+			$values['mail_delay'] = $dataArray['mail_delay'];
+		}
 
-	if (!isset($dataArray['save'])) {
-		$values['request_date'] = date("Y-m-d H:i:s");
-	}
-	$recordInsert = $qry->insert('record');
-	$recordInsert->values($values);
+		if (!isset($dataArray['save'])) {
+			$values['request_date'] = date("Y-m-d H:i:s");
+		}
+		$recordInsert = $qry->insert('record');
+		$recordInsert->values($values);
 
-	$recordSqlString = $qry->getSqlStringForSqlObject($recordInsert);
-	try {
-		$result = $this->adapter->query($recordSqlString, Adapter::QUERY_MODE_EXECUTE);
-	} catch (\Exception $e) {
-		echo 'Caught exception: ',  $e->getMessage(), "\n";
-	}	
+		$recordSqlString = $qry->getSqlStringForSqlObject($recordInsert);
+		try {$result = $this->adapter->query($recordSqlString, Adapter::QUERY_MODE_EXECUTE);}
+		catch (\Exception $e) {echo 'Caught exception: ',  $e->getMessage(), "\n";}	
 
-	return $result;   
+		return $result;   
 	}
 }

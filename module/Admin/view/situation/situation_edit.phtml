@@ -187,7 +187,7 @@ $question_num = isset($diagnosisData['question_num']) ? $diagnosisData['question
 			<dl class="emegra setting">
                 <dt class="essential" id="ITskillTitle">ITスキル有無</dt>
 				<dd>
-					<select class="form-select" name="skill" id="ITskillId" style="width:220px;">>
+					<select class="form-select" name="skill" id="ITskillId" style="width:220px;" onchange="SkillSelectChange(this.value)">
                         <option value="0" <?php echo($isITSkill) ? "selected" : "" ;?>>有</option>
                         <option value="1" <?php echo(!$isITSkill) ? "selected" : "" ;?>>無</option>
                     </select>
@@ -195,7 +195,8 @@ $question_num = isset($diagnosisData['question_num']) ? $diagnosisData['question
                 <dt class="essential" id="class1stTitle">経験分野</dt>
 				
 				<dd>
-					<select class="form-select"  id="class1stId" style="width:220px;" onchange="ChangeClass1stValue(this)"  onclick="ChangeClass1st(this)">
+					<select class="form-select" name="class1st" id="class1stId" style="width:220px;"   onclick="ChangeClass1st(this)">
+          <option value="" selected hidden>選択してください。</option>
             <option value="WEB" <?php echo($isClass1st1) ? "selected" : "" ;?>>WEB</option>
             <option value="IT基礎" <?php echo($isClass1st2) ? "selected" : "" ;?>>IT基礎</option>
             <option value="モバイル" <?php echo($isClass1st3) ? "selected" : "" ;?>>モバイル</option>
@@ -203,7 +204,6 @@ $question_num = isset($diagnosisData['question_num']) ? $diagnosisData['question
             <option value="インフラ" <?php echo($isClass1st5) ? "selected" : "" ;?>>インフラ</option>
             <option value="その他"<?php echo ($isClass1st1 || $isClass1st2 || $isClass1st3 || $isClass1st4 || $isClass1st5) ? "" : "selected"; ?>>その他</option>
           </select>
-					<input class="form-control w-50" style="margin-left: 10px;" type="text" placeholder="その他の場合" id="otherclass1st"  name="class1st" maxlength='20' value='<?php echo ($recordArray['class1st']) ?>'  hidden/>
 				</dd>
 
 				<dt class="essential" id=class2ndTitle>問題種別</dt>
@@ -213,9 +213,7 @@ $question_num = isset($diagnosisData['question_num']) ? $diagnosisData['question
 					<?php
           if (!empty($optionDatas["class2nd"][$recordArray["class1st"]])) {
             $dataArray = $optionDatas["class2nd"][$recordArray["class1st"]];
-          } else if($recordArray['class1st'] ==NULL){
-            $class2ndText="テキスト";
-          } else{
+          }else{
             $dataArray = $optionDatas["class2nd"]['11'];
           }						
           foreach ($dataArray as $data) {
@@ -225,7 +223,7 @@ $question_num = isset($diagnosisData['question_num']) ? $diagnosisData['question
             }
         }
 					?>
-                    <option value="<?php echo $recordArray["class2nd"]; ?>" hidden><?php echo $class2ndText; ?></option>
+          <option value="<?php echo $recordArray["class2nd"]; ?>" hidden><?php echo $class2ndText; ?></option>
 					<?php foreach ($optionDatas["class2nd"][$recordArray["class1st"]] as $data): ?>
 					<?php endforeach; ?>
 				<?php endif; ?>
@@ -236,6 +234,8 @@ $question_num = isset($diagnosisData['question_num']) ? $diagnosisData['question
 				<dt class="essential" id="careerTitle">IT経験年数</dt>
 				<dd><input class="form-control" name="career" id="careerId" type="text" placeholder="経歴を記入してください。" style="font-size:15px; width:220px" maxlength='2' value="<?php echo $applicantArray['career']?>"></dd> 
 		</dl>
+    <!-- <input type="hidden" name="career" id="noSkillCareer"> -->
+
 	</div>
 </div>
 
@@ -304,20 +304,32 @@ $question_num = isset($diagnosisData['question_num']) ? $diagnosisData['question
             <input id="question_numId" class="form-control" type="text" style="width:50px;text-align:center;" value="<?php echo $question_num ?>" readonly>問
           </dd>		             
 				<dt class="essential">診断方法</dt>
-                <dd>
-                <select class="form-select" name="method" style="width:100px;" onchange="ChangeInputStyle(this)" >
-            <option value="" selected disabled hidden><?php echo $recordArray['method']?></option>
-            <option value="WEB" <?php echo($isMethod) ? "selected" : ""?>>WEB</option>
-            <option value="対面"<?php echo(!$isMethod) ? "selected" : "" ;?>>対面</option>
-          </select>
-				</dd>
-                <dt class="essential">言語選択</dt>
+          <dd>
+            <select class="form-select" name="method" style="width:100px;" onchange="ChangeInputStyle(this)" >
+              <option value="" selected disabled hidden><?php echo $recordArray['method']?></option>
+              <option value="WEB" <?php echo($isMethod) ? "selected" : ""?>>WEB</option>
+              <option value="対面"<?php echo(!$isMethod) ? "selected" : "" ;?>>対面</option>
+            </select>
+				  </dd>
+        <dt class="essential">言語選択</dt>
         <dd>
           <select class="form-select" name="language" style="width:100px;" onchange="ChangeInputStyle(this)" >
             <option value="0" selected>日本語</option>
             <option value="1">韓国語</option>
           </select>
 				</dd>
+        <dt class="essential">メール転送</dt>
+        <dd>
+          <select class="form-select" name="mail_delay" style="width:100px;" onchange="ChangeInputStyle(this)" >
+            <option value="<?php echo $recordArray['mail_delay']?>" hidden></option>
+            <option value="" selected>手動</option>
+            <option value="0">自動</option>
+          </select>
+				</dd>
+
+        <dt class="essential">診断日</dt>
+        <dd><input class="form-control" name="schedule" type="text" style="width:220px;" value="<?php echo $recordArray['date_schedule']?>"></dd>
+
 		</dl>
 	</div>
 </div>
@@ -328,18 +340,19 @@ $question_num = isset($diagnosisData['question_num']) ? $diagnosisData['question
 			<style type="text/css">
 			dl.emegra.detail { grid-template-columns: repeat(2, 150px 1fr); }
 			</style>
-			<dl class="emegra detail">
-				<dt>診断者のコメント</dt>
-				<dd><input class="form-control" name="comment" type="text" style="width:220px; " value="<?php echo $recordArray['comment']?>"></dd>
-		
+			<dl class="emegra detail"> 
+
 				<dt>備考</dt>
 				<dd><input class="form-control" name="note" type="text" style="width:220px; " value="<?php echo $recordArray['note']?>"></dd>
+
         <input type="hidden" name="recordindex" value="<?php echo $index?>"></div>
         <input type="hidden" name="applicantindex" value="<?php echo $applicantArray['idx']?>"></div>
 
 			</dl>
 		</div>
 	</div>
+
+  
 <div class="btn-place" style="margin-top: 32px;">
 	<button type="button" class="emegra cancel" onclick="self.location.href='../../situation/list';">戻る</button>
   <button class="emegra"  id="btn_save" name="editDatas" value="btn_save"  style="width:150px;" onclick=saveConfirm()>一時保存</button>
@@ -396,17 +409,17 @@ $question_num = isset($diagnosisData['question_num']) ? $diagnosisData['question
 		}
 	}
 
-	var selectElement3 = document.getElementById('class1stId');
-    var inputElement3 = document.getElementById('otherclass1st');
-	if (selectElement3.value != "その他") {
-        inputElement3.hidden = true;
-    } else if (selectElement3.value === "その他") {
-        inputElement3.hidden = false;
-    }
+	// var selectElement3 = document.getElementById('class1stId');
+  //   var inputElement3 = document.getElementById('otherclass1st');
+	// if (selectElement3.value != "その他") {
+  //       inputElement3.hidden = true;
+  //   } else if (selectElement3.value === "その他") {
+  //       inputElement3.hidden = false;
+  //   }
 
 
 </script>
-<script>
+<!-- <script>
         function ChangeClass1stValue(selectElement) {
             var otherInput = document.getElementById('otherclass1st');
             if (ITskillId.value=="1" && selectElement.value === "その他") {
@@ -431,7 +444,7 @@ $question_num = isset($diagnosisData['question_num']) ? $diagnosisData['question
         document.addEventListener('DOMContentLoaded', function() {
             ChangeClass1stValue(document.getElementById('class1stId'));
         });
-    </script>
+    </script> -->
 <script>
 	function ChangeInputStyle(element) {
 		element.style.fontStyle = "normal";
@@ -467,40 +480,42 @@ $question_num = isset($diagnosisData['question_num']) ? $diagnosisData['question
 
 <script>
 	let skillSelect = document.getElementById('ITskillId');
-	let class1stSelect = document.getElementById('class1stId')
-	let class1stOtherSelect = document.getElementById('otherclass1st')
-
-	var class2ndSelect = document.getElementById('class2ndId')
+  let class1stBox = document.getElementById('class1stId');
+	let class2ndSelect = document.getElementById('class2ndId')
 	let careerSelect = document.getElementById('careerId')
-	skillSelect.addEventListener('change', function() {
-  var selectedValue = this.value;
-    if (selectedValue === '1') {
-      class1stSelect.value="その他";
-      class1stOtherSelect.value="その他";
-    //   class1stSelect.setAttribute('disabled','disabled')
-      // option.setAttribute('disabled', 'disabled');
-      class2ndSelect.innerText=""
-      var option = document.createElement("option");
-      option.value = "33";
-      option.innerText = "テキスト";
-      class2ndSelect.appendChild(option);
-      class2ndSelect.value = "33";
-      class1stOtherSelect.style.display='none';
-      // class1stOtherSelect.querySelector('input').disabled = true;
-    }
-    else{
-        class2ndSelect.style.display='block';    
-        class1stSelect.style.display='block';
-        class1stOtherSelect.style.display='block';
-        class1stOtherSelect.value="";
-        console.log(class1stOtherSelect.value);
+  let hiddenCareer= document.getElementById('noSkillCareer');
 
-        class2ndSelect.disabled=false;
-        class1stSelect.disabled = false;
-        // class1stOtherSelect.querySelector('input').disabled = false;
+  function SkillSelectChange(value){
+    class2ndSelect.replaceChildren();
+    if (form.skill.value === '1') {
+      for (var i = 0; i < class1stBox.options.length - 1; i++) {
+        class1stBox.options[i].style.display = 'none';
+      }
+      class2ndId.value = "";
+      class1stId.value = "";
+      var option = document.createElement("option");
+      option.hidden = true;
+      option.innerText = "選択してください。";
+      class2ndSelect.appendChild(option);
+      careerSelect.value = "0";
+      careerId.readOnly =  true;
+
+    } else {
+      for (var i = 0; i < class1stBox.options.length - 1; i++) {
+        class1stBox.options[i].style.display = 'block';
+      }
+      class1stId.value = "";
+      class2ndSelect.innerText = "";
+      class2ndSelect.value = "";
+      careerSelect.value = '';
+      var defaultOption = document.createElement("option");
+      defaultOption.value = "";
+      defaultOption.innerText = "選択してください。";
+      class2ndSelect.appendChild(defaultOption);
+      class2ndSelect.value = "";
+      careerId.readOnly =  false;
     }
   }	
-)
 
 </script>
 
@@ -531,17 +546,17 @@ document.getElementById('majorId').addEventListener('change', function(event) {
     }
 });
 
-document.getElementById('class1stId').addEventListener('change', function(event) {
-	var selectedOption = event.target.value;
+// document.getElementById('class1stId').addEventListener('change', function(event) {
+// 	var selectedOption = event.target.value;
 
-	if (selectedOption === "その他") {
-		  form.class1st.value = "";
-      form.class1st.hidden = false;
-    } else if(selectedOption != "その他") {
-        form.class1st.hidden = true;
-		// form.education.style.display = 'none';
-    }
-});
+// 	if (selectedOption === "その他") {
+// 		  form.class1st.value = "";
+//       form.class1st.hidden = false;
+//     } else if(selectedOption != "その他") {
+//         form.class1st.hidden = true;
+// 		// form.education.style.display = 'none';
+//     }
+// });
 </script>
 
 <script>

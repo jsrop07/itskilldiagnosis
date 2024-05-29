@@ -132,6 +132,8 @@ var otherTextarea = document.querySelector('textarea[name="other"]');
 
 
 function SkillSelectChange(value) {
+    class2ndSelect.replaceChildren();
+
     form.skill.value = value;    
     if (form.skill.value === '1') {
       for (var i = 0; i < class1stBox.options.length - 1; i++) {

@@ -206,7 +206,24 @@
 							<td>未実行</td>
 						<?php endif; ?>
 
-						<td><input name="checkIdx" type="checkbox" value="<?php echo $data["idx"]; ?>" onclick="Checking(this);" style="cursor: pointer;"<?php echo ($data["request_date"] == null) ? "" : " disabled"; ?>></td>
+            <!-- edit disabled condition
+              作成：朴昰成
+              修正：朴昰成
+              修正日：24/05/29
+            -->
+
+            <!-- 修正前： <?php /* ?>
+              <td><input name="checkIdx" type="checkbox" value="<?php echo $data["idx"]; ?>" onclick="Checking(this);" style="cursor: pointer;"<?php echo ($data["request_date"] == null) ? "" : " disabled"; ?>></td>
+            <?php */ ?> -->
+
+            <!-- 修正後： -->
+            <?php
+              $isAbleCheck = false;
+              if ($data["diagnosis_date"] != null && $data["request_date"] == null) { $isAbleCheck = true; }
+              if ($data["rank"] != null && $data["date_mail"] == null) { $isAbleCheck = true; }
+            ?>
+            <td><input name="checkIdx" type="checkbox" value="<?php echo $data["idx"]; ?>" onclick="Checking(this);" style="cursor: pointer;"<?php echo ($isAbleCheck) ? "" : " disabled"; ?>></td>
+            <!-- ここまで -->
 					</tr>
 				<?php endforeach; ?>
 			</tbody>
@@ -221,7 +238,7 @@
 	<div></div>
 	
 	<div>
-		<button class="emegra" style="margin-right:10px;" onclick="">メール送信</button>
+		<button class="emegra" style="margin-right:10px;" onclick="SendMail()">メール送信</button>
 		<button class="emegra" style="width:150px; margin-right:10px;" onclick="Request()">ITスキル診断依頼</button>
 		<button class="emegra" onclick="self.window.location='./input'">新規登録</button>
 		</div>	
@@ -344,4 +361,56 @@
 			}
 		}
 	}
+  /*
+    作成：朴昰成
+    作成日：24/05/29
+  */
+
+  function SendMail() {
+		idxs = [];
+		isChecked = false;
+		for (let i = 0; i < check_idxs.length; i++) {
+			if (check_idxs[i].checked == true) {
+				isChecked = true;
+
+				idxs.push(check_idxs[i].value);
+			}
+		}
+
+		if (!isChecked) {
+			alert("送信するデータを選んでください。");
+			return false;
+		}
+		idxs = idxs.join(",");
+
+    if (confirm("メールを送信しますか？") === false) { return false; }
+
+    const postForm = new FormData();
+    postForm.append("idxs", idxs);
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", "./mail", true);
+    xhr.send(postForm);
+    xhr.onload = () => {
+      if (xhr.status == 200) {
+        const result = xhr.responseText;
+
+        if (result === "success") {
+          alert("送信しました。");
+          location.reload(true);
+        }
+        else {
+          try {
+            let idxDatas = JSON.parse(result);
+            alert("送信てきないデータがあります。");
+            return false;
+          } catch (e) {
+            alert("error");
+            console.log(result);
+            return false;
+          }
+        }
+      }
+    }
+  }
+  /* ここまで */
 </script>

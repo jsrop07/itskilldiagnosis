@@ -1,12 +1,7 @@
 <?php
 	$pointTexts = ["A", "B", "C", "D"];
 	$numTexts = array("①", "②", "③", "④", "⑤");
-  /*
-    作成：朴昰成
-    作成日：24/05/28
-  */
   $levelTexts = ["無級", "初級", "中級", "高級"];
-  /* ここまで */
 
 	function ReplaceSymbol($string) {
 		$string = str_replace("<", "＜", $string);
@@ -44,19 +39,7 @@
 			<dd><?php echo $optionDatas[$diagnosisData["class1st"]]; ?> / <?php echo $optionDatas[$diagnosisData["class2nd"]]; ?></dd>
 		
 			<dt>レベル</dt>
-      <!--
-        作成：朴昰成
-        修正：朴昰成
-        修正日：24/05/28
-      -->
-
-      <!-- 修正前： <?php /* ?>
-        <dd><?php echo $optionDatas[$diagnosisData["level"]]; ?></dd>
-      <?php */ ?> -->
-
-      <!-- 修正後： -->
       <dd><?php echo $levelTexts[$diagnosisData["level"]]; ?></dd>
-      <!-- ここまで -->
 		
 			<dt>タイトル</dt>
 			<dd><?php echo $diagnosisData["title"]; ?></dd>

@@ -2,19 +2,7 @@
 	$caseTexts = ["新卒", "中途"];
 	$genderTexts = ["男", "女"];
 	$skillTexts = ["有", "無"];
-  /* テキスト変更
-    作成：朴昰成
-    修正：朴昰成
-    修正日：24/05/27
-  */
-
-  /* 修正前：
-    $levelTexts = array("0級", "初級", "中級", "高級");
-  */
-
-  /* 修正後： */
-  $levelTexts = array("無級", "初級", "中級", "高級");
-  /* ここまで */
+  $levelTexts = ["無級", "初級", "中級", "高級"];
   $languageTexts = ["日本語", "韓国語"];
 
 	$isRequest = false;
@@ -146,6 +134,22 @@
 
 				<dt>備考</dt>
 				<dd><?php echo $recordData["comment"]; ?></dd>
+
+        <!--
+          作成：朴昰成
+          修正：朴昰成
+          修正日：24/05/29
+        -->
+
+        <!-- 修正前： <?php /* ?>
+          <dt>メール送信日</dt>
+          <dd><?php echo date("y.m.d", strtotime($recordData["execute_date"])); ?></dd>
+        <?php */ ?> -->
+
+        <!-- 修正後： -->
+        <dt>結果送信日</dt>
+        <dd><?php echo ($recordData["date_mail"] != null) ? date("y.m.d", strtotime($recordData["date_mail"])) : "未送信"; ?></dd>
+        <!-- ここまで -->
 			<?php else: ?>
 				<div style="grid-column: 1 / 6; display: flex; align-items: center; justify-content: center;">未受験</div>
 			<?php endif; ?>
@@ -154,10 +158,31 @@
 </div>
 
 <div class="btn-place" style="margin-top: 32px;">
-	<button class="emegra cancel" onclick="self.location.href='../list';">戻る</button>
+  <!--
+    作成：朴昰成
+    修正：朴昰成
+    修正日：24/05/19
+  -->
+
+  <!-- 修正前：
+    <button class="emegra cancel" onclick="self.location.href='../list';">戻る</button>
+  -->
+
+  <!-- 修正後： -->
+  <button class="emegra cancel" onclick="history.back();">戻る</button>
+  <!-- ここまで -->
 	<?php if (!$isRequest): ?>
     <button class="emegra" style="background:orange;" onclick="self.location.href='../edit/<?php echo $recordData['idx']	?>';">修正</button>
 		<button class="emegra" style="width:150px;" onclick="Request();">ITスキル診断依頼</button>
+  <!--
+    作成：朴昰成
+    作成日：24/05/29
+  -->
+  <?php else: ?>
+    <?php if ($recordData["date_mail"] == null): ?>
+      <button class="emegra" onclick="SendMail();">メール送信</button>
+    <?php endif; ?>
+  <!-- ここまで -->
 	<?php endif; ?>
 </div>
 
@@ -187,9 +212,51 @@
 			}
 		}
 	}
-</script>
+  
+  /*
+    作成：朴昰成
+    作成日：24/05/29
+  */
+  function SendMail() {
+    if (confirm("メールを送信しますか？") === false) { return false; }
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    const postForm = new FormData();
+    postForm.append("idxs", idx);
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", "../mail", true);
+    xhr.send(postForm);
+    xhr.onload = () => {
+      if (xhr.status == 200) {
+        const result = xhr.responseText;
+
+        if (result === "success") {
+          alert("送信しました。");
+          location.reload(true);
+        }
+        else {
+          try {
+            let idxDatas = JSON.parse(result);
+            alert("すでに送信しました。");
+            return false;
+          } catch (e) {
+            alert("error");
+            console.log(result);
+            return false;
+          }
+        }
+      }
+    }
+  }
+  /* ここまで */
+</script>
+<!-- disused
+    作成：丁錫圓
+    削除：朴昰成
+    削除日：24/05/29
+-->
+
+<!-- 削除前：
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/datepicker/1.0.10/datepicker.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/datepicker/1.0.10/datepicker.min.css">
 
@@ -202,3 +269,4 @@
       });
     });
   </script>
+ここまで -->

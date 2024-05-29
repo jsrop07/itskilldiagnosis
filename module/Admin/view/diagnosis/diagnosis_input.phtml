@@ -1,17 +1,5 @@
 <?php
-  /* テキスト変更
-    作成：朴昰成
-    修正：朴昰成
-    修正日：24/05/27
-  */
-
-  /* 修正前：
-    $levelTexts = array("0級", "初級", "中級", "高級");
-  */
-
-  /* 修正後： */
-  $levelTexts = array("無級", "初級", "中級", "高級");
-  /* ここまで */
+  $levelTexts = ["無級", "初級", "中級", "高級"];
 	$numTexts = array("①", "②", "③", "④", "⑤");
 
 	function ReplaceSymbol($string) {
@@ -182,19 +170,7 @@
 								<th>タイトル</th>
 								<th>タイプ</th>
 								<th>点数</th>
-								<!--
-									作成：朴昰成
-									修正：朴昰成
-									修正日：24/05/22
-								-->
-
-								<!-- 修正前：
-									<th><input type="checkbox"/></th>
-								-->
-
-								<!-- 修正後： -->
 								<th><input type="checkbox" id="check-question_select" value="" onclick="CheckingSelect(this);"/></th>
-								<!-- ここまで -->
 							</tr>
 						</thead>
 					</table>
@@ -347,12 +323,7 @@
 	modalDiv.addEventListener("show.bs.modal", function (event) {
 		let selectCheckboxs = questionSelectBody.getElementsByTagName("input");
 		questionIdxs = form.question_idxs.value.split(",");
-		/*
-			作成：朴昰成
-			作成日：24/05/21
-		*/
 		selectCheckbox.checked = false;
-		/* ここまで */
 
 		let no = 1;
 		for (let i = 0; i < selectCheckboxs.length; i++) {
@@ -628,12 +599,7 @@
 				questionListBody.childNodes[i].childNodes[0].innerText = i + 1;
 				totalPoint += Number(questionListBody.childNodes[i].childNodes[3].innerText);
 			}
-			/*
-				作成：朴昰成
-				作成日：24/05/21
-			*/
 			listCheckbox.checked = false;
-			/* ここまで */
 			questionListBody.lastChild.childNodes[1].innerText = totalPoint + "点";
 
 			form.question_idxs.value = questionIdxs.join(",");

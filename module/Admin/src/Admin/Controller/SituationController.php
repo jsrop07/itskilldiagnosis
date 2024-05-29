@@ -223,6 +223,60 @@ class SituationController extends AbstractActionController {
 		die("success");
 	}
 
+	/*
+		作成：朴昰成
+		作成日：24/05/29
+	*/
+	/** When Send Mail for Notice Result */
+	public function mailAction() {
+		$idxs = $this->params()->fromPost("idxs");
+		$idxDatas = explode(",", $idxs);
+		
+		$recordTb = $this->getServiceLocator()->get("RecordTable-Admin");
+
+		$recordDatas = array();
+		$recordIdxDatas = array();
+		foreach ($idxDatas as $idx) {
+			$recordData = "";
+			try { $recordData = $recordTb->ReadByIdx($idx); }
+			catch (\Exception $e) { die($e->getMessage()); }
+
+			// when test didn't ended	
+			if ($recordData["rank"] == null) { $recordIdxDatas[] = $idx; }
+			// when mail already sent
+			if ($recordData["date_mail"] != null) { $recordIdxDatas[] = $idx; }
+
+			$recordDatas[] = $recordData;
+		}
+
+		// return record idx that sent mail
+		if (!empty($recordIdxDatas)) { die(json_encode($recordIdxDatas)); }
+
+		// read pic_admin data
+		$adminTb = $this->getServiceLocator()->get("AdminTable");
+		$PicDatas = "";
+		try { $PicDatas = $adminTb->ReadPIC(); }
+		catch (\Exception $e) { die($e->getMessage()); }
+
+		// send mail
+		$applicantTb = $this->getServiceLocator()->get("ApplicantTable-Admin");
+		foreach ($recordDatas as $data) {
+			// read applicant data
+			$applicantData = "";
+			try { $applicantData = $applicantTb->ReadByIdx($data["applicant_idx"]); }
+			catch (\Exception $e) { die($e->getMessage()); }
+
+			$this->SendResultMailToApplicantByPICAdmin($applicantData, $data, $PicDatas[0]);
+
+			// update applicant table
+			$sqlSet["date_mail"] = date("Y-m-d H:i:s");
+			$recordTb->UpdateByIdx($idx, $sqlSet);
+		}
+
+		die("success");
+	}
+
+	/* ここまで */
 	/** Set Layout & Make ViewModel with datas and template 
 	 * @param mixed $datas array #ViewModel($datas)
 	 * @param mixed $template string #setTemplate($template) 
@@ -758,4 +812,117 @@ class SituationController extends AbstractActionController {
 		}	
 
 	
+	/* Add Send Result Mail Function from ApplicantController
+		作成：朴昰成
+		作成日：24/05/29
+	*/
+	/** Send Result Mail to Applicant by PIC Admin 
+	 * @param array $applicantData
+	 * @param array $recordData
+	 * @param array $adminData
+	 * @return string "success" or "false"
+	*/
+	function SendResultMailToApplicantByPICAdmin($applicantData, $recordData, $adminData) {
+		$mail = new MailRequest();
+
+		// load basic setting for MailSender
+		$param["config"] = $this->getConfig();
+		
+		$param["title"] = "{{applicant_name}}様、診断試験結果が出ました。";
+		$param["title"] = str_replace("{{applicant_name}}", $applicantData["name"], $param["title"]);
+		
+		$caseText = "新卒";
+		if ($recordData["case"] == 1) { $caseText = "中途"; }
+		$param["content"] = "株式会社ジエンジサービスから、ITスキル診断結果が到着しましたのでご確認をお願いいたします。\n\n"
+											. "申請者：{{applicant_name}}\n"
+											. "お名前（カナ）：{{kana}}\n"
+											. "応募区分：{{case}}\n"
+											. "学歴：{{education}}\n"
+											. "専攻：{{major}}\n"
+											. "試験日：{{execute_date}}\n\n"
+											. "得点：{{get_point}}\n"
+											. "評価：{{rank}}\n"
+											. "評価結果：{{diagnosis_comment}}\n\n"
+											. "※ITスキル診断に不明点などありましたら下記の問い合わせ先にご連絡ください。\n"
+											. "お問い合わせ先\n"
+											. "担当者：{{admin_name}}\n"
+											. "連絡先：{{admin_id}}\n\n"
+											. "※このメールに返信しないでください。";
+		$param["content"] = str_replace("{{applicant_name}}", $applicantData["name"], $param["content"]);
+		$param["content"] = str_replace("{{kana}}", $applicantData["kana"], $param["content"]);
+		$param["content"] = str_replace("{{case}}", $caseText, $param["content"]);
+		$param["content"] = str_replace("{{education}}", $recordData["education"], $param["content"]);
+		$param["content"] = str_replace("{{major}}", $recordData["major"], $param["content"]);
+		$param["content"] = str_replace("{{execute_date}}", $recordData["execute_date"], $param["content"]);
+		$param["content"] = str_replace("{{get_point}}", $recordData["get_point"], $param["content"]);
+		$param["content"] = str_replace("{{rank}}", $recordData["rank"], $param["content"]);
+		$param["content"] = str_replace("{{diagnosis_comment}}", $recordData["diagnosis_comment"], $param["content"]);
+		$param["content"] = str_replace("{{admin_name}}", $adminData["name"], $param["content"]);
+		$param["content"] = str_replace("{{admin_id}}", $adminData["id"], $param["content"]);
+
+		$param["managerEmail"] = $adminData["id"];
+		$param["email"] = $applicantData["email"];;
+		$param["password"] = $adminData["password"];
+		$param["name"] = $adminData["name"];
+		$param["smtp_password"] = $adminData["smtp_password"];
+
+		$result = $mail->mailsender($param);
+		// $result = $this->getServiceLocator()->get("mailsender");
+
+		$result_row = $result["transport"]->getConnection()->getResponse();
+
+		$results = str_replace("\r", "", str_replace("\n", "", str_replace(" ", "", $result_row[0])));
+		switch(substr(strtolower($results), 0, 5)) {
+			case "250ok":
+				$status = "success"; break;
+			default:
+				$status = "false"; break;
+		}
+
+		return $status;
+  }
+
+	function mailByApplicantExam($applicantInfo,$sqlSet,$managerArray,$examRecordIdx){
+		$mail = new MailRequest();
+
+		// load basic setting for MailSender
+		$param["config"] = $this->getConfig();
+
+		$param["title"]="{{user_name}}様、{$applicantInfo["name"]}診断者の試験結果が出ました。";
+		$param["content"] = "以下の診断者の試験結果をご参照ください。\n\nお名前（漢字）：{$applicantInfo["name"]}\nお名前（カナ）：{$applicantInfo["kana"]}\nメールアドレス：{$applicantInfo["email"]}\n得点：{$sqlSet["get_point"]}\n評価：{$sqlSet["rank"]}\n評価結果：{$sqlSet["diagnosis_comment"]}\n\n診断者ページ：http://gngitskill:84/admin/situation/detail/{$examRecordIdx}";
+
+		// 사람이름이나, URL등 고유하게 변경해야 하는 것은 이렇게 처리한다.
+		// 메일 제목과 내용 부분 모두 변환처리.
+		$param['title']=str_replace("{{user_name}}","担当者",$param['title']);
+		// print_r($param['title']);
+		// $param['content']=str_replace("{{user_name}}","変換する試験受け者名",$param['content']);
+		$param['content']=str_replace("{{URL}}","テスト",$param['content']);
+
+
+		// 수신자 이메일과 이름 설정
+		// $param['managerEmail']=$managerArray[0];
+		$param['email']=$managerArray[0];
+		$param['password']=$managerArray[1];
+		$param['name']=$managerArray[2];
+		$param['smtp_password']=$managerArray[3];
+
+		// 전송
+		$result = $mail->mailsender($param);
+		// $result = $this->getServiceLocator()->get("mailsender");
+
+		$result_row = $result['transport']->getConnection()->getResponse();
+
+		$results = str_replace("\r","",str_replace("\n","",str_replace(" ","",$result_row[0])));
+		switch(substr(strtolower($results),0,5)){
+			// 250ok 가 나오면 전송 의뢰 성공이다.
+				case "250ok":
+					$status = 'OK';
+						break;
+				// 그외의 것은 모두 실패로 처리한다.
+				default:
+					$status = 'FALSE';
+						break;
+			}
+		}
+	/* ここまで */
 }

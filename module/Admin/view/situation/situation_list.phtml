@@ -1,18 +1,6 @@
 <?php
 	$caseTexts = ["新卒", "中途"];
-  /* テキスト変更
-    作成：朴昰成
-    修正：朴昰成
-    修正日：24/05/27
-  */
-
-  /* 修正前：
-    $levelTexts = array("0級", "初級", "中級", "高級");
-  */
-
-  /* 修正後： */
-  $levelTexts = array("無級", "初級", "中級", "高級");
-  /* ここまで */
+  $levelTexts = ["無級", "初級", "中級", "高級"];
 
 	if (!isset($_SESSION)) { session_start(); }
 	$url = explode("?", $_SERVER["REQUEST_URI"]);
@@ -21,19 +9,45 @@
 		$queryDatas = explode("&", $url[1]);
 	}
 
-	$selectDatas["apply"] = "新規";
-	$selectDatas["request"] = "診断";
-	$selectDatas["execute"] = "終了";
-	$selectDatas["case-0"] = "新卒";
-	$selectDatas["case-1"] = "中途";
-	$selectDatas["education-高卒"] = "高卒";
-	$selectDatas["education-専門卒"] = "専門卒";
-	$selectDatas["education-大学卒"] = "大学卒";
-	$selectDatas["education-大学院卒"] = "大学院卒";
-	$selectDatas["rank-A"] = "等級A";
-	$selectDatas["rank-B"] = "等級B";
-	$selectDatas["rank-C"] = "等級C";
-	$selectDatas["rank-D"] = "等級D";
+  /*
+    作成：朴昰成
+    修正：朴昰成
+    修正日：24/05/28
+  */
+
+  /* 修正前：
+    $selectDatas["apply"] = "新規";
+    $selectDatas["request"] = "診断";
+    $selectDatas["execute"] = "終了";
+    $selectDatas["case-0"] = "新卒";
+    $selectDatas["case-1"] = "中途";
+    $selectDatas["education-高卒"] = "高卒";
+    $selectDatas["education-専門卒"] = "専門卒";
+    $selectDatas["education-大学卒"] = "大学卒";
+    $selectDatas["education-大学院卒"] = "大学院卒";
+    $selectDatas["rank-A"] = "等級A";
+    $selectDatas["rank-B"] = "等級B";
+    $selectDatas["rank-C"] = "等級C";
+    $selectDatas["rank-D"] = "等級D";
+  */
+
+  /* 修正後： */
+  $selectDatas = array(
+    "apply" => "新規",
+    "request" => "診断",
+    "execute" => "終了",
+    "case-0" => "新卒",
+    "case-1" => "中途",
+    "education-高卒" => "高卒", 
+    "education-専門卒" => "専門卒",
+    "education-大学卒" => "大学卒",
+    "education-大学院卒" => "大学院卒",
+    "rank-A" => "等級A",
+    "rank-B" => "等級B",
+    "rank-C" => "等級C",
+    "rank-D" => "等級D"
+  );
+  /* ここまで */
 
 	$firstNo = $this->noticelist->getTotalItemCount();
 	$firstNo -= (($this->noticelist->getCurrentPageNumber() - 1) * $this->noticelist->getitemCountPerPage());
@@ -192,7 +206,24 @@
 							<td>未実行</td>
 						<?php endif; ?>
 
-						<td><input name="checkIdx" type="checkbox" value="<?php echo $data["idx"]; ?>" onclick="Checking(this);" style="cursor: pointer;"<?php echo ($data["request_date"] == null) ? "" : " disabled"; ?>></td>
+            <!-- edit disabled condition
+              作成：朴昰成
+              修正：朴昰成
+              修正日：24/05/29
+            -->
+
+            <!-- 修正前： <?php /* ?>
+              <td><input name="checkIdx" type="checkbox" value="<?php echo $data["idx"]; ?>" onclick="Checking(this);" style="cursor: pointer;"<?php echo ($data["request_date"] == null) ? "" : " disabled"; ?>></td>
+            <?php */ ?> -->
+
+            <!-- 修正後： -->
+            <?php
+              $isAbleCheck = false;
+              if ($data["diagnosis_date"] != null && $data["request_date"] == null) { $isAbleCheck = true; }
+              if ($data["rank"] != null && $data["date_mail"] == null) { $isAbleCheck = true; }
+            ?>
+            <td><input name="checkIdx" type="checkbox" value="<?php echo $data["idx"]; ?>" onclick="Checking(this);" style="cursor: pointer;"<?php echo ($isAbleCheck) ? "" : " disabled"; ?>></td>
+            <!-- ここまで -->
 					</tr>
 				<?php endforeach; ?>
 			</tbody>
@@ -207,6 +238,7 @@
 	<div></div>
 	
 	<div>
+		<button class="emegra" style="margin-right:10px;" onclick="SendMail()">メール送信</button>
 		<button class="emegra" style="width:150px; margin-right:10px;" onclick="Request()">ITスキル診断依頼</button>
 		<button class="emegra" onclick="self.window.location='./input'">新規登録</button>
 		</div>	
@@ -329,4 +361,56 @@
 			}
 		}
 	}
+  /*
+    作成：朴昰成
+    作成日：24/05/29
+  */
+
+  function SendMail() {
+		idxs = [];
+		isChecked = false;
+		for (let i = 0; i < check_idxs.length; i++) {
+			if (check_idxs[i].checked == true) {
+				isChecked = true;
+
+				idxs.push(check_idxs[i].value);
+			}
+		}
+
+		if (!isChecked) {
+			alert("送信するデータを選んでください。");
+			return false;
+		}
+		idxs = idxs.join(",");
+
+    if (confirm("メールを送信しますか？") === false) { return false; }
+
+    const postForm = new FormData();
+    postForm.append("idxs", idxs);
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", "./mail", true);
+    xhr.send(postForm);
+    xhr.onload = () => {
+      if (xhr.status == 200) {
+        const result = xhr.responseText;
+
+        if (result === "success") {
+          alert("送信しました。");
+          location.reload(true);
+        }
+        else {
+          try {
+            let idxDatas = JSON.parse(result);
+            alert("送信てきないデータがあります。");
+            return false;
+          } catch (e) {
+            alert("error");
+            console.log(result);
+            return false;
+          }
+        }
+      }
+    }
+  }
+  /* ここまで */
 </script>

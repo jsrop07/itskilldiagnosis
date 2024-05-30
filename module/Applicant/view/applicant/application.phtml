@@ -65,8 +65,8 @@
           </select>
 
           <span id="spanclass1stSelect">経験分野</span>
-          <select class="" name="class1st" style="width:40%" id="class1stSelect" onclick="ChangeClass1st(this)">
-          <option value="" selected disabled hidden  >選択してください。</option>
+          <select name="class1st" style="width:40%" id="class1stSelect" onclick="ChangeClass1st(this)">
+          <option selected disabled hidden  >選択してください。</option>
               <?php foreach ($this->class1st as $row): ?>
                   <?php $texts = explode(',', $row['text']); ?>
                   <?php foreach ($texts as $text): ?>
@@ -395,7 +395,6 @@ switch (element.value) {
       option.hidden = true;
       option.innerText = "選択してください。";
       class2ndSelect.appendChild(option);
-
       <?php foreach ($class2nd as $data): ?>
         var option = document.createElement("option");
         option.value = <?php echo $data["idx"]; ?>;

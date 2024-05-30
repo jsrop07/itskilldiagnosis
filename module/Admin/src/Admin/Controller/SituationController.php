@@ -859,9 +859,9 @@ class SituationController extends AbstractActionController {
 			foreach ($class2ndDatas as $data) {
 				$class_upper = $data["class_upper"];
 				
-				// Debugging: Check if class_upper exists in $class1stDatas
+				// Check if class_upper exists in $class1stDatas
 				if (!isset($class1stDatas[$class_upper])) {
-					// echo "Notice: Undefined index $class_upper in \$class1stDatas\n";
+					// "Notice: Undefined index $class_upper in \$class1stDatas\n";
 					continue; // Skip this iteration if the index is not set
 				}
 			

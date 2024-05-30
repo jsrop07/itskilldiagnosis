@@ -66,7 +66,7 @@
 
           <span id="spanclass1stSelect">経験分野</span>
           <select name="class1st" style="width:40%" id="class1stSelect" onclick="ChangeClass1st(this)">
-          <option selected disabled hidden  >選択してください。</option>
+          <option value="" selected disabled hidden  >選択してください。</option>
               <?php foreach ($this->class1st as $row): ?>
                   <?php $texts = explode(',', $row['text']); ?>
                   <?php foreach ($texts as $text): ?>

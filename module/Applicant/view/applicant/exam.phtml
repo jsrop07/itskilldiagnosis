@@ -52,7 +52,9 @@ if ($ses_id) {
                             if (!empty($row[$answerKey])) :
                             ?>
                                 <li style="padding: 10px 0">
+                                <label>
                                     <input type="radio" name="answer<?= $idx + 1 ?>" value="<?= $i ?>"> <?php echo $language == 1 && $answer_ko != null? $answer_ko : $answer_jp ?>
+                                    </label>
                                 </li>
                             <?php endif; ?>
                         <?php endfor; ?>
@@ -78,12 +80,12 @@ if ($ses_id) {
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(100%);"></button>
       </div>
       <div class="modal-body fs-5" style="padding-bottom:0">
-      <div id="confirmContent" style="text-align:center;"></div>
+      <div id="confirmContent" style="text-align:center;">診断を提出しますか？</div>
       <!-- <div id="confirmComment"></div> -->
       </div>
       <div class="modal-footer  border-top-0" style="margin-bottom:8px; justify-content:center;">
     <button type="button" class="applicant_cancel" data-bs-dismiss="modal">キャンセル</button>
-    <button type="submit" class="exam_submit" name="submit_post" value="btn_submit">提出</button>
+    <button type="submit" class="exam_submit" name="submit_post" value="btn_submit" id="submittingId">提出</button>
     </div>
   </div>
   </div>
@@ -91,7 +93,6 @@ if ($ses_id) {
 <button type="submit" class="timeout_submit" name="submit_post" value="btn_submit" hidden></button>
 
 </form>
-
 
 <!-- modal -->
 <button type="button" class="btn btn-primary" id="loadPage" data-bs-toggle="modal" data-bs-target="#staticBackdrop" style="display:none"></button>
@@ -113,7 +114,7 @@ if ($ses_id) {
 					</p>
 					</div>
 					<div class="modal-footer flex-column border-top-0" style="padding-bottom:32px;">
-						<button type="button" class="btn btn-lg  w-75 mx-0" id="startBtn" data-bs-dismiss="modal" style="background: linear-gradient(111deg, #87D782 0%, #22BC8E 100%); color:white; ">スタート</button>
+						<button type="button" class="btn btn-lg  w-75 mx-0" id="startBtn" data-bs-dismiss="modal" style="background: linear-gradient(111deg, #87D782 0%, #22BC8E 100%); color:white; " onclick="executeTime()">スタート</button>
 					</div>
 					</div>
 				</div>
@@ -136,18 +137,6 @@ if ($ses_id) {
 					</div>
 				</div>
 			</div>
- 
-<!-- exam submit request loading modal -->
-<div class="modal" tabindex="-1" role="dialog" id="submitLoading">
-  <div class="modal-dialog modal-dialog-centered" role="document">
-    <div class="modal-content">
-      <div class="modal-body">
-        <h3 style="text-align:center;">依頼転送中です。</h3>
-      </div>
-    </div>
-  </div>
-</div>
-
 
 <script>
     let forms= document.getElementById('myForm');
@@ -333,14 +322,14 @@ document.addEventListener('keydown', notReload);
  function confirmExam() {
     var formData = new FormData(document.getElementById('myForm'));
     var radioIdsArray= [];
-    var confirmContent = document.getElementById('confirmContent');
-    confirmContent.innerHTML = '';
+    // var confirmContent = document.getElementById('confirmContent');
+    // confirmContent.innerHTML = '';
     for (var pair of formData.entries()) {
       var questionIdx = pair[0];
       var selectedRadio = document.querySelector('input[name="' + questionIdx + '"]:checked');
       if (selectedRadio) {
         var radioId = selectedRadio.value;
-        confirmContent.innerHTML = '診断を提出しますか？';
+        // confirmContent.innerHTML = '診断を提出しますか？';
         formData.append('answer_data', radioId);
         radioIdsArray.push(radioId);
       }      
@@ -414,10 +403,44 @@ document.addEventListener('keydown', notReload);
 }
 </script> -->
 
-
 <script>
-  function requestSubmit(){
-    $('#submitLoading').modal('show');
-  }
+  function executeTime() {
+  const url = window.location.href;
+  const postForm = new FormData();
+  const examIdx = <?= json_encode($examIdx) ?>;
+  postForm.append("idx", examIdx);
+
+  const xhr = new XMLHttpRequest();
+  xhr.open("POST", url, true);
+  xhr.send(postForm);
+  xhr.onload = () => {
+    if (xhr.status == 200) {
+        try {
+            const result = JSON.parse(xhr.responseText);
+            // console.log(result);
+            if (result === "wrong") {
+            console.log(result);
+            return;
+            }
+            console.log(result);
+          } catch (e) {
+            console.error("Failed to parse response", e);
+            alert("サーバー応答の解析に失敗しました");
+        }
+    }
+}
+}
+</script>
+
+<!-- exam submit request loading modal -->
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    let submitButton = document.getElementById("submittingId");
+    let confirmContent = document.getElementById("confirmContent");
+
+    submitButton.addEventListener("click", function(event) {
+      confirmContent.innerHTML = '依頼転送中です。。。';
+    });
+});
 </script>
 <?php endif; ?>

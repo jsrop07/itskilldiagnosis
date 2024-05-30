@@ -114,7 +114,16 @@
         </div>
         </form>
     </div>
-    
+    <script>
+  document.addEventListener("DOMContentLoaded", function() {
+    let submitButton = document.getElementById("btn_submitId");
+    let confirmContent = document.getElementById("requestMessage");
+
+    submitButton.addEventListener("click", function(event) {
+      confirmContent.innerHTML = '依頼転送中です。。。';
+    });
+});
+</script>
 <footer><a>GOMS Order・Received・Service.</a> Copyright G&GService. All Right Reserved.</footer>
 </body>
 </html>
@@ -132,6 +141,8 @@ var otherTextarea = document.querySelector('textarea[name="other"]');
 
 
 function SkillSelectChange(value) {
+    class2ndSelect.replaceChildren();
+
     form.skill.value = value;    
     if (form.skill.value === '1') {
       for (var i = 0; i < class1stBox.options.length - 1; i++) {
@@ -155,13 +166,11 @@ function SkillSelectChange(value) {
         class2ndSelect.innerText = "";
         class2ndSelect.value = "";
         careerInput.value = '';
-        class2ndSelect.innerText = "";
         var defaultOption = document.createElement("option");
         defaultOption.value = "";
         defaultOption.innerText = "選択してください。";
         class2ndSelect.appendChild(defaultOption);
         class2ndSelect.value = "";
-        class2ndSelect.disabled = false;
         hiddenCareer.disabled = true;
         careerInput.value = '';
         careerInput.disabled = false;

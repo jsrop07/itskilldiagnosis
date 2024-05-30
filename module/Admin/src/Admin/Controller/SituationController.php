@@ -543,6 +543,13 @@ class SituationController extends AbstractActionController {
 				$code = $this->params()->fromPost('code');	
 				$method = $this->params()->fromPost('method');	
 				$language = $this->params()->fromPost('language');	
+				/*
+					作成：丁錫圓
+					作成日：24/05/29
+				*/
+				$mail_delay = $this->params()->fromPost('mail_delay');	
+				$schedule = $this->params()->fromPost('schedule');	
+				/* ここまで */
 
 				if ($skill == 0) {
 					$skillText = '有';
@@ -573,12 +580,26 @@ class SituationController extends AbstractActionController {
 					'other' => $other,
 					'code' => $code,
 					'method' => $method,
+					/*
+						作成：丁錫圓
+						修正：丁錫圓
+						修正日：24/05/29
+					*/
+
+					/* 修正前：
 					'language' => $language
+					*/
+
+					/* 修正後： */
+					'language' => $language,
+					'mail_delay' => $mail_delay,
+					'schedule' => $schedule
+					/* ここまで */
 				];      
 				$situTb->insertAndUpdateApplication($arr);
 				 
 				$applicantInfo = $situTb->getRecord();
-				 
+
 				$this->mailByAdmin($arr,$skillText,$caseText,$managerInfo,$applicantInfo);
 				echo "
 				<script>
@@ -607,28 +628,41 @@ class SituationController extends AbstractActionController {
 				$code = $this->params()->fromPost('code');	
 				$method = $this->params()->fromPost('method');	
 				$language = $this->params()->fromPost('language');	
-			 $saveArr=[
-					'email' => $email,
-					'password' => $password,
-					'name' => $name,
-					'kana' => $kana,
-					'gender' => $gender,
-					'birth' => $birth,
-					'case' => $case,
-					'education' => $education,
-					'major' => $major,
-					'skill' => $skill,
-					'class1st' => $class1st,
-					'class2nd' => $class2nd,
-					'career' => $career,
-					'certificates' => $certificates,
-					'other' => $other,
-					'code' => $code,
-					'method' => $method,
-					'language' => $language,
-					'save' => "save"
-				];
-
+				/*
+					作成：丁錫圓
+					作成日：24/05/29
+				*/
+				$mail_delay = $this->params()->fromPost('mail_delay');	
+				$schedule = $this->params()->fromPost('schedule');	
+				/* ここまで */
+				$saveArr=[
+						'email' => $email,
+						'password' => $password,
+						'name' => $name,
+						'kana' => $kana,
+						'gender' => $gender,
+						'birth' => $birth,
+						'case' => $case,
+						'education' => $education,
+						'major' => $major,
+						'skill' => $skill,
+						'class1st' => $class1st,
+						'class2nd' => $class2nd,
+						'career' => $career,
+						'certificates' => $certificates,
+						'other' => $other,
+						'code' => $code,
+						'method' => $method,
+						'language' => $language,
+						/*
+							作成：丁錫圓
+							作成日：24/05/29
+						*/
+						'mail_delay' => $mail_delay,
+						'schedule' => $schedule,
+						/* ここまで */			
+						'save' => "save"
+					];
 				$situTb->insertAndUpdateApplication($saveArr);
 
 				echo "
@@ -682,9 +716,9 @@ class SituationController extends AbstractActionController {
 			$datas["applicantArray"] = $applicantData;
 			$datas["recordArray"] = $recordData;
 			
-			$datas["diagnosisArray"] = $diagnosisData;
+			// $datas["diagnosisArray"] = $diagnosisData;
 			$datas["diagnosisData"] = $diagnosisTb->ReadForRecordByCodenDate($recordData["diagnosis_code"], $recordData["diagnosis_date"]);
-	
+
 			return $this->SetViewModel($datas, "/situation/situation_edit.phtml");
 		}
 	
@@ -720,10 +754,15 @@ class SituationController extends AbstractActionController {
 				$recordSet['diagnosis_code']=$post['code'];
 				$recordSet['method']=$post['method'];
 				$recordSet['language']=$post['language'];
-
-	
+				/*
+					作成：丁錫圓
+					作成日：24/05/29
+				*/
+				$recordSet['mail_delay']=$post['mail_delay'];
+				$recordSet['date_schedule']=$post['schedule'];
+				/* ここまで */
 				$situTb->updateRecordInfo($recordlWhere, $recordSet);	
-				$situTb->updateApplicantInfo($applicantWhere, $applicantSet);	
+				$situTb->updateApplicantInfo($applicantWhere, $applicantSet);
 				$recentPassword = $situTb->readById($applicantInfos);
 	
 				$this->mailByRequest($managerInfo,$recentPassword);
@@ -756,8 +795,16 @@ class SituationController extends AbstractActionController {
 				$recordSet['diagnosis_code']=$post['code'];
 				$recordSet['method']=$post['method'];
 				$recordSet['language']=$post['language'];
+				/*
+					作成：丁錫圓
+					作成日：24/05/29
+				*/
+				$recordSet['mail_delay']=$post['mail_delay'];
+				$recordSet['date_schedule']=$post['schedule'];
+				/* ここまで */
 				$situTb->saveRecordInfo($recordlWhere, $recordSet);	
 				$situTb->saveApplicantInfo($applicantWhere, $applicantSet);	
+
 			echo "
 			<script>
 			alert('保存が完了しました。')
@@ -804,7 +851,11 @@ class SituationController extends AbstractActionController {
 				}
 				array_push($afterOptionDatas["class2nd"][$data["class_upper"]], $data);
 			}
-	
+			/*
+			作成：丁錫圓
+			作成日：24/05/29
+			*/
+			// sw's edit code 240529 -> compare optionDatas and redordArray
 			foreach ($class2ndDatas as $data) {
 				$class_upper = $data["class_upper"];
 				
@@ -823,9 +874,11 @@ class SituationController extends AbstractActionController {
 			
 				array_push($afterOptionDatas["class2nd"][$class1stValue], $data);
 			}
-	
+			/* ここまで */
+		
 			return $afterOptionDatas;
 		}	
+
 	
 	/* Add Send Result Mail Function from ApplicantController
 		作成：朴昰成

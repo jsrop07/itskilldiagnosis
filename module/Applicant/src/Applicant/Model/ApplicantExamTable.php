@@ -88,12 +88,23 @@ class ApplicantExamTable
       
       return $resultSet;
   }
+  public function executeExam($idx){
+    $qry=new sql($this->adapter);
+    $update=$qry->update('record');
+    
+    $update->set(['execute_date' => date("Y-m-d H:i:s")])->where(['idx' => $idx]);
+
+    $sqlString = $qry->getSqlStringForSqlObject($update);
+
+    $result = $this->adapter->query($sqlString, Adapter::QUERY_MODE_EXECUTE);
+    return $result;
+  }
 
   public function updateExam($sqlWhere, $sqlSet){
     $qry=new sql($this->adapter);
     $update=$qry->update('record');
 
-    $sqlSet["execute_date"] = date("Y-m-d H:i:s");
+    // $sqlSet["execute_date"] = date("Y-m-d H:i:s");
 
     $update->set($sqlSet);
     $update->where($sqlWhere);

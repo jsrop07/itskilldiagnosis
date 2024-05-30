@@ -44,15 +44,40 @@ class ApplicantLoginTable
     );
 
     $result = $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
+
     if (empty($result)) {
       return "wrong info";
     }
 
     if ($result["password"] == $password) {
-      return "success";
-      exit;
+      $recordQry = $this->sql->select("record")->where(
+        array(
+          "applicant_idx" => $result['idx']
+        )
+      )->order("idx DESC");
     }
-    // return "wrong password";
+    $resultqry = $this->sql->prepareStatementForSqlObject($recordQry)->execute()->current();
+
+    $currentDateTime = date("Y-m-d H:i:s"); // current time
+    $dateSchedule = $resultqry['date_schedule']; // diagnosis schedule time 
+
+    $currentDateTimeObj = date_create($currentDateTime); //turn to datetime object by cureenttDateTime 
+    $dateScheduleObj = date_create($dateSchedule); // turn to datetime object by dateScheduleTime
+    
+    $dateInterval = $currentDateTimeObj -> diff($dateScheduleObj); // calculate dateScheduletime - cureentDateTime
+    $minutesDifference = ($dateInterval->days * 24 * 60) + ($dateInterval->h * 60) + $dateInterval->i; //turn days, hour, minute to minute
+
+
+    if($minutesDifference <= 30 && $currentDateTimeObj > $dateScheduleObj){
+      return "success";
+    } elseif($minutesDifference > 30 && $currentDateTimeObj > $dateScheduleObj){
+      $updateQry = $this->sql->update('record')->set(array('rank' => 'F'))->where(array('idx' => $resultqry['idx']));
+      $updateResult = $this->sql->prepareStatementForSqlObject($updateQry)->execute();
+
+      return "timeout";
+    }
+    return "wrong time";
+    exit;
   }
 
 }

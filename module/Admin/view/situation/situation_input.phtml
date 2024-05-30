@@ -1,6 +1,8 @@
 <?php 
 echo $this->partial("breadcrumb", ["datas" => $breadcrumbData]); 
 $currentDate = date("Y-m-d H:i:s");
+$dateSchedule = date("Y-m-d H:i");
+
 function InitStyle() { return " font-style: italic; color: ;"; }
 ?>
 
@@ -119,9 +121,6 @@ function InitStyle() { return " font-style: italic; color: ;"; }
                   <?php endforeach; ?>
               <?php endforeach; ?>
           </select>
-          <div id="otherclass1stInput" style="margin-left: 10px; display:none;  width:200px;">
-            <input class="form-control" type="text" placeholder="その他の場合の、記入" id="otherclass1st" name="class1st" maxlength='20'>
-          </div>
 				</dd>
 
 				<dt class="essential" id=class2ndTitle>問題種別</dt>
@@ -135,6 +134,7 @@ function InitStyle() { return " font-style: italic; color: ;"; }
 				<dd><input class="form-control" id="careerId" name="career" type="text" placeholder="経歴を記入してください。" style="font-size:15px; width:220px;" maxlength='2'></dd> 
 		</dl>
 	</div>
+
 </div>
 
     <div class="emegra card" style="margin-top: 32px;">
@@ -186,7 +186,7 @@ function InitStyle() { return " font-style: italic; color: ;"; }
 				<dt class="essential">レベル</dt>
 				<dd>
           <select class="form-select" name="level" type="text" style="width:100px;">
-            <option value="0">０級</option>
+            <option value="0">無級</option>
             <option value="1">初級</option>
             <option value="2">中級</option>
             <option value="3">高級</option>
@@ -211,13 +211,20 @@ function InitStyle() { return " font-style: italic; color: ;"; }
             <option value="1">韓国語</option>
           </select>
 				</dd>
+
+        <dt class="essential">メール転送</dt>
+        <dd>
+          <select class="form-select" name="mail_delay" style="width:100px;" onchange="ChangeInputStyle(this)" >
+            <option value="" selected>手動</option>
+            <option value="0">自動</option>
+          </select>
+				</dd>
+
+        <dt class="essential">診断日</dt>
+        <dd><input class="form-control" name="schedule" type="text" style="width:220px;" value="<?php echo $dateSchedule?>"></dd>
 		</dl>
 	</div>
 </div>
-
-<input type="hidden" name="class1st" id="noSkillClass1st">
-<input type="hidden" name="class2nd" id="noSkillClass2nd">
-<input type="hidden" name="career" id="noSkillCareer">
 
 <div class="btn-place" style="margin-top: 32px;">
 	<button type="button" class="emegra cancel" onclick="self.location.href='.././situation/list';">戻る</button>
@@ -269,67 +276,40 @@ function InitStyle() { return " font-style: italic; color: ;"; }
 		randomPW();
 	}
 </script>
-
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/datepicker/1.0.10/datepicker.min.js"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/datepicker/1.0.10/datepicker.min.css">
-
-  <script>
-    $(document).ready(function(){
-      var birth = document.getElementById("birth");
-      $(birth).datepicker({
-        format: 'yyyy-mm-dd',
-        autohide: true
-      });
-    });
-  </script>
-
 <script>
 	let skillSelect = document.getElementById('ITskillId');
-	let class1stSelect = document.getElementById('class1stId')
-  let class1stOtherSelect = document.getElementById('otherclass1st')
+  var class1stBox = document.getElementById('class1stId');
 	var class2ndSelect = document.getElementById('class2ndId')
 	let careerSelect = document.getElementById('careerId')
-  var hiddenClass1st= document.getElementById('noSkillClass1st');
-  var hiddenClass2nd= document.getElementById('noSkillClass2nd');
-  var hiddenCareer= document.getElementById('noSkillCareer');
-  var noSkillClass2ndoption = document.createElement("option");
-  var yesSkillClass2ndoption = document.createElement("option");
 
   function SkillSelectChange(value){
-  form.skill.value = value;
+    class2ndSelect.replaceChildren();
     if (form.skill.value === '1') {
-      class1stSelect.value="その他";
-      class2ndSelect.innerText="";
-      noSkillClass2ndoption.value = "33";
-      noSkillClass2ndoption.innerText = "テキスト";
-      class2ndSelect.appendChild(noSkillClass2ndoption);
-      class2ndSelect.value = "33";
-      careerSelect.value="0";
-      class1stSelect.setAttribute('disabled', 'disabled');
-      class2ndSelect.setAttribute('disabled', 'disabled');
-      class1stOtherSelect.setAttribute('disabled', 'disabled');
-      careerSelect.setAttribute('disabled', 'disabled');
-      class1stOtherSelect.style.display = "none";
-      hiddenClass1st.value = "その他";
-      hiddenClass2nd.value = "33";
-      hiddenCareer.value = "0";
-    }
-    else{
-      class1stSelect.value = "";
-      class1stOtherSelect.value="";
-      class1stOtherSelect.style.display = "block";
-      class2ndSelect.innerText="";
-      careerSelect.value = "";
-      yesSkillClass2ndoption.value = "";
-      yesSkillClass2ndoption.innerText = "選択してください。";
-      class2ndSelect.appendChild(yesSkillClass2ndoption);
-      class1stSelect.removeAttribute('disabled');
-      class2ndSelect.removeAttribute('disabled');
-      careerSelect.removeAttribute('disabled');
-      hiddenClass1st.setAttribute('disabled', 'disabled');
-      hiddenClass2nd.setAttribute('disabled', 'disabled');
-      hiddenCareer.setAttribute('disabled', 'disabled');
+      for (var i = 0; i < class1stBox.options.length - 1; i++) {
+        class1stBox.options[i].style.display = 'none';
+      }
+      class2ndId.value = "";
+      class1stId.value = "";
+      var option = document.createElement("option");
+      option.hidden = true;
+      option.innerText = "選択してください。";
+      class2ndSelect.appendChild(option);
+      careerSelect.value = "0";
+      careerId.readOnly =  true;
+    } else {
+      for (var i = 0; i < class1stBox.options.length - 1; i++) {
+        class1stBox.options[i].style.display = 'block';
+      }
+      class1stId.value = "";
+      class2ndSelect.innerText = "";
+      class2ndSelect.value = "";
+      careerSelect.value = '';
+      var defaultOption = document.createElement("option");
+      defaultOption.value = "";
+      defaultOption.innerText = "選択してください。";
+      class2ndSelect.appendChild(defaultOption);
+      class2ndSelect.value = "";
+      careerId.readOnly =  false;
     }
   }	
 
@@ -380,33 +360,6 @@ function InitStyle() { return " font-style: italic; color: ;"; }
 </script>
 
 <script>
-	function ChangeClass1st(element) {
-
-class2ndSelect.replaceChildren();
-
-console.log(class2ndSelect);
-switch (element.value) {
-<?php foreach ($optionDatas["class2nd"] as $value => $class2nd): ?>
-	case "<?php echo $optionDatas["class1st"][array_search($value, array_column($optionDatas["class1st"], "idx"))]["text"]; ?>":
-		var option = document.createElement("option");
-		option.hidden = true;
-		option.innerText = "選択してください。";
-		class2ndSelect.appendChild(option);
-
-		<?php foreach ($class2nd as $data): ?>
-			var option = document.createElement("option");
-			option.value = <?php echo $data["idx"]; ?>;
-			option.innerText = "<?php echo $data["text"]; ?>";
-			class2ndSelect.appendChild(option);
-		<?php endforeach; ?>
-		break;
-		<?php endforeach; ?>
-		
-	}
-}
-</script>
-
-<script>
 	function randomPW(){
 		const pwLength = 8;
 		const pwEncoding = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -437,24 +390,6 @@ switch (element.value) {
         otherEducation.removeAttribute('disabled');
     } else {
         otherEducation.setAttribute('disabled', 'disabled');
-    }
-});
-
-    document.getElementById('class1stId').addEventListener('change', function(event) {
-    var selectedOption = event.target.value;
-    var otherclass1stInput = document.getElementById('otherclass1stInput');
-
-    if (selectedOption === "その他") {
-        otherclass1stInput.style.display = 'block';
-    } else {
-        otherclass1stInput.style.display = 'none';
-    }
-
-    var otherclass1st = document.getElementById('otherclass1st');
-    if (selectedOption === "その他") {
-        otherclass1st.removeAttribute('disabled');
-    } else {
-        otherclass1st.setAttribute('disabled', 'disabled');
     }
 });
 
@@ -608,7 +543,7 @@ function checkKana(input) {
 <script>
   function saveConfirm(){
         if (form.email.value == "" || !emailValidationCheck(form.email.value)) {
-             alert("メールアドレスを入力してください。");
+            alert("メールアドレスを入力してください。");
             setTimeout("form.email.focus()",100);
             event.preventDefault();
             return false;
@@ -708,7 +643,6 @@ function checkKana(input) {
 
 		class2ndSelect.replaceChildren();
 		
-        console.log(class2ndSelect);
 		switch (element.value) {
         <?php foreach ($optionDatas["class2nd"] as $value => $class2nd): ?>
             case "<?php echo $optionDatas["class1st"][array_search($value, array_column($optionDatas["class1st"], "idx"))]["text"]; ?>":

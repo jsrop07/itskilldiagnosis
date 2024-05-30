@@ -79,6 +79,7 @@ class ApplicantController extends AbstractActionController
 			'certificates' => $certificates,
 			'other' => $other,
 		];
+
 		$tbl->insertAndUpdateApplication($arr);
 		$applicantInfo = $tbl->getRecord();
 		$this->mailByApplicantation($arr,$skillText,$caseText,$managerArray,$applicantInfo);
@@ -154,6 +155,7 @@ class ApplicantController extends AbstractActionController
 				$session = new Container("applicant");
 				$session["id"] = $p["id"];
 			}
+			// print_r("Asd");
 			die($result);
     }
 
@@ -193,6 +195,7 @@ class ApplicantController extends AbstractActionController
         }
 	  }
 
+
 	  // Read applicant info
 	  $applicantExamTbl = $this->getServiceLocator()->get("ApplicantExamTable");
 	  $applicantInfo    = $applicantExamTbl->readById($emailId);
@@ -206,10 +209,17 @@ class ApplicantController extends AbstractActionController
 
 	  // Read $applicantinfo's to record
 	  $examRecordInfo =  $applicantExamTbl->readByApplicantIdx($applicantInfo);
-	  $datas["name"]  =  $applicantInfo["name"];
-		$datas['language'] = $examRecordInfo['language'];
 		$examRecordIdx = $examRecordInfo['idx'];
+	  $datas['name']  =  $applicantInfo["name"];
+		$datas['language'] = $examRecordInfo['language'];
+		$datas['examIdx'] = $examRecordIdx;
 
+		
+		if (isset($post["idx"])) {
+			$result = $applicantExamTbl->executeExam($post["idx"]);
+			die(json_encode($result));
+		}
+		
 		// Read record's diagnosis_code & Read selected diagnosis_code's info
 	  $recordCode    = $examRecordInfo["diagnosis_code"];
 
@@ -322,6 +332,7 @@ class ApplicantController extends AbstractActionController
 			$sqlSet["get_point"] = $get_point;
 			$sqlSet['rank']=$recordRank;
 			$sqlSet['diagnosis_comment']=$recordExamResult;
+
 			$applicantExamTbl->updateExam($sqlWhere, $sqlSet);			
 			$examRecordRecent =  $applicantExamTbl->readByApplicantIdx($applicantInfo);
 			$applicantExamTbl->deletePasswordByIdx($applicantInfo["idx"]);

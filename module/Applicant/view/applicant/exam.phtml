@@ -28,7 +28,11 @@ if ($ses_id) {
     <form id="myForm" name="input_form" action="/applicant/exam" method="post">
         <div class="welcomeText" id="welcomeId">
           <p>表示される問題に従って回答してください。</p>			
+          <!-- 240531 丁錫圓 作成-->
+          <p>問題は一つずつ出ます。 戻るボタンがありませんので、慎重に解いてください。</p>
+          <!-- ここまで -->
           <p style="color:red;">※ ページ下部の一時停止ボタンを押すと10分間停止し、1回のみ使用可能です。</p>	
+          
         </div>
         <div style="padding:0px 50px;">
           <?php $count = 1; 

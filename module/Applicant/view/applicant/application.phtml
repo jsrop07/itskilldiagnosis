@@ -82,7 +82,6 @@
 
           <span id='spanCareer'>IT経験年数</span>
           <input class="form-control" id="career" name="career" type="text" placeholder="経歴を記入してください。" style="font-size:15px; width:40%" maxlength='2'>
-          <input type="hidden" name="career" style="width:40%" id="hiddenCareer">
 
           <span class="no_after_style" id='spanCertificates'>IT関連資格</span>
           <input class="form-control" name="certificates" type="text" placeholder="資格を記入してください。"style="width:80%" maxlength='50'>
@@ -154,10 +153,8 @@ function SkillSelectChange(value) {
       Option.value = "";
       Option.innerText = "選択してください。";
       class2ndSelect.appendChild(Option);
-      careerInput.value = '';
-      hiddenCareer.value = "0";
-      careerInput.value = '0';
-      careerInput.disabled = true;
+      careerInput.value = "0";
+      career.readOnly =  true;
     } else {
       for (var i = 0; i < class1stBox.options.length - 1; i++) {
         class1stBox.options[i].style.display = 'block';
@@ -171,9 +168,7 @@ function SkillSelectChange(value) {
         defaultOption.innerText = "選択してください。";
         class2ndSelect.appendChild(defaultOption);
         class2ndSelect.value = "";
-        hiddenCareer.disabled = true;
-        careerInput.value = '';
-        careerInput.disabled = false;
+        career.readOnly =  false;
     }
 }
 

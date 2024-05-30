@@ -79,9 +79,9 @@ class ApplicantController extends AbstractActionController
 			'certificates' => $certificates,
 			'other' => $other,
 		];
+
 		$tbl->insertAndUpdateApplication($arr);
 		$applicantInfo = $tbl->getRecord();
-		exit;
 		$this->mailByApplicantation($arr,$skillText,$caseText,$managerArray,$applicantInfo);
 
 		echo "
@@ -155,6 +155,7 @@ class ApplicantController extends AbstractActionController
 				$session = new Container("applicant");
 				$session["id"] = $p["id"];
 			}
+			// print_r("Asd");
 			die($result);
     }
 
@@ -331,6 +332,7 @@ class ApplicantController extends AbstractActionController
 			$sqlSet["get_point"] = $get_point;
 			$sqlSet['rank']=$recordRank;
 			$sqlSet['diagnosis_comment']=$recordExamResult;
+
 			$applicantExamTbl->updateExam($sqlWhere, $sqlSet);			
 			$examRecordRecent =  $applicantExamTbl->readByApplicantIdx($applicantInfo);
 			$applicantExamTbl->deletePasswordByIdx($applicantInfo["idx"]);

@@ -80,12 +80,12 @@ if ($ses_id) {
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(100%);"></button>
       </div>
       <div class="modal-body fs-5" style="padding-bottom:0">
-      <div id="confirmContent" style="text-align:center;"></div>
+      <div id="confirmContent" style="text-align:center;">診断を提出しますか？</div>
       <!-- <div id="confirmComment"></div> -->
       </div>
       <div class="modal-footer  border-top-0" style="margin-bottom:8px; justify-content:center;">
     <button type="button" class="applicant_cancel" data-bs-dismiss="modal">キャンセル</button>
-    <button type="submit" class="exam_submit" name="submit_post" value="btn_submit">提出</button>
+    <button type="submit" class="exam_submit" name="submit_post" value="btn_submit" id="submittingId">提出</button>
     </div>
   </div>
   </div>
@@ -93,7 +93,6 @@ if ($ses_id) {
 <button type="submit" class="timeout_submit" name="submit_post" value="btn_submit" hidden></button>
 
 </form>
-
 
 <!-- modal -->
 <button type="button" class="btn btn-primary" id="loadPage" data-bs-toggle="modal" data-bs-target="#staticBackdrop" style="display:none"></button>
@@ -138,18 +137,6 @@ if ($ses_id) {
 					</div>
 				</div>
 			</div>
- 
-<!-- exam submit request loading modal -->
-<div class="modal" tabindex="-1" role="dialog" id="submitLoading">
-  <div class="modal-dialog modal-dialog-centered" role="document">
-    <div class="modal-content">
-      <div class="modal-body">
-        <h3 style="text-align:center;">依頼転送中です。</h3>
-      </div>
-    </div>
-  </div>
-</div>
-
 
 <script>
     let forms= document.getElementById('myForm');
@@ -335,14 +322,14 @@ document.addEventListener('keydown', notReload);
  function confirmExam() {
     var formData = new FormData(document.getElementById('myForm'));
     var radioIdsArray= [];
-    var confirmContent = document.getElementById('confirmContent');
-    confirmContent.innerHTML = '';
+    // var confirmContent = document.getElementById('confirmContent');
+    // confirmContent.innerHTML = '';
     for (var pair of formData.entries()) {
       var questionIdx = pair[0];
       var selectedRadio = document.querySelector('input[name="' + questionIdx + '"]:checked');
       if (selectedRadio) {
         var radioId = selectedRadio.value;
-        confirmContent.innerHTML = '診断を提出しますか？';
+        // confirmContent.innerHTML = '診断を提出しますか？';
         formData.append('answer_data', radioId);
         radioIdsArray.push(radioId);
       }      
@@ -445,9 +432,15 @@ document.addEventListener('keydown', notReload);
 }
 </script>
 
+<!-- exam submit request loading modal -->
 <script>
-  function requestSubmit(){
-    $('#submitLoading').modal('show');
-  }
+  document.addEventListener("DOMContentLoaded", function() {
+    let submitButton = document.getElementById("submittingId");
+    let confirmContent = document.getElementById("confirmContent");
+
+    submitButton.addEventListener("click", function(event) {
+      confirmContent.innerHTML = '依頼転送中です。。。';
+    });
+});
 </script>
 <?php endif; ?>

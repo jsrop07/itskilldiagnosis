@@ -21,11 +21,9 @@ class SituationController extends AbstractActionController {
 	}
 
 	public function indexAction() {
-		// $this->ChkLogin();
-		// header("Location: ./situation/list");
-		// exit;
-
-		return $this->SetViewModel($datas, "/situation/situation_test.phtml");
+		$this->ChkLogin();
+		header("Location: ./situation/list");
+		exit;
 	}
 
 	public function listAction() {

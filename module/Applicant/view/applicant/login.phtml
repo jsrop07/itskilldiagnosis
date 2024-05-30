@@ -63,10 +63,12 @@ if ($ses_id) {
 				if (result == "wrong info") {
 					alert("有効ではないIDまたはパスワードです");
 					id.focus();
-				} else if (result == "wrong password") {
-					alert("パスワードを確認してください");
-					password.focus();
-				} else if (result == "success") {
+				} else if (result == "wrong time") {
+					alert("診断可能な時間ではありません。");
+				} else if (result == "timeout"){
+					alert("診断をできません。");
+				} 
+				else if (result == "success") {
           self.location.href = "../applicant/exam";
 				}
 			}

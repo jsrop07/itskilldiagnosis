@@ -114,7 +114,16 @@
         </div>
         </form>
     </div>
-    
+    <script>
+  document.addEventListener("DOMContentLoaded", function() {
+    let submitButton = document.getElementById("btn_submitId");
+    let confirmContent = document.getElementById("requestMessage");
+
+    submitButton.addEventListener("click", function(event) {
+      confirmContent.innerHTML = '依頼転送中です。。。';
+    });
+});
+</script>
 <footer><a>GOMS Order・Received・Service.</a> Copyright G&GService. All Right Reserved.</footer>
 </body>
 </html>

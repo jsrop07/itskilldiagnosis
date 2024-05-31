@@ -10,6 +10,8 @@ if ($ses_id) {
     $logged = false;
 }
 
+
+$lineChange = "<br>";
 ?>
 <?php if ($logged == true): ?>
 <header>
@@ -37,10 +39,9 @@ if ($ses_id) {
         <div style="padding:0px 50px;">
           <?php $count = 1; 
           foreach ($matchedData as $idx => $row) : 
-          $question_ko = $idx + 1 . ". " . $row["question_ko"];
-          $question_jp = $idx + 1 . ". " . $row["question"];
+          $question_ko = $idx + 1 . ". " . str_replace('{{n}}',$lineChange,$row["question_ko"]);
+          $question_jp = $idx + 1 . ". " . str_replace('{{n}}',$lineChange,$row["question"]);
           ?>
-            
         <div class="examBox" style="width:100%; position:relative; display: <?= $count === 1 ? 'block' : 'none' ?>;" id="exam<?= $count ?>">
         <div style="position:absolute; top:-10px; left:-10px; background-color:green; color:white; border-radius: 5px; font-size: 1.3rem; padding:5px; font-family: arial;"><?php echo $count ?>/<?php echo $question_num ?></div>
           <div class="question" style="margin-left:50px;font-weight:bold;" id="<?= $row['idx'] ?>">問題 <?= $language==1 && $row["question_ko"] != null ?  $question_ko : $question_jp ?></div>
@@ -372,7 +373,6 @@ document.addEventListener('keydown', notReload);
     console.log(combinedAnswers);
 
     document.getElementById('answer_data').value = combinedAnswers;
-    // requestSubmit();
   }
 
 

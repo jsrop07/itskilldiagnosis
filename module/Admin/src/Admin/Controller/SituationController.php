@@ -380,7 +380,14 @@ class SituationController extends AbstractActionController {
 		return json_encode($questionDatas);
 	}
 
+// 修正の時
+/* log
+	作成：丁錫圓
+	修正：丁錫圓
+	修正日：24/05/31
+*/
 
+/* 修正前：
 	function mailByRequest($managerInfo,$recentPassword,$recordSet){
 		$mail = new MailRequest();
 
@@ -391,6 +398,23 @@ class SituationController extends AbstractActionController {
 
 		$param['title']="{$recentPassword["name"]}様、株式会社ジエンジサービスから、ITスキル診断依頼が到着しています。";
 		$param["content"] = "以下URLより「ITスキル診断サイト」にログインし診断を行ってください。\n\nログインID：{$recentPassword["email"]}\nログインPWD：{$recentPassword["password"]}\n\n＜ITスキル診断URL＞\nhttp://18.181.4.65/applicant/login\n\n※ITスキル診断の有効時間は{$recordSet["date_schedule"]}分からです。\n診断時間から30分以内に始めないと、受験できません。\n\n\n※このメールに返信しないでください。";
+*/
+
+/* 修正後： */
+	function mailByRequest($managerInfo,$recentPassword){
+		$mail = new MailRequest();
+		$applicantTb = $this->getServiceLocator()->get("ApplicantExamTable");
+
+		$applicantInfo = $applicantTb->readByApplicantIdx($recentPassword);
+
+		// 기본 메일 전송 관련 설정 로드
+		$param['config']=$this->getConfig();
+		// 메일 제목 지정 (일반적으로 DB에 메일폼 테이블을 만들어서 그것을 가져와서 아래의 title contents에 넣지만, 이건 샘플이므로 간단히.)
+		// 사람마다 변환해야 할 부분은 {{이렇게}} 메일폼에 넣어놓는다.
+
+		$param['title']="{$recentPassword["name"]}様、株式会社ジエンジサービスから、ITスキル診断依頼が到着しています。";
+		$param["content"] = "以下URLより「ITスキル診断サイト」にログインし診断を行ってください。\n\nログインID：{$recentPassword["email"]}\nログインPWD：{$recentPassword["password"]}\n\n＜ITスキル診断URL＞\nhttp://18.181.4.65/applicant/login\n\n※ITスキル診断の有効時間は{$applicantInfo["date_schedule"]}分からです。\n診断時間から30分以内に始めないと、受験できません。\n\n\n※このメールに返信しないでください。";
+/* ここまで */
 
 		// 사람이름이나, URL등 고유하게 변경해야 하는 것은 이렇게 처리한다.
 		// 메일 제목과 내용 부분 모두 변환처리.
@@ -686,7 +710,7 @@ class SituationController extends AbstractActionController {
 			$situTb = $this->getServiceLocator()->get("situTable");
 	
 			$recordData = $recordTb->ReadByIdx($index);
-	
+
 			$applicantData = $applicantTb->ReadByIdx($recordData["applicant_idx"]);
 
 			$recordData = array_merge($applicantData, $recordData);
@@ -765,7 +789,7 @@ class SituationController extends AbstractActionController {
 				$situTb->updateApplicantInfo($applicantWhere, $applicantSet);
 				$recentPassword = $situTb->readById($applicantInfos);
 	
-				$this->mailByRequest($managerInfo,$recentPassword,$recordSet);
+				$this->mailByRequest($managerInfo,$recentPassword);
 	
 				echo "
 				<script>

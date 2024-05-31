@@ -1,6 +1,7 @@
 <?php 
 echo $this->partial("breadcrumb", ["datas" => $breadcrumbData]); 
 $currentDate = date("Y-m-d H:i:s");
+$dateSchedule = date("Y-m-d H:i");
 
 $urlLink = "../../diagnosis/detail/";
 
@@ -20,7 +21,10 @@ $isClass1st2 = false;
 $isClass1st3 = false;
 $isClass1st4 = false;
 $isClass1st5 = false;
-
+$isLevel0 = false;
+$isLevel1 = false;
+$isLevel2 = false;
+$isLevel3 = false;
 // gender
 if ($applicantArray["gender"] === NULL) {
     $isGenderNull = true;
@@ -79,6 +83,35 @@ switch ($recordArray["class1st"]) {
         $isClass1st5 = true;
         break;
 }
+
+// level
+if (isset($diagnosisData["level"]) && is_string($diagnosisData["level"])) {
+  switch ($diagnosisData["level"]) {
+      case "0":
+          $isLevel0 = true;
+          break;
+      case "1":
+          $isLevel1 = true;
+          break;
+      case "2":
+          $isLevel2 = true;
+          break;
+      case "3":
+          $isLevel3 = true;
+          break;
+      default:
+          // Optional: handle unexpected values
+          break;
+  }
+} else {
+  // Handle the case where "level" is not set or not a string
+  // For example, you might want to initialize the variables to false
+  $isLevel0 = false;
+  $isLevel1 = false;
+  $isLevel2 = false;
+  $isLevel3 = false;
+}
+
 // editHTML show question_num
 $question_num = isset($diagnosisData['question_num']) ? $diagnosisData['question_num'] : null;
 ?>
@@ -253,7 +286,10 @@ $question_num = isset($diagnosisData['question_num']) ? $diagnosisData['question
 				<dt class="essential">診断問項ID</dt>
 				<dd>
 					<input name="code" type="hidden" style="width:220px;" value="<?php echo $diagnosisData['code'] !=NULL ?  $diagnosisData['code'] : "" ?>">
-            <div id="codeDisplay" name="codeName" style="padding-right:5px;cursur:pointer;" <?php echo isset($diagnosisData['idx']) ? "onclick='Link(" . $diagnosisData['idx'] . ");'" : '' ?>><?php echo $diagnosisData['code'] !=NULL ? $diagnosisData['code'] : "未登録" ?></div>
+            <div id="codeDisplay" name="codeName" style="padding-right:5px;cursor:pointer;" 
+              <?php echo isset($diagnosisData['idx']) ? "onclick='Link(" . $diagnosisData['idx'] . ");'" : '' ?>>
+              <?php echo isset($diagnosisData['code']) && $diagnosisData['code'] !== false ? $diagnosisData['code'] : "未登録" ?>
+            </div>
 					<button type="button" data-bs-toggle="modal" data-bs-target="#staticBackdrop" style="padding: 0px 10px ;border-radius: 8px; background:linear-gradient(111deg, #50D7C7 0%, #40ADF0 100%); color:white;" onclick="diagnosisData();">検索</button>
 				</dd> 
         <script>
@@ -292,10 +328,10 @@ $question_num = isset($diagnosisData['question_num']) ? $diagnosisData['question
 			</div>
 				<dt class="essential">レベル</dt>
 				<dd><select class="form-select" name="level" type="text" style="width:100px;">
-					<option value="0" <?php echo $diagnosisData['level']==0 ? "selected" : "" ?>>無級</option>
-					<option value="1"<?php echo $diagnosisData['level']==1 ? "selected" : "" ?>>初級</option>
-					<option value="2"<?php echo $diagnosisData['level']==2 ? "selected" : "" ?>>中級</option>
-					<option value="3"<?php echo $diagnosisData['level']==3 ? "selected" : "" ?>>高級</option>
+					<option value="0"<?php echo $isLevel0 ? "selected" : "" ;?>>無級</option>
+					<option value="1"<?php echo $isLevel1 ? "selected" : "" ?>>初級</option>
+					<option value="2"<?php echo $isLevel2 ? "selected" : "" ?>>中級</option>
+					<option value="3"<?php echo $isLevel3 ? "selected" : "" ?>>高級</option>
 					</select>
 					
 				</dd>
@@ -328,7 +364,7 @@ $question_num = isset($diagnosisData['question_num']) ? $diagnosisData['question
 				</dd>
 
         <dt class="essential">診断日</dt>
-        <dd><input class="form-control" name="schedule" type="text" style="width:220px;" value="<?php echo $recordArray['date_schedule']?>"></dd>
+        <dd><input class="form-control" name="schedule" type="text" style="width:220px;" value="<?php echo $recordArray['date_schedule'] ? $recordArray['date_schedule'] : $dateSchedule ?>"></dd>
 
 		</dl>
 	</div>

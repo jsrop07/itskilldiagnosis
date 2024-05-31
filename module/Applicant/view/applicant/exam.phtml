@@ -10,6 +10,8 @@ if ($ses_id) {
     $logged = false;
 }
 
+
+$lineChange = "<br>";
 ?>
 <?php if ($logged == true): ?>
 <header>
@@ -28,15 +30,18 @@ if ($ses_id) {
     <form id="myForm" name="input_form" action="/applicant/exam" method="post">
         <div class="welcomeText" id="welcomeId">
           <p>表示される問題に従って回答してください。</p>			
+          <!-- 240531 丁錫圓 作成-->
+          <p>問題は一つずつ出ます。 戻るボタンがありませんので、慎重に解いてください。</p>
+          <!-- ここまで -->
           <p style="color:red;">※ ページ下部の一時停止ボタンを押すと10分間停止し、1回のみ使用可能です。</p>	
+          
         </div>
         <div style="padding:0px 50px;">
           <?php $count = 1; 
           foreach ($matchedData as $idx => $row) : 
-          $question_ko = $idx + 1 . ". " . $row["question_ko"];
-          $question_jp = $idx + 1 . ". " . $row["question"];
+          $question_ko = $idx + 1 . ". " . str_replace('{{n}}',$lineChange,$row["question_ko"]);
+          $question_jp = $idx + 1 . ". " . str_replace('{{n}}',$lineChange,$row["question"]);
           ?>
-            
         <div class="examBox" style="width:100%; position:relative; display: <?= $count === 1 ? 'block' : 'none' ?>;" id="exam<?= $count ?>">
         <div style="position:absolute; top:-10px; left:-10px; background-color:green; color:white; border-radius: 5px; font-size: 1.3rem; padding:5px; font-family: arial;"><?php echo $count ?>/<?php echo $question_num ?></div>
           <div class="question" style="margin-left:50px;font-weight:bold;" id="<?= $row['idx'] ?>">問題 <?= $language==1 && $row["question_ko"] != null ?  $question_ko : $question_jp ?></div>
@@ -368,7 +373,6 @@ document.addEventListener('keydown', notReload);
     console.log(combinedAnswers);
 
     document.getElementById('answer_data').value = combinedAnswers;
-    // requestSubmit();
   }
 
 

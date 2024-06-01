@@ -112,7 +112,7 @@ function InitStyle() { return " font-style: italic; color: ;"; }
 				</dd>
         <dt class="essential" id="class1stTitle">経験分野</dt>
 				<dd>
-          <select class="form-select" name="class1st" style="width:220px;" id="class1stId" onclick="ChangeClass1st(this)">
+          <select class="form-select" name="class1st" style="width:220px;" id="class1stId" onchange="ChangeClass1st(this)">
             <option value="" selected hidden>選択してください。</option>
               <?php foreach ($this->class1st as $row): ?>
                 <?php $texts = explode(',', $row['text']); ?>

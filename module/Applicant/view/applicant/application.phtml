@@ -139,7 +139,47 @@ var careerInput = document.getElementById('career');
 var certificatesInput = document.querySelector('input[name="certificates"]');
 var otherTextarea = document.querySelector('textarea[name="other"]');
 
+// 修正の時
+/* 
+	作成：丁錫圓
+	修正：丁錫圓
+	修正日：24/06/02
+*/
+/* 修正前：
+function SkillSelectChange(value) {
+    class2ndSelect.replaceChildren();
 
+    form.skill.value = value;    
+    if (form.skill.value === '1') {
+      for (var i = 0; i < class1stBox.options.length - 1; i++) {
+        class1stBox.options[i].style.display = 'none';
+      }
+      class2ndSelect.value = "";
+      class1stSelect.value = "";
+      var Option = document.createElement("option");
+      Option.value = "";
+      Option.innerText = "選択してください。";
+      class2ndSelect.appendChild(Option);
+      careerInput.value = "0";
+      career.readOnly =  true;
+    } else {
+      for (var i = 0; i < class1stBox.options.length - 1; i++) {
+        class1stBox.options[i].style.display = 'block';
+      }
+        class1stSelect.value = "";
+        class2ndSelect.innerText = "";
+        class2ndSelect.value = "";
+        careerInput.value = '';
+        var defaultOption = document.createElement("option");
+        defaultOption.value = "";
+        defaultOption.innerText = "選択してください。";
+        class2ndSelect.appendChild(defaultOption);
+        class2ndSelect.value = "";
+        career.readOnly =  false;
+    }
+}
+*/
+/* 修正後： */
 function SkillSelectChange(element) {
     class2ndSelect.replaceChildren();
 
@@ -147,7 +187,7 @@ function SkillSelectChange(element) {
 
     if (value === '1') {
         for (var i = 0; i < class1stBox.options.length - 1; i++) {
-            class1stBox.options[i].hidden= true; // 보이기
+            class1stBox.options[i].hidden= true; 
         }
         class2ndSelect.value = "";
         class1stSelect.value = "";
@@ -159,7 +199,7 @@ function SkillSelectChange(element) {
         career.readOnly = true;
     } else {
         for (var i = 0; i < class1stBox.options.length - 1; i++) {
-            class1stBox.options[i].hidden= false; // 보이기
+            class1stBox.options[i].hidden= false;
         }
         class1stSelect.value = "";
         class2ndSelect.innerText = "";
@@ -173,7 +213,7 @@ function SkillSelectChange(element) {
         career.readOnly = false;
     }
 }
-
+/* ここまで */
 
 function ChangeClass1st(element) {
     const class2ndSelect = document.getElementById("typeSelect");

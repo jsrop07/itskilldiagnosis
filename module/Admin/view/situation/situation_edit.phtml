@@ -247,7 +247,7 @@ $question_num = isset($diagnosisData['question_num']) ? $diagnosisData['question
                 <dt class="essential" id="class1stTitle">経験分野</dt>
 				
 				<dd>
-					<select class="form-select" name="class1st" id="class1stId" style="width:220px;"   onclick="ChangeClass1st(this)">
+					<select class="form-select" name="class1st" id="class1stId" style="width:220px;" onchange="ChangeClass1st(this)">
           <option value="" selected hidden>選択してください。</option>
             <option value="WEB" <?php echo($isClass1st1) ? "selected" : "" ;?>>WEB</option>
             <option value="IT基礎" <?php echo($isClass1st2) ? "selected" : "" ;?>>IT基礎</option>

@@ -185,16 +185,6 @@ class ApplicantController extends AbstractActionController
 		$this->RedirectToLogin();		  
 	  }
 
-	  if($submit_post=='cancel'){
-		if (isset($session->id)) {
-            $emailId = $session->id;
-            unset($emailId);
-            session_unset(); 
-			$this->RedirectToLogin();	
-        }
-	  }
-
-
 	  // Read applicant info
 	  $applicantExamTbl = $this->getServiceLocator()->get("ApplicantExamTable");
 	  $applicantInfo    = $applicantExamTbl->readById($emailId);
@@ -335,7 +325,6 @@ class ApplicantController extends AbstractActionController
 			$examRecordRecent =  $applicantExamTbl->readByApplicantIdx($applicantInfo);
 			$applicantExamTbl->deletePasswordByIdx($applicantInfo["idx"]);
 			$this->mailByApplicantExam($applicantInfo,$sqlSet,$managerArray,$examRecordIdx);
-			print_r($examRecordInfo['mail_delay']);
 			if($examRecordInfo['mail_delay'] == '0'){
 			$this->mailByAdminToApplicant($applicantInfo,$examRecordRecent,$caseText,$majorText,$managerArray);
 			}
@@ -345,6 +334,17 @@ class ApplicantController extends AbstractActionController
 			self.location.href='/applicant/examclear';
 			</script>
 			";	
+		  }
+		  
+		  if($submit_post=='cancel'){
+			if (isset($session->id)) {
+				$emailId = $session->id;
+				unset($emailId);
+				$applicantExamTbl->deletePasswordByIdx($applicantInfo["idx"]);
+        $applicantExamTbl->disqualificationByCancel($examRecordInfo['idx']);
+				session_unset(); 
+				$this->CancelToLogin();	
+			}
 		  }
 	  // Set variables to be passed to the layout
 	  $viewModel = new ViewModel($datas);
@@ -460,6 +460,15 @@ function mailByApplicantExam($applicantInfo,$sqlSet,$managerArray,$examRecordIdx
 		$this->layout("/applicant/examclear");
 	}
 
+	function CancelToLogin() {
+		echo "
+		<script>
+			alert('ログアウトされました。');
+			self.location.href='/applicant/login';
+		</script>
+		";
+		exit;
+	}
 
 	function RedirectToLogin() {
 		echo "

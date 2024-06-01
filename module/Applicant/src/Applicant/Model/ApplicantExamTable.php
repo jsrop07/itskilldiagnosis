@@ -126,11 +126,21 @@ class ApplicantExamTable
     $result = $this->adapter->query($sqlString, Adapter::QUERY_MODE_EXECUTE);
 
     return $result;   
-}
+  }
 
-public function readByManagerInfo()
-{
-  $qry = $this->sql->select("admin")->where(["pic" => "y"]);
-  return $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
-}
+  public function readByManagerInfo()
+  {
+    $qry = $this->sql->select("admin")->where(["pic" => "y"]);
+    return $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
+  }
+
+  public function disqualificationByCancel($idx)
+  {
+    $qry = new sql($this->adapter);
+    $update = $qry->update('record')->set(array('rank' => 'F'))->where(['idx' => $idx]);
+    $sqlString = $qry->getSqlStringForSqlObject($update);
+    $result = $this->adapter->query($sqlString, Adapter::QUERY_MODE_EXECUTE);
+
+    return $result;     
+  }
 }

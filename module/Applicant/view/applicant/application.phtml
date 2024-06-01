@@ -140,40 +140,40 @@ var certificatesInput = document.querySelector('input[name="certificates"]');
 var otherTextarea = document.querySelector('textarea[name="other"]');
 
 
-function SkillSelectChange(value) {
-    class2ndSelect.replaceChildren();
+// function SkillSelectChange(value) {
+//     class2ndSelect.replaceChildren();
 
-    form.skill.value = value;    
-    if (form.skill.value === '1') {
-      for (var i = 0; i < class1stBox.options.length - 1; i++) {
-        class1stBox.options[i].style.display = 'none';
-      }
-      class2ndSelect.value = "";
-      class1stSelect.value = "";
-      var Option = document.createElement("option");
-      Option.value = "";
-      Option.innerText = "選択してください。";
-      class2ndSelect.appendChild(Option);
-      careerInput.value = "0";
-      career.readOnly =  true;
-    } else {
-      for (var i = 0; i < class1stBox.options.length - 1; i++) {
-        class1stBox.options[i].style.display = 'block';
-      }
-        class1stSelect.value = "";
-        class2ndSelect.innerText = "";
-        class2ndSelect.value = "";
-        careerInput.value = '';
-        var defaultOption = document.createElement("option");
-        defaultOption.value = "";
-        defaultOption.innerText = "選択してください。";
-        class2ndSelect.appendChild(defaultOption);
-        class2ndSelect.value = "";
-        career.readOnly =  false;
-    }
-}
+//     form.skill.value = value;    
+//     if (form.skill.value === '1') {
+//       for (var i = 0; i < class1stBox.options.length - 1; i++) {
+//         class1stBox.options[i].style.display = 'none';
+//       }
+//       class2ndSelect.value = "";
+//       class1stSelect.value = "";
+//       var Option = document.createElement("option");
+//       Option.value = "";
+//       Option.innerText = "選択してください。";
+//       class2ndSelect.appendChild(Option);
+//       careerInput.value = "0";
+//       career.readOnly =  true;
+//     } else {
+//       for (var i = 0; i < class1stBox.options.length - 1; i++) {
+//         class1stBox.options[i].style.display = 'block';
+//       }
+//         class1stSelect.value = "";
+//         class2ndSelect.innerText = "";
+//         class2ndSelect.value = "";
+//         careerInput.value = '';
+//         var defaultOption = document.createElement("option");
+//         defaultOption.value = "";
+//         defaultOption.innerText = "選択してください。";
+//         class2ndSelect.appendChild(defaultOption);
+//         class2ndSelect.value = "";
+//         career.readOnly =  false;
+//     }
+// }
 
-</script>
+// </script>
 
 <!-- educationとclass1stのその他項目画面変化 -->
 <script>

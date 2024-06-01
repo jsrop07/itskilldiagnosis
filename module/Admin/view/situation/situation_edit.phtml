@@ -25,6 +25,14 @@ $isLevel0 = false;
 $isLevel1 = false;
 $isLevel2 = false;
 $isLevel3 = false;
+/* log
+	作成：丁錫圓
+	修正日：24/06/01
+*/
+$isMailNull = false;
+$isMail = false;
+// ここまで
+
 // gender
 if ($applicantArray["gender"] === NULL) {
     $isGenderNull = true;
@@ -111,7 +119,18 @@ if (isset($diagnosisData["level"]) && is_string($diagnosisData["level"])) {
   $isLevel2 = false;
   $isLevel3 = false;
 }
-
+/* log
+	作成：丁錫圓
+	修正日：24/06/01
+*/
+//mail Manual/Auto
+if ($recordArray["mail_delay"] === NULL) {
+  $isMailNull = true;
+}
+if ($recordArray["mail_delay"] !== NULL) {
+  $isMail = true;
+}
+// ここまで
 // editHTML show question_num
 $question_num = isset($diagnosisData['question_num']) ? $diagnosisData['question_num'] : null;
 ?>
@@ -356,13 +375,24 @@ $question_num = isset($diagnosisData['question_num']) ? $diagnosisData['question
 				</dd>
         <dt class="essential">メール転送</dt>
         <dd>
-          <select class="form-select" name="mail_delay" style="width:100px;" onchange="ChangeInputStyle(this)" >
-            <option value="<?php echo $recordArray['mail_delay']?>" hidden></option>
+        <!-- /* log
+          作成：丁錫圓
+          修正：丁錫圓
+          修正日：24/06/01
+        */ -->
+        <!-- /* 修正前： -->
+        <!-- <option value="<?php echo $recordArray['mail_delay']?>" hidden></option>
             <option value="" selected>手動</option>
-            <option value="0">自動</option>
-          </select>
-				</dd>
+            <option value="0">自動</option> -->
+          <!-- ここまで -->
 
+          <!-- /* 修正後： */ -->
+          <select class="form-select" name="mail_delay" style="width:100px;" onchange="ChangeInputStyle(this)" >
+            <option value="" <?php echo($isMailNull) ? "selected" : ""?>>手動</option>
+            <option value="0" <?php echo($isMail) ? "selected" : ""?>>自動</option>
+          </select>
+          <!-- /* ここまで */ -->
+				</dd>
         <dt class="essential">診断日</dt>
         <dd><input class="form-control" name="schedule" type="text" style="width:220px;" value="<?php echo $recordArray['date_schedule'] ? $recordArray['date_schedule'] : $dateSchedule ?>"></dd>
 

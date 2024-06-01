@@ -380,30 +380,26 @@ selectElements.forEach(function(selectElement) {
 
 <script>
 function ChangeClass1st(element) {
+    class2ndSelect.replaceChildren();
+    class2ndSelect.dataset.value = "";
 
-class2ndSelect.replaceChildren();
+    switch (element.value) {
+        <?php foreach ($optionDatas["class2nd"] as $value => $class2nd): ?>
+            case "<?php echo $optionDatas["class1st"][array_search($value, array_column($optionDatas["class1st"], 'idx'))]['text']; ?>":
+                var option = document.createElement("option");
+                option.hidden = true;
+                option.innerText = "選択してください。";
+                class2ndSelect.appendChild(option);
 
-switch (element.value) {
-  <?php foreach ($optionDatas["class2nd"] as $value => $class2nd): ?>
-    case "<?php echo $optionDatas["class1st"][array_search($value, array_column($optionDatas["class1st"], "idx"))]["text"]; ?>":
-      var option = document.createElement("option");
-      option.hidden = true;
-      option.innerText = "選択してください。";
-      class2ndSelect.appendChild(option);
-      <?php foreach ($class2nd as $data): ?>
-        var option = document.createElement("option");
-        option.value = <?php echo $data["idx"]; ?>;
-        option.innerText = "<?php echo $data["text"]; ?>";
-        class2ndSelect.appendChild(option);
-      <?php endforeach; ?>
-      break;
-      <?php endforeach; ?>
-      default:
-        var option = document.createElement("option");
-        option.value = 7;
-        option.innerText = "データがありません";
-        class2ndSelect.appendChild(option);
-        break;
-      }
+                <?php foreach ($class2nd as $data): ?>
+                    var option = document.createElement("option");
+                    option.value = "<?php echo $data['idx']; ?>";
+                    option.innerText = "<?php echo $data['text']; ?>";
+                    class2ndSelect.appendChild(option);
+                <?php endforeach; ?>
+                break;
+        <?php endforeach; ?>
+    }
 }
+
 </script>

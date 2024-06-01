@@ -71,7 +71,7 @@ $lineChange = "<br>";
       <?php endforeach; ?>
     <input type="hidden" id="answer_data" name="answer_data">
     <div class="button_box" style="margin-bottom: 32px; gap:30px">
-      <button  class="applicant_cancel" id="cancel" name="submit_post"  value="cancel" onclick="window.location.href='../applicant/login';">キャンセル</button>
+      <button  class="applicant_cancel" id="cancel" name="submit_post"  value="cancel" onclick="CancelConfirm()">キャンセル</button>
       <button class="exam_submit" id="stopBtn" style=" display:flex; align-items:center; text-align:center; border:none;"  data-bs-toggle="modal" data-bs-target="#staticBackdrop2">一時停止</button>
       <button type="button" class="exam_submit" id='nextId' name="submit_post"  value="btn_submit" onclick="showNextQuestion()" >次へ</button>
     </div>
@@ -137,7 +137,7 @@ $lineChange = "<br>";
 					<div id='timeLimit' style="text-align:center; margin-top:20px;"></div>
 					</div>
 					<div class="modal-footer flex-column border-top-0" style="margin-bottom:12px;">
-						<button type="button" id='lock_time' class="btn btn-lg  w-75 mx-0" data-bs-dismiss="modal" style="background: linear-gradient(111deg, #87D782 0%, #22BC8E 100%); color:white;">再開</button>
+						<button type="button" id='unlock_time' class="btn btn-lg  w-75 mx-0" data-bs-dismiss="modal" style="background: linear-gradient(111deg, #87D782 0%, #22BC8E 100%); color:white;">再開</button>
 					</div>
 					</div>
 				</div>
@@ -209,8 +209,14 @@ window.onload = function() {
 
 </script>
 
+<!-- 
+修正の時
 
-<script>
+作成：名前
+修正：名前
+修正日：24/06/01
+
+修正前：
   document.getElementById("startBtn").addEventListener("click", function() {
     var lock = 'n';
     var stopBtn = document.getElementById('stopBtn');
@@ -297,9 +303,106 @@ window.onload = function() {
     }
   });  
   });
+-->
 
+<!-- 修正後： -->
+<script>
+document.getElementById("startBtn").addEventListener("click", function() {
+  var lock = 'n';
+  var stopBtn = document.getElementById('stopBtn');
 
+  var timerDisplay = document.getElementById("timerDisplay");
+  
+  var examTime = <?php echo $time_limit; ?>; 
+  var stopTime = 10; 
+
+  var examTimeInSeconds = examTime * 60;
+  var stopTimeInSeconds = stopTime * 60;
+
+  var firstAlert = false;
+  var secondAlert = false;
+
+  var startTime = performance.now();
+  var pausedTime = 0;
+
+  function updateTimer() {
+    if (lock === 'n') {
+      var currentTime = performance.now(); 
+
+      var elapsed = Math.floor((currentTime - startTime - pausedTime) / 1000);
+      var remainingTime = examTimeInSeconds - elapsed;
+      var minutes = Math.floor(remainingTime / 60);
+      var seconds = remainingTime % 60;
+
+      timerDisplay.innerHTML = "残り時間: " + minutes + "分 " + seconds + "秒";
+
+      if (remainingTime <= 0) {
+        clearInterval(timer);
+        timerDisplay.innerHTML = "終";
+        timeoutExam();
+        document.querySelector('.timeout_submit').click();
+      } else if (remainingTime <= 600 && !firstAlert) {
+        timerDisplay.style.color = "orange";
+        firstAlert = true;
+      } else if (remainingTime <= 300 && !secondAlert) {
+        timerDisplay.style.color = "red";
+        secondAlert = true;
+      }
+    }
+  }
+
+  var timer = setInterval(updateTimer, 1000);
+  updateTimer();
+
+  var stopStartTime;
+  var stopTimer;
+  
+  document.getElementById("stopBtn").addEventListener("click", function(event) {
+    event.preventDefault();
+    if (lock === 'n') {
+      lock = 'y';
+      stopStartTime = performance.now();
+      stopBtn.disabled = true;
+      stopBtn.style.color = "gray";
+      PauseTimer();
+    }
+  });
+  PauseTimer();
+
+  function PauseTimer() {
+    stopTimer = setInterval(function() {
+      if (lock === 'y') {
+        var stopElapsed = Math.floor((performance.now() - stopStartTime) / 1000);
+        var stopRemainingTime = stopTimeInSeconds - stopElapsed;
+
+        var stopMinutes = Math.floor(stopRemainingTime / 60);
+        var stopSeconds = stopRemainingTime % 60;
+
+        document.getElementById("timeLimit").innerHTML = "残り時間: " + stopMinutes + "分 " + stopSeconds + "秒";
+
+        if (stopRemainingTime < 0) {
+          clearInterval(stopTimer);
+          pausedTime += (performance.now() - stopStartTime);
+          lock = 'n';
+          document.getElementById("unlock_time").click();
+
+          stopBtn.disabled = false;
+          stopBtn.style.color = "gray";
+        }
+      }
+    }, 1000);
+  }
+
+  document.getElementById("unlock_time").addEventListener("click", function() {
+      if (lock === 'y') {
+          lock = 'n';
+          pausedTime += (performance.now() - stopStartTime);
+      }
+  });
+});
 </script>
+<!-- ここまで -->
+
 <!-- <script>
 function notReload(event) {
     if ((event.ctrlKey && (event.keyCode === 78 || event.keyCode === 82)) || event.keyCode === 116) {
@@ -324,6 +427,14 @@ document.addEventListener('keydown', notReload);
 </script>
 
 <script>
+ function CancelConfirm(){
+  var submitConfirm=confirm("再度診断を受けることができませんが、キャンセルされますか？");
+    if (!submitConfirm){
+      event.preventDefault();
+      return false;
+    }
+    window.location.href='../applicant/login';
+ }
  function confirmExam() {
     var formData = new FormData(document.getElementById('myForm'));
     var radioIdsArray= [];
@@ -342,12 +453,9 @@ document.addEventListener('keydown', notReload);
     }
 
     var combinedAnswers = radioIdsArray.join(',');
-    console.log(combinedAnswers);
 
     document.getElementById('answer_data').value = combinedAnswers;
     
-
-      
     // var confirmData= confirmContent.innerHTML;
 }
 </script>
@@ -370,15 +478,12 @@ document.addEventListener('keydown', notReload);
     }
 
     var combinedAnswers = answersArray.join(',');
-    console.log(combinedAnswers);
 
     document.getElementById('answer_data').value = combinedAnswers;
   }
-
-
 </script>
 <!-- <script>
- function confirmExam() {
+function confirmExam() {
     var formData = new FormData(document.getElementById('myForm'));
     var radioIdsArray= [];
     var comment = document.getElementById('comment').value;
@@ -421,12 +526,9 @@ document.addEventListener('keydown', notReload);
     if (xhr.status == 200) {
         try {
             const result = JSON.parse(xhr.responseText);
-            // console.log(result);
             if (result === "wrong") {
-            console.log(result);
             return;
             }
-            console.log(result);
           } catch (e) {
             console.error("Failed to parse response", e);
             alert("サーバー応答の解析に失敗しました");

@@ -8,32 +8,98 @@
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 return array(
-    'router' => array(
-        'routes' => array(
-            'admin' => array(
-                'type' => 'Zend\Mvc\Router\Http\Segment',
-                'options' => array(
-                    'route'    => "/admin[/:action][/:cat][/:status][/:index]",
-                    'constraints' => array(),
-                    'defaults' => array(
-                        "controller" => "Admin",
-                        'action'     => 'index',
-                    ),
-                ),
-            ),
-            "user" => array(
-                'type' => 'Zend\Mvc\Router\Http\Segment',
-                'options' => array(
-                    'route'    => "/user[/:action][/:url]",
-                    'constraints' => array(),
-                    'defaults' => array(
-                        "controller" => "User",
-                        'action'     => 'index',
-                    ),
-                ),
-            ),
-        ),
-    ),
+	"router" => array(
+		"routes" => array(
+			"main" => array(
+				"type" => "Zend\Mvc\Router\Http\Segment",
+				"options" => array(
+					"route" => "/admin",
+					"constraints" => array(),
+					"defaults" => array(
+						"controller"	=> "Account",
+						"action"			=> "index",
+					),
+				),
+			),
+			"login" => array(
+				"type" => "Zend\Mvc\Router\Http\Segment",
+				"options" => array(
+					"route" => "/admin/login",
+					"constraints" => array(),
+					"defaults" => array(
+						"controller"	=> "Account",
+						"action"			=> "main",
+					),
+				),
+			),
+			"account" => array(
+				"type" => "Zend\Mvc\Router\Http\Segment",
+				"options" => array(
+					"route" => "/admin/account[/:action]",
+					"constraints" => array(),
+					"defaults" => array(
+						"controller"	=> "Account",
+						"action"			=> "index",
+					),
+				),
+			),
+			"question" => array(
+				"type" => "Zend\Mvc\Router\Http\Segment",
+				"options" => array(
+					"route" => "/admin/question[/:action][/:index]",
+					"constraints" => array(),
+					"defaults" => array(
+						"controller"	=> "Question",
+						"action"			=> "index",
+					),
+				),
+			),
+			"diagnosis" => array(
+				"type" => "Zend\Mvc\Router\Http\Segment",
+				"options" => array(
+					"route" => "/admin/diagnosis[/:action][/:index]",
+					"constraints" => array(),
+					"defaults" => array(
+						"controller"	=> "Diagnosis",
+						"action"			=> "index",
+					),
+				),
+			),
+			"situation" => array(
+				"type" => "Zend\Mvc\Router\Http\Segment",
+				"options" => array(
+					"route" => "/admin/situation[/:action][/:index]",
+					"constraints" => array(),
+					"defaults" => array(
+						"controller"	=> "Situation",
+						"action"			=> "index",
+					),
+				),
+			),
+			"tempsitu" => array(
+				"type" => "Zend\Mvc\Router\Http\Segment",
+				"options" => array(
+					"route" => "/admin/situ[/:action][/:index]",
+					"constraints" => array(),
+					"defaults" => array(
+						"controller"	=> "Situ",
+						"action"			=> "index",
+					),
+				),
+			),
+			"manager" => array(
+				"type" => "Zend\Mvc\Router\Http\Segment",
+				"options" => array(
+					"route" => "/admin/manager[/:action][/:index]",
+					"constraints" => array(),
+					"defaults" => array(
+						"controller"	=> "Manager",
+						"action"			=> "index",
+					),
+				),
+			),
+		),
+	),
     'service_manager' => array(
         'abstract_factories' => array(
             'Zend\Cache\Service\StorageCacheAbstractServiceFactory',
@@ -53,12 +119,16 @@ return array(
             ),
         ),
     ),
-    'controllers' => array(
-        'invokables' => array(
-            "Admin" => "Test\Controller\AdminController",
-            "User" => "Test\Controller\UserController",
-        ),
-    ),
+	"controllers" => array(
+		"invokables" => array(
+			"Account"		=> "Admin\Controller\AccountController",
+			"Question"	=> "Admin\Controller\QuestionController",
+			"Diagnosis"	=> "Admin\Controller\DiagnosisController",
+			"Situation"	=> "Admin\Controller\SituationController",
+			"Situ"			=> "Admin\Controller\SituController",
+			"Manager"		=> "Admin\Controller\ManagerController",
+		),
+	),
     'view_manager' => array(
         'display_not_found_reason' => true,
         'display_exceptions'       => true,
@@ -66,11 +136,13 @@ return array(
         'not_found_template'       => 'error/404',
         'exception_template'       => 'error/index',
         'template_map' => array(
+					"layout/default"						=> __DIR__ . "/../view/layout/layout_default.phtml",
+					"breadcrumb"						=> __DIR__ . "/../view/layout/breadcrumb.phtml",
+					"pagination"						=> __DIR__ . "/../view/layout/pagination.phtml",
+
 					"admin"									=> __DIR__ . "/../view/layout/admin_layout.phtml",
 					"layout/user"						=> __DIR__ . "/../view/layout/user/layout.phtml",
 					"layout/user/login"			=> __DIR__ . "/../view/layout/user/login.phtml",
-					"breadcrumb"						=> __DIR__ . "/../view/layout/breadcrumb.phtml",
-					"pagination"						=> __DIR__ . "/../view/layout/pagination.phtml",
             'layout/layout'           => __DIR__ . '/../view/layout/layout.phtml',
             'layout/mylayout'           => __DIR__ . '/../view/layout/mylayout.phtml',
             "layout/exam_layout" => __DIR__ . "/../view/layout/exam_layout.phtml",

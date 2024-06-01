@@ -1,0 +1,416 @@
+<?php
+	$caseTexts = ["新卒", "中途"];
+  $levelTexts = ["無級", "初級", "中級", "高級"];
+
+	if (!isset($_SESSION)) { session_start(); }
+	$url = explode("?", $_SERVER["REQUEST_URI"]);
+	$route = $url[0];
+	if (isset($url[1])) {
+		$queryDatas = explode("&", $url[1]);
+	}
+
+  /*
+    作成：朴昰成
+    修正：朴昰成
+    修正日：24/05/28
+  */
+
+  /* 修正前：
+    $selectDatas["apply"] = "新規";
+    $selectDatas["request"] = "診断";
+    $selectDatas["execute"] = "終了";
+    $selectDatas["case-0"] = "新卒";
+    $selectDatas["case-1"] = "中途";
+    $selectDatas["education-高卒"] = "高卒";
+    $selectDatas["education-専門卒"] = "専門卒";
+    $selectDatas["education-大学卒"] = "大学卒";
+    $selectDatas["education-大学院卒"] = "大学院卒";
+    $selectDatas["rank-A"] = "等級A";
+    $selectDatas["rank-B"] = "等級B";
+    $selectDatas["rank-C"] = "等級C";
+    $selectDatas["rank-D"] = "等級D";
+  */
+
+  /* 修正後： */
+  $selectDatas = array(
+    "apply" => "新規",
+    "request" => "診断",
+    "execute" => "終了",
+    "case-0" => "新卒",
+    "case-1" => "中途",
+    "education-高卒" => "高卒", 
+    "education-専門卒" => "専門卒",
+    "education-大学卒" => "大学卒",
+    "education-大学院卒" => "大学院卒",
+    "rank-A" => "等級A",
+    "rank-B" => "等級B",
+    "rank-C" => "等級C",
+    "rank-D" => "等級D"
+  );
+  /* ここまで */
+
+	$firstNo = $this->noticelist->getTotalItemCount();
+	$firstNo -= (($this->noticelist->getCurrentPageNumber() - 1) * $this->noticelist->getitemCountPerPage());
+
+	$isPick = false;
+	if (isset($searchDatas["pick"])) {
+		$isPick = true;
+	}
+?>
+<?php echo $this->partial("breadcrumb", ["datas" => $breadcrumbData]); ?>
+
+<style type="text/css">
+	.header {
+		height: 110px;
+		display: flex;
+		justify-content: space-between;
+	}
+
+	.info-num {
+		height: 100%;
+		display: flex;
+		justify-content: space-between ;
+	}
+
+	table.emegra tr {
+		min-width: 1200px;
+		grid-template-columns: 30px repeat(13, 1fr) 30px;
+	}
+	table.emegra tr.index {
+		padding-top: 8px;
+		padding-bottom: 4px;
+		grid-template-areas:
+		"no  status  applicant_info applicant_info        applicant_info applicant_info applicant_info  applicant_info  dianosis_detail dianosis_detail dianosis_detail  dianosis_status  dianosis_status  dianosis_status check "
+		"no  status  applicant_date application_category  name           education      develop         career          request_date    level           test             execute_date     get_point        grade           check";
+	}
+
+	button.emegra.search.confirm {
+		height: 30px;
+		width: 100px;
+		
+		font-size: 15px;
+		font-weight: 400;
+	}
+
+	table.emegra tr.index > th {
+		padding: 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.pagination-place, .button-place {
+		margin-top: 10px;
+		display: flex;
+		justify-content: center;
+	}
+	.button-place { justify-content: space-between; }
+</style>
+
+<content class="header">
+	<div class="title">ITスキル診断状況管理</div>
+</content>
+
+<content class="main">
+	<div style="width: 100%; display:grid; align-items:end; text-align: center;">
+		<div class="info-num">
+			<div style="display: flex;">
+				<div class="count">新規申込<div class="num"><?php echo $totalApply; ?></div>名</div>
+				<div class="count" style="margin-left:50px;">診断中<div class="num"><?php echo $totalRequest; ?></div>名</div>
+			</div>
+			<div class="count">診断状況<div class="num"><?php echo $totalData; ?></div>名</div>
+		</div>
+
+		<div style="display: flex; justify-content: right;padding-top: 24px;">
+			<input class="form-control" type="text" id="search-name" style="width:15%; height:30px;margin-right:10px;" placeholder="診断者名" value="<?php echo (isset($searchDatas["name"])) ? $searchDatas["name"] : ""; ?>">
+			<button class="emegra search confirm" style="margin-right: 8px;" onclick="Search()">検索</button>
+			<div id="div-search" style="width: 150px;">
+				<select class="form-select form-select-sm" id="search-align" style="width: 150px; margin-right: 8px;" onchange="Select(this.value)">
+					<option value="">全て</option>
+
+					<?php foreach ($selectDatas as $value => $text): ?>
+						<option value="<?= $value; ?>"<?php echo ($isPick && $searchDatas["pick"] == $value) ? " selected" : ""; ?>><?= $text; ?></option>
+					<?php endforeach; ?>
+				</select>
+			</div>
+		</div>
+	</div>
+
+	<?php if (empty($recordDatas)): ?>
+		<div class="table-empty" style="margin-top: 16px;">
+			データがありません。
+		</div>
+	<?php else: ?>
+		<table class="emegra" style="margin-top: 8px;">
+			<thead>
+				<tr class="index">
+					<th style="grid-area: no">No</th>
+					<th style="grid-area: status">ステータス</th>
+					<th style="grid-area: applicant_info">IT診断者情報</th>
+					<th style="grid-area: dianosis_detail ">診断問項詳細</th>
+					<th style="grid-area: dianosis_status  ">診断状況</th>
+					<th style="grid-area: check;"><input id="checkAll" type="checkbox" onclick="Checking(this);" style="cursor: pointer;"></th>
+
+					<th style="grid-area: applicant_date">申込日</th>
+					<th style="grid-area: application_category">応募区分</th>
+					<th style="grid-area: name">名前</th>
+					<th style="grid-area: education">学歴</th>
+					<th style="grid-area: develop">経験分野</th>
+					<th style="grid-area: career">経験年数</th>
+
+					<th style="grid-area: request_date">診断依頼</th>
+					<th style="grid-area: level">レベル</th>
+					<th style="grid-area: test">診断問題</th>
+
+					<th style="grid-area: execute_date">試験日</th>
+					<th style="grid-area: get_point">得点</th>
+					<th style="grid-area: grade ">等級</th>
+				</tr>
+			</thead>
+			<tbody>
+				<?php foreach ($recordDatas as $index => $data): ?>
+          <!-- Debug: color change do not apply
+            作成：朴昰成
+            修正：朴昰成
+            修正日：24/05/24
+          -->
+
+          <!-- 修正前： <?php /* ?>
+            <tr <?php echo ($data["diagnosis_code"] == null) ? "style='background: lightcyan;'" : ""; ?>>
+          <?php */ ?> -->
+
+          <!-- 修正後： -->
+          <tr <?php echo ($data["diagnosis_date"] == null) ? "style='background: lightcyan;'" : ""; ?>>
+          <!-- ここまで -->
+						<td><?php echo $firstNo - $index; ?></td>
+						<td><?php echo $data["status"]; ?></td>
+
+						<td><?php echo date("y.m.d", strtotime($data["apply_date"])); ?></td>
+						<td><?php echo $caseTexts[$data["case"]]; ?></td>
+						<td class="link" onclick="self.location.href='./<?php echo ($data['diagnosis_date'] == null) ? 'edit' : 'detail'; ?>/<?php echo $data['idx']; ?>';" style="text-align: center; color: blue"><?php echo $data["name"]; ?></td>
+						<td><?php echo $data["education"]; ?></td>
+						<td><?php echo ($data["major"] != null) ? $data["major"] : "無"; ?></td>
+						<td><?php echo ($data["career"] != null) ? $data["career"] . "年" : "無"; ?></td>
+
+						<td><?php echo ($data["request_date"] != null) ? date("y.m.d", strtotime($data["request_date"])) : "未依頼"; ?></td>
+						<td><?php echo (isset($data["level"])) ? $levelTexts[$data["level"]] : "未設定"; ?></td>
+						<td><?php echo ($data["diagnosis_code"] != null) ? $data["diagnosis_code"] : "未設定"; ?></td>
+
+						<?php if ($data["execute_date"] != null): ?>
+							<td><?php echo date("y.m.d", strtotime($data["execute_date"])); ?></td>
+							<td><?php echo $data["get_point"]; ?>/100</td>
+							<td><?php echo $data["rank"]; ?></td>
+						<?php else: ?>
+							<td>未実行</td>
+							<td>未実行</td>
+							<td>未実行</td>
+						<?php endif; ?>
+
+            <!-- edit disabled condition
+              作成：朴昰成
+              修正：朴昰成
+              修正日：24/05/29
+            -->
+
+            <!-- 修正前： <?php /* ?>
+              <td><input name="checkIdx" type="checkbox" value="<?php echo $data["idx"]; ?>" onclick="Checking(this);" style="cursor: pointer;"<?php echo ($data["request_date"] == null) ? "" : " disabled"; ?>></td>
+            <?php */ ?> -->
+
+            <!-- 修正後： -->
+            <?php
+              $isAbleCheck = false;
+              if ($data["diagnosis_date"] != null && $data["request_date"] == null) { $isAbleCheck = true; }
+              if ($data["rank"] != null && $data["date_mail"] == null) { $isAbleCheck = true; }
+            ?>
+            <td><input name="checkIdx" type="checkbox" value="<?php echo $data["idx"]; ?>" onclick="Checking(this);" style="cursor: pointer;"<?php echo ($isAbleCheck) ? "" : " disabled"; ?>></td>
+            <!-- ここまで -->
+					</tr>
+				<?php endforeach; ?>
+			</tbody>
+		</table>
+	<?php endif; ?>
+
+<div class="pagination-place" style="margin-top: 10px;">
+	<?php echo $this->paginationControl($this->noticelist, "sliding", array("pagination2", "Notice"), array("url" => "")); ?>
+</div>
+
+<div class="button-place" style="margin-top: 10px; justify-content:space-between;">
+	<div></div>
+	
+	<div>
+		<button class="emegra" style="margin-right:10px;" onclick="SendMail()">メール送信</button>
+		<button class="emegra" style="width:150px; margin-right:10px;" onclick="Request()">ITスキル診断依頼</button>
+		<button class="emegra" onclick="self.window.location='./input'">新規登録</button>
+		</div>	
+	</div>
+</content>
+
+<script type="text/javascript">
+	const seachName = document.getElementById("search-name");
+	const seachAlign = document.getElementById("search-align");
+	const check_all = document.getElementById("checkAll");
+	const check_idxs = document.getElementsByName("checkIdx");
+
+	function Checking(element) {
+		if (element == check_all) {
+			if (element.checked) {
+				check_idxs.forEach(e => {
+					if (!e.disabled) { e.checked = true; }
+				});
+			}
+			else {
+				check_idxs.forEach(e => { e.checked = false; });
+			}
+		}
+
+		if (element != check_all) {
+			let allChecked = true;
+			for (let i = 0; i < check_idxs.length; i++) {
+				if (check_idxs[i].checked == false) {
+					if (check_idxs[i].disabled == true) { continue; }
+					allChecked = false;
+					break;
+				}
+			}
+
+			check_all.checked = allChecked;
+		}
+	}
+
+	function Select(value) {
+		<?php
+			$newQuery = "?";
+
+			if (!empty($queryDatas)) {
+				foreach ($queryDatas as $data) {
+					if (explode("=", $data)[0] == "page") { continue; }
+					if (explode("=", $data)[0] == "pick") { continue; }
+
+					$newQuery .= $data . "&";
+				}
+			}
+
+			$url = $route . $newQuery;
+		?>
+
+		let url = "<?php echo $url; ?>";
+
+		if (value == "") { url = url.slice(0, -1); }
+		else { url += "pick=" + value; }
+		self.window.location = url;
+	}
+	function Search(value) {
+		<?php
+			$newQuery = "?";
+
+			if (!empty($queryDatas)) {
+				foreach ($queryDatas as $data) {
+					if (explode("=", $data)[0] == "page") { continue; }
+					if (explode("=", $data)[0] == "name") { continue; }
+
+					$newQuery .= $data . "&";
+				}
+			}
+
+			$url = $route . $newQuery;
+		?>
+
+		let url = "<?php echo $url; ?>";
+
+		if (seachName.value.trim() == "") { url = url.slice(0, -1); }
+		else { url += "name=" + seachName.value; }
+		self.window.location = url;
+	}
+
+	function Request() {
+		idxs = [];
+		isChecked = false;
+		for (let i = 0; i < check_idxs.length; i++) {
+			if (check_idxs[i].checked == true) {
+				isChecked = true;
+
+				idxs.push(check_idxs[i].value);
+			}
+		}
+
+		if (!isChecked) {
+			alert("依頼するデータを選んでください。");
+			return false;
+		}
+		idxs = idxs.join(",");
+
+		if (confirm("依頼しますか？") === false) { return false; }
+
+		const postForm = new FormData();
+		postForm.append("idxs", idxs);
+		const xhr = new XMLHttpRequest();
+		xhr.open("POST", "./request", true);
+		xhr.send(postForm);
+		xhr.onload = () => {
+			if (xhr.status == 200) {
+				const result = xhr.responseText;
+
+				if (result === "success") {
+					alert("依頼しました。");
+					location.reload(true);
+				}
+				else {
+					alert("error");
+					console.log(result);
+				}
+			}
+		}
+	}
+  /*
+    作成：朴昰成
+    作成日：24/05/29
+  */
+
+  function SendMail() {
+		idxs = [];
+		isChecked = false;
+		for (let i = 0; i < check_idxs.length; i++) {
+			if (check_idxs[i].checked == true) {
+				isChecked = true;
+
+				idxs.push(check_idxs[i].value);
+			}
+		}
+
+		if (!isChecked) {
+			alert("送信するデータを選んでください。");
+			return false;
+		}
+		idxs = idxs.join(",");
+
+    if (confirm("メールを送信しますか？") === false) { return false; }
+
+    const postForm = new FormData();
+    postForm.append("idxs", idxs);
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", "./mail", true);
+    xhr.send(postForm);
+    xhr.onload = () => {
+      if (xhr.status == 200) {
+        const result = xhr.responseText;
+
+        if (result === "success") {
+          alert("送信しました。");
+          location.reload(true);
+        }
+        else {
+          try {
+            let idxDatas = JSON.parse(result);
+            alert("送信てきないデータがあります。");
+            return false;
+          } catch (e) {
+            alert("error");
+            console.log(result);
+            return false;
+          }
+        }
+      }
+    }
+  }
+  /* ここまで */
+</script>

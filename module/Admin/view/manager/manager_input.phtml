@@ -1,0 +1,113 @@
+<?php
+	$levelTexts = ["権限なし", "承認者"];
+
+	$picTexts["n"] = "権限なし";
+	$picTexts["y"] = "担当者";
+	
+	if (!isset($_SESSION)) { session_start(); }
+
+	$isReturn = false;
+	if (isset($adminData)) { $isReturn = true; }
+?>
+
+<?php echo $this->partial("breadcrumb", ["datas" => $breadcrumbData]); ?>
+
+<h1 class="title"><?php echo $title; ?></h1>
+
+<form id="form" method="post" action="./confirm">
+	<style type="text/css">
+		option { color: black; }
+		input::placeholder { font-style: italic; }
+	</style>
+
+	<div class="emegra card">
+		<div class="card-header">管理者情報</div>
+
+		<div class="card-body">
+			<style type="text/css">
+				dl.emegra.setting { grid-template-columns: 140px 1fr; }
+			</style>
+			<dl class="emegra setting">
+				<dt>ログインID</dt>
+				<dd><input type="email" class="form-control" name="id" placeholder="IDを入力してください" value="<?php echo ($isReturn) ? $adminData["id"] : ""; ?>"/></dd>
+		
+				<dt>パスワード</dt>
+				<dd><input class="form-control" name="password" placeholder="パスワードを入力してください" value="<?php echo ($isReturn) ? $adminData["password"] : ""; ?>"/></dd>
+				
+				<dt>名前</dt>
+				<dd><input class="form-control" name="name" placeholder="名前を入力してください" value="<?php echo ($isReturn) ? $adminData["name"] : ""; ?>"/></dd>
+				
+				<dt>権限</dt>
+				<dd>
+					<select class="form-select" name="level" style="width: 150px;">
+						<?php foreach ($levelTexts as $idx => $text): ?>
+							<option value="<?= $idx; ?>"<?php echo ($isReturn && $adminData["level"] == $idx) ? " selected" : ""; ?>><?= $text; ?></option>
+						<?php endforeach; ?>
+					</select>
+				</dd>
+				
+				<dt>担当者</dt>
+				<dd>
+					<select class="form-select" name="pic" style="width: 150px;" onchange="ActiveSmtp(this.value);">
+						<?php foreach ($picTexts as $key => $text): ?>
+							<option value="<?= $key; ?>"<?php echo ($isReturn && $adminData["pic"] == $key) ? " selected" : ""; ?>><?= $text; ?></option>
+						<?php endforeach; ?>
+					</select>
+				</dd>
+				
+				<dt>SMTP パスワード</dt>
+				<dd><input class="form-control" name="smtp_password" id="smtp" placeholder="SMTPを入力してください" <?php echo ($isReturn && isset($adminData["smtp_password"])) ? "" : "disabled"; ?> value="<?php echo ($isReturn && isset($adminData["smtp_password"])) ? $adminData["smtp_password"] : ""; ?>"/></dd>
+			</dl>
+		</div>
+	</div>
+</form>
+
+<div class="btn-place" style="margin-top: 32px;">
+	<button class="emegra cancel" onclick="self.location.href='./list';">戻る</button>
+	<button class="emegra" onclick="Regist();">登録</button>
+</div>
+
+<script type="text/javascript">
+	const smtp = document.getElementById("smtp");
+	const form = document.getElementById("form");
+	const pattern = /^[A-Za-z0-9_\.\-]+@[A-Za-z0-9\-]+\.[A-za-z0-9\-]+/;
+
+	function ActiveSmtp(value) {
+		if (value == "y") { smtp.disabled = false; }
+		else { smtp.disabled = true; }
+	}
+
+	function Regist() {
+		if (form.id.value == "") {
+			alert("IDを入力してください");
+			setTimeout("form.id.focus()", 100);
+			return false;
+		}
+		
+		if (pattern.test(form.id.value) === false) {
+			alert("IDを確認してください");
+			setTimeout("form.id.focus()", 100);
+			return false;
+		}
+		
+		if (form.password.value == "") {
+			alert("パスワードを入力してください");
+			setTimeout("form.password.focus()", 100);
+			return false;
+		}
+		
+		if (form.name.value == "") {
+			alert("名前を入力してください");
+			setTimeout("form.name.focus()", 100);
+			return false;
+		}
+		
+		if (smtp.disabled == false && smtp.value == "") {
+			alert("SMTPを入力してください");
+			setTimeout("smtp.focus()", 100);
+			return false;
+		}
+
+		form.submit();
+	}
+</script>

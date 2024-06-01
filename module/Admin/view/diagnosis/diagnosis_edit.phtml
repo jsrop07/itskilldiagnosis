@@ -1,0 +1,390 @@
+<?php
+	if (!isset($_SESSION)) { session_start(); }
+
+	$isReturn = true;
+?>
+
+<?php echo $this->partial("breadcrumb", ["datas" => $breadcrumbData]); ?>
+
+<h1 class="title">診断書修正</h1>
+
+<form id="form" method="post" action="./confirm">
+	<input name="question_idxs" value='<?php echo $diagnosisData["question_idxs"]; ?>' hidden/>
+
+	<style type="text/css">
+		option { color: black; }
+		input::placeholder { font-style: italic; }
+		select[data-value=""] {
+			font-style: italic;
+			color: grey;
+		}
+		select option { font-style: normal; }
+	</style>
+
+	<div class="emegra card">
+		<div class="card-header">設定</div>
+
+		<div class="card-body">
+			<style type="text/css">
+				dl.emegra.setting { grid-template-columns: 140px 1fr; }
+			</style>
+			<dl class="emegra setting">
+				<dt>職別コード</dt>
+				<dd><input class="form-control form-control-sm" name="code" style="width: 150px;" readonly value="<?php $diagnosisData["code"]; ?>"/></dd>
+
+				<dt class="essential">大分類</dt>
+				<dd>
+					<select class="form-select" name="class1st" data-value="<?php echo $diagnosisData["class1st"]; ?>" onchange="this.dataset.value = this.value" style="width: 150px;">
+						<option value="" hidden>選択</option>
+						<?php foreach($optionDatas["class1st"] as $data): ?>
+							<option value="<?php echo $data["idx"]; ?>"<?php echo ($isReturn && $diagnosisData["class1st"] == $data["idx"]) ? " selected" : ""; ?>>
+								<?php echo $data["text"]; ?>
+							</option>
+						<?php endforeach; ?>
+						<option value="1">dd</option>
+					</select>
+				</dd>
+
+				<dt class="essential">小分類</dt>
+				<dd>
+					<select class="form-select" name="class2nd" onchange="ChangeInputStyle(this)" style="width: 150px;<?php echo ($isReturn) ? "" : InitStyle(); ?>">
+						<option value="" hidden>選択</option>
+						<?php foreach($optionDatas["class2nd"] as $idx => $data): ?>
+							<option value="<?php echo $data["idx"]; ?>"<?php echo ($isReturn && $diagnosisData["class2nd"] == $data["idx"]) ? " selected" : ""; ?>>
+								<?php echo $data["text"]; ?>
+							</option>
+						<?php endforeach; ?>
+					</select>
+				</dd>
+
+				<dt class="essential">レベル</dt>
+				<dd>
+					<select class="form-select" name="level" onchange="ChangeInputStyle(this)" style="width: 100px;<?php echo ($isReturn) ? "" : InitStyle(); ?>">
+						<option value="" hidden>選択</option>
+						<?php foreach($optionDatas["level"] as $data): ?>
+							<option value="<?php echo $data["idx"]; ?>"<?php echo ($isReturn && $diagnosisData["level"] == $data["idx"]) ? " selected" : ""; ?>>
+								<?php echo $data["text"]; ?>
+							</option>
+						<?php endforeach; ?>
+					</select>
+				</dd>	
+
+				<dt class="essential">タイトル</dt>
+				<dd><input class="form-control" name="title" type="text" placeholder="タイトルを入力してください" value="<?php echo ($isReturn) ? $diagnosisData["title"] : ""; ?>"/></dd>
+			</dl>
+		</div>
+	</div>
+
+	<div class="emegra card" style="margin-top: 32px;">
+		<div class="card-header">問題</div>
+
+		<div class="card-body">
+			<style type="text/css">
+				dl.emegra.question { grid-template-columns: 140px 1fr; }
+			</style>
+			<dl class="emegra question">
+				<dt class="essential">問項数</dt>
+				<dd><input type="number" class="form-control" name="question_num" style="width: 80px;" value="<?php echo ($isReturn) ? $diagnosisData["question_num"] : "35"; ?>"/>項目</dd>
+
+				<dt class="essential">診断時間</dt>
+				<dd><input type="number" class="form-control" name="time_limit" style="width: 80px;" value="<?php echo ($isReturn) ? $diagnosisData["time_limit"] : "120"; ?>"/>分</dd>
+
+				<dt class="essential" id="correct-title">問項一覧</dt>
+				<div style="width: 100%; display: flex;">
+					<style type="text/css">
+						table.emegra tr { grid-template-columns: 50px 1fr 60px 50px; }
+						table.emegra th, table.emegra td { padding: 5px 0 !important; }
+					</style>
+					<table class="emegra">
+						<thead>
+							<tr>
+								<th>No</th>
+								<th>問項タイトル</th>
+								<th>タイプ</th>
+								<th>点数</th>
+							</tr>
+						</thead>
+						<tbody id="tbody-list">
+							<?php if ($isReturn): ?>
+								<?php foreach ($questionDatas as $index => $data): ?>
+									<tr>
+										<td><?= $index + 1; ?></td>
+										<td style="text-align: left" data-bs-toggle="popover" data-bs-placement="bottom" data-bs-title="<?php echo $data->question; ?>" data-bs-content=""><div><?php echo $data->title; ?></div></td>
+										<td><?php echo $data->type; ?></td>
+										<td><?php echo $data->point; ?></td>
+									</tr>
+								<?php endforeach; ?>
+								<tr>
+									<td style="grid-column: 1 / 4;"></td>
+									<td><?php echo $diagnosisData["totalPoint"]; ?>点</td>
+								</tr>
+							<?php else: ?>
+								<tr>
+									<td style="grid-column: 1 / 5;">設定で大分類、小分類、レベルを選択し、左側のボタンを押してください。</td>
+								</tr>
+							<?php endif; ?>
+						</tbody>
+					</table>
+					<button type="button" class="emegra" onclick="CreateList()" style="margin-left: 8px;">問題作成</button>
+				</div>
+			</dl>
+		</div>
+	</div>
+
+	<div class="emegra card" style="margin-top: 32px;">
+		<div class="card-header">情報</div>
+
+		<div class="card-body">
+			<style type="text/css">
+				table.evaluation {
+					width: 100%;
+					text-align: center;
+				}
+				table.evaluation tr {
+					display: grid;
+					grid-template-columns: 100px 150px 150px 1fr;
+					gap: 10px 8px;
+				}
+				table.evaluation td {
+					padding: 4px 0;
+					display: flex;
+					align-items: center;
+					justify-content: center;
+				}
+			</style>
+			<table class="evaluation">
+				<thead>
+					<tr>
+						<th>評価等級</th>
+						<th>評価点数</th>
+						<th>評価</th>
+						<th>評価コメント</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>A</td>
+						<td style="display: flex; justify-content:space-between">
+							<input class="form-control form-control-sm" name="point1" style="width: 50px;" oninput="ChangePoint(this)" value="<?php echo ($isReturn) ? $diagnosisData["point1"] : "91"; ?>"/>
+							~
+							<input class="form-control form-control-sm" style="width: 50px;" readonly value="100"/>
+						</td>
+						<td><input class="form-control form-control-sm" name="text1" value="<?php echo ($isReturn) ? $diagnosisData["text1"] : ""; ?>"/></td>
+						<td><input class="form-control form-control-sm" name="comment1" value="<?php echo ($isReturn) ? $diagnosisData["comment1"] : ""; ?>"/></td>
+					</tr>
+					<tr>
+						<td>B</td>
+						<td style="display: flex; justify-content:space-between">
+							<input class="form-control form-control-sm" name="point2" style="width: 50px;" oninput="ChangePoint(this)" value="<?php echo ($isReturn) ? $diagnosisData["point2"] : "78"; ?>"/>
+							~
+							<input class="form-control form-control-sm" id="point1Child" readonly style="width: 50px;" value="<?php echo ($isReturn) ? $diagnosisData["point1"] - 1 : "90"; ?>"/>
+						</td>
+						<td><input class="form-control form-control-sm" name="text2" value="<?php echo ($isReturn) ? $diagnosisData["text2"] : ""; ?>"/></td>
+						<td><input class="form-control form-control-sm" name="comment2" value="<?php echo ($isReturn) ? $diagnosisData["comment2"] : ""; ?>"/></td>
+					</tr>
+					<tr>
+						<td>C</td>
+						<td style="display: flex; justify-content:space-between">
+							<input class="form-control form-control-sm" name="point3" style="width: 50px;" oninput="ChangePoint(this)" value="<?php echo ($isReturn) ? $diagnosisData["point3"] : "60"; ?>"/>
+							~
+							<input class="form-control form-control-sm" id="point2Child" readonly style="width: 50px;"  value="<?php echo ($isReturn) ? $diagnosisData["point2"] - 1 : "77"; ?>"/>
+						</td>
+						<td><input class="form-control form-control-sm" name="text3" value="<?php echo ($isReturn) ? $diagnosisData["text3"] : ""; ?>"/></td>
+						<td><input class="form-control form-control-sm" name="comment3" value="<?php echo ($isReturn) ? $diagnosisData["comment3"] : ""; ?>"/></td>
+					</tr>
+					<tr>
+						<td>D</td>
+						<td style="display: flex; justify-content:space-between">
+							<input class="form-control form-control-sm" name="point4" readonly style="width: 50px;" value="0"/>
+							~
+							<input class="form-control form-control-sm" id="point3Child" readonly style="width: 50px;"  value="<?php echo ($isReturn) ? $diagnosisData["point3"] - 1 : "59"; ?>"/>
+						</td>
+						<td><input class="form-control form-control-sm" name="text4" value="<?php echo ($isReturn) ? $diagnosisData["text4"] : ""; ?>"/></td>
+						<td><input class="form-control form-control-sm" name="comment4" value="<?php echo ($isReturn) ? $diagnosisData["comment4"] : ""; ?>"/></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</form>
+
+<div class="btn-place" style="margin-top: 32px;">
+	<button class="emegra cancel" onclick="self.location.href='./list'">戻る</button>
+	<button class="emegra" onclick="Regist();">確認画面へ</button>
+</div>
+
+<script type="text/javascript">
+	const numTexts = ["①", "②", "③", "④", "⑤"];
+
+	const listBody = document.getElementById("tbody-list");
+
+	const form = document.getElementById("form");
+
+	let answerCount = 0;
+	let datetime = "";
+
+	window.onload = function() {
+		const now = new Date();
+		datetime = now.toISOString().replace("T", " ").substring(0, 19);
+	}
+
+	function ChangeInputStyle(element) {
+		element.style.fontStyle = "normal";
+		element.style.color = "black";
+	}
+
+	function CreateList(element) {
+		if (form.class1st.value == "") {
+			RequestSelect(form.class1st, "大分類");
+			return false;
+		}
+
+		if (form.class2nd.value == "") {
+			RequestSelect(form.class2nd, "小分類");
+			return false;
+		}
+
+		if (form.level.value == "") {
+			RequestSelect(form.level, "レベル");
+			return false;
+		}
+
+		const postForm = new FormData();
+		postForm.append("class1st", form.class1st.value);
+		postForm.append("class2nd", form.class2nd.value);
+		postForm.append("level", form.level.value);
+		postForm.append("question_num", form.question_num.value);
+		postForm.append("time_limit", form.time_limit.value);
+
+		const xhr = new XMLHttpRequest();
+		xhr.open("POST", "./read", true);
+		xhr.send(postForm);
+
+		let questionDatas = "";
+		xhr.onload = () => {
+			if (xhr.status == 200) {
+				const result = xhr.responseText;
+				console.log(result);
+				
+				// Check is json
+				try {
+					questionDatas = JSON.parse(result);
+				} catch (e) {
+					alert("error");
+					console.log(result);
+					return false;
+				}
+
+				listBody.replaceChildren();
+				let point = 0;
+				let questionTdxs = "";
+				for (let i = 0; i < questionDatas.length; i++) {
+					let tr = document.createElement("tr");
+
+					let numTd = document.createElement("td");
+					numTd.innerHTML = Number(i) + 1;
+					tr.appendChild(numTd);
+
+					let titleTd = document.createElement("td");
+					titleTd.style.textAlign = "start";
+					titleTd.setAttribute("data-bs-toggle", "popover");
+					titleTd.setAttribute("data-bs-placement", "bottom");
+					titleTd.setAttribute("data-bs-title", questionDatas[i]["question"]);
+					titleTd.setAttribute("data-bs-content", questionDatas[i]["answers"]);
+					titleTd.innerHTML = questionDatas[i]["title"];
+					tr.appendChild(titleTd);
+
+					let typeTd = document.createElement("td");
+					typeTd.innerHTML = questionDatas[i]["type"];
+					tr.appendChild(typeTd);
+
+					let pointTd = document.createElement("td");
+					pointTd.innerHTML = questionDatas[i]["point"];
+					tr.appendChild(pointTd);
+
+					listBody.appendChild(tr);
+					point += Number(questionDatas[i]["point"]);
+					questionTdxs += questionDatas[i]["idx"] + ",";
+				}
+
+				const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
+				const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
+				
+				let resultTr = document.createElement("tr");
+				let emptyTd = document.createElement("td");
+				emptyTd.style.gridColumn = "1 / 4";
+				resultTr.appendChild(emptyTd);
+
+				let resultTd = document.createElement("td");
+				resultTd.innerText = point + "点";
+				resultTr.appendChild(resultTd);
+				listBody.appendChild(resultTr);
+				form.totalPoint.value = point;
+				
+				form.questionDatas.value = result;
+
+				questionTdxs = questionTdxs.slice(0, -1);
+			}
+		}
+	}
+
+	function ChangePoint(element) {
+		let pointElement = document.getElementById(element.name + "Child");
+		pointElement.value = element.value - 1;
+	}
+
+		function Regist() {
+			if (form.class1st.value == "") {
+				RequestSelect(form.class1st, "大分類");
+				return false;
+			}
+
+			if (form.class2nd.value == "") {
+				RequestSelect(form.class2nd, "小分類");
+				return false;
+			}
+
+			if (form.level.value == "") {
+				RequestSelect(form.level, "レベル");
+				return false;
+			}
+
+			if (form.title.value == "") {
+				RequestSelect(form.title, "タイトル");
+				return false;
+			}
+			
+			if (form.questionDatas.value == "") {
+				alert("問題を作成してください。");
+				listBody.focus();
+				return false;
+			}
+
+			<?php for ($i = 1; $i <= 4; $i++): ?>
+				if (form.point<?= $i ?>.value == "") {
+					alert("評価点数を入力してください。");
+					setTimeout("form.point<?= $i ?>.focus()", 100);
+					return false;
+				}
+				
+				if (form.text<?= $i ?>.value == "") {
+					alert("評価を入力してください。");
+					setTimeout("form.text<?= $i ?>.focus()", 100);
+					return false;
+				}
+				
+				if (form.comment<?= $i ?>.value == "") {
+					alert("評価コメントを入力してください。");
+					setTimeout("form.comment<?= $i ?>.focus()", 100);
+					return false;
+				}
+			<?php endfor; ?>
+
+			form.submit();
+		}
+
+	function RequestSelect(element, text) {
+		alert(text + "を選択してください");
+		element.focus();
+	}
+</script>

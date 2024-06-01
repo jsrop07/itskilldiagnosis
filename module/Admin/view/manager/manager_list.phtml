@@ -1,0 +1,108 @@
+<?php
+	$levelTexts = ["無し", "承認", "マスター"];
+
+	if (!isset($_SESSION)) { session_start(); }
+?>
+
+<?php echo $this->partial("breadcrumb", ["datas" => $breadcrumbData]); ?>
+
+<style type="text/css">
+	.header {
+		height: 110px;
+		display: flex;
+		justify-content: space-between;
+	}
+
+	.info-num {
+		height: 100%;
+		display: flex;
+		justify-content: end;
+	}
+
+	.search-place {
+		width: 100%;
+		margin-top: 20px;
+		display: grid;
+		grid-template-columns: 50px 150px 150px 1fr 65px 150px 110px 65px 200px;
+		column-gap: 10px;
+
+		text-align: center;
+	}
+	button.emegra.search.confirm {
+		height: 30px;
+		width: 100px;
+		
+		font-size: 15px;
+		font-weight: 400;
+	}
+
+	table.emegra tr { grid-template-columns: 50px 1fr 100px 70px 50px repeat(2,150px); }
+	table.emegra tr.index {
+		padding-top: 8px;
+		padding-bottom: 4px;
+		grid-template-areas:
+		"no id name level ipc date_login date_start";
+	}
+	table.emegra tr.index > th {
+		padding: 4px 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.pagination-place, .button-place {
+		margin-top: 10px;
+		display: flex;
+		justify-content: center;
+	}
+	.button-place { justify-content: space-between; }
+</style>
+<content class="header">
+	<div class="title">ITスキル診断管理者管理</div>
+</content>
+
+<content class="main">
+	<?php if (empty($adminDatas)): ?>
+		<div class="table-empty" style="margin-top: 16px;">
+			データがありません。
+		</div>
+	<?php else: ?>
+		<table class="emegra" style="margin-top: 8px;">
+			<thead>
+				<tr class="index">
+					<th style="grid-area: no">No</th>
+					<th style="grid-area: id">ログインID</th>
+					<th style="grid-area: name">名前</th>
+					<th style="grid-area: level">権限</th>
+					<th style="grid-area: ipc">担当者</th>
+					<th style="grid-area: date_login">最終ログイン</th>
+					<th style="grid-area: date_start">更新日</th>
+				</tr>
+			</thead>
+			<tbody>
+				<?php foreach($adminDatas as $data): ?>
+					<tr>
+						<td><?php echo $data["num"]; ?></td>
+						<td class="link left" onclick="self.location.href='./detail/<?php echo $data['code']; ?>'"><?php echo $data["id"]; ?></td>
+						<td class="left"><?php echo $data["name"]; ?></td>
+						<td><?php echo $levelTexts[$data["level"]]; ?></td>
+						<td><?php echo ($data["pic"] == "y") ? "o" : "x"; ?></td>
+						<td class="left"><?php echo (empty($data["date_login"])) ? "無し" : date("Y/m/d h:i:s", strtotime($data["date_login"])); ?></td>
+						<td class="left"><?php echo date("Y/m/d h:i:s", strtotime($data["date_start"])); ?></td>
+					</tr>
+				<?php endforeach; ?>
+			</tbody>
+		</table>
+	<?php endif; ?>
+
+	<div class="pagination-place">
+		<?php echo $this->paginationControl($this->noticelist, "sliding", array("pagination", "Notice"), array("url" => "")); ?>
+	</div>
+	<div class="button-place">
+		<div></div>
+
+		<div>
+			<button class="emegra" onclick="self.window.location='./input'">新規登録</button>
+		</div>	
+	</div>
+</content>

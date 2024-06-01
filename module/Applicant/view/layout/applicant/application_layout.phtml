@@ -1,0 +1,100 @@
+<?php
+	echo $this->doctype();
+
+	if ($this->title == "") { $this->title = "G&GService"; }
+?>
+
+<html lang="jp">
+	<head>
+		<meta charset="UTF-8">
+		<?php
+			echo $this->headTitle($this->title)->setSeparator(" - ")->setAutoEscape(false);
+			
+			echo $this->headMeta()
+				->appendName("title", $this->title)
+				->appendName("description", $this->description)
+				->appendName("keywords", $this->keywords)
+				->appendName("robots", "ALL")
+				->appendName("Distribution", "GNGService")
+				->appendName("author", "drapiece@gngs.co.jp")
+				->appendName("viewport", "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no")
+				->appendHttpEquiv("X-UA-Compatible", "IE=edge");
+		?>
+		<meta name="viewport" content="height=device-height">
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+		<link href="/css/applicant_layout.css" rel="stylesheet" type="text/css">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
+
+	</head>
+
+<body>
+<header>
+	<div class="left-column"><img src="/img/hd_logo.png" alt="logo" height="40px" width="auto"></div>
+	<div class="middle-column" style="font-size:bold">株式会社ジエンジサービス</div>
+	<div class="right-column" id="date-container"></div>
+</header>	
+<main>
+		<?php echo $this->content; ?>
+		<button type="button" class="btn btn-primary" id="loadPage" data-bs-toggle="modal" data-bs-target="#staticBackdrop" style="display:none">
+</button>
+
+<div class="modal modal-sheet py-5" style="backdrop-filter: blur(5px); " tabindex="-1" role="dialog" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog" style="margin-top:150px;" role="document">
+    <div class="modal-content rounded-4" style=>
+      <div class="modal-header border-bottom-0" style="background:linear-gradient(111deg, #87D782 0%, #22BC8E 100%);color:white; height: 40px;border-top-left-radius:13px;border-top-right-radius:13px">
+	  <h3 class="modal-title fs-6" id="exampleModalLabel">案内</h3>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(100%);"></button>
+      </div>
+      <div class="modal-body fs-5">
+	  <p style="text-align:center; font-size: 1.25rem;line-height: 1.6;color: #333;margin-bottom:0px;">
+			株式会社ジエンジサービス<br>　のITスキル診断申込書です。 <br><br>
+			項目に沿って必要事項を入力してください。
+	  </p>
+      </div>
+	  <div class="modal-footer flex-column border-top-0" style="margin-bottom:8px;">
+		<button type="button" id='lock_time' class="btn btn-lg  w-75 mx-0" data-bs-dismiss="modal" style="background: linear-gradient(111deg, #87D782 0%, #22BC8E 100%); color:white;">開始</button>
+	  </div>
+    </div>
+  </div>
+</div>
+</main>
+
+
+<script>
+function getDayOfWeek(day) {
+    const weekdays = ['日', '月', '火', '水', '木', '金', '土'];
+    return weekdays[day];
+}
+
+function getCurrentDate() {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = today.getMonth() + 1;
+    const date = today.getDate();
+    const day = getDayOfWeek(today.getDay());
+
+    return year + '年 ' + addZero(month) + '月 ' + addZero(date) + '日（' + day + '）';
+}
+
+function addZero(num) {
+    return (num < 10 ? '0' : '') + num;
+}
+
+function displayCurrentDate() {
+    const dateContainer = document.getElementById('date-container');
+    dateContainer.textContent = getCurrentDate();
+}
+
+window.onload = displayCurrentDate;
+
+function onLoadEvent() {
+	loadPage.click();
+}
+
+window.onload = function() {
+	onLoadEvent();
+	displayCurrentDate();
+};
+
+</script>

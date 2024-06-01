@@ -1,0 +1,482 @@
+<?php
+  $levelTexts = ["無級", "初級", "中級", "高級"];
+	$numTexts = array("①", "②", "③", "④", "⑤");
+	
+	if (!isset($_SESSION)) { session_start(); }
+
+	$isSet = false;
+	$answerNum = 0;
+	if (isset($_COOKIE["questionData"])) {
+		$isSet = true;
+    $questionData = json_decode($_COOKIE["questionData"], true);
+		setcookie("questionData", "", time() - 3600, "/");
+
+		$answerNum = 3;
+		if (isset($questionData["answer4"])) { $answerNum = 4; }
+		if (isset($questionData["answer5"])) { $answerNum = 5; }
+	}
+
+	$isEdit = false;
+	if (isset($questionData["idx"])) {
+		$isSet = true;
+		$isEdit = true;
+
+		$answerNum = 3;
+		if (isset($questionData["answer4"])) { $answerNum = 4; }
+		if (isset($questionData["answer5"])) { $answerNum = 5; }
+	}
+?>
+
+<?php echo $this->partial("breadcrumb", ["datas" => $breadcrumbData]); ?>
+
+<h1 class="title"><?php echo $title; ?></h1>
+
+<form id="form" method="post" action="./confirm">
+	<input name="date_regist" value="<?php echo ($isSet) ? date("Y-m-d H:i:s", strtotime($questionData["date_regist"])) : date("Y-m-d H:i:s"); ?>" hidden>
+	<?php if ($isEdit): ?>
+		<input name="idx" value="<?php echo $questionData["idx"]; ?>" hidden/>
+	<?php endif; ?>
+
+	<div class="emegra card">
+		<div class="card-header">設定</div>
+
+		<div class="card-body">
+			<style type="text/css">
+				dl.emegra.setting { grid-template-columns: 140px 1fr; }
+			</style>
+			<dl class="emegra setting">
+				<dt class="essential">大分類</dt>
+				<dd>
+					<select class="form-select" name="class1st" onchange="ChangeClass1st(this)" style="width: 150px;">
+						<option value="" hidden>選択</option>
+						<?php foreach ($optionDatas["class1st"] as $data): ?>
+							<option value="<?php echo $data["idx"]; ?>"<?php echo ($isSet && $questionData["class1st"] == $data["idx"]) ? " selected" : ""; ?>>
+								<?php echo $data["text"]; ?>
+							</option>
+						<?php endforeach; ?>
+					</select>
+				</dd>
+
+				<dt class="essential">小分類</dt>
+				<dd>
+					<select class="form-select" name="class2nd" id="class2nd" onchange="ChangeValue(this)" style="width: 150px;">
+						<option value="" hidden>選択</option>
+						<?php if ($isSet): ?>
+							<?php foreach ($optionDatas["class2nd"][$questionData["class1st"]] as $data): ?>
+								<option value="<?php echo $data["idx"]; ?>"<?php echo ($questionData["class2nd"] == $data["idx"]) ? " selected" : ""; ?>>
+									<?php echo $data["text"]; ?>
+								</option>
+							<?php endforeach; ?>
+						<?php endif; ?>
+					</select>
+				</dd>
+
+				<dt class="essential">レベル</dt>
+				<dd>
+					<select class="form-select" name="level" onchange="ChangeValue(this)" style="width: 100px;">
+						<option value="" hidden>選択</option>
+						<?php for ($i = 0; $i <= 3; $i++): ?>
+							<option value="<?= $i; ?>"<?php echo ($isSet && $questionData["level"] == $i) ? " selected" : ""; ?>><?= $levelTexts[$i]; ?></option>
+						<?php endfor; ?>
+					</select>
+				</dd>
+
+				<dt class="essential">問題タイプ</dt>
+				<dd>
+					<select class="form-select" name="type" id="type" onchange="ChangeType(this)" style="width: 150px;">
+						<option value="" hidden>選択</option>
+						<?php foreach ($optionDatas["type"] as $data): ?>
+							<option value="<?php echo $data["idx"]; ?>"<?php echo ($isSet && $questionData["type"] == $data["idx"]) ? " selected" : ""; ?>>
+								<?php echo $data["text"]; ?>
+							</option>
+						<?php endforeach; ?>
+					</select>
+				</dd>
+
+				<dt class="essential">タイトル</dt>
+				<dd><input class="form-control" name="title" type="text" placeholder="タイトルを入力してください" value="<?php echo ($isSet) ? $questionData["title"] : ""; ?>"/></dd>
+			</dl>
+		</div>
+	</div>
+
+	<div class="emegra card" style="margin-top: 32px;">
+		<div class="card-header">問題</div>
+
+		<div class="card-body">
+			<style type="text/css">
+				dl.emegra.question { grid-template-columns: 140px 1fr; }
+			</style>
+			<dl class="emegra question">
+        <div style="grid-column: 1 / 3;">
+          <nav style="margin-bottom: 30px;">
+            <div class="nav nav-tabs" id="nav-tab" role="tablist">
+              <button class="nav-link active" id="nav-tab" data-bs-toggle="tab" data-bs-target="#nav" type="button" role="tab" aria-controls="nav" aria-selected="true">日本語</button>
+
+              <?php foreach ($languageCodeDatas as $code => $text): ?>
+                <button class="nav-link" id="nav-<?php echo $code; ?>-tab" data-bs-toggle="tab" data-bs-target="#nav-<?php echo $code; ?>" type="button" role="tab" aria-controls="nav-<?php echo $code; ?>" aria-selected="false"><?php echo $text; ?></button>
+              <?php endforeach; ?>
+            </div>
+          </nav>
+          <div class="tab-content" id="nav-tabContent">
+            <div class="tab-pane show active" id="nav" role="tabpanel" aria-labelledby="nav-tab">
+              <dl class="emegra question">
+                <dt class="essential">問題</dt>
+                <dd><input class="form-control" name="question" type="text" placeholder="問題を入力してください" value="<?php echo ($isSet) ? htmlspecialchars($questionData["question"], ENT_QUOTES) : ""; ?>"/></dd>
+
+                <dt class="essential">選択肢</dt>
+                <div class="grid answers" name="answers" id="answers">
+                  <?php if ($isSet): ?>
+                    <?php for ($i = 1; $i <= $answerNum; $i++): ?>
+                      <div>
+                        <dt class="essential"><?= $numTexts[$i - 1]; ?></dt>
+                        <dd><input class="form-control" name="answer<?= $i; ?>" type="text" placeholder="選択肢を入力してください" value="<?php echo htmlspecialchars($questionData["answer" . $i], ENT_QUOTES); ?>"></dd>
+                      </div>
+                    <?php endfor; ?>
+                    <?php for ($i = $answerNum + 1; $i <= 5; $i++): ?>
+                      <div hidden>
+                        <dt class="essential"><?= $numTexts[$i - 1]; ?></dt>
+                        <dd><input class="form-control" name="answer<?= $i; ?>" type="text" placeholder="選択肢を入力してください" disabled/></dd>
+                      </div>
+                    <?php endfor; ?>
+                  <?php else: ?>
+                    <div name="div_notice" style="display: flex; align-items: center;">タイプを選択してください。</div>
+
+                    <?php for ($i = 1; $i <= 5; $i++): ?>
+                      <div hidden>
+                        <dt class="essential"><?= $numTexts[$i - 1]; ?></dt>
+                        <dd><input class="form-control" name="answer<?= $i; ?>" type="text" placeholder="選択肢を入力してください" disabled/></dd>
+                      </div>
+                    <?php endfor; ?>
+                  <?php endif; ?>
+                </div>
+              </dl>
+            </div>
+
+            <?php foreach ($languageCodeDatas as $code => $text): ?>
+              <div class="tab-pane" id="nav-<?php echo $code; ?>" role="tabpanel" aria-labelledby="nav-<?php echo $code; ?>-tab">
+                <dl class="emegra question">
+                  <dt>問題</dt>
+                  <dd><input class="form-control" name="question_<?php echo $code; ?>" type="text" placeholder="問題を入力してください（<?php echo $text; ?>）" value="<?php echo ($isSet) ? htmlspecialchars($questionData["question_" . $code], ENT_QUOTES) : ""; ?>"/></dd>
+
+                  <dt>選択肢</dt>
+                  <div class="grid answers" name="answers" id="answers">
+                    <?php if ($isSet): ?>
+                      <?php for ($i = 1; $i <= $answerNum; $i++): ?>
+                        <div>
+                          <dt><?= $numTexts[$i - 1]; ?></dt>
+                          <dd><input class="form-control" name="answer<?= $i; ?>_<?php echo $code; ?>" type="text" placeholder="選択肢を入力してください（<?php echo $text; ?>）" value="<?php echo htmlspecialchars($questionData["answer" . $i . "_" . $code], ENT_QUOTES); ?>"></dd>
+                        </div>
+                      <?php endfor; ?>
+                      <?php for ($i = $answerNum + 1; $i <= 5; $i++): ?>
+                        <div hidden>
+                          <dt><?= $numTexts[$i - 1]; ?></dt>
+                          <dd><input class="form-control" name="answer<?= $i; ?>_<?php echo $code; ?>" type="text" placeholder="選択肢を入力してください（<?php echo $text; ?>）" disabled/></dd>
+                        </div>
+                      <?php endfor; ?>
+                    <?php else: ?>
+                      <div name="div_notice" style="display: flex; align-items: center;">タイプを選択してください。</div>
+
+                      <?php for ($i = 1; $i <= 5; $i++): ?>
+                        <div hidden>
+                          <dt><?= $numTexts[$i - 1]; ?></dt>
+                          <dd><input class="form-control" name="answer<?= $i; ?>_<?php echo $code; ?>" type="text" placeholder="選択肢を入力してください（<?php echo $text; ?>）" disabled/></dd>
+                        </div>
+                      <?php endfor; ?>
+                    <?php endif; ?>
+                  </div>
+                </dl>
+              </div>
+            <?php endforeach; ?>
+          </div>
+        </div>
+        <!-- ここまで -->
+
+				<dt class="essential" id="correct-title">正解番号</dt>
+				<dd>
+					<select class="form-select" name="correct" id="correct" onchange="ChangeValue(this)" style="width: 100px;">
+						<option value="" hidden>選択</option>
+						<?php if ($isSet): ?>
+							<?php for ($i = 1; $i <= $answerNum; $i++): ?>
+								<option value="<?= $i; ?>"<?php echo ($questionData["correct"] == $i) ? " selected" : ""; ?>><?= $numTexts[$i - 1]; ?></option>
+							<?php endfor; ?>
+						<?php endif; ?>
+					</select>
+				</dd>
+
+				<dt class="essential">点数</dt>
+				<dd>
+					<select class="form-select" name="point" onchange="ChangeValue(this)" style="width: 100px;">
+						<option value="" hidden>選択</option>
+						<?php for($i = 1; $i <= 5; $i++): ?>
+							<option value="<?= $i; ?>"<?php echo ($isSet && $questionData["point"] == $i) ? " selected" : ""; ?>><?= $i; ?></option>
+						<?php endfor; ?>
+					</select>
+				</dd>
+			</dl>
+		</div>
+	</div>
+
+	<div class="emegra card" style="margin-top: 32px;">
+		<div class="card-header">情報</div>
+
+		<div class="card-body">
+			<style type="text/css">
+				dl.emegra.info { grid-template-columns: 140px 1fr; }
+			</style>
+			<dl class="emegra info">
+				<dt class="essential">作成者</dt>
+				<dd>
+					<select class="form-select" name="admin_regist" style="width: 150px;">
+						<option value="" hidden>選択</option>
+						<?php if ($isSet): ?>
+							<?php foreach($adminDatas as $data): ?>
+								<option value="<?php echo $data["code"]; ?>"<?php echo ($data["code"] == $questionData["admin_regist"]) ? " selected" : ""; ?>><?php echo $data["name"]; ?></option>
+							<?php endforeach; ?>
+						<?php else: ?>
+							<?php foreach($adminDatas as $data): ?>
+								<option value="<?php echo $data["code"]; ?>"<?php echo ($data["code"] == $_SESSION["user"]["code"]) ? " selected" : ""; ?>><?php echo $data["name"]; ?></option>
+							<?php endforeach; ?>
+						<?php endif; ?>
+					</select>
+				</dd>
+
+				<dt class="essential">作成日</dt>
+				<dd><input class="form-control" type="date" style="width: 150px;" value="<?php echo ($isSet) ? date("Y-m-d", strtotime($questionData["date_regist"])) : date("Y-m-d"); ?>" readonly></dd>
+			
+				<dt>備考</dt>
+				<dd class="expand">
+					<textarea class="form-control" name="note" rows="5"><?php if ($isSet) {
+						echo $questionData["note"];
+						if ($isEdit) {
+							$logString = "修正　" . date("Y.m.d") . "　" . $_SESSION["user"]["name"];
+							echo $logString . "\n";
+						}
+					}?></textarea>
+				</dd>
+			</dl>
+		</div>
+	</div>
+</form>
+
+<div class="btn-place" style="margin-top: 32px;">
+	<button class="emegra cancel" onclick="history.back()">戻る</button>
+
+	<?php if ($isEdit): ?>
+		<button class="emegra" onclick="Edit();">修正</button>
+	<?php else: ?>
+		<button class="emegra" onclick="Confirm();">確認画面へ</button>
+	<?php endif; ?>
+</div>
+
+<script type="text/javascript">
+	const numTexts = ["①", "②", "③", "④", "⑤"];
+
+  const noticeDivs = document.getElementsByName("div_notice");
+	const answerDivs = document.getElementsByName("div_answer");
+	const selectInputs = document.getElementsByTagName("select");
+	const form = document.getElementById("form");
+
+	let answerCount = <?php echo $answerNum; ?>;
+	let answers;
+
+	window.onload = function() {
+		answers = [form.answer1, form.answer2, form.answer3, form.answer4, form.answer5];
+		SetValue();
+	}
+
+	function SetValue() {
+		<?php if ($isSet): ?>
+			for (let i = 0; i < selectInputs.length; i++ ) {
+				var select = selectInputs.item(i);
+				if (select.value == "") { select.dataset.value = ""; }
+				else { select.dataset.value = "1"; }
+			}
+		<?php else: ?>
+			for (let i = 0; i < selectInputs.length; i++ ) {
+				var select = selectInputs.item(i);
+				if (select.value == "") { select.dataset.value = ""; }
+				else { select.dataset.value = "1"; }
+			}
+		<?php endif; ?>
+	}
+
+	function ChangeValue(element) { element.dataset.value = element.value; }
+
+	function ChangeClass1st(element) {
+		ChangeValue(element);
+
+		form.class2nd.replaceChildren();
+		form.class2nd.dataset.value = "";
+
+		switch (element.value) {
+			<?php foreach ($optionDatas["class2nd"] as $value => $class2nd): ?>
+				case "<?php echo $value; ?>":
+					var option = document.createElement("option");
+					option.value = "";
+					option.innerText = "選択";
+					option.hidden = true;
+					form.class2nd.appendChild(option);
+
+					<?php foreach ($class2nd as $data): ?>
+						var option = document.createElement("option");
+						option.value = <?php echo $data["idx"]; ?>;
+						option.innerText = "<?php echo $data["text"]; ?>";
+						class2nd.appendChild(option);
+					<?php endforeach; ?>
+					break;
+			<?php endforeach; ?>
+		}
+	}
+
+	// Change 答え
+	function ChangeType(element) {
+    if (answerCount == 0) {
+      for (let i = 0; i < noticeDivs.length; i++) {
+        noticeDivs[i].hidden = true;
+      }
+    }
+		ChangeValue(element);
+
+		let beforeAnswerCount = answerCount;
+
+		text = element[element.selectedIndex].text.trim();
+		switch(text) {
+			case "3項選択":
+				answerCount = 3;
+				break;
+			case "4項選択":
+				answerCount = 4;
+				break;
+			case "5項選択":
+				answerCount = 5;
+				break;
+		}
+
+		// Show 答え&正解番号
+		if (answerCount > beforeAnswerCount) {
+			for (let i = beforeAnswerCount; i < answerCount; i++) {
+        form.elements["answer" + Number(i + 1)].disabled = false;
+        console.log(form.elements["answer" + Number(i + 1)]);
+        form.elements["answer" + Number(i + 1)].parentNode.parentNode.hidden = false;
+
+        <?php foreach ($languageCodeDatas as $code => $text): ?>
+          form.elements["answer" + Number(i + 1) + "_<?php echo $code; ?>"].disabled = false;
+          form.elements["answer" + Number(i + 1) + "_<?php echo $code; ?>"].parentNode.parentNode.hidden = false;
+        <?php endforeach; ?>
+
+				var option = document.createElement("option");
+				option.value = Number(i + 1);
+				option.innerText = numTexts[i];
+				form.correct.appendChild(option);
+			}
+		} else { // Hide 答え&正解番号
+			let correctChildren = Array.from(correct.children);
+			for (let i = beforeAnswerCount - 1; i >= answerCount; i--) {
+        form.elements["answer" + Number(i + 1)].parentNode.parentNode.hidden = true;
+        form.elements["answer" + Number(i + 1)].disabled = true;
+        form.elements["answer" + Number(i + 1)].value = "";
+
+        <?php foreach ($languageCodeDatas as $code => $text): ?>
+          form.elements["answer" + Number(i + 1) + "_<?php echo $code; ?>"].parentNode.parentNode.hidden = true;
+          form.elements["answer" + Number(i + 1) + "_<?php echo $code; ?>"].disabled = true;
+          form.elements["answer" + Number(i + 1) + "_<?php echo $code; ?>"].value = "";
+        <?php endforeach; ?>
+
+				if (form.correct.value == i + 1) {
+					form.correct.dataset.value = "";
+				}
+				correctChildren[i + 1].remove();
+			}
+		}
+	}
+
+	<?php if ($isEdit): ?>
+		function Edit() {
+			if (ChkValid() == false) { return false; }
+
+			const postForm = new FormData(form);
+			const xhr = new XMLHttpRequest();
+			xhr.open("POST", "../update", true);
+			xhr.send(postForm);
+			xhr.onload = () => {
+				if (xhr.status == 200) {
+					const result = xhr.responseText;
+					if (result == "success") {
+						alert("修正しました。");
+						self.location.href = "../list";
+					}
+					else {
+						alert("Error");
+						console.log(result);
+					}
+				}
+			}
+		}
+	<?php else: ?>
+		function Confirm() {
+			if (ChkValid() == false) { return false; }
+
+			form.submit();
+		}
+	<?php endif; ?>
+
+	function ChkValid() {
+		if (form.class1st.value == "") {
+			RequestSelect(form.class1st, "大分類");
+			return false;
+		}
+
+		if (form.class2nd.value == "") {
+			RequestSelect(form.class2nd, "小分類");
+			return false;
+		}
+
+		if (form.level.value == "") {
+			RequestSelect(form.level, "レベル");
+			return false;
+		}
+
+		if (form.type.value == "") {
+			RequestSelect(form.type, "問題タイプ");
+			return false;
+		}
+
+		if (form.title.value.trim() == "") {
+			alert("タイトルを入力してください");
+			setTimeout("form.title.focus()", 100);
+			return false;
+		}
+
+		if (form.question.value.trim() == "") {
+			alert("問題を入力してください");
+			setTimeout("form.question.focus()", 100);
+			return false;
+		}
+
+		for (let i = 0; i < answerCount; i++) {
+      if (form.elements["answer" + Number(i + 1)].disabled == true) { break; }
+
+      if (form.elements["answer" + Number(i + 1)].value.trim() == "") {
+        alert("選択肢" + (Number(i) + 1) + "を入力してください");
+        setTimeout("form.answer" + (Number(i) + 1) + ".focus()", 100);
+        return false;
+      }
+		}
+
+		if (form.correct.value == "") {
+			RequestSelect(form.correct, "正解番号");
+			return false;
+		}
+
+		if (form.point.value == "") {
+			RequestSelect(form.point, "点数");
+			return false;
+		}
+	}
+
+	// For alert
+	function RequestSelect(element, text) {
+		alert(text + "を選択してください");
+		element.focus();
+	}
+</script>

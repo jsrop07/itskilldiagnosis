@@ -20,18 +20,19 @@ p { margin: 0; }
 	--background: #F2FAF9;
 	--line: #CED4DA;
 	--emegra-blue: #44B0DA;
+	--emegra-skyblue: #30C8D6;
 	--font: #6C757D;
 }
 
 
 
 body {
+	min-width: 1300px;
 	display: grid;
 	grid-template-columns: 250px 1fr;
-	grid-template-rows: 70px 60px 1fr;
+	grid-template-rows: 70px 1fr;
 	grid-template-areas: 
 	"header header"
-	"navbar navbar"
 	"sidebar main";
 	background: var(--background);
 }
@@ -44,21 +45,30 @@ header {
 	background: var(--title-gradient);
 }
 
+header > .title {
+	margin: 0;
+	display: flex;
+	align-items: center;
+	color: white;
+}
+
 .logo {
 	height: 100%;
 	display: flex;
 	align-items: center;
 }
 .logo-title {
-	margin-left: 24px;
+	margin-top: 6px;
+	margin-left: 18px;
 
-	font-size: 14px;
+	font-size: 12px;
 	font-weight: 500;
 	color: white;
 }
 
 .status {
 	height: 100%;
+	margin-top: 1px;
 	display: flex;
 	align-items: center;
 
@@ -74,42 +84,10 @@ header {
 
 
 
-nav {
-	grid-area: navbar;
-
-	border-bottom: 1px solid var(--line);
-	display: grid;
-	grid-template-columns: repeat(2, 1fr);
-	background: white;
-}
-
-button.btn-main {
-	height: 100%;
-	width: calc(100% - 16px);
-	margin: 0 8px;
-	padding: 3px 0;
-	background: transparent;
-
-	font-size: 14px;
-	font-weight: 700;
-	color: var(--font);
-
-	cursor: pointer;
-}
-button.btn-main:hover { color: black; }
-button.btn-main.active {
-	padding-bottom: 0;
-	border-bottom: 3px solid var(--emegra-blue);
-	
-	color: black;
-}
-
-
-
 aside {
 	grid-area: sidebar;
 
-	min-height: calc(100vh - 130px);
+	min-height: calc(100vh - 70px);
 	border-right: 1px solid var(--line);
 	display: flex;
 	flex-direction: column;
@@ -120,8 +98,10 @@ button.btn-sub {
 	height: 52px;
 	width: 100%;
 	border-bottom: 1px solid var(--line);
+	padding: 0 30px;
 	background: white;
 
+	text-align: left;
 	font-size: 14px;
 	font-weight: 700;
 	color: var(--font);
@@ -151,12 +131,12 @@ main {
 	display: flex;
 	align-items: center;
 }
-.essential::before {
-	content: "必須";
+.essential::after {
+	content: "\5FC5\9808";
 
 	height: 20px;
 	width: 40px;
-	margin-right: 8px;
+	margin-left: 8px;
 	border-radius: 4px;
 	display: flex;
 	justify-content: center;
@@ -167,7 +147,6 @@ main {
 	font-weight: 700;
 	color: white;
 }
-
 
 
 button.btn-plus, button.btn-minus {
@@ -198,7 +177,18 @@ button.emegra {
 button.emegra:hover { background: var(--emegra-blue); }
 button.emegra.cancel { background: #C1C5C9; }
 button.emegra.cancel:hover { background: #A4A8AD; }
+button.emegra.delete { background: red; }
+button.emegra.delete:hover { background: red; }
 
+button.emegra.search {
+	height: 50px;
+	width: 120px;
+	background: var(--emegra-skyblue);
+
+	font-size: 20px;
+	font-weight: 700;
+}
+button.emegra.search:hover { background: var(--emegra-blue); }
 
 
 ul.emegra.breadcrumb {
@@ -319,7 +309,7 @@ ul.emegra.pagination li.item:hover a { color: white; }
 
 dl.emegra {
 	display: grid;
-	grid-gap: 24px 8px;
+	grid-gap: 24px 16px;
 }
 dl.emegra dt, dl.emegra dd {
 	height: 38px;
@@ -331,7 +321,11 @@ dl.emegra dt, dl.emegra dd {
 	font-size: 16px;
 	font-weight: 700;
 }
+dl.emegra dt { justify-content: end; }
 dl.emegra dd { font-weight: 400; }
+dl.emegra dd.expand {
+	height: auto;
+}
 dl.emegra input { height: 38px; }
 
 
@@ -344,20 +338,36 @@ table.emegra {
 	background: white;
 	
 	text-align: center;
+
+	overflow: hidden;
 }
 table.emegra tr {
 	display: grid;
 	column-gap: 8px;
 }
-table.emegra > tbody > tr { border-top: 1px solid var(--line); }
-table.emegra > tbody > tr:hover { background: var(--line) }
+table.emegra > thead > tr {
+	position: relative;
+	left: -16px;
+	width: calc(100% + 32px);
+	padding: 0 16px;
+	border: 0;
+	background: var(--emegra-blue);
+}
+table.emegra > tbody > tr {
+	position: relative;
+	left: -16px;
+	width: calc(100% + 32px);
+	padding: 0 16px;
+	border-top: 1px solid var(--line);
+}
+table.emegra > tbody > tr:nth-child(1) { border-top: 0; }
 table.emegra thead th {
 	padding-top: 16px;
 	padding-bottom: 8px;
 
 	font-size: 14px;
 	font-weight: 700;
-	color: var(--font);
+	color: white;
 }
 table.emegra tbody td {
 	padding: 16px 0;
@@ -365,6 +375,44 @@ table.emegra tbody td {
 	font-size: 14px;
 	font-weight: 400;
 	color: #343A40;
+}
+table.emegra td.left { text-align: left; }
+table.emegra td.link {
+	color: blue;
 
 	cursor: pointer;
+}
+table.emegra td.link:hover { text-decoration: underline; }
+
+
+
+.count {
+	width: 240px;
+	display: flex;
+	border-bottom: 1px solid black;
+	align-items: end;
+
+	font-size: 13px;
+}
+.count > .num {
+	width: 150px;
+	margin-right: 10px;
+	display: flex;
+	justify-content: end;
+
+	line-height: 40px;
+	font-size: 40px;
+}
+
+.table-empty {
+	width: 100%;
+	border: 1px solid var(--line);
+	border-radius: 6px;
+	padding: 16px;
+	background: white;
+	
+	text-align: center;
+	font-size: 14px;
+	font-weight: 400;
+	color: #343A40;
 }

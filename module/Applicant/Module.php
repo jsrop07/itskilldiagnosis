@@ -8,12 +8,13 @@
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
-namespace Test;
+namespace Applicant;
 
-use Test\Model\AdminInfoTable;
-use Test\Model\QuestionTypeTable;
-use Test\Model\QuestionPoolTable;
-use Test\Model\ExamTable;
+use Applicant\Model\QuestionTable;
+use Applicant\Model\ApplicantLoginTable;
+use Applicant\Model\ApplicationTable;
+use Applicant\Model\ApplicantExamTable;
+use Applicant\Model\MailSender;
 use Zend\Mvc\ModuleRouteListener;
 use Zend\Mvc\MvcEvent;
 use Zend\Session\Container;
@@ -51,29 +52,29 @@ class Module
     {
         return array(
             'factories' => array(
-                'CommonTable' =>  function ($sm) {
-                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
-                    //$table = new CommonTable($dbAdapter);
-                    //return $table;
-                },
-                "AdminInfoTable" => function ($sm) {
+                "AppQuestionTable" => function ($sm) {
                     $dbAdapter = $sm->get("Zend\Db\Adapter\Adapter");
-                    $table = new AdminInfoTable($dbAdapter);
+                    $table = new QuestionTable($dbAdapter);
                     return $table;
                 },
-                "QuestionTypeTable" => function ($sm) {
+                "ApplicantLoginTable" => function ($sm) {
                     $dbAdapter = $sm->get("Zend\Db\Adapter\Adapter");
-                    $table = new QuestionTypeTable($dbAdapter);
+                    $table = new ApplicantLoginTable($dbAdapter);
                     return $table;
                 },
-                "QuestionPoolTable" => function ($sm) {
+                "ApplicationTable" => function ($sm){
                     $dbAdapter = $sm->get("Zend\Db\Adapter\Adapter");
-                    $table = new QuestionPoolTable($dbAdapter);
+                    $table = new ApplicationTable($dbAdapter);
                     return $table;
                 },
-                "ExamTable" => function ($sm) {
+                "ApplicantExamTable" => function ($sm) {
                     $dbAdapter = $sm->get("Zend\Db\Adapter\Adapter");
-                    $table = new ExamTable($dbAdapter);
+                    $table = new ApplicantExamTable($dbAdapter);
+                    return $table;
+                },
+                "ApplicantMailSenderTable" => function ($sm) {
+                    $dbAdapter = $sm->get("Zend\Db\Adapter\Adapter");
+                    $table = new MailSender($dbAdapter);
                     return $table;
                 },
             ),

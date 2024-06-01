@@ -1,0 +1,80 @@
+<?php
+	$levelTexts = ["無し", "承認", "マスター"];
+
+	$picTexts["n"] = "権限なし";
+	$picTexts["y"] = "担当者";
+
+	if (!isset($_SESSION)) { session_start(); }
+?>
+
+<?php echo $this->partial("breadcrumb", ["datas" => $breadcrumbData]); ?>
+
+<h1 class="title"><?php echo $title; ?></h1>
+
+<div class="emegra card">
+	<div class="card-header">管理者情報</div>
+
+	<div class="card-body">
+		<style type="text/css">
+			dl.emegra.setting { grid-template-columns: 140px 1fr; }
+		</style>
+		<dl class="emegra setting">
+			<dt>固有番号</dt>
+			<dd><?php echo $adminData["idx"]; ?></dd>
+
+			<dt>職別コード</dt>
+			<dd><?php echo $adminData["code"]; ?></dd>
+
+			<dt>権限</dt>
+			<dd><?php echo $levelTexts[$adminData["level"]]; ?></dd>
+
+			<dt>ログインID</dt>
+			<dd><?php echo $adminData["id"]; ?></dd>
+
+			<dt>名前</dt>
+			<dd><?php echo $adminData["name"]; ?></dd>
+
+			<dt>担当者</dt>
+			<dd><?php echo $picTexts[$adminData["pic"]]; ?></dd>
+
+			<?php if ($adminData["pic"] == "y"): ?>
+				<dt>SMTP パスワード</dt>
+				<dd><?php echo $adminData["smtp_password"]; ?></dd>
+			<?php endif; ?>
+		</dl>
+	</div>
+</div>
+
+<div class="emegra card" style="margin-top: 32px;">
+	<div class="card-header">追加情報</div>
+
+	<div class="card-body">
+		<style type="text/css">
+			dl.emegra.question { grid-template-columns: 140px 1fr; }
+		</style>
+		<dl class="emegra question">
+			<dt>最終ログイン</dt>
+			<dd><?php echo (empty($adminData["date_login"])) ? "無し" : date("Y-m-d h:i:s", strtotime($adminData["date_login"])); ?></dd>
+
+			<dt>更新日</dt>
+			<dd><?php echo $adminData["date_start"]; ?></dd>
+		</dl>
+	</div>
+</div>
+
+<form id="form" method="post" action="../modify">
+	<input name="code" value="<?php echo $adminData["code"]; ?>" hidden/>
+</form>
+
+<div class="btn-place" style="margin-top: 32px;">
+	<button class="emegra cancel" onclick="self.location.href='../list';">戻る</button>
+	<button class="emegra" onclick="Update();">修正</button>
+</div>
+
+<script type="text/javascript">
+	const form = document.getElementById("form");
+
+	function Update() {
+		form.submit();
+	}
+</script>

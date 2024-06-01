@@ -1,0 +1,272 @@
+<?php
+	$caseTexts = ["新卒", "中途"];
+	$genderTexts = ["男", "女"];
+	$skillTexts = ["有", "無"];
+  $levelTexts = ["無級", "初級", "中級", "高級"];
+  $languageTexts = ["日本語", "韓国語"];
+
+	$isRequest = false;
+	$isExecute = false;
+	if ($recordData["request_date"] != null) {
+		$isRequest = true;
+		if ($recordData["execute_date"] != null) {
+			$isExecute = true;
+		}
+	}
+?>
+
+<?php echo $this->partial("breadcrumb", ["datas" => $breadcrumbData]); ?>
+
+<h1 class="title">ITスキル診断状況管理</h1>
+
+<style type="text/css">
+	option { color: black; }
+	input::placeholder { font-style: italic; }
+</style>
+
+<div class="emegra card">
+	<div class="card-header">ITスキル診断者情報</div>
+
+	<div class="card-body">
+		<style type="text/css">
+			dl.emegra.info { grid-template-columns:  repeat(2, 170px 1fr) }
+		</style>
+		<dl class="emegra info">			<dt>ID</dt>
+			<dd><?php echo $recordData["email"]; ?></dd>
+
+			<dt>応募区分</dt>
+			<dd><?php echo $caseTexts[$recordData["case"]]; ?></dd>
+
+			<dt>パスワード</dt>
+			<dd><?php echo $recordData["password"]; ?></dd>
+
+			<dt>お名前（漢字）</dt>
+			<dd><?php echo $recordData["name"]; ?></dd>
+
+			<dt>申込日</dt>
+			<dd><?php echo date("y.m.d", strtotime($recordData["apply_date"])); ?></dd>
+
+			<dt>お名前（カナ）</dt>
+			<dd><?php echo $recordData["kana"]; ?></dd>
+
+			<dt>性別</dt>
+			<dd><?php echo ($recordData["gender"] == null) ? "未設定" : $genderTexts[$recordData["gender"]]; ?></dd>
+
+			<dt>学歴</dt>
+			<dd><?php echo $recordData["education"]; ?></dd>
+
+			<dt>IT関連資格</dt>
+			<dd><?php echo ($recordData["certificates"] == null) ? "未設定" : $recordData["certificates"]; ?></dd>
+
+			<dt>生年月日</dt>
+			<dd><?php echo date("Y.m.d", strtotime($recordData["birth"])); ?></dd>
+
+			<dt>専攻</dt>
+			<dd><?php echo ($recordData["major"] == null) ? "未設定" : $recordData["major"]; ?></dd>
+
+			<dt>その他</dt>
+			<dd><?php echo $recordData["other"]; ?></dd>
+		</dl>
+	</div>
+</div>
+
+<div class="emegra card" style="margin-top: 32px;">
+	<div class="card-header">ITスキル診断問項詳細</div>
+
+	<div class="card-body">
+		<style type="text/css">
+			dl.emegra.setting { grid-template-columns: repeat(2, 170px 1fr); }
+		</style>
+		<dl class="emegra setting">
+			<dt>ITスキル有無</dt>
+			<dd><?php echo $skillTexts[$recordData["skill"]]; ?></dd>
+
+			<dt>経験分野</dt>
+			<dd><?php echo $recordData["class1st"]; ?></dd>
+
+			<dt>IT経験年数</dt>
+			<dd><?php echo ($recordData["career"] != null) ? $recordData["career"] . "年" : "無"; ?></dd>
+
+			<dt>問題種別</dt>
+			<dd><?php echo $optionDatas[$recordData["class2nd"]]; ?></dd>
+
+			<dt>診断問項ID</dt>
+			<dd><?php echo $recordData["diagnosis_code"]; ?></dd>
+
+			<dt>レベル</dt>
+			<dd><?php echo $levelTexts[$recordData["level"]]; ?></dd>
+
+			<dt>問項数別</dt>
+			<dd><?php echo $recordData["question_num"]; ?>問項</dd>
+
+			<dt>診断方法</dt>
+			<dd><?php echo $recordData["method"]; ?></dd>
+	
+			<dt>診断依頼</dt>
+			<dd><?php echo ($recordData["request_date"] != null) ? date("y.m.d", strtotime($recordData["request_date"])) : "未依頼"; ?></dd>
+
+      <dt>言語</dt>
+			<dd><?php echo ($recordData["language"] == null) ? "未設定" : $languageTexts[$recordData["language"]]; ?></dd>
+		</dl>
+	</div>
+</div>
+
+<div class="emegra card" style="margin-top: 32px;">
+	<div class="card-header">ITスキル診断状況</div>
+
+	<div class="card-body">
+		<style type="text/css">
+			dl.emegra.detail { grid-template-columns: repeat(2, 150px 1fr); }
+		</style>
+		<dl class="emegra detail">
+			<?php if ($isExecute): ?>
+				<dt>診断実施日</dt>
+				<dd><?php echo date("y.m.d", strtotime($recordData["execute_date"])); ?></dd>
+
+				<dt>得点</dt>
+				<dd><?php echo $recordData["get_point"]; ?></dd>
+
+				<dt>評価等級</dt>
+				<dd><?php echo $recordData["rank"]; ?></dd>
+
+				<dt>診断者のコメント</dt>
+				<dd><?php echo $recordData["comment"]; ?></dd>
+
+				<dt>備考</dt>
+				<dd><?php echo $recordData["comment"]; ?></dd>
+
+        <!--
+          作成：朴昰成
+          修正：朴昰成
+          修正日：24/05/29
+        -->
+
+        <!-- 修正前： <?php /* ?>
+          <dt>メール送信日</dt>
+          <dd><?php echo date("y.m.d", strtotime($recordData["execute_date"])); ?></dd>
+        <?php */ ?> -->
+
+        <!-- 修正後： -->
+        <dt>結果送信日</dt>
+        <dd><?php echo ($recordData["date_mail"] != null) ? date("y.m.d", strtotime($recordData["date_mail"])) : "未送信"; ?></dd>
+        <!-- ここまで -->
+			<?php else: ?>
+				<div style="grid-column: 1 / 6; display: flex; align-items: center; justify-content: center;">未受験</div>
+			<?php endif; ?>
+		</dl>
+	</div>
+</div>
+
+<div class="btn-place" style="margin-top: 32px;">
+  <!--
+    作成：朴昰成
+    修正：朴昰成
+    修正日：24/05/19
+  -->
+
+  <!-- 修正前：
+    <button class="emegra cancel" onclick="self.location.href='../list';">戻る</button>
+  -->
+
+  <!-- 修正後： -->
+  <button class="emegra cancel" onclick="history.back();">戻る</button>
+  <!-- ここまで -->
+	<?php if (!$isRequest): ?>
+    <button class="emegra" style="background:orange;" onclick="self.location.href='../edit/<?php echo $recordData['idx']	?>';">修正</button>
+		<button class="emegra" style="width:150px;" onclick="Request();">ITスキル診断依頼</button>
+  <!--
+    作成：朴昰成
+    作成日：24/05/29
+  -->
+  <?php else: ?>
+    <?php if ($recordData["date_mail"] == null): ?>
+      <button class="emegra" onclick="SendMail();">メール送信</button>
+    <?php endif; ?>
+  <!-- ここまで -->
+	<?php endif; ?>
+</div>
+
+<script type="text/javascript">
+	const idx = <?php echo $recordData["idx"]; ?>
+
+	function Request() {
+		if (confirm("依頼しますか？") === false) { return false; }
+
+		const postForm = new FormData();
+		postForm.append("idxs", idx);
+		const xhr = new XMLHttpRequest();
+		xhr.open("POST", "../request", true);
+		xhr.send(postForm);
+		xhr.onload = () => {
+			if (xhr.status == 200) {
+				const result = xhr.responseText;
+
+				if (result === "success") {
+					alert("依頼しました。");
+					self.location.href = "../list";
+				}
+				else {
+					alert("error");
+					console.log(result);
+				}
+			}
+		}
+	}
+  
+  /*
+    作成：朴昰成
+    作成日：24/05/29
+  */
+  function SendMail() {
+    if (confirm("メールを送信しますか？") === false) { return false; }
+
+    const postForm = new FormData();
+    postForm.append("idxs", idx);
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", "../mail", true);
+    xhr.send(postForm);
+    xhr.onload = () => {
+      if (xhr.status == 200) {
+        const result = xhr.responseText;
+
+        if (result === "success") {
+          alert("送信しました。");
+          location.reload(true);
+        }
+        else {
+          try {
+            let idxDatas = JSON.parse(result);
+            alert("すでに送信しました。");
+            return false;
+          } catch (e) {
+            alert("error");
+            console.log(result);
+            return false;
+          }
+        }
+      }
+    }
+  }
+  /* ここまで */
+</script>
+<!-- disused
+    作成：丁錫圓
+    削除：朴昰成
+    削除日：24/05/29
+-->
+
+<!-- 削除前：
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/datepicker/1.0.10/datepicker.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/datepicker/1.0.10/datepicker.min.css">
+
+  <script>
+    $(document).ready(function(){
+      var birth = document.getElementById("birth");
+      $(birth).datepicker({
+        format: 'yyyy-mm-dd',
+        autohide: true
+      });
+    });
+  </script>
+ここまで -->

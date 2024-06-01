@@ -1,0 +1,763 @@
+<?php 
+echo $this->partial("breadcrumb", ["datas" => $breadcrumbData]); 
+$currentDate = date("Y-m-d H:i:s");
+$dateSchedule = date("Y-m-d H:i");
+
+function InitStyle() { return " font-style: italic; color: ;"; }
+?>
+
+
+<h1 class="title">ITスキル診断状況管理</h1>
+
+<form id="form" method="post" action=".././situation/inputok">
+	<style type="text/css">
+		option { color: black; }
+		input::placeholder { font-style: italic; }
+	</style>
+
+	<div class="emegra card">
+		<div class="card-header">ITスキル診断者情報</div>
+
+		<div class="card-body">
+			<style type="text/css">
+				dl.emegra.info { grid-template-columns:  repeat(2, 170px 1fr) }
+			</style>
+			<dl class="emegra info">
+				<dt class="essential">ID</dt>
+				<dd><input class="form-control" name="email" type="text" style="width:220px;" placeholder="その他の場合の、記入"></dd>
+          
+        <dt class="essential">応募区分</dt>
+        <dd>
+          <select class="form-select" name="case" style="width:220px" >
+            <option value="" selected hidden>選択してください。</option>
+            <option value="0">新卒</option>
+            <option value="1">中途（経歴職）</option>
+          </select>
+        </dd>
+        
+        <dt class="essential">パスワード</dt>
+        <dd><input class="form-control" name="password" type="text" style="width:220px;" readonly></dd>
+
+        <dt class="essential">学歴</dt>
+				<dd>
+          <select class="form-select" name="education" style="width:220px" id="educationSelect" >
+            <option value=""selected hidden>選択してください。</option>
+            <option value="高卒">高卒</option>
+            <option value="専門卒">専門卒</option>
+            <option value="大卒">大卒</option>
+            <option value="大学院卒">大学院卒</option>
+            <option value="その他">その他</option>
+          </select>
+          <div id="otherEducationInput" style=" margin-left: 10px; display:none; width:200px;">
+              <input class="form-control" type="text" placeholder="その他の場合の、記入" id="otherEducation" name="education" maxlength='20'>
+          </div>
+				</dd>      
+        
+        <dt class="essential">お名前（漢字）</dt>
+				<dd><input class="form-control" id="userInput" name="name" type="text" placeholder="漢字を記入してください。"style="width:220px" maxlength='20'></dd>
+        
+
+        <dt>性別</dt>
+				<dd> 
+          <select class="form-select" name="gender" style="width:220px" >
+            <option selected disabled hidden>選択</option>
+            <option value="0">男</option>
+            <option value="1">女</option>
+          </select>
+				</dd>
+
+        <dt class="essential">お名前（カナ）</dt>
+				<dd><input class="form-control" name="kana" type="text" placeholder="カナを記入してください。"style="width:220px" maxlength='50'></dd>
+                
+				<dt>専攻</dt>
+				<dd> 
+          <select class="form-select" name="major" style="width: 220px;" id="majorSelect" >
+            <option selected>選択してください。</option>
+            <option value="IT・ソフトウェア専攻">IT・ソフトウェア専攻</option>
+            <option value="IT・ソフトウェア以外">IT・ソフトウェア以外</option>
+          </select>
+          <div id="otherMajorInput" style=" margin-left: 10px; display:none;  width:200px;">
+            <input class="form-control" type="text" placeholder="その他の場合の、記入" id="otherMajor" name="major" maxlength='20'>
+          </div>
+				</dd>
+
+        <dt class="essential">生年月日</dt>
+				<dd><input class="form-control" id="birth" name="birth" type="text" placeholder="YYYY-MM-DD" autocomplete="off"  style="width:220px" value=""></dd>
+
+        <dt>IT関連資格</dt>
+				<dd><input class="form-control" id="certificatesId" name="certificates" type="text"  placeholder="その他の場合の、記入" style="width:220px"></dd> 
+
+				<dt>その他</dt>
+				<dd><input class="form-control" id="other" name="other" type="text"  style="width:220px" placeholder="その他の場合の、記入" ></dd> 
+			</dl>
+		</div>
+	</div>
+
+    <div class="emegra card" style="margin-top: 32px;">
+	<div class="card-header">診断者ITスキル有無</div>
+
+	<div class="card-body">
+		<style type="text/css">
+
+		dl.emegra.setting { grid-template-columns: repeat(1, 180px 1fr); }
+				</style>
+			<dl class="emegra setting">
+        <dt class="essential" id="ITskillTitle">ITスキル有無</dt>
+				<dd>
+          <select class="form-select" name="skill" id="ITskillId" style="width:220px" onchange="SkillSelectChange(this.value)">
+            <option value="" selected hidden>選択</option>
+            <option value="0">有</option>
+            <option value="1">無</option>
+          </select>
+				</dd>
+        <dt class="essential" id="class1stTitle">経験分野</dt>
+				<dd>
+          <select class="form-select" name="class1st" style="width:220px;" id="class1stId" onclick="ChangeClass1st(this)">
+            <option value="" selected hidden>選択してください。</option>
+              <?php foreach ($this->class1st as $row): ?>
+                <?php $texts = explode(',', $row['text']); ?>
+                  <?php foreach ($texts as $text): ?>
+                    <option value="<?php echo $text; ?>"><?php echo $text; ?></option>
+                  <?php endforeach; ?>
+              <?php endforeach; ?>
+          </select>
+				</dd>
+
+				<dt class="essential" id=class2ndTitle>問題種別</dt>
+				<dd>
+          <select class="form-select" name="class2nd" style="width:220px;" id="class2ndId">
+            <option value=""  >選択してください。</option>
+          </select>
+				</dd>
+
+				<dt class="essential" id="careerTitle">IT経験年数</dt>
+				<dd><input class="form-control" id="careerId" name="career" type="text" placeholder="経歴を記入してください。" style="font-size:15px; width:220px;" maxlength='2'></dd> 
+		</dl>
+	</div>
+
+</div>
+
+    <div class="emegra card" style="margin-top: 32px;">
+	<div class="card-header">ITスキル診断問項詳細</div>
+
+	<div class="card-body">
+		<style type="text/css">
+			dl.emegra.detail { grid-template-columns: repeat(2, 140px 1fr); }
+		</style>
+		<dl class="emegra detail">
+        <dt>診断依頼</dt>
+				<dd><input class="form-control"  type="text" style="width:220px;" value="<?php echo $currentDate?>"readonly></dd>
+        
+        <dt class="essential">診断問項ID</dt>
+				<dd>
+					<input name="code" type="hidden" style="width:220px;">
+          <div id="codeDisplay" style="padding-right:5px"></div>
+					<button type="button" data-bs-toggle="modal" data-bs-target="#staticBackdrop" style="padding: 0px 10px ;border-radius: 8px; background:linear-gradient(111deg, #50D7C7 0%, #40ADF0 100%); color:white;" onclick="diagnosisData();">検索</button>
+				</dd> 
+				
+			<div class="modal modal-sheet py-5" style="backdrop-filter: blur(5px); " tabindex="-1" role="dialog" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+				<div class="modal-dialog" style="margin-top:150px;" role="document">
+					<div class="modal-content rounded-4">
+            <div class="modal-header border-bottom-0" style="background:linear-gradient(111deg, #50D7C7 0%, #40ADF0 100%); color:white; height: 40px;border-top-left-radius:13px;border-top-right-radius:13px">
+              <h3 class="modal-title fs-6" id="exampleModalLabel">診断書検索</h3>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(100%);"></button>
+					  </div>
+              <div class="modal-body fs-5">
+                <table class="table" style="text-align:center; font-size:12px;">
+                  <thead>
+                    <tr>
+                      <th>No</th>
+                      <th style="text-align:left;">タイトル</th>
+                      <th>診断書番号</th>
+                      <th>選択</th>
+                    </tr>
+                  </thead>
+                  <tbody style="text-align:center">
+                  </tbody>
+                </table>
+              </div>
+              <div class="modal-footer flex-column border-top-0" style="margin-bottom:8px;">
+                <button type="button" class="btn btn-lg  w-75 mx-0" data-bs-dismiss="modal" style="background:linear-gradient(111deg, #50D7C7 0%, #40ADF0 100%); color:white;">閉じる</button>
+              </div>
+          </div>
+				</div>
+			</div>
+
+				<dt class="essential">レベル</dt>
+				<dd>
+          <select class="form-select" name="level" type="text" style="width:100px;">
+            <option value="0">無級</option>
+            <option value="1">初級</option>
+            <option value="2">中級</option>
+            <option value="3">高級</option>
+          </select>
+				</dd>
+
+				<dt class="essential">問項数別</dt>
+				<dd><input class="form-control" name="question_num" type="text" style="width:50px;text-align:center;">問</dd>
+		
+				<dt class="essential">診断方法</dt>
+        <dd >
+          <select class="form-select" name="method" style="width:100px;" onchange="ChangeInputStyle(this)" >
+            <option value="WEB">WEB</option>
+            <option value="対面"selected>対面</option>
+          </select>
+				</dd>
+
+        <dt class="essential">言語選択</dt>
+        <dd>
+          <select class="form-select" name="language" style="width:100px;" onchange="ChangeInputStyle(this)" >
+            <option value="0" selected>日本語</option>
+            <option value="1">韓国語</option>
+          </select>
+				</dd>
+
+        <dt class="essential">メール転送</dt>
+        <dd>
+          <select class="form-select" name="mail_delay" style="width:100px;" onchange="ChangeInputStyle(this)" >
+            <option value="" selected>手動</option>
+            <option value="0">自動</option>
+          </select>
+				</dd>
+
+        <dt class="essential">診断日</dt>
+        <dd><input class="form-control" name="schedule" type="text" style="width:220px;" value="<?php echo $dateSchedule?>"></dd>
+		</dl>
+	</div>
+</div>
+
+<div class="btn-place" style="margin-top: 32px;">
+	<button type="button" class="emegra cancel" onclick="self.location.href='.././situation/list';">戻る</button>
+  <button class="emegra"  id="btn_save" name="inputDatas" value="btn_save"  style="width:150px;" onclick=saveConfirm()>一時保存</button>
+	<button class="emegra"  id="btn_submit" name="inputDatas" value="btn_submit"  style="width:150px;" onclick=inputConfirm()>ITスキル診断依頼</button>
+</div>
+
+<!-- Request send modal -->
+<div class="modal" tabindex="-1" role="dialog" id="submitLoading">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <h3 style="text-align:center;">依頼転送中です。</h3>
+            </div>
+        </div>
+    </div>
+</div>
+
+</form>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.0/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/locales/bootstrap-datepicker.ja.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
+<script>
+    $(document).ready(function(){
+      var birth = document.getElementById("birth");
+      $(birth).datepicker({
+        format: 'yyyy-mm-dd',
+        autohide: true,
+        language: 'ja',
+        startDate: '1980-01-01',
+        endDate: '2010-12-31'
+      });
+    });
+  </script>
+
+<script>
+	function ChangeInputStyle(element) {
+		element.style.fontStyle = "normal";
+		element.style.color = "black";
+	}
+</script>
+
+<script>
+	window.onload=function(){
+		// console.log(form.major);
+		randomPW();
+	}
+</script>
+<script>
+	let skillSelect = document.getElementById('ITskillId');
+  var class1stBox = document.getElementById('class1stId');
+	var class2ndSelect = document.getElementById('class2ndId')
+	let careerSelect = document.getElementById('careerId')
+
+  function SkillSelectChange(value){
+    class2ndSelect.replaceChildren();
+    if (form.skill.value === '1') {
+      for (var i = 0; i < class1stBox.options.length - 1; i++) {
+        class1stBox.options[i].style.display = 'none';
+      }
+      class2ndId.value = "";
+      class1stId.value = "";
+      var option = document.createElement("option");
+      option.hidden = true;
+      option.innerText = "選択してください。";
+      class2ndSelect.appendChild(option);
+      careerSelect.value = "0";
+      careerId.readOnly =  true;
+    } else {
+      for (var i = 0; i < class1stBox.options.length - 1; i++) {
+        class1stBox.options[i].style.display = 'block';
+      }
+      class1stId.value = "";
+      class2ndSelect.innerText = "";
+      class2ndSelect.value = "";
+      careerSelect.value = '';
+      var defaultOption = document.createElement("option");
+      defaultOption.value = "";
+      defaultOption.innerText = "選択してください。";
+      class2ndSelect.appendChild(defaultOption);
+      class2ndSelect.value = "";
+      careerId.readOnly =  false;
+    }
+  }	
+
+
+</script>
+
+<script>
+// document.getElementById('educationId').addEventListener('change', function(event) {
+//     var selectedOption = event.target.value;
+
+//     if (selectedOption === "その他") {
+// 		  form.education.value = "";
+//       form.education.hidden = false;
+//     } else if(selectedOption != "その他") {
+//         form.education.hidden = true;
+// 		// form.education.style.display = 'none';
+//     }
+// });
+
+
+// document.getElementById('majorId').addEventListener('change', function(event) {
+//     var selectedOption = event.target.value;
+
+//     if (selectedOption === "other") {
+// 		form.major.value = "";
+//         form.major.hidden = false;
+//     } else {
+//         form.major.hidden = true;
+// 		form.major.style.display = 'none';
+//     }
+// });
+
+// Delete 240524
+// 削除前： 下のコド保存
+// 削除後：
+// document.getElementById('class1stId').addEventListener('change', function(event) {
+// 	var selectedOption = event.target.value;
+
+// 	if (selectedOption === "その他") {
+// 		  form.class1st.value = "";
+//       form.class1st.hidden = false;
+//       console.log("1");
+//     } else if(selectedOption != "その他") {
+//         form.class1st.hidden = true;
+//         console.log("2");
+//     }
+// });
+</script>
+
+<script>
+	function randomPW(){
+		const pwLength = 8;
+		const pwEncoding = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+		let randomPw = "";
+
+		for (let i = 0; i < pwLength; i++) {
+			const randomIndex = Math.floor(Math.random() * pwEncoding.length);
+			randomPw += pwEncoding.charAt(randomIndex);
+		}
+		form.password.value = randomPw;
+	}
+</script>
+
+<script>
+    document.getElementById('educationSelect').addEventListener('change', function(event) {
+    var selectedOption = event.target.value;
+    var otherEducationInput = document.getElementById('otherEducationInput');
+
+    if (selectedOption === "その他") {
+        otherEducationInput.style.display = 'block';
+    } else {
+        otherEducationInput.style.display = 'none';
+    }
+
+    var otherEducation = document.getElementById('otherEducation');
+    if (selectedOption === "その他") {
+        otherEducation.removeAttribute('disabled');
+    } else {
+        otherEducation.setAttribute('disabled', 'disabled');
+    }
+});
+
+document.getElementById('majorSelect').addEventListener('change', function(event) {
+    var selectedOption = event.target.value;
+    var otherMajorInput = document.getElementById('otherMajorInput');
+
+    if (selectedOption === "IT・ソフトウェア以外") {
+        otherMajorInput.style.display = 'block';
+    } else {
+        otherMajorInput.style.display = 'none';
+    }
+
+    var otherMajor = document.getElementById('otherMajor');
+    if (selectedOption === "IT・ソフトウェア以外") {
+        otherMajor.removeAttribute('disabled');
+    } else {
+        otherMajor.setAttribute('disabled', 'disabled');
+    }
+});
+</script>
+
+<!-- 漢字カナ入力時有効性検査 -->
+<script>
+function emailValidationCheck(input){
+    var emailValidation =  /^[A-Za-z0-9_\.\-]+@[A-Za-z0-9\-]+\.[A-Za-z0-9\-]+/;
+    return emailValidation.test(input);
+}
+
+function checkKanji(input) {
+    function toHalfWidth(str) {
+        return str.replace(/[！-～]/g, function(s) {
+            return String.fromCharCode(s.charCodeAt(0) - 0xFEE0);
+        }).replace(/　/g, " ");
+    }
+
+    var halfWidthInput = toHalfWidth(input);
+    var japaneseRegex = /^[\u4E00-\u9FFF\u3040-\u309F]+$/; // 
+    var katakanaRegex = /^[\u30A0-\u30FF]+$/; // 
+
+    return japaneseRegex.test(halfWidthInput) || katakanaRegex.test(halfWidthInput);
+}
+
+
+function checkKana(input) {
+    var katakanaRegex = /^[\u30A0-\u30FFー]+$/; 
+    return katakanaRegex.test(input);
+}
+</script>
+
+<script>
+    function inputConfirm() {
+        if (form.email.value == "" || !emailValidationCheck(form.email.value)) {
+            alert("メールアドレスを入力してください。");
+            setTimeout("form.email.focus()",100);
+            event.preventDefault();
+            return false;
+        }
+
+        if (form.name.value == "" || !checkKanji(form.name.value)) {
+            alert("漢字を入力してください。");
+            setTimeout("form.name.focus()",100);
+            event.preventDefault();
+            return false;
+        }
+
+        if (form.kana.value == "" || !checkKana(form.kana.value)) {
+            alert("カナを入力してください。");
+            setTimeout("form.kana.focus()",100);
+            event.preventDefault();
+            return false;
+        }
+
+        if (form.birth.value == "" ) {
+            alert("生年月日を入力してください。");
+            setTimeout("form.birth.focus()",100);
+            event.preventDefault();
+            return false;
+        }
+        if (form.case.value == "") {
+            alert("応募区分を入力してください。");
+            setTimeout("form.case.focus()",100);
+            event.preventDefault();
+            return false;
+        }
+        if (form.educationSelect.value == "") {
+            alert("学歴入力してください。");
+            setTimeout("form.educationSelect.focus()",100);
+            event.preventDefault();
+            return false;
+        }
+
+        if (form.educationSelect.value == "その他" && form.otherEducation.value=="") {
+            alert("その他の場合の、記入してください。");
+            setTimeout("form.educationSelect.focus()",100);
+            event.preventDefault();
+            return false;
+        }
+
+        if (form.skill.value == "") {
+            alert("ITスキル有無を入力してください。");
+            setTimeout("form.skill.focus()",100);
+            event.preventDefault();
+            return false;
+        }
+
+        if (form.class1stId.value === "") {
+            alert("経験分野を入力してください。");
+            setTimeout("form.class1stId.focus()",100);
+            event.preventDefault();
+            return false;
+        }
+
+        // if (form.class1stId.value == "その他" && form.otherclass1st.value=="") {
+        //     alert("その他の場合の、記入してください");
+        //     setTimeout("form.class1stId.focus()",100);
+        //     return false;
+        // }
+
+        if (form.class2ndId.value == "") {
+            alert("問題種別を入力してください。");
+            setTimeout("form.class2ndId.focus()",100);
+            event.preventDefault();
+            return false;
+        }
+        // console.log(class2nd.value);
+        if ((isNaN(form.careerId.value) || form.careerId.value === "")) {
+            alert("IT経験年数を入力してください。");
+            setTimeout("form.careerInput.focus()",100);
+            event.preventDefault();
+            return false;
+        }
+        if (form.code.value == "") {
+            alert("診断問項IDを入力してください。");
+            setTimeout("form.code.focus()",100);
+            event.preventDefault();
+            return false;
+        }
+
+        var submitConfirm=confirm("依頼しますか？");
+        if (!submitConfirm){
+            event.preventDefault();
+            return false;
+        }
+        else if(submitConfirm==true){
+          $('#submitLoading').modal('show');
+        }
+    }
+</script>
+
+<script>
+  function saveConfirm(){
+        if (form.email.value == "" || !emailValidationCheck(form.email.value)) {
+            alert("メールアドレスを入力してください。");
+            setTimeout("form.email.focus()",100);
+            event.preventDefault();
+            return false;
+        }
+
+        if (form.name.value == "" || !checkKanji(form.name.value)) {
+            alert("漢字を入力してください。");
+            setTimeout("form.name.focus()",100);
+            event.preventDefault();
+            return false;
+        }
+
+        if (form.kana.value == "" || !checkKana(form.kana.value)) {
+            alert("カナを入力してください。");
+            setTimeout("form.kana.focus()",100);
+            event.preventDefault();
+            return false;
+        }
+
+        if (form.birth.value == "" ) {
+            alert("生年月日を入力してください。");
+            setTimeout("form.birth.focus()",100);
+            event.preventDefault();
+            return false;
+        }
+        if (form.case.value == "") {
+            alert("応募区分を入力してください。");
+            setTimeout("form.case.focus()",100);
+            event.preventDefault();
+            return false;
+        }
+        if (form.educationSelect.value == "") {
+            alert("学歴入力してください。");
+            setTimeout("form.educationSelect.focus()",100);
+            event.preventDefault();
+            return false;
+        }
+
+        if (form.educationSelect.value == "その他" && form.otherEducation.value=="") {
+            alert("その他の場合の、記入してください。");
+            setTimeout("form.educationSelect.focus()",100);
+            event.preventDefault();
+            return false;
+        }
+
+        if (form.skill.value == "") {
+            alert("ITスキル有無を入力してください。");
+            setTimeout("form.skill.focus()",100);
+            event.preventDefault();
+            return false;
+        }
+
+        if (form.class1stId.value === "") {
+            alert("経験分野を入力してください。");
+            setTimeout("form.class1stId.focus()",100);
+            event.preventDefault();
+            return false;
+        }
+
+        // if (form.class1stId.value == "その他" && form.otherclass1st.value=="") {
+        //     alert("その他の場合の、記入してください");
+        //     setTimeout("form.class1stId.focus()",100);
+        //     return false;
+        // }
+
+        if (form.class2ndId.value == "") {
+            alert("問題種別を入力してください。");
+            setTimeout("form.class2ndId.focus()",100);
+            event.preventDefault();
+            return false;
+        }
+        // console.log(class2nd.value);
+        if ((isNaN(form.careerId.value) || form.careerId.value === "")) {
+            alert("IT経験年数を入力してください。");
+            setTimeout("form.careerInput.focus()",100);
+            event.preventDefault();
+            return false;
+        }
+        if (form.code.value == "") {
+            alert("診断問項IDを入力してください。");
+            setTimeout("form.code.focus()",100);
+            event.preventDefault();
+            return false;
+        }
+
+		var submitConfirm=confirm("保存しますか？");
+    if (!submitConfirm){
+            event.preventDefault();
+            return false;
+        }
+    form.submit();
+  }
+</script>
+
+<script>
+    	function ChangeClass1st(element) {
+
+		class2ndSelect.replaceChildren();
+		
+		switch (element.value) {
+        <?php foreach ($optionDatas["class2nd"] as $value => $class2nd): ?>
+            case "<?php echo $optionDatas["class1st"][array_search($value, array_column($optionDatas["class1st"], "idx"))]["text"]; ?>":
+                var option = document.createElement("option");
+                option.hidden = true;
+                option.innerText = "選択してください。";
+                class2ndSelect.appendChild(option);
+
+                <?php foreach ($class2nd as $data): ?>
+                    var option = document.createElement("option");
+                    option.value = <?php echo $data["idx"]; ?>;
+                    option.innerText = "<?php echo $data["text"]; ?>";
+                    class2ndSelect.appendChild(option);
+                <?php endforeach; ?>
+                break;
+                <?php endforeach; ?>
+            }
+	}
+</script>
+<script>
+function diagnosisData() {
+  var levelElement = document.querySelector('select[name="level"]');
+  var class2ndElement = document.querySelector('select[name="class2nd"]');
+  var levelValue = levelElement.options[levelElement.selectedIndex].value;
+  var class2ndValue = class2ndElement.options[class2ndElement.selectedIndex].value;
+  const url = window.location.href;
+  const postForm = new FormData();
+  postForm.append("level", levelValue);
+  postForm.append("class2nd", class2ndValue);
+  const xhr = new XMLHttpRequest();
+  xhr.open("POST", url, true);
+  xhr.send(postForm);
+  xhr.onload = () => {
+    if (xhr.status == 200) {
+        try {
+            const result = JSON.parse(xhr.responseText);
+            console.log(result);
+            if (result === "wrong") {
+              updateTable("wrong");
+                return;
+            }
+            updateTable(result);
+        } catch (e) {
+            console.error("Failed to parse response", e);
+            alert("サーバー応答の解析に失敗しました");
+        }
+    }
+}
+}
+
+    function updateTable(data) {
+    const tableBody = document.querySelector(".table tbody");
+    tableBody.innerHTML = ""; 
+    if (data === "wrong" || data.length === 0) {
+        const row = document.createElement("tr");
+
+        const messageCell = document.createElement("td");
+        messageCell.setAttribute("colspan", "4");
+        messageCell.textContent = "データがありません";
+        row.appendChild(messageCell);
+
+        tableBody.appendChild(row);
+    } else {
+      data.forEach((item, index) => {
+        const row = document.createElement("tr");
+
+        const noCell = document.createElement("td");
+        noCell.style="align-content:center;";
+        noCell.textContent = index + 1;
+        row.appendChild(noCell);
+
+        const titleCell = document.createElement("td");
+        titleCell.style="align-content:center;text-align:left;";
+        titleCell.textContent = item.title; 
+        row.appendChild(titleCell);
+
+        const codeCell = document.createElement("td");
+        codeCell.style="align-content:center";
+        codeCell.textContent = item.code;
+        row.appendChild(codeCell);
+
+        const selectCell = document.createElement("td");
+        selectCell.style="align-content:center";
+        const button = document.createElement("button");
+        button.type = "button";
+        button.textContent = "選択";
+        button.style="background:linear-gradient(111deg, #50D7C7 0%, #40ADF0 100%); padding: 5px 10px; color:white; border-radius:5px;";
+        button.addEventListener("click", () => {
+          selectCode(item.code,item.title);
+          selectQuestionNum(item.question_num);
+          const modalElement = document.querySelector('#staticBackdrop');
+        });
+        
+        selectCell.appendChild(button);
+        row.appendChild(selectCell);
+
+        tableBody.appendChild(row);
+    });
+}}
+
+function selectCode(code, title) {
+    const codeElement = document.querySelector('input[name="code"]');
+    const displayElement = document.querySelector('#codeDisplay');
+    if (codeElement) {
+        codeElement.value =code ;
+    }
+    if (displayElement){
+        displayElement.textContent = title+ "　("+code+")";
+    }
+}
+  function selectQuestionNum(question_num){
+    const numElement = document.querySelector('input[name="question_num"]');
+    if (numElement) {
+        numElement.value = question_num;
+    }
+  }
+
+</script>

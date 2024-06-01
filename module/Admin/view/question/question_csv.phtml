@@ -1,0 +1,39 @@
+<?php echo $this->partial("breadcrumb", ["datas" => $breadcrumbData]); ?>
+
+<h1 class="title">CSV登録</h1>
+
+<form enctype="multipart/form-data" id="form">
+	<input class="form-control" type="file" name="csv_file" id="csv_file"/>
+</form>
+<div class="btn-place" style="margin-top: 32px;">
+	<button class="emegra cancel" onclick="history.back();">戻る</button>
+	<button class="emegra" onclick="Regist();">登録</button>
+</div>
+
+<script type="text/javascript">
+	const form = document.getElementById("form");
+	const csvFile = document.getElementById("csv_file");
+
+	function Regist() {
+		const postForm = new FormData(form);
+		postForm.append("csvFile", csvFile[0]);
+
+		const xhr = new XMLHttpRequest();
+		xhr.open("POST", "./createByCsv", true);
+		xhr.send(postForm);
+
+		xhr.onload = () => {
+			if (xhr.status == 200) {
+				const result = xhr.responseText;	
+				if (result == "success") {
+					alert("登録しました。");
+					self.location.href = "list";
+				}
+				else {
+					alert("Error");
+					console.log(result);
+				}
+			}
+		}
+	}
+</script>

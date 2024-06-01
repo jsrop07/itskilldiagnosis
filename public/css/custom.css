@@ -1,0 +1,28 @@
+
+input::placeholder { font-style: italic; }
+
+select[data-value=""] {
+	font-style: italic;
+	color: grey;
+}
+option {
+	font-style: normal;
+	color: black;
+}
+
+.grid.answers {
+	display: grid;
+	grid-gap: 24px 0;
+}
+.grid.answers > div {
+	height: 38px;
+	display: grid;
+	grid-template-columns: 80px 1fr;
+	grid-gap: 0 16px;
+}
+
+.info-num {
+	height: 100%;
+	display: flex;
+	justify-content: end;
+}

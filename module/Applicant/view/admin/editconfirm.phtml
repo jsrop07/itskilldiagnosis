@@ -1,0 +1,196 @@
+<?php echo $this->partial("breadcrumb", ["datas" => $breadcrumbData]); ?>
+
+<h1 class="title">ITスキル診断状況管理</h1>
+
+<form id="form" method="post" action="./confirm">
+	<style type="text/css">
+		option { color: black; }
+		input::placeholder { font-style: italic; }
+	</style>
+
+	<div class="emegra card">
+		<div class="card-header">ITスキル診断者情報</div>
+
+		<div class="card-body">
+			<style type="text/css">
+				dl.emegra.info { grid-template-columns:  repeat(2, 170px 1fr) }
+			</style>
+			<dl class="emegra info">
+				<dt>ID</dt>
+                <dd>tanaka@gmail.com</dd>
+				
+                <dt>応募区分</dt>
+                <dd>新卒</dd>
+
+                <dt>パスワード</dt>
+                <dd>A1b3c4</dd>
+
+				<dt>お名前（漢字）</dt>
+                <dd>田中 一郎</dd>
+
+				<dt>申込日</dt>
+                <dd>24.3.1</dd>				
+
+				<dt>お名前（カナ）</dt>
+                <dd>タナカイチロウ</dd>
+
+                <dt>性別</dt>
+                <dd>男</dd>
+
+				<dt>学歴</dt>
+                <dd>専門卒</dd>
+				
+                <dt>生年月日</dt>
+                <dd>2000.01.01</dd>
+
+			</dl>
+		</div>
+	</div>
+
+    <div class="emegra card" style="margin-top: 32px;">
+	<div class="card-header">診断者ITスキル有無</div>
+
+	<div class="card-body">
+		<style type="text/css">
+
+		dl.emegra.skill { grid-template-columns: repeat(1, 170px 1fr); }
+				</style>
+		<dl class="emegra skill">
+                <dt>ITスキル有無</dt>
+                <dd>有</dd>
+
+
+                <dt>経験分野</dt>
+                <dd>ゲーム</dd>
+
+				<dt>IT経験年数</dt>
+                <dd>1</dd>
+
+				<dt>問題種別</dt>
+                <dd>JAVA</dd>
+		</dl>
+	</div>
+</div>
+
+    <div class="emegra card" style="margin-top: 32px;">
+	<div class="card-header">ITスキル診断問項詳細</div>
+
+	<div class="card-body">
+		<style type="text/css">
+			dl.emegra.setting { grid-template-columns: repeat(2, 170px 1fr); }
+		</style>
+		<dl class="emegra setting">
+                <dt>診断依頼</dt>
+                <dd>24.3.15</dd>
+
+				<dt>診断問項ID</dt>
+                <dd>B-50-T1</dd>
+
+				<dt>レベル</dt>
+                <dd>初級</dd>
+
+				<dt>問項数別</dt>
+                <dd>50問</dd>
+		
+				<dt>診断方法</dt>
+                <dd>WEB</dd>
+		</dl>
+	</div>
+</div>
+
+    <div class="emegra card" style="margin-top: 32px;">
+		<div class="card-header">ITスキル診断状況</div>
+
+		<div class="card-body">
+			<style type="text/css">
+			dl.emegra.detail { grid-template-columns: repeat(2, 150px 1fr); }
+			</style>
+			<dl class="emegra detail">
+				<dt>診断実施日</dt>
+				<dd><span value="">24.3.16</span></dd>
+
+				<dt>得点</dt>
+				<dd><span>76</span></dd> 
+
+				<dt>評価等級</dt>
+				<dd>B</dd>
+
+				<dt>診断者のコメント</dt>
+				<dd></dd>
+		
+				<dt>備考</dt>
+				<dd></dd>
+			</dl>
+		</div>
+	</div>
+</form>
+
+<div class="btn-place" style="margin-top: 32px;">
+	<button class="emegra cancel" onclick="self.location.href='../list';">戻る</button>
+	<button class="emegra" style="width:150px;" onclick="Regist();">修正</button>
+</div>
+
+<script type="text/javascript">
+	const smtp = document.getElementById("smtp");
+	const form = document.getElementById("form");
+	const pattern = /^[A-Za-z0-9_\.\-]+@[A-Za-z0-9\-]+\.[A-za-z0-9\-]+/;
+
+	function ActiveSmtp(value) {
+		if (value == "y") { smtp.disabled = false; }
+		else { smtp.disabled = true; }
+	}
+
+	function Regist() {
+		if (form.code.value == "") {
+			alert("職別コードを入力してください");
+			setTimeout("form.code.focus();", 100);
+			return false;
+		}
+		
+		if (form.id.value == "") {
+			alert("IDを入力してください");
+			setTimeout("form.id.focus()", 100);
+			return false;
+		}
+		
+		if (pattern.test(form.id.value) === false) {
+			alert("IDを確認してください");
+			setTimeout("form.id.focus()", 100);
+			return false;
+		}
+		
+		if (form.password.value == "") {
+			alert("パスワードを入力してください");
+			setTimeout("form.password.focus()", 100);
+			return false;
+		}
+		
+		if (form.name.value == "") {
+			alert("名前を入力してください");
+			setTimeout("form.name.focus()", 100);
+			return false;
+		}
+		
+		if (smtp.disabled == false && smtp.value == "") {
+			alert("SMTPを入力してください");
+			setTimeout("smtp.focus()", 100);
+			return false;
+		}
+
+		form.submit();
+	}
+</script>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/datepicker/1.0.10/datepicker.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/datepicker/1.0.10/datepicker.min.css">
+
+  <script>
+    $(document).ready(function(){
+      var birth = document.getElementById("birth");
+      $(birth).datepicker({
+        format: 'yyyy-mm-dd',
+        autohide: true
+      });
+    });
+  </script>

@@ -1,0 +1,188 @@
+<?php
+	$pointTexts = ["A", "B", "C", "D"];
+	$numTexts = array("①", "②", "③", "④", "⑤");
+  $levelTexts = ["無級", "初級", "中級", "高級"];
+
+	function ReplaceSymbol($string) {
+		$string = str_replace("<", "＜", $string);
+		$string = str_replace(">", "＞", $string);
+		return $string;
+	}
+
+	if (!isset($_SESSION)) { session_start(); }
+
+	$resultPoints = explode(",", $diagnosisData["result_points"]);
+	$resultTexts = explode(",", $diagnosisData["result_texts"]);
+	$resultComments = explode(",", $diagnosisData["result_comments"]);
+
+	// Check approve authority
+	$isApprover = false;
+	if ($_SESSION["user"]["level"] >= 1) { $isApprover = true; }
+?>
+
+<?php echo $this->partial("breadcrumb", ["datas" => $breadcrumbData]); ?>
+
+<h1 class="title">診断書詳細</h1>
+
+<div class="emegra card">
+	<div class="card-header">設定</div>
+
+	<div class="card-body">
+		<style type="text/css">
+				dl.emegra.setting { grid-template-columns: 140px 1fr; }
+		</style>
+		<dl class="emegra setting">
+			<dt>ID</dt>
+			<dd><?php echo $diagnosisData["code"]; ?></dd>
+			
+			<dt>分類</dt>
+			<dd><?php echo $optionDatas[$diagnosisData["class1st"]]; ?> / <?php echo $optionDatas[$diagnosisData["class2nd"]]; ?></dd>
+		
+			<dt>レベル</dt>
+      <dd><?php echo $levelTexts[$diagnosisData["level"]]; ?></dd>
+		
+			<dt>タイトル</dt>
+			<dd><?php echo $diagnosisData["title"]; ?></dd>
+		</dl>
+	</div>
+</div>
+
+<div class="emegra card" style="margin-top: 32px;">
+	<div class="card-header">問題</div>
+
+	<div class="card-body">
+		<style type="text/css">
+			dl.emegra.question { grid-template-columns: 90px 1fr; }
+		</style>
+		<dl class="emegra question">
+			<dt>問項数</dt>
+			<dd><?php echo $diagnosisData["question_num"]; ?>問題</dd>
+
+			<dt>診断時間</dt>
+			<dd><?php echo $diagnosisData["time_limit"]; ?>分</dd>
+
+			<dt>問項一覧</dt>
+			<div style="width: 100%; display: flex;">
+				<style type="text/css">
+					table.emegra tr { grid-template-columns: 50px 1fr 60px 50px; }
+					table.emegra th, table.emegra td { padding: 5px 0 !important; }
+				</style>
+
+				<table class="emegra">
+					<thead>
+						<tr>
+							<th>No</th>
+							<th>問項タイトル</th>
+							<th>タイプ</th>
+							<th>点数</th>
+						</tr>
+					</thead>
+					<tbody>
+						<?php foreach ($questionDatas as $index => $data): ?>
+							<?php
+								$popContent = $numTexts[0] . ReplaceSymbol($data["answer1"]);
+								for ($i = 2; $i <= 5; $i++) {
+									if ($data["answer" . $i] == null) { break; }
+									$popContent .= "<br/>" . $numTexts[$i -1] . ReplaceSymbol($data["answer" . $i]);
+								}
+							?>
+							<tr>
+								<td><?php echo $index + 1; ?></td>
+								<td style="text-align: left" data-bs-toggle="popover" data-bs-placement="bottom" data-bs-title="<?php echo $data["question"]; ?>" data-bs-content="<?php echo $popContent; ?>" data-bs-html="true">
+									<?php echo $data["title"]; ?>
+								</td>
+								<td><?php echo $optionDatas[$data["type"]]; ?></td>
+								<td><?php echo $data["point"]; ?></td>
+							</tr>
+						<?php endforeach; ?>
+						<tr>
+							<td style="grid-column: 1 / 4;"></td>
+							<td>100点</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</dl>
+	</div>
+</div>
+
+<div class="emegra card" style="margin-top: 32px;">
+	<div class="card-header">情報</div>
+
+	<div class="card-body">
+			<style type="text/css">
+				table.evaluation {
+					width: 100%;
+					text-align: center;
+				}
+				table.evaluation tr {
+					display: grid;
+					grid-template-columns: 100px 150px 150px 1fr;
+					gap: 10px 8px;
+				}
+				table.evaluation td {
+					padding: 4px 0;
+					display: flex;
+					align-items: center;
+					justify-content: center;
+				}
+			</style>
+			<table class="evaluation">
+				<thead>
+					<tr>
+						<th>評価等級</th>
+						<th>評価点数</th>
+						<th>評価</th>
+						<th>評価コメント</th>
+					</tr>
+				</thead>
+				<tbody>
+					<?php foreach ($resultPoints as $index => $point): ?>
+						<tr>
+							<td><?php echo $pointTexts[$index]; ?></td>
+							<td><?php echo $point; ?> ~ <?php echo ($index == 0) ? "100" : $resultPoints[$index - 1] - 1; ?></td>
+							<td style="justify-content: start;"><?php echo $resultTexts[$index]; ?></td>
+							<td style="justify-content: start;"><?php echo $resultComments[$index]; ?></td>
+						</tr>
+					<?php endforeach; ?>
+				</tbody>
+			</table>
+	</div>
+</div>
+
+<div class="btn-place" style="margin-top: 32px;">
+	<button class="emegra cancel" onclick="history.back();">戻る</button>
+	<?php if ($isApprover): ?>
+		<button class="emegra" onclick="self.location.href='../edit/<?php echo $diagnosisData['idx']; ?>';">修正</button>
+		<button class="emegra delete" onclick="Remove();">削除</button>
+	<?php endif; ?>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+<script type="text/javascript">
+	<?php if ($isApprover): ?>
+		function Remove() {
+			if (confirm("削除しますか？") === false) { return false; }
+
+			const postForm = new FormData();
+			postForm.append("idxs", <?php echo $diagnosisData["idx"]; ?>);
+
+			const xhr = new XMLHttpRequest();
+			xhr.open("POST", "../remove", true);
+			xhr.send(postForm);
+			xhr.onload = () => {
+				if (xhr.status == 200) {
+				const result = xhr.responseText;
+				if (result == "success") {
+					alert("削除しました。");
+					self.location.href = "../list";
+				}
+				else {
+					alert("Error");
+					console.log(result);
+					}
+				}
+			}
+		}
+	<?php endif; ?>
+</script>

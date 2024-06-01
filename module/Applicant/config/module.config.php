@@ -10,28 +10,30 @@
 return array(
     'router' => array(
         'routes' => array(
-            'admin' => array(
+            "applicant" => array(
                 'type' => 'Zend\Mvc\Router\Http\Segment',
                 'options' => array(
-                    'route'    => "/admin[/:action][/:cat][/:status][/:index]",
+                    'route'    => "/applicant[/:action][/:url]",
                     'constraints' => array(),
                     'defaults' => array(
-                        "controller" => "Admin",
+                        "controller" => "Applicant",
                         'action'     => 'index',
                     ),
                 ),
             ),
-            "user" => array(
+
+            "temp" => array(
                 'type' => 'Zend\Mvc\Router\Http\Segment',
                 'options' => array(
-                    'route'    => "/user[/:action][/:url]",
+                    'route'    => "/admin/applicant[/:action][/:index]",
                     'constraints' => array(),
                     'defaults' => array(
-                        "controller" => "User",
+                        "controller" => "Applicant",
                         'action'     => 'index',
                     ),
                 ),
             ),
+            
         ),
     ),
     'service_manager' => array(
@@ -55,8 +57,7 @@ return array(
     ),
     'controllers' => array(
         'invokables' => array(
-            "Admin" => "Test\Controller\AdminController",
-            "User" => "Test\Controller\UserController",
+            "Applicant" => "Applicant\Controller\ApplicantController",
         ),
     ),
     'view_manager' => array(
@@ -66,15 +67,19 @@ return array(
         'not_found_template'       => 'error/404',
         'exception_template'       => 'error/index',
         'template_map' => array(
-					"admin"									=> __DIR__ . "/../view/layout/admin_layout.phtml",
-					"layout/user"						=> __DIR__ . "/../view/layout/user/layout.phtml",
-					"layout/user/login"			=> __DIR__ . "/../view/layout/user/login.phtml",
-					"breadcrumb"						=> __DIR__ . "/../view/layout/breadcrumb.phtml",
-					"pagination"						=> __DIR__ . "/../view/layout/pagination.phtml",
-            'layout/layout'           => __DIR__ . '/../view/layout/layout.phtml',
-            'layout/mylayout'           => __DIR__ . '/../view/layout/mylayout.phtml',
-            "layout/exam_layout" => __DIR__ . "/../view/layout/exam_layout.phtml",
-            "layout/none" => __DIR__ . "/../view/layout/none_layout.phtml",
+			"layout/default"									=> __DIR__ . "/../applicant/view/layout/admin/layout_default.phtml",
+            "breadcrumb"									=> __DIR__ . "/../view/layout/admin/breadcrumb.phtml",
+            "pagination2"                                    => __DIR__ . "/../view/layout/admin/pagination2.phtml",
+                                        // C:\xampp\htdocs\gngitskill\admin\module\Applicant\view\layout\admin\pagination2.phtml
+			// 		"admin"									=> __DIR__ . "/../view/layout/admin_layout.phtml",
+			// 		"layout/user"						=> __DIR__ . "/../view/layout/user/layout.phtml",
+			// 		"layout/user/login"			=> __DIR__ . "/../view/layout/user/login.phtml",
+			// 		"breadcrumb"						=> __DIR__ . "/../view/layout/breadcrumb.phtml",
+			// 		"pagination"						=> __DIR__ . "/../view/layout/pagination.phtml",
+            // 'layout/layout'           => __DIR__ . '/../view/layout/layout.phtml',
+            // 'layout/mylayout'           => __DIR__ . '/../view/layout/mylayout.phtml',
+            // "layout/exam_layout" => __DIR__ . "/../view/layout/exam_layout.phtml",
+            // "layout/none" => __DIR__ . "/../view/layout/none_layout.phtml",
         ),
         'template_path_stack' => array(
             __DIR__ . '/../view',

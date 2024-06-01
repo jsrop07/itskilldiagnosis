@@ -1,0 +1,882 @@
+<?php 
+echo $this->partial("breadcrumb", ["datas" => $breadcrumbData]); 
+$currentDate = date("Y-m-d H:i:s");
+$dateSchedule = date("Y-m-d H:i");
+
+$urlLink = "../../diagnosis/detail/";
+
+function InitStyle() { return " font-style: italic; color: ;"; }
+$isGenderNull = false;
+$isGender = false;
+
+$isMethod = false;
+$isITMajor = false;
+$isITSkill = false;
+$isITEducation1 = false;
+$isITEducation2 = false;
+$isITEducation3 = false;
+$isITEducation4 = false;
+$isClass1st1 = false;
+$isClass1st2 = false;
+$isClass1st3 = false;
+$isClass1st4 = false;
+$isClass1st5 = false;
+$isLevel0 = false;
+$isLevel1 = false;
+$isLevel2 = false;
+$isLevel3 = false;
+/* log
+	作成：丁錫圓
+	修正日：24/06/01
+*/
+$isMailNull = false;
+$isMail = false;
+// ここまで
+
+// gender
+if ($applicantArray["gender"] === NULL) {
+    $isGenderNull = true;
+}
+
+if ($applicantArray["gender"] == "0") {
+    $isGender = true;
+}
+
+// method
+if ($recordArray["method"] == "WEB") {
+    $isMethod = true;
+}
+
+// major
+if ($recordArray["major"] == "IT・ソフトウェア専攻") {
+    $isITMajor = true;
+}
+
+// skill
+if ($recordArray["skill"] == 0) {
+    $isITSkill = true;
+}
+
+// education
+switch ($recordArray["education"]) {
+    case "高卒":
+        $isITEducation1 = true;
+        break;
+    case "専門卒":
+        $isITEducation2 = true;
+        break;
+    case "大卒":
+        $isITEducation3 = true;
+        break;
+    case "大学院卒":
+        $isITEducation4 = true;
+        break;
+}
+
+// class1st
+switch ($recordArray["class1st"]) {
+    case "WEB":
+        $isClass1st1 = true;
+        break;
+    case "IT基礎":
+        $isClass1st2 = true;
+        break;
+    case "モバイル":
+        $isClass1st3 = true;
+        break;
+    case "サーバ":
+        $isClass1st4 = true;
+        break;
+    case "インフラ":
+        $isClass1st5 = true;
+        break;
+}
+
+// level
+if (isset($diagnosisData["level"]) && is_string($diagnosisData["level"])) {
+  switch ($diagnosisData["level"]) {
+      case "0":
+          $isLevel0 = true;
+          break;
+      case "1":
+          $isLevel1 = true;
+          break;
+      case "2":
+          $isLevel2 = true;
+          break;
+      case "3":
+          $isLevel3 = true;
+          break;
+      default:
+          // Optional: handle unexpected values
+          break;
+  }
+} else {
+  // Handle the case where "level" is not set or not a string
+  // For example, you might want to initialize the variables to false
+  $isLevel0 = false;
+  $isLevel1 = false;
+  $isLevel2 = false;
+  $isLevel3 = false;
+}
+/* log
+	作成：丁錫圓
+	修正日：24/06/01
+*/
+//mail Manual/Auto
+if ($recordArray["mail_delay"] === NULL) {
+  $isMailNull = true;
+}
+if ($recordArray["mail_delay"] !== NULL) {
+  $isMail = true;
+}
+// ここまで
+// editHTML show question_num
+$question_num = isset($diagnosisData['question_num']) ? $diagnosisData['question_num'] : null;
+?>
+
+
+<h1 class="title">ITスキル診断状況管理</h1>
+
+<form id="form" method="post" action="../editok" onsubmit="return handleSubmit()">
+	<style type="text/css">
+		option { color: black; }
+		/* input::placeholder { font-style: italic; } */
+	</style>
+
+	<div class="emegra card">
+		<div class="card-header">ITスキル診断者情報</div>
+
+		<div class="card-body">
+			<style type="text/css">
+				dl.emegra.info { grid-template-columns:  repeat(2, 170px 1fr) }
+			</style>
+			<dl class="emegra info">
+				<dt>ID</dt>
+				<dd><input class="form-control" name="email" type="text" style="width:220px; " value="<?php echo $applicantArray["email"] ?>" readonly></dd>
+				
+                <dt class="essential">応募区分</dt>
+				<select class="form-select" name="case" style="width:220px;" onchange="ChangeInputStyle(this)" value="<?php echo $recordArray["case"] ?>" >
+                        <option value="<?php echo ($recordArray['case']) ?>" selected hidden>
+						<?php
+							if ($recordArray['case'] == NULL) {
+								echo "なし";
+							} elseif($recordArray['case']==0) {
+								echo "新卒";
+							}	else{echo "中途（経歴職）";
+							}
+							?>					
+						</option>
+                        <option value="0">新卒</option>
+                        <option value="1">中途（経歴職）</option>
+                    </select>
+
+                <dt>パスワード</dt>
+				<dd><input class="form-control" name="password" type="text" style="width:220px;" value="B7A2D423" readonly></dd>
+
+				<dt class="essential">お名前（漢字）</dt>
+				<dd><input class="form-control" id="userInput" name="name" type="text" placeholder="漢字を記入してください。"style="width:220px" maxlength='20' value="<?php echo $applicantArray["name"] ?>"></dd>
+
+                <dt>申込日</dt>
+				<dd><input class="form-control" type="text" style="width:220px; " value="<?php echo $applicantArray["apply_date"] ?>" readonly></dd>
+				
+                <dt class="essential">お名前（カナ）</dt>
+				<dd><input class="form-control" name="kana" type="text" placeholder="カナを記入してください。"style="width:220px" maxlength='50' value="<?php echo $applicantArray["kana"] ?>"></dd>
+
+                <dt>性別</dt>
+				<dd> 
+				<select class="form-select"  name="gender" id="gender" style="width:220px">
+					<option value="" <?php echo ($isGenderNull) ? "selected" : "未依頼" ?>>未依頼</option>
+					<option value="0" <?php echo (!$isGenderNull && $isGender) ? "selected" : "" ?>>男</option>
+					<option value="1" <?php echo (!$isGenderNull && !$isGender) ? "selected" : "" ?>>女</option>
+				</select>
+
+
+				</dd>
+				
+                <dt class="essential">学歴</dt>
+				<dd>
+					<select class="form-select" id="educationId"  style="width:220px" onchange="ChangeEducation(this)">
+                        <option value="高卒" <?php echo($isITEducation1) ? "selected" : "" ;?>>高卒</option>
+                        <option value="専門卒" <?php echo($isITEducation2) ? "selected" : "" ;?>>専門卒</option>
+                        <option value="大卒" <?php echo($isITEducation3) ? "selected" : "" ;?>>大卒</option>
+                        <option value="大学院卒" <?php echo($isITEducation4) ? "selected" : "" ;?>>大学院卒</option>
+                        <option value="その他"<?php echo ($isITEducation1 || $isITEducation2 || $isITEducation3 || $isITEducation4 ) ? "" : "selected"; ?>>その他</option>
+                    </select>
+                        <input class="form-control"  style="margin-left: 10px; width:200px;" type="text" placeholder="その他の場合" id="educationInput" name="education" maxlength='20' value="<?php echo ($recordArray['education']) ?>">
+				</dd>
+
+				<dt>IT関連資格</dt>
+				<dd><input class="form-control" id="certificatesId" name="certificates" type="text"  style="width:220px" value="<?php echo ($applicantArray["certificates"] == null) ? "未設定" : $applicantArray["certificates"]; ?>"></dd> 
+
+        <dt class="essential">生年月日</dt>
+				<dd><input class="form-control" id="birth" name="birth" type="text" placeholder="YYYY-MM-DD" autocomplete="off"  style="width:220px" value="<?php echo $applicantArray["birth"] ?>"></dd> 
+
+				<dt>専攻</dt>
+				<dd> 
+					<select class="form-select" id="majorId" style="width:220px;" onchange="ChangeMajor(this)">
+						<option value="" >未依頼</option>
+                        <option value="IT・ソフトウェア専攻"<?php echo ($isITMajor) ? " selected" : ""; ?>>IT・ソフトウェア専攻</option>
+                        <option value="other"<?php echo ($recordArray["major"] != null && !$isITMajor) ? " selected" : ""; ?>>IT・ソフトウェア以外</option>
+                    </select>
+                    <input class="form-control" style="margin-left: 10px; width:200px;" type="text" placeholder="その他の場合" id="majorInput"  name="major" maxlength='20' value='<?php echo ($recordArray['major']) ?>'  />
+				</dd>
+
+				<dt>その他</dt>
+				<dd><input class="form-control" id="other" name="other" type="text"  style="width:220px" value="<?php echo ($applicantArray["other"] == null) ? "未設定" : $applicantArray["other"]; ?>"></dd> 
+			</dl>
+		</div>
+	</div>
+
+    <div class="emegra card" style="margin-top: 32px;">
+	<div class="card-header">診断者ITスキル有無</div>
+
+	<div class="card-body">
+		<style type="text/css">
+
+		dl.emegra.setting { grid-template-columns: repeat(1, 180px 1fr); }
+				</style>
+			<dl class="emegra setting">
+                <dt class="essential" id="ITskillTitle">ITスキル有無</dt>
+				<dd>
+					<select class="form-select" name="skill" id="ITskillId" style="width:220px;" onchange="SkillSelectChange(this.value)">
+                        <option value="0" <?php echo($isITSkill) ? "selected" : "" ;?>>有</option>
+                        <option value="1" <?php echo(!$isITSkill) ? "selected" : "" ;?>>無</option>
+                    </select>
+				</dd>
+                <dt class="essential" id="class1stTitle">経験分野</dt>
+				
+				<dd>
+					<select class="form-select" name="class1st" id="class1stId" style="width:220px;"   onclick="ChangeClass1st(this)">
+          <option value="" selected hidden>選択してください。</option>
+            <option value="WEB" <?php echo($isClass1st1) ? "selected" : "" ;?>>WEB</option>
+            <option value="IT基礎" <?php echo($isClass1st2) ? "selected" : "" ;?>>IT基礎</option>
+            <option value="モバイル" <?php echo($isClass1st3) ? "selected" : "" ;?>>モバイル</option>
+            <option value="サーバ" <?php echo($isClass1st4) ? "selected" : "" ;?>>サーバ</option>
+            <option value="インフラ" <?php echo($isClass1st5) ? "selected" : "" ;?>>インフラ</option>
+            <option value="その他"<?php echo ($isClass1st1 || $isClass1st2 || $isClass1st3 || $isClass1st4 || $isClass1st5) ? "" : "selected"; ?>>その他</option>
+          </select>
+				</dd>
+
+				<dt class="essential" id=class2ndTitle>問題種別</dt>
+				<dd>
+				<select class="form-select" name="class2nd" id="class2ndId" style="width:220px;" onchange="ChangeInputStyle(this)">
+				<?php if (true): ?>
+					<?php
+          if (!empty($optionDatas["class2nd"][$recordArray["class1st"]])) {
+            $dataArray = $optionDatas["class2nd"][$recordArray["class1st"]];
+          }else{
+            $dataArray = $optionDatas["class2nd"]['11'];
+          }						
+          foreach ($dataArray as $data) {
+            if ($data["idx"] == $recordArray["class2nd"]) {
+                $class2ndText = $data["text"];
+                break;
+            }
+        }
+					?>
+          <option value="<?php echo $recordArray["class2nd"]; ?>" hidden><?php echo $class2ndText; ?></option>
+					<?php foreach ($optionDatas["class2nd"][$recordArray["class1st"]] as $data): ?>
+					<?php endforeach; ?>
+				<?php endif; ?>
+			</select>
+
+				</dd>
+
+				<dt class="essential" id="careerTitle">IT経験年数</dt>
+				<dd><input class="form-control" name="career" id="careerId" type="text" placeholder="経歴を記入してください。" style="font-size:15px; width:220px" maxlength='2' value="<?php echo $applicantArray['career']?>"></dd> 
+		</dl>
+    <!-- <input type="hidden" name="career" id="noSkillCareer"> -->
+
+	</div>
+</div>
+
+    <div class="emegra card" style="margin-top: 32px;">
+	<div class="card-header">ITスキル診断問項詳細</div>
+
+	<div class="card-body">
+		<style type="text/css">
+			dl.emegra.detail { grid-template-columns: repeat(2, 140px 1fr); }
+		</style>
+		<dl class="emegra detail">
+                <dt>診断依頼</dt>
+				<dd><input class="form-control"  type="text" style="width:220px;" value="<?php echo $currentDate?>"readonly></dd>
+
+				<dt class="essential">診断問項ID</dt>
+				<dd>
+					<input name="code" type="hidden" style="width:220px;" value="<?php echo $diagnosisData['code'] !=NULL ?  $diagnosisData['code'] : "" ?>">
+            <div id="codeDisplay" name="codeName" style="padding-right:5px;cursor:pointer;" 
+              <?php echo isset($diagnosisData['idx']) ? "onclick='Link(" . $diagnosisData['idx'] . ");'" : '' ?>>
+              <?php echo isset($diagnosisData['code']) && $diagnosisData['code'] !== false ? $diagnosisData['code'] : "未登録" ?>
+            </div>
+					<button type="button" data-bs-toggle="modal" data-bs-target="#staticBackdrop" style="padding: 0px 10px ;border-radius: 8px; background:linear-gradient(111deg, #50D7C7 0%, #40ADF0 100%); color:white;" onclick="diagnosisData();">検索</button>
+				</dd> 
+        <script>
+          function Link(idx) {
+            self.location.href = "../../diagnosis/detail/" + idx;
+          }
+        </script>
+				
+			<div class="modal modal-sheet py-5" style="backdrop-filter: blur(5px); " tabindex="-1" role="dialog" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+				<div class="modal-dialog" style="margin-top:150px;" role="document">
+					<div class="modal-content rounded-4" style=>
+          <div class="modal-header border-bottom-0" style="background:linear-gradient(111deg, #50D7C7 0%, #40ADF0 100%); color:white; height: 40px;border-top-left-radius:13px;border-top-right-radius:13px">
+              <h3 class="modal-title fs-6" id="exampleModalLabel">診断書検索</h3>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(100%);"></button>
+					  </div>
+              <div class="modal-body fs-5">
+                  <table class="table" style="text-align:center; font-size:12px;">
+                    <thead>
+                    <tr>
+                        <th>No</th>
+                        <th style="text-align:left;">タイトル</th>
+                        <th>診断書番号</th>
+                        <th>選択</th>
+                      </tr>
+                      </thead>
+                      <tbody style="text-align:center">
+                      
+                      </tbody>
+                    </table>
+              </div>
+              <div class="modal-footer flex-column border-top-0" style="margin-bottom:8px;">
+                <button type="button" class="btn btn-lg  w-75 mx-0" data-bs-dismiss="modal" style="background:linear-gradient(111deg, #50D7C7 0%, #40ADF0 100%); color:white;">閉じる</button>
+              </div>
+          </div>
+				</div>
+			</div>
+				<dt class="essential">レベル</dt>
+				<dd><select class="form-select" name="level" type="text" style="width:100px;">
+					<option value="0"<?php echo $isLevel0 ? "selected" : "" ;?>>無級</option>
+					<option value="1"<?php echo $isLevel1 ? "selected" : "" ?>>初級</option>
+					<option value="2"<?php echo $isLevel2 ? "selected" : "" ?>>中級</option>
+					<option value="3"<?php echo $isLevel3 ? "selected" : "" ?>>高級</option>
+					</select>
+					
+				</dd>
+				<dt class="essential">問項数別</dt>
+          <dd>
+            <input id="question_numId" class="form-control" type="text" style="width:50px;text-align:center;" value="<?php echo $question_num ?>" readonly>問
+          </dd>		             
+				<dt class="essential">診断方法</dt>
+          <dd>
+            <select class="form-select" name="method" style="width:100px;" onchange="ChangeInputStyle(this)" >
+              <option value="" selected disabled hidden><?php echo $recordArray['method']?></option>
+              <option value="WEB" <?php echo($isMethod) ? "selected" : ""?>>WEB</option>
+              <option value="対面"<?php echo(!$isMethod) ? "selected" : "" ;?>>対面</option>
+            </select>
+				  </dd>
+        <dt class="essential">言語選択</dt>
+        <dd>
+          <select class="form-select" name="language" style="width:100px;" onchange="ChangeInputStyle(this)" >
+            <option value="0" selected>日本語</option>
+            <option value="1">韓国語</option>
+          </select>
+				</dd>
+        <dt class="essential">メール転送</dt>
+        <dd>
+        <!-- /* log
+          作成：丁錫圓
+          修正：丁錫圓
+          修正日：24/06/01
+        */ -->
+        <!-- /* 修正前： -->
+        <!-- <option value="<?php echo $recordArray['mail_delay']?>" hidden></option>
+            <option value="" selected>手動</option>
+            <option value="0">自動</option> -->
+          <!-- ここまで -->
+
+          <!-- /* 修正後： */ -->
+          <select class="form-select" name="mail_delay" style="width:100px;" onchange="ChangeInputStyle(this)" >
+            <option value="" <?php echo($isMailNull) ? "selected" : ""?>>手動</option>
+            <option value="0" <?php echo($isMail) ? "selected" : ""?>>自動</option>
+          </select>
+          <!-- /* ここまで */ -->
+				</dd>
+        <dt class="essential">診断日</dt>
+        <dd><input class="form-control" name="schedule" type="text" style="width:220px;" value="<?php echo $recordArray['date_schedule'] ? $recordArray['date_schedule'] : $dateSchedule ?>"></dd>
+
+		</dl>
+	</div>
+</div>
+<div class="emegra card" style="margin-top: 32px;">
+		<div class="card-header">ITスキル診断状況</div>
+
+		<div class="card-body">
+			<style type="text/css">
+			dl.emegra.detail { grid-template-columns: repeat(2, 150px 1fr); }
+			</style>
+			<dl class="emegra detail"> 
+
+				<dt>備考</dt>
+				<dd><input class="form-control" name="note" type="text" style="width:220px; " value="<?php echo $recordArray['note']?>"></dd>
+
+        <input type="hidden" name="recordindex" value="<?php echo $index?>"></div>
+        <input type="hidden" name="applicantindex" value="<?php echo $applicantArray['idx']?>"></div>
+
+			</dl>
+		</div>
+	</div>
+
+  
+<div class="btn-place" style="margin-top: 32px;">
+	<button type="button" class="emegra cancel" onclick="self.location.href='../../situation/list';">戻る</button>
+  <button class="emegra"  id="btn_save" name="editDatas" value="btn_save"  style="width:150px;" onclick=saveConfirm()>一時保存</button>
+	<button class="emegra"  id="btn_submit" name="editDatas" value="btn_submit"  style="width:150px;" onclick=editConfirm()>ITスキル診断依頼</button>
+</div>
+
+<!-- Request send modal -->
+<div class="modal" tabindex="-1" role="dialog" id="submitLoading">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <h3 style="text-align:center;">依頼転送中です。</h3>
+      </div>
+    </div>
+  </div>
+</div>
+
+</form>
+
+<script type="text/javascript">
+	const form = document.getElementById("form");
+    var selectElement = document.getElementById('majorId');
+    var inputElement = document.getElementById('majorInput');
+	if (selectElement.value != "other" || selectElement.value == "なし") {
+        inputElement.hidden = true;
+    } else if (selectElement.value === "other" && selectElement.value !="IT・ソフトウェア専攻") {
+        inputElement.hidden = false;
+    }
+	function ChangeGender(element) {
+		ChangeInputStyle(element);
+		if (form.gender.value != "other") { 
+			form.gender.value = element.value;
+		}
+	}
+
+	function ChangeMajor(element) {
+		ChangeInputStyle(element);
+		if (form.major.value != "other") { 
+			form.major.value = element.value;
+		}
+	}
+
+	var selectElement2 = document.getElementById('educationId');
+    var inputElement2 = document.getElementById('educationInput');
+	if (selectElement2.value != "その他") {
+        inputElement2.hidden = true;
+    } else if (selectElement2.value === "その他") {
+        inputElement2.hidden = false;
+    }
+	function ChangeEducation(elements) {
+		ChangeInputStyle(elements);
+		if (form.education.value != "その他") { 
+			form.education.value = elements.value;
+		}
+	}
+
+	// var selectElement3 = document.getElementById('class1stId');
+  //   var inputElement3 = document.getElementById('otherclass1st');
+	// if (selectElement3.value != "その他") {
+  //       inputElement3.hidden = true;
+  //   } else if (selectElement3.value === "その他") {
+  //       inputElement3.hidden = false;
+  //   }
+
+
+</script>
+<!-- <script>
+        function ChangeClass1stValue(selectElement) {
+            var otherInput = document.getElementById('otherclass1st');
+            if (ITskillId.value=="1" && selectElement.value === "その他") {
+                otherInput.style.display = 'none';
+            } else if(selectElement.value === "その他"){
+                otherInput.style.display = 'block';
+            } else{
+                otherInput.style.display = 'none';
+                otherInput.value = selectElement.value;
+              }
+            }
+
+        function handleSubmit() {
+            var selectElement = document.getElementById('class1stId');
+            var otherInput = document.getElementById('otherclass1st');
+            if (selectElement.value !== "その他") {
+                otherInput.value = selectElement.value;
+            }
+            return true; 
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            ChangeClass1stValue(document.getElementById('class1stId'));
+        });
+    </script> -->
+<script>
+	function ChangeInputStyle(element) {
+		element.style.fontStyle = "normal";
+		element.style.color = "black";
+	}
+</script>
+
+<script>
+	window.onload=function(){
+		// console.log(form.major);
+		randomPW();
+	}
+</script>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.0/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/locales/bootstrap-datepicker.ja.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
+
+  <script>
+    $(document).ready(function(){
+      var birth = document.getElementById("birth");
+      $(birth).datepicker({
+        format: 'yyyy-mm-dd',
+        autohide: true,
+        language: 'ja',
+        startDate: '1980-01-01',
+        endDate: '2010-12-31'
+      });
+    });
+  </script>
+
+<script>
+	let skillSelect = document.getElementById('ITskillId');
+  let class1stBox = document.getElementById('class1stId');
+	let class2ndSelect = document.getElementById('class2ndId')
+	let careerSelect = document.getElementById('careerId')
+  let hiddenCareer= document.getElementById('noSkillCareer');
+
+  function SkillSelectChange(value){
+    class2ndSelect.replaceChildren();
+    if (form.skill.value === '1') {
+      for (var i = 0; i < class1stBox.options.length - 1; i++) {
+        class1stBox.options[i].style.display = 'none';
+      }
+      class2ndId.value = "";
+      class1stId.value = "";
+      var option = document.createElement("option");
+      option.hidden = true;
+      option.innerText = "選択してください。";
+      class2ndSelect.appendChild(option);
+      careerSelect.value = "0";
+      careerId.readOnly =  true;
+
+    } else {
+      for (var i = 0; i < class1stBox.options.length - 1; i++) {
+        class1stBox.options[i].style.display = 'block';
+      }
+      class1stId.value = "";
+      class2ndSelect.innerText = "";
+      class2ndSelect.value = "";
+      careerSelect.value = '';
+      var defaultOption = document.createElement("option");
+      defaultOption.value = "";
+      defaultOption.innerText = "選択してください。";
+      class2ndSelect.appendChild(defaultOption);
+      class2ndSelect.value = "";
+      careerId.readOnly =  false;
+    }
+  }	
+
+</script>
+
+<script>
+document.getElementById('educationId').addEventListener('change', function(event) {
+    var selectedOption = event.target.value;
+
+    if (selectedOption === "その他") {
+		form.education.value = "";
+        form.education.hidden = false;
+    } else if(selectedOption != "その他") {
+        form.education.hidden = true;
+		// form.education.style.display = 'none';
+    }
+});
+
+
+document.getElementById('majorId').addEventListener('change', function(event) {
+    var selectedOption = event.target.value;
+
+    if (selectedOption === "other") {
+		    form.major.value = "";
+        form.major.style.display = 'block';
+        form.major.hidden = false;
+    } else {
+        form.major.hidden = true;
+		    form.major.style.display = 'none';
+    }
+});
+
+// document.getElementById('class1stId').addEventListener('change', function(event) {
+// 	var selectedOption = event.target.value;
+
+// 	if (selectedOption === "その他") {
+// 		  form.class1st.value = "";
+//       form.class1st.hidden = false;
+//     } else if(selectedOption != "その他") {
+//         form.class1st.hidden = true;
+// 		// form.education.style.display = 'none';
+//     }
+// });
+</script>
+
+<script>
+	function ChangeClass1st(element) {
+
+class2ndSelect.replaceChildren();
+switch (element.value) {
+<?php foreach ($optionDatas["class2nd"] as $value => $class2nd): ?>
+	case "<?php echo $optionDatas["class1st"][array_search($value, array_column($optionDatas["class1st"], "idx"))]["text"]; ?>":
+		var option = document.createElement("option");
+		option.hidden = true;
+		option.innerText = "選択してください。";
+		class2ndSelect.appendChild(option);
+
+		<?php foreach ($class2nd as $data): ?>
+			var option = document.createElement("option");
+			option.value = <?php echo $data["idx"]; ?>;
+			option.innerText = "<?php echo $data["text"]; ?>";
+			class2ndSelect.appendChild(option);
+		<?php endforeach; ?>
+		break;
+		<?php endforeach; ?>
+		
+	}
+}
+</script>
+
+<script>
+	function editConfirm(){
+        if (form.skill.value == "") {
+            alert("ITスキル有無を入力してください。");
+            setTimeout("form.skill.focus()",100);
+            event.preventDefault();
+            return false;
+        }
+
+        if (form.class1stId.value === "") {
+            alert("経験分野を入力してください。");
+            setTimeout("form.class1stId.focus()",100);
+            event.preventDefault();
+            return false;
+        }
+
+        // if (form.class1stId.value == "その他" && form.otherclass1st.value=="") {
+        //     alert("その他の場合の、記入してください");
+        //     setTimeout("form.class1stId.focus()",100);
+        //     return false;
+        // }
+
+        if (form.class2ndId.value == "") {
+            alert("問題種別を入力してください。");
+            setTimeout("form.class2ndId.focus()",100);
+            event.preventDefault();
+            return false;
+        }
+        // console.log(class2nd.value);
+        if ((isNaN(form.careerId.value) || form.careerId.value === "")) {
+            alert("IT経験年数を入力してください。");
+            setTimeout("form.careerInput.focus()",100);
+            event.preventDefault();
+            return false;
+        }
+        if (form.code.value == "") {
+            alert("診断問項IDを入力してください。");
+            setTimeout("form.code.focus()",100);
+            event.preventDefault();
+            return false;
+        }
+
+		var submitConfirm=confirm("依頼しますか？");
+		if (!submitConfirm){
+            event.preventDefault();
+            return false;
+        }
+        else if(submitConfirm==true){
+        form.submit();
+        $('#submitLoading').modal('show');
+
+        }
+        // form.submit();
+
+		
+	}
+  function saveConfirm(){
+    if (form.skill.value == "") {
+            alert("ITスキル有無を入力してください。");
+            setTimeout("form.skill.focus()",100);
+            event.preventDefault();
+            return false;
+        }
+
+        if (form.class1stId.value === "") {
+            alert("経験分野を入力してください。");
+            setTimeout("form.class1stId.focus()",100);
+            event.preventDefault();
+            return false;
+        }
+
+        // if (form.class1stId.value == "その他" && form.otherclass1st.value=="") {
+        //     alert("その他の場合の、記入してください");
+        //     setTimeout("form.class1stId.focus()",100);
+        //     return false;
+        // }
+
+        if (form.class2ndId.value == "") {
+            alert("問題種別を入力してください。");
+            setTimeout("form.class2ndId.focus()",100);
+            event.preventDefault();
+            return false;
+        }
+        // console.log(class2nd.value);
+        if ((isNaN(form.careerId.value) || form.careerId.value === "")) {
+            alert("IT経験年数を入力してください。");
+            setTimeout("form.careerInput.focus()",100);
+            event.preventDefault();
+            return false;
+        }
+        if (form.code.value == "") {
+            alert("診断問項IDを入力してください。");
+            setTimeout("form.code.focus()",100);
+            event.preventDefault();
+            return false;
+        }
+       
+        var submitConfirm=confirm("保存しますか？");
+            if (!submitConfirm){
+                    event.preventDefault();
+                    return false;
+                }
+        form.submit();
+  }
+	function randomPW(){
+		const pwLength = 8;
+		const pwEncoding = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+		let randomPw = "";
+
+		for (let i = 0; i < pwLength; i++) {
+			const randomIndex = Math.floor(Math.random() * pwEncoding.length);
+			randomPw += pwEncoding.charAt(randomIndex);
+		}
+		form.password.value = randomPw;
+		// console.log(randomPW);
+
+
+	}
+</script>
+
+<script>
+function diagnosisData() {
+  var skillElement = document.querySelector('select[name="skill"]');
+  var levelElement = document.querySelector('select[name="level"]');
+  var class2ndElement = document.querySelector('select[name="class2nd"]');
+  var skillValue = skillElement.options[skillElement.selectedIndex].value;
+  var levelValue = levelElement.options[levelElement.selectedIndex].value;
+  var class2ndValue = class2ndElement.options[class2ndElement.selectedIndex].value;
+  console.log(skillValue);
+
+  const url = window.location.href;
+  const postForm = new FormData();
+  postForm.append("level", levelValue);
+  postForm.append("class2nd", class2ndValue);
+  const xhr = new XMLHttpRequest();
+  xhr.open("POST", url, true);
+  xhr.send(postForm);
+  xhr.onload = () => {
+    if (xhr.status == 200) {
+        try {
+            const result = JSON.parse(xhr.responseText);
+            // console.log(result);
+            if (result === "wrong") {
+              updateTable("wrong");
+                return;
+            }
+            updateTable(result);
+        } catch (e) {
+            console.error("Failed to parse response", e);
+            alert("サーバー応答の解析に失敗しました");
+        }
+    }
+}
+}
+
+    function updateTable(data) {
+    const tableBody = document.querySelector(".table tbody");
+    tableBody.innerHTML = ""; 
+    if (data === "wrong" || data.length === 0) {
+        const row = document.createElement("tr");
+        const messageCell = document.createElement("td");
+        messageCell.setAttribute("colspan", "4");
+        messageCell.textContent = "データがありません";
+        row.appendChild(messageCell);
+
+        tableBody.appendChild(row);
+    } else {
+      data.forEach((item, index) => {
+        const row = document.createElement("tr");
+
+        const indexCell = document.createElement("td");
+        indexCell.style="align-content:center;";
+        indexCell.textContent = index + 1;
+        row.appendChild(indexCell);
+
+        const titleCell = document.createElement("td");
+        titleCell.style="align-content:center;text-align:left;";
+        titleCell.textContent = item.title; 
+        row.appendChild(titleCell);
+
+        const codeCell = document.createElement("td");
+        codeCell.style="align-content:center";
+        codeCell.textContent = item.code;
+        row.appendChild(codeCell);
+
+        const selectCell = document.createElement("td");
+        selectCell.style="align-content:center";
+
+        const button = document.createElement("button");
+        button.type = "button";
+        button.textContent = "選択";
+        button.style="background:linear-gradient(111deg, #50D7C7 0%, #40ADF0 100%); padding: 5px 10px; color:white; border-radius:5px;";
+        button.addEventListener("click", () => {
+          selectCode(item.code,item.title);
+          selectQuestionNum(item.question_num);
+          const modalElement = document.querySelector('#staticBackdrop');
+        });
+        
+        selectCell.appendChild(button);
+        row.appendChild(selectCell);
+
+        tableBody.appendChild(row);
+    });
+}}
+
+function selectCode(code, title) {
+  const codeElement = document.querySelector('input[name="code"]');
+  const displayElement = document.querySelector('#codeDisplay');
+  codeElement.value =code ;
+  displayElement.textContent = title+ "　("+code+")";
+}
+</script>
+
+<!-- 診断書問題数's javascript -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+var questionNum = "<?php echo $question_num ?>";
+if (!questionNum) {
+    selectQuestionNum('0');
+}
+});
+
+function selectQuestionNum(question_num) {
+const questionNumElement = document.getElementById('question_numId');
+if (questionNumElement) {
+    questionNumElement.value = question_num;
+}
+}
+</script>

@@ -65,20 +65,20 @@
           </select>
 
           <span id="spanclass1stSelect">経験分野</span>
-          <select name="class1st" style="width:40%" id="class1stSelect" onclick="ChangeClass1st(this)">
-          <option value="" selected disabled hidden  >選択してください。</option>
-              <?php foreach ($this->class1st as $row): ?>
-                  <?php $texts = explode(',', $row['text']); ?>
-                  <?php foreach ($texts as $text): ?>
-                      <option value="<?php echo $text; ?>"><?php echo $text; ?></option>
-                  <?php endforeach; ?>
-              <?php endforeach; ?>
-          </select>
+            <select name="class1st" style="width:40%" id="class1stSelect" onchange="ChangeClass1st(this)">
+                <option value="" selected disabled hidden>選択してください。</option>
+                <?php foreach ($this->class1st as $row): ?>
+                    <?php $texts = explode(',', $row['text']); ?>
+                    <?php foreach ($texts as $text): ?>
+                        <option value="<?php echo $text; ?>"><?php echo $text; ?></option>
+                    <?php endforeach; ?>
+                <?php endforeach; ?>
+            </select>
 
-          <span  id="spanTypeSelect">問題種別</span>
-          <select class="" name="class2nd" style="width:40%" id="typeSelect">
-          <option value="" selected disabled hidden  >選択してください。</option>
-          </select>
+            <span id="spanTypeSelect">問題種別</span>
+            <select name="class2nd" style="width:40%" id="typeSelect">
+                <option value="" selected disabled hidden>選択してください。</option>
+            </select>
 
           <span id='spanCareer'>IT経験年数</span>
           <input class="form-control" id="career" name="career" type="text" placeholder="経歴を記入してください。" style="font-size:15px; width:40%" maxlength='2'>
@@ -140,40 +140,40 @@ var certificatesInput = document.querySelector('input[name="certificates"]');
 var otherTextarea = document.querySelector('textarea[name="other"]');
 
 
-// function SkillSelectChange(value) {
-//     class2ndSelect.replaceChildren();
+function SkillSelectChange(value) {
+    class2ndSelect.replaceChildren();
 
-//     form.skill.value = value;    
-//     if (form.skill.value === '1') {
-//       for (var i = 0; i < class1stBox.options.length - 1; i++) {
-//         class1stBox.options[i].style.display = 'none';
-//       }
-//       class2ndSelect.value = "";
-//       class1stSelect.value = "";
-//       var Option = document.createElement("option");
-//       Option.value = "";
-//       Option.innerText = "選択してください。";
-//       class2ndSelect.appendChild(Option);
-//       careerInput.value = "0";
-//       career.readOnly =  true;
-//     } else {
-//       for (var i = 0; i < class1stBox.options.length - 1; i++) {
-//         class1stBox.options[i].style.display = 'block';
-//       }
-//         class1stSelect.value = "";
-//         class2ndSelect.innerText = "";
-//         class2ndSelect.value = "";
-//         careerInput.value = '';
-//         var defaultOption = document.createElement("option");
-//         defaultOption.value = "";
-//         defaultOption.innerText = "選択してください。";
-//         class2ndSelect.appendChild(defaultOption);
-//         class2ndSelect.value = "";
-//         career.readOnly =  false;
-//     }
-// }
+    form.skill.value = value;    
+    if (form.skill.value === '1') {
+      for (var i = 0; i < class1stBox.options.length - 1; i++) {
+        class1stBox.options[i].style.display = 'none';
+      }
+      class2ndSelect.value = "";
+      class1stSelect.value = "";
+      var Option = document.createElement("option");
+      Option.value = "";
+      Option.innerText = "選択してください。";
+      class2ndSelect.appendChild(Option);
+      careerInput.value = "0";
+      career.readOnly =  true;
+    } else {
+      for (var i = 0; i < class1stBox.options.length - 1; i++) {
+        class1stBox.options[i].style.display = 'block';
+      }
+        class1stSelect.value = "";
+        class2ndSelect.innerText = "";
+        class2ndSelect.value = "";
+        careerInput.value = '';
+        var defaultOption = document.createElement("option");
+        defaultOption.value = "";
+        defaultOption.innerText = "選択してください。";
+        class2ndSelect.appendChild(defaultOption);
+        class2ndSelect.value = "";
+        career.readOnly =  false;
+    }
+}
 
-// </script>
+</script>
 
 <!-- educationとclass1stのその他項目画面変化 -->
 <script>
@@ -378,27 +378,26 @@ selectElements.forEach(function(selectElement) {
     });
   });
 </script>
-
 <script>
 function ChangeClass1st(element) {
+    const class2ndSelect = document.getElementById("typeSelect");
+    class2ndSelect.replaceChildren();
 
-class2ndSelect.replaceChildren();
-
-switch (element.value) {
-  <?php foreach ($optionDatas["class2nd"] as $value => $class2nd): ?>
-    case "<?php echo $optionDatas["class1st"][array_search($value, array_column($optionDatas["class1st"], "idx"))]["text"]; ?>":
-      var option = document.createElement("option");
-      option.hidden = true;
-      option.innerText = "選択してください。";
-      class2ndSelect.appendChild(option);
-      <?php foreach ($class2nd as $data): ?>
-        var option = document.createElement("option");
-        option.value = <?php echo $data["idx"]; ?>;
-        option.innerText = "<?php echo $data["text"]; ?>";
-        class2ndSelect.appendChild(option);
-      <?php endforeach; ?>
-      break;
-      <?php endforeach; ?>
-      }
+    switch (element.value) {
+        <?php foreach ($optionDatas["class2nd"] as $value => $class2nd): ?>
+            case "<?php echo $optionDatas["class1st"][array_search($value, array_column($optionDatas["class1st"], "idx"))]["text"]; ?>":
+                var option = document.createElement("option");
+                option.hidden = true;
+                option.innerText = "選択してください。";
+                class2ndSelect.appendChild(option);
+                <?php foreach ($class2nd as $data): ?>
+                    var option = document.createElement("option");
+                    option.value = "<?php echo $data['idx']; ?>";
+                    option.innerText = "<?php echo $data['text']; ?>";
+                    class2ndSelect.appendChild(option);
+                <?php endforeach; ?>
+                break;
+        <?php endforeach; ?>
+    }
 }
 </script>

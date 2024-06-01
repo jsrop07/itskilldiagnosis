@@ -61,12 +61,12 @@ if ($ses_id) {
 			if (xhr.status == 200) {
 				const result = xhr.responseText;
 				if (result == "wrong info") {
-					alert("有効ではないIDまたはパスワードです");
+					alert("有効ではないIDまたはパスワードです。");
 					id.focus();
 				} else if (result == "wrong time") {
-					alert("診断可能な時間ではありません。");
+					alert("診断可能な時間に再度お試しください。");
 				} else if (result == "timeout"){
-					alert("診断をできません。");
+					alert("診断可能な時間が過ぎたので、受験できません。");
 				} 
 				else if (result == "success") {
           self.location.href = "../applicant/exam";

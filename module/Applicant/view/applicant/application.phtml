@@ -181,39 +181,37 @@ function SkillSelectChange(value) {
 */
 /* 修正後： */
 function SkillSelectChange(element) {
-  class2ndSelect.replaceChildren();
+    class2ndSelect.replaceChildren();
 
-  var value = element.value; 
+    var value = element.value; 
 
-  if (value === '1') {
-    for (var i = 0; i < class1stBox.options.length; i++) {
-        class1stBox.options[i].hidden = true;
+    if (value === '1') {
+        for (var i = 0; i < class1stBox.options.length - 1; i++) {
+            class1stBox.options[i].hidden= true; 
+        }
+        class2ndSelect.value = "";
+        class1stSelect.value = "";
+        var Option = document.createElement("option");
+        Option.value = "";
+        Option.innerText = "選択してください。";
+        class2ndSelect.appendChild(Option);
+        careerInput.value = "0";
+        career.readOnly = true;
+    } else {
+        for (var i = 0; i < class1stBox.options.length - 1; i++) {
+            class1stBox.options[i].hidden= false;
+        }
+        class1stSelect.value = "";
+        class2ndSelect.innerText = "";
+        class2ndSelect.value = "";
+        careerInput.value = '';
+        var defaultOption = document.createElement("option");
+        defaultOption.value = "";
+        defaultOption.innerText = "選択してください。";
+        class2ndSelect.appendChild(defaultOption);
+        class2ndSelect.value = "";
+        career.readOnly = false;
     }
-    class1stBox.options[class1stBox.options.length - 1].hidden = false;
-
-    class2ndSelect.value = "";
-    class1stSelect.value = "";
-    var Option = document.createElement("option");
-    Option.value = "";
-    Option.innerText = "選択してください。";
-    class2ndSelect.appendChild(Option);
-    careerInput.value = "0";
-    career.readOnly = true;
-  } else {
-    for (var i = 0; i < class1stBox.options.length; i++) {
-        class1stBox.options[i].hidden = false;
-    }
-    class1stSelect.value = "";
-    class2ndSelect.innerText = "";
-    class2ndSelect.value = "";
-    careerInput.value = '';
-    var defaultOption = document.createElement("option");
-    defaultOption.value = "";
-    defaultOption.innerText = "選択してください。";
-    class2ndSelect.appendChild(defaultOption);
-    class2ndSelect.value = "";
-    career.readOnly = false;
-  }
 }
 /* ここまで */
 

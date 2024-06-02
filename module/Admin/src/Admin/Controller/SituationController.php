@@ -139,6 +139,7 @@ class SituationController extends AbstractActionController {
 
 				if ($data["request_date"] == null) { $data["status"] = "新規"; }
 				else if ($data["execute_date"] == null) { $data["status"] = "診断"; }
+				else if ($data["rank"] == "F") { $data["status"] = "失格"; }
 				else { $data["status"] = "終了"; }
 
 				$data["num"] = $datas["totalData"] - (($page - 1) * 10) - $index;

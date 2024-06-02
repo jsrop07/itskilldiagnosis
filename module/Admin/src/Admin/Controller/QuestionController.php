@@ -287,10 +287,6 @@ class QuestionController extends AbstractActionController
 	public function registAction() {
 		$post = $this->params()->fromPost();
 
-		/*
-			作成：朴昰成
-			作成日：24/05/31
-		*/
 		foreach ($post as $index => $data) {
 			if ($data == null) {
 				$post[$index] = "";
@@ -299,7 +295,6 @@ class QuestionController extends AbstractActionController
 			$post[$index] = str_replace("\n", "{{n}}", $data);
 		}
 
-		/* ここまで */
 		$optionTb = $this->getServiceLocator()->get("OptionTable");
 		try { $post["status"] = $optionTb->ReadByText("新規")["idx"]; }
 		catch (\Exception $e) { die($e->getMessage()); }
@@ -392,36 +387,17 @@ class QuestionController extends AbstractActionController
 			if (!$filePointer) { die("ファイル　オープン　失敗"); }
 
 			$csvStrings = array();
-			/*
-				作成：朴昰成
-				修正：朴昰成
-				修正日：24/05/31
-			*/
-
-			/* 修正前：
-				while($line = fgetcsv($filePointer, 1024, ",")) {
-					array_push($csvStrings, $line);
-				}
-			*/
-
-			/* 修正後： */
 			while ($line = fgetcsv($filePointer, 2048, ",")) {
 				$line = str_replace("{{44}}", ",", $line);
 				$csvStrings[] = $line;
 			}
-			/* ここまで */
 
 			$keys = $csvStrings[0];
 			unset($csvStrings[0]);
-			/*
-				作成：朴昰成
-				作成日：24/05/30
-			*/
 			// exception handling
 			if (ord($keys[0][0]) == 239 && ord($keys[0][1]) == 187 && ord($keys[0][2]) == 191) {
 				$keys[0] = substr($keys[0], 3);
 			}
-			/* ここまで */
 
 			$questionTb = $this->getServiceLocator()->get("QuestionTable");
 			$optionTb = $this->getServiceLocator()->get("OptionTable");

@@ -69,18 +69,7 @@
           <div class="tab-pane show active" id="nav" role="tabpanel" aria-labelledby="nav-tab">
             <dl class="emegra question">
               <dt>問題</dt>
-              <!--
-                作成：朴昰成
-                修正：朴昰成
-                修正日：24/05/30
-              -->
-              <!-- 修正前： <?php /* ?>
-                <dd><?php echo htmlspecialchars($questionData["question"], ENT_QUOTES); ?></dd>
-              <?php */ ?> -->
-
-              <!-- 修正後： -->
               <dd class="expand"><?php echo str_replace("{{n}}", "<br/>", htmlspecialchars($questionData["question"], ENT_QUOTES)); ?></dd>
-              <!-- ここまで -->
 
               <dt>選択肢</dt>
               <dd class="expand">
@@ -96,18 +85,7 @@
             <div class="tab-pane" id="nav-<?php echo $code; ?>" role="tabpanel" aria-labelledby="nav-<?php echo $code; ?>-tab">
               <dl class="emegra question">
                 <dt>問題</dt>
-                <!--
-                  作成：朴昰成
-                  修正：朴昰成
-                  修正日：24/05/30
-                -->
-                <!-- 修正前： <?php /* ?>
-                  <dd><?php echo htmlspecialchars($questionData["question_" . $code], ENT_QUOTES); ?></dd>
-                <?php */ ?> -->
-
-                <!-- 修正後： -->
                 <dd class="expand"><?php echo str_replace("{{n}}", "<br/>", htmlspecialchars($questionData["question_" . $code], ENT_QUOTES)); ?></dd>
-                <!-- ここまで -->
 
                 <dt>選択肢</dt>
                 <dd class="expand">
@@ -121,7 +99,6 @@
           <?php endforeach; ?>
         </div>
       </div>
-      <!-- ここまで -->
 
 			<dt>正解番号</dt>
 			<dd><?php echo $numTexts[$questionData["correct"] - 1]; ?></dd>

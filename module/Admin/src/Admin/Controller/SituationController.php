@@ -52,12 +52,7 @@ class SituationController extends AbstractActionController {
 			$datas["searchDatas"] = $query;
 
 			if (isset($query["name"])) { $sqlWhere["name"] = $query["name"]; }
-			/*
-				作成：朴昰成
-				作成日：24/06/02
-			*/
 			if (isset($query["date"])) { $sqlWhere["date"] = $query["date"]; }
-			/* ここまで： */
 
 			if (isset($query["pick"])) {
 				switch ($query["pick"]) {
@@ -200,39 +195,6 @@ class SituationController extends AbstractActionController {
 		$recordTb = $this->getServiceLocator()->get("RecordTable-Admin");
 		$adminTb = $this->getServiceLocator()->get("AdminTable");
 
-		/*
-			作成：朴昰成
-			修正：朴昰成
-			修正日：24/06/02
-		*/
-
-		/* 修正前：
-			try { $PICDatas = $adminTb->ReadPIC(); }
-			catch (\Exception $e) { die($e->getMessage()); }
-
-			foreach ($PICDatas as $adminData) {
-				foreach ($recordIdxs as $idx) {
-					try { $recordData = $recordTb->ReadByIdx($idx); }
-					catch (\Exception $e) { die($e->getMessage()); }
-					try { $applicantData = $applicantTb->ReadByIdx($recordData["applicant_idx"]); }
-					catch (\Exception $e) { die($e->getMessage()); }
-
-					$skillText = "無";
-					if ($recordData["skill"] == 0) { $skillText = "有"; }
-
-					$caseText = "中途（経歴職）";
-					if($recordData["case"] == 0){ $caseText = "新卒"; }
-
-					$this->mailByRequest($adminData, $applicantData);
-					$this->mailByAdmin($applicantData, $skillText, $caseText, $adminData, $recordData);
-
-					try { $recordTb->RequestByIdx($idx); }
-					catch (\Exception $e) { die($e->getMessage()); }
-				}
-			}
-		*/
-
-		/* 修正後： */
 		$recordDatas = array();
 		foreach ($recordIdxs as $idx) {
 			try { $recordData = $recordTb->ReadByIdx($idx); }
@@ -263,15 +225,10 @@ class SituationController extends AbstractActionController {
 				catch (\Exception $e) { die($e->getMessage()); }
 			}
 		}
-		/* ここまで */
 
 		die("success");
 	}
 
-	/*
-		作成：朴昰成
-		作成日：24/05/29
-	*/
 	/** When Send Mail for Notice Result */
 	public function mailAction() {
 		$idxs = $this->params()->fromPost("idxs");
@@ -321,7 +278,6 @@ class SituationController extends AbstractActionController {
 		die("success");
 	}
 
-	/* ここまで */
 	/** Set Layout & Make ViewModel with datas and template 
 	 * @param mixed $datas array #ViewModel($datas)
 	 * @param mixed $template string #setTemplate($template) 
@@ -950,16 +906,11 @@ class SituationController extends AbstractActionController {
 			return $afterOptionDatas;
 		}	
 
-	
-	/* Add Send Result Mail Function from ApplicantController
-		作成：朴昰成
-		作成日：24/05/29
-	*/
 	/** Send Result Mail to Applicant by PIC Admin 
 	 * @param array $applicantData
 	 * @param array $recordData
 	 * @param array $adminData
-	 * @return string "success" or "false"
+	 * @return string "success" or "fale"
 	*/
 	function SendResultMailToApplicantByPICAdmin($applicantData, $recordData, $adminData) {
 		$mail = new MailRequest();
@@ -1015,7 +966,7 @@ class SituationController extends AbstractActionController {
 			case "250ok":
 				$status = "success"; break;
 			default:
-				$status = "false"; break;
+				$status = "fale"; break;
 		}
 
 		return $status;
@@ -1063,5 +1014,4 @@ class SituationController extends AbstractActionController {
 						break;
 			}
 		}
-	/* ここまで */
 }

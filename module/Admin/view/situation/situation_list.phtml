@@ -9,29 +9,6 @@
 		$queryDatas = explode("&", $url[1]);
 	}
 
-  /*
-    作成：朴昰成
-    修正：朴昰成
-    修正日：24/05/28
-  */
-
-  /* 修正前：
-    $selectDatas["apply"] = "新規";
-    $selectDatas["request"] = "診断";
-    $selectDatas["execute"] = "終了";
-    $selectDatas["case-0"] = "新卒";
-    $selectDatas["case-1"] = "中途";
-    $selectDatas["education-高卒"] = "高卒";
-    $selectDatas["education-専門卒"] = "専門卒";
-    $selectDatas["education-大学卒"] = "大学卒";
-    $selectDatas["education-大学院卒"] = "大学院卒";
-    $selectDatas["rank-A"] = "等級A";
-    $selectDatas["rank-B"] = "等級B";
-    $selectDatas["rank-C"] = "等級C";
-    $selectDatas["rank-D"] = "等級D";
-  */
-
-  /* 修正後： */
   $selectDatas = array(
     "apply" => "新規",
     "request" => "診断",
@@ -47,7 +24,6 @@
     "rank-C" => "等級C",
     "rank-D" => "等級D"
   );
-  /* ここまで */
 
 	$firstNo = $this->noticelist->getTotalItemCount();
 	$firstNo -= (($this->noticelist->getCurrentPageNumber() - 1) * $this->noticelist->getitemCountPerPage());
@@ -122,20 +98,8 @@
 		</div>
 
 		<div style="display: flex; justify-content: right;padding-top: 24px;">
-      <!--
-        作成：朴昰成
-        修正：朴昰成
-        修正日：24/06/02
-      -->
-
-      <!-- 修正前： <?php /* />
-        <input class="form-control" type="text" id="search-name" style="width:15%; height:30px;margin-right:10px;" placeholder="診断者名" value="<?php echo (isset($searchDatas["name"])) ? $searchDatas["name"] : ""; ?>">
-      <?php */ ?> -->
-
-      <!-- 修正後： -->
       <input type="text" class="form-control form-control-sm" id="search-name" style="width: 150px; margin-right: 8px;" placeholder="診断者名" value="<?php echo (isset($searchDatas["name"])) ? $searchDatas["name"] : ""; ?>">
       <input type="date" class="form-control form-control-sm" id="search-date" style="width: 150px; margin-right: 8px;" value="<?php echo (isset($searchDatas["date"])) ? date("Y-m-d", strtotime($searchDatas["date"])) : ""; ?>">
-      <!-- ここまで -->
 			<button class="emegra search confirm" style="margin-right: 8px;" onclick="Search()">検索</button>
 			<div id="div-search" style="width: 150px;">
 				<select class="form-select form-select-sm" id="search-align" style="width: 150px; margin-right: 8px;" onchange="Select(this.value)">
@@ -182,19 +146,7 @@
 			</thead>
 			<tbody>
 				<?php foreach ($recordDatas as $index => $data): ?>
-          <!-- Debug: color change do not apply
-            作成：朴昰成
-            修正：朴昰成
-            修正日：24/05/24
-          -->
-
-          <!-- 修正前： <?php /* ?>
-            <tr <?php echo ($data["diagnosis_code"] == null) ? "style='background: lightcyan;'" : ""; ?>>
-          <?php */ ?> -->
-
-          <!-- 修正後： -->
           <tr <?php echo ($data["diagnosis_date"] == null) ? "style='background: lightcyan;'" : ""; ?>>
-          <!-- ここまで -->
 						<td><?php echo $firstNo - $index; ?></td>
 						<td><?php echo $data["status"]; ?></td>
 
@@ -219,24 +171,12 @@
 							<td>未実行</td>
 						<?php endif; ?>
 
-            <!-- edit disabled condition
-              作成：朴昰成
-              修正：朴昰成
-              修正日：24/05/29
-            -->
-
-            <!-- 修正前： <?php /* ?>
-              <td><input name="checkIdx" type="checkbox" value="<?php echo $data["idx"]; ?>" onclick="Checking(this);" style="cursor: pointer;"<?php echo ($data["request_date"] == null) ? "" : " disabled"; ?>></td>
-            <?php */ ?> -->
-
-            <!-- 修正後： -->
             <?php
               $isAbleCheck = false;
               if ($data["diagnosis_date"] != null && $data["request_date"] == null) { $isAbleCheck = true; }
               if ($data["rank"] != null && $data["date_mail"] == null) { $isAbleCheck = true; }
             ?>
             <td><input name="checkIdx" type="checkbox" value="<?php echo $data["idx"]; ?>" onclick="Checking(this);" style="cursor: pointer;"<?php echo ($isAbleCheck) ? "" : " disabled"; ?>></td>
-            <!-- ここまで -->
 					</tr>
 				<?php endforeach; ?>
 			</tbody>
@@ -259,14 +199,9 @@
 </content>
 
 <script type="text/javascript">
-	const seachName = document.getElementById("search-name");
-	const seachAlign = document.getElementById("search-align");
-  /*
-    作成：朴昰成
-    作成日：24/06/02
-  */
+	const searchName = document.getElementById("search-name");
+	const searchAlign = document.getElementById("search-align");
 	const searchDate = document.getElementById("search-date");
-  /* ここまで */
 	const check_all = document.getElementById("checkAll");
 	const check_idxs = document.getElementsByName("checkIdx");
 
@@ -326,12 +261,7 @@
 				foreach ($queryDatas as $data) {
 					if (explode("=", $data)[0] == "page") { continue; }
 					if (explode("=", $data)[0] == "name") { continue; }
-          /*
-            作成：朴昰成
-            作成日：24/06/02
-          */
           if (explode("=", $data)[0] == "date") { continue; }
-          /* ここまで */
 
 					$newQuery .= $data . "&";
 				}
@@ -342,25 +272,11 @@
 
 		let url = "<?php echo $url; ?>";
 
-    /*
-      作成：朴昰成
-      修正：朴昰成
-      修正前：24/06/02
-    */
-
-    /* 修正前：
-      if (seachName.value.trim() == "") { url = url.slice(0, -1); }
-      else { url += "name=" + seachName.value; }
-      self.window.location = url;
-    */
-
-    /* 修正後： */
-    if (seachName.value.trim() != "") { url += "name=" + seachName.value + "&"; }
+    if (searchName.value.trim() != "") { url += "name=" + searchName.value + "&"; }
     if (searchDate.value != "") { url += "date=" + searchDate.value + "&"; }
     url = url.slice(0, -1);
 
     self.window.location = url;
-    /* ここまで */
 	}
 
 	function Request() {
@@ -402,10 +318,6 @@
 			}
 		}
 	}
-  /*
-    作成：朴昰成
-    作成日：24/05/29
-  */
 
   function SendMail() {
 		idxs = [];
@@ -453,5 +365,4 @@
       }
     }
   }
-  /* ここまで */
 </script>

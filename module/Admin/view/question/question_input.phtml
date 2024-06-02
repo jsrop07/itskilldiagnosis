@@ -121,19 +121,7 @@
             <div class="tab-pane show active" id="nav" role="tabpanel" aria-labelledby="nav-tab">
               <dl class="emegra question">
                 <dt class="essential">問題</dt>
-                <!--
-                  作成：朴昰成
-                  修正：朴昰成
-                  修正日：24/05/31 
-                -->
-
-                <!-- 修正前： <?php /* ?>
-                  <dd><input class="form-control" name="question" type="text" placeholder="問題を入力してください" value="<?php echo ($isSet) ? htmlspecialchars($questionData["question"], ENT_QUOTES) : ""; ?>"/></dd>
-                <?php */ ?>-->
-
-                <!-- 修正後： -->
                 <dd><textarea row="1" class="form-control" name="question" placeholder="問題を入力してください" value="<?php echo ($isSet) ? htmlspecialchars($questionData["question"], ENT_QUOTES) : ""; ?>"></textarea></dd>
-                <!-- ここまで -->
 
                 <dt class="essential">選択肢</dt>
                 <div class="grid answers" name="answers" id="answers">
@@ -168,19 +156,7 @@
               <div class="tab-pane" id="nav-<?php echo $code; ?>" role="tabpanel" aria-labelledby="nav-<?php echo $code; ?>-tab">
                 <dl class="emegra question">
                   <dt>問題</dt>
-                  <!--
-                    作成：朴昰成
-                    修正：朴昰成
-                    修正日：24/05/31
-                  -->
-
-                  <!-- 修正前： <?php /* ?>
-                    <dd><input class="form-control" name="question_<?php echo $code; ?>" type="text" placeholder="問題を入力してください（<?php echo $text; ?>）" value="<?php echo ($isSet) ? htmlspecialchars($questionData["question_" . $code], ENT_QUOTES) : ""; ?>"/></dd>
-                  <?php */ ?>-->
-
-                  <!-- 修正後： -->
                   <dd><textarea row="3" class="form-control" name="question_<?php echo $code; ?>" placeholder="問題を入力してください（<?php echo $text; ?>）" value="<?php echo ($isSet) ? htmlspecialchars($questionData["question_" . $code], ENT_QUOTES) : ""; ?>"></textarea></dd>
-                  <!-- ここまで -->
 
                   <dt>選択肢</dt>
                   <div class="grid answers" name="answers" id="answers">

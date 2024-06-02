@@ -85,14 +85,9 @@ class RecordTable {
 				$where->and->nest()->like("name", "%" . $data . "%")
 					->or->like("kana", "%" . $data . "%")->unnest();
 			}
-			/*	
-				作成：朴昰成
-				作成日：24/06/02
-			*/
 			else if ($field == "date") {
 				$where->and->like("date_schedule", $data . "%");
 			}
-			/* ここまで */
 			else {
 				switch($data) {
 					case "null":
@@ -121,14 +116,9 @@ class RecordTable {
 				$where->and->nest()->like("name", "%" . $data . "%")
 					->or->like("kana", "%" . $data . "%")->unnest();
 			}
-			/*	
-				作成：朴昰成
-				作成日：24/06/02
-			*/
 			else if ($field == "date") {
 				$where->and->like("date_schedule", $data . "%");
 			}
-			/* ここまで */
 			else {
 				switch($data) {
 					case "null":
@@ -156,14 +146,9 @@ class RecordTable {
 				$where->and->nest()->like("name", "%" . $data . "%")
 					->or->like("kana", "%" . $data . "%")->unnest();
 			}
-			/*	
-				作成：朴昰成
-				作成日：24/06/02
-			*/
 			else if ($field == "date") {
 				$where->and->like("date_schedule", $data . "%");
 			}
-			/* ここまで */
 			else {
 				switch($data) {
 					case "null":
@@ -185,17 +170,12 @@ class RecordTable {
 		return new Paginator($paginatorAdapter);
 	}
 
-	/*
-		作成：朴昰成
-		作成日：24/05/29
-	*/
 	public function ReadRecord($selectDatas, $whereDatas) {
 		$qry = $this->sql->select("record", $selectDatas)->where($whereDatas);
 		print_r($qry->__toString());
 		exit;
 	}
 
-	/* ここまで */
 	public function CountAllData() {
 		$qry = $this->sql->select("record")->columns(array('COUNT'=>new \Zend\Db\Sql\Expression('COUNT(*)')));
 		$result = $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
@@ -228,14 +208,9 @@ class RecordTable {
 				$where->and->nest()->like("name", "%" . $whereDatas . "%")
 					->or->like("kana", "%" . $whereDatas . "%")->unnest();
 			}
-			/*	
-				作成：朴昰成
-				作成日：24/06/02
-			*/
 			else if ($field == "date") {
 				$where->and->like("date_schedule", $data . "%");
 			}
-			/* ここまで */
 			else {
 				switch($data) {
 					case "null":
@@ -263,14 +238,9 @@ class RecordTable {
 				$where->and->nest()->like("name", "%" . $data . "%")
 					->or->like("kana", "%" . $data . "%")->unnest();
 			}
-			/*	
-				作成：朴昰成
-				作成日：24/06/02
-			*/
 			else if ($field == "date") {
 				$where->and->like("date_schedule", $data . "%");
 			}
-			/* ここまで */
 			else {
 				switch($data) {
 					case "null":
@@ -299,14 +269,9 @@ class RecordTable {
 				$where->and->nest()->like("name", "%" . $data . "%")
 					->or->like("kana", "%" . $data . "%")->unnest();
 			}
-			/*	
-				作成：朴昰成
-				作成日：24/06/02
-			*/
 			else if ($field == "date") {
 				$where->and->like("date_schedule", $data . "%");
 			}
-			/* ここまで */
 			else {
 				switch($data) {
 					case "null":
@@ -334,14 +299,9 @@ class RecordTable {
 				$where->and->nest()->like("name", "%" . $data . "%")
 					->or->like("kana", "%" . $data . "%")->unnest();
 			}
-			/*	
-				作成：朴昰成
-				作成日：24/06/02
-			*/
 			else if ($field == "date") {
 				$where->and->like("date_schedule", $data . "%");
 			}
-			/* ここまで */
 			else {
 				switch($data) {
 					case "null":
@@ -362,26 +322,15 @@ class RecordTable {
 		return $result["COUNT"];
 	}
 
-	/*
-		作成：朴昰成
-		作成日：24/05/29
-	*/
 	public function UpdateByIdx($idx, $setDatas) {
 		$qry = $this->sql->update("record")->where(["idx" => $idx])->set($setDatas);
 		$result = $this->sql->prepareStatementForSqlObject($qry)->execute();
 		return $result;
 	}
 
-	/* ここまで */
-	/*
-		作成：朴昰成
-		修正：朴昰成
-		修正日：24/06/02
-	*/
 	public function RequestByIdx($idx) {
 		$qry = $this->sql->update("record")->where(["idx" => $idx])->set(["request_date" => date("Y-m-d H:i:s")]);
 		$result = $this->sql->prepareStatementForSqlObject($qry)->execute();
 		return $result;
 	}
-	/* ここまで */
 }

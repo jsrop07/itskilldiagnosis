@@ -194,19 +194,59 @@ class SituationController extends AbstractActionController {
 		$recordTb = $this->getServiceLocator()->get("RecordTable-Admin");
 		$adminTb = $this->getServiceLocator()->get("AdminTable");
 
+		/*
+			作成：朴昰成
+			修正：朴昰成
+			修正日：24/06/02
+		*/
+
+		/* 修正前：
+			try { $PICDatas = $adminTb->ReadPIC(); }
+			catch (\Exception $e) { die($e->getMessage()); }
+
+			foreach ($PICDatas as $adminData) {
+				foreach ($recordIdxs as $idx) {
+					try { $recordData = $recordTb->ReadByIdx($idx); }
+					catch (\Exception $e) { die($e->getMessage()); }
+					try { $applicantData = $applicantTb->ReadByIdx($recordData["applicant_idx"]); }
+					catch (\Exception $e) { die($e->getMessage()); }
+
+					$skillText = "無";
+					if ($recordData["skill"] == 0) { $skillText = "有"; }
+
+					$caseText = "中途（経歴職）";
+					if($recordData["case"] == 0){ $caseText = "新卒"; }
+
+					$this->mailByRequest($adminData, $applicantData);
+					$this->mailByAdmin($applicantData, $skillText, $caseText, $adminData, $recordData);
+
+					try { $recordTb->RequestByIdx($idx); }
+					catch (\Exception $e) { die($e->getMessage()); }
+				}
+			}
+		*/
+
+		/* 修正後： */
+		$recordDatas = array();
+		foreach ($recordIdxs as $idx) {
+			try { $recordData = $recordTb->ReadByIdx($idx); }
+			catch (\Exception $e) { die($e->getMessage()); }
+
+			if ($recordData["request_date"] != null) { die("fale"); }
+			$recordDatas[] = $recordData;
+		}
+
 		try { $PICDatas = $adminTb->ReadPIC(); }
 		catch (\Exception $e) { die($e->getMessage()); }
-		
+
 		foreach ($PICDatas as $adminData) {
-			foreach ($recordIdxs as $idx) {
-				try { $recordData = $recordTb->ReadByIdx($idx); }
-				catch (\Exception $e) { die($e->getMessage()); }
+			foreach ($recordDatas as $recordData) {
 				try { $applicantData = $applicantTb->ReadByIdx($recordData["applicant_idx"]); }
 				catch (\Exception $e) { die($e->getMessage()); }
 
 				$skillText = "無";
-				if ($recordData["skill"] == 0) { $skillText = "有"; } 
-		
+				if ($recordData["skill"] == 0) { $skillText = "有"; }
+
 				$caseText = "中途（経歴職）";
 				if($recordData["case"] == 0){ $caseText = "新卒"; }
 
@@ -217,6 +257,7 @@ class SituationController extends AbstractActionController {
 				catch (\Exception $e) { die($e->getMessage()); }
 			}
 		}
+		/* ここまで */
 
 		die("success");
 	}

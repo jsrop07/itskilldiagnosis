@@ -317,9 +317,15 @@ class RecordTable {
 	}
 
 	/* ここまで */
+	/*
+		作成：朴昰成
+		修正：朴昰成
+		修正日：24/06/02
+	*/
 	public function RequestByIdx($idx) {
 		$qry = $this->sql->update("record")->where(["idx" => $idx])->set(["request_date" => date("Y-m-d H:i:s")]);
 		$result = $this->sql->prepareStatementForSqlObject($qry)->execute();
-		return $result["COUNT"];
+		return $result;
 	}
+	/* ここまで */
 }

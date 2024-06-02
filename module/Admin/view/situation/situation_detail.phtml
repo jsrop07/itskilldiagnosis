@@ -176,10 +176,10 @@
 		<button class="emegra" style="width:150px;" onclick="Request();">ITスキル診断依頼</button>
   <!--
     作成：朴昰成
-    作成日：24/05/29
+    作成日：24/06/02
   -->
   <?php else: ?>
-    <?php if ($recordData["date_mail"] == null): ?>
+    <?php if ($recordData["rank"] != null && $recordData["date_mail"] == null): ?>
       <button class="emegra" onclick="SendMail();">メール送信</button>
     <?php endif; ?>
   <!-- ここまで -->

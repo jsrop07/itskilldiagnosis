@@ -85,6 +85,14 @@ class RecordTable {
 				$where->and->nest()->like("name", "%" . $data . "%")
 					->or->like("kana", "%" . $data . "%")->unnest();
 			}
+			/*	
+				作成：朴昰成
+				作成日：24/06/02
+			*/
+			else if ($field == "date") {
+				$where->and->like("date_schedule", $data . "%");
+			}
+			/* ここまで */
 			else {
 				switch($data) {
 					case "null":
@@ -113,6 +121,14 @@ class RecordTable {
 				$where->and->nest()->like("name", "%" . $data . "%")
 					->or->like("kana", "%" . $data . "%")->unnest();
 			}
+			/*	
+				作成：朴昰成
+				作成日：24/06/02
+			*/
+			else if ($field == "date") {
+				$where->and->like("date_schedule", $data . "%");
+			}
+			/* ここまで */
 			else {
 				switch($data) {
 					case "null":
@@ -140,6 +156,14 @@ class RecordTable {
 				$where->and->nest()->like("name", "%" . $data . "%")
 					->or->like("kana", "%" . $data . "%")->unnest();
 			}
+			/*	
+				作成：朴昰成
+				作成日：24/06/02
+			*/
+			else if ($field == "date") {
+				$where->and->like("date_schedule", $data . "%");
+			}
+			/* ここまで */
 			else {
 				switch($data) {
 					case "null":
@@ -204,6 +228,14 @@ class RecordTable {
 				$where->and->nest()->like("name", "%" . $whereDatas . "%")
 					->or->like("kana", "%" . $whereDatas . "%")->unnest();
 			}
+			/*	
+				作成：朴昰成
+				作成日：24/06/02
+			*/
+			else if ($field == "date") {
+				$where->and->like("date_schedule", $data . "%");
+			}
+			/* ここまで */
 			else {
 				switch($data) {
 					case "null":
@@ -231,6 +263,14 @@ class RecordTable {
 				$where->and->nest()->like("name", "%" . $data . "%")
 					->or->like("kana", "%" . $data . "%")->unnest();
 			}
+			/*	
+				作成：朴昰成
+				作成日：24/06/02
+			*/
+			else if ($field == "date") {
+				$where->and->like("date_schedule", $data . "%");
+			}
+			/* ここまで */
 			else {
 				switch($data) {
 					case "null":
@@ -259,6 +299,14 @@ class RecordTable {
 				$where->and->nest()->like("name", "%" . $data . "%")
 					->or->like("kana", "%" . $data . "%")->unnest();
 			}
+			/*	
+				作成：朴昰成
+				作成日：24/06/02
+			*/
+			else if ($field == "date") {
+				$where->and->like("date_schedule", $data . "%");
+			}
+			/* ここまで */
 			else {
 				switch($data) {
 					case "null":
@@ -286,6 +334,14 @@ class RecordTable {
 				$where->and->nest()->like("name", "%" . $data . "%")
 					->or->like("kana", "%" . $data . "%")->unnest();
 			}
+			/*	
+				作成：朴昰成
+				作成日：24/06/02
+			*/
+			else if ($field == "date") {
+				$where->and->like("date_schedule", $data . "%");
+			}
+			/* ここまで */
 			else {
 				switch($data) {
 					case "null":

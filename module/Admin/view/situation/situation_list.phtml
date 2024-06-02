@@ -134,7 +134,7 @@
 
       <!-- 修正後： -->
       <input type="text" class="form-control form-control-sm" id="search-name" style="width: 150px; margin-right: 8px;" placeholder="診断者名" value="<?php echo (isset($searchDatas["name"])) ? $searchDatas["name"] : ""; ?>">
-      <input type="date" class="form-control form-control-sm" id="search-date" style="width: 150px; margin-right: 8px;" value="<?php echo (isset($searchDatas["date"])) ? date("y.m.d", strtotime($searchDatas["date"])) : ""; ?>">
+      <input type="date" class="form-control form-control-sm" id="search-date" style="width: 150px; margin-right: 8px;" value="<?php echo (isset($searchDatas["date"])) ? date("Y-m-d", strtotime($searchDatas["date"])) : ""; ?>">
       <!-- ここまで -->
 			<button class="emegra search confirm" style="margin-right: 8px;" onclick="Search()">検索</button>
 			<div id="div-search" style="width: 150px;">
@@ -350,17 +350,18 @@
 
     /* 修正前：
       if (seachName.value.trim() == "") { url = url.slice(0, -1); }
-        else { url += "name=" + seachName.value; }
-        self.window.location = url;
-      }
+      else { url += "name=" + seachName.value; }
+      self.window.location = url;
     */
 
     /* 修正後： */
-    if (seachName.value.trim() == "") { url = url.slice(0, -1); }
-      else { url += "name=" + seachName.value; }
-      self.window.location = url;
-    }
+    if (seachName.value.trim() != "") { url += "name=" + seachName.value + "&"; }
+    if (searchDate.value != "") { url += "date=" + searchDate.value + "&"; }
+    url = url.slice(0, -1);
+
+    self.window.location = url;
     /* ここまで */
+	}
 
 	function Request() {
 		idxs = [];

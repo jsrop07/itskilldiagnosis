@@ -52,6 +52,12 @@ class SituationController extends AbstractActionController {
 			$datas["searchDatas"] = $query;
 
 			if (isset($query["name"])) { $sqlWhere["name"] = $query["name"]; }
+			/*
+				作成：朴昰成
+				作成日：24/06/02
+			*/
+			if (isset($query["date"])) { $sqlWhere["date"] = $query["date"]; }
+			/* ここまで： */
 
 			if (isset($query["pick"])) {
 				switch ($query["pick"]) {

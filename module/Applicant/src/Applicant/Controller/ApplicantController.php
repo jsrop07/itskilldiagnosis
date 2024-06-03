@@ -95,6 +95,13 @@ class ApplicantController extends AbstractActionController
 	return $viewModel;
   }
 
+	// function duplicationAction($email){
+	// 	if (isset($p["email"])) {
+	// 		$result = $tbl->emailDuplicateCheck($p["email"]);
+	// 		die(json_encode($result));
+	// 	}
+	// }
+	
   function applicationclearAction() {
 	$this->layout("/applicant/applicationclear");
 	}

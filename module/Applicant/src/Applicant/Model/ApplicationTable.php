@@ -140,6 +140,13 @@ class ApplicationTable
       $qry = $this->sql->select("admin")->where(["pic" => "y"]);
       return $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
     }
-  
+// public function emailDuplicateCheck($email)
+// {
+//     $qry = $this->sql->select("applicant")->where(["email" => $email]);
+
+//     $result = $this->sql->prepareStatementForSqlObject($qry)->execute();
+
+//     return $result;
+// }
 
 }

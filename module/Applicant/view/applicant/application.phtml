@@ -81,7 +81,7 @@
             </select>
 
           <span id='spanCareer'>IT経験年数</span>
-          <input class="form-control" id="career" name="career" type="text" placeholder="経歴を記入してください。" style="font-size:15px; width:40%" maxlength='2'>
+          <input class="form-control" id="career" name="career" type="text" placeholder="経歴を記入してください。" style="font-size:15px; width:40%" maxlength='2'>年
 
           <span class="no_after_style" id='spanCertificates'>IT関連資格</span>
           <input class="form-control" name="certificates" type="text" placeholder="資格を記入してください。"style="width:80%" maxlength='50'>
@@ -90,25 +90,25 @@
           <textarea class="form-control" name="other" type="textarea" placeholder="その他を記入してください。"style="width:80%" maxlength='500' ></textarea>
         </div>
         <div class="button_box">
-            <button class="applicant_cancel" onclick="window.location.href='../applicant/application';">キャンセル</button>
-            <button type="button" class="applicant_button" onclick="applicationConfirm();">登録</button>
+          <button type="button" class="applicant_cancel" onclick="window.location.href='../applicant/application';">キャンセル</button>
+          <button type="submit" class="applicant_button" onclick="validationAndConfirm();return false;">登録</button>
         </div>
         
         <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog" style="margin-top:150px">
             <div class="modal-content rounded-4">
-                <div class="modal-header" style="background:linear-gradient(111deg, #87D782 0%, #22BC8E 100%);color:white; height: 40px;border-top-left-radius:13px;border-top-right-radius:13px">
-                  <h5 class="modal-title" id="exampleModalLabel">申し込み案内</h5>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(100%);"></button>
-                </div>
-                <div class="modal-body fs-5" style="padding-bottom:0; text-align:center">
-                <div id="requestMessage">申し込みますか？</div>
-                </div>
-                <div class="modal-footer  border-top-0" style="margin-bottom:8px; justify-content:center;">
-                  <button type="button" class="applicant_cancel" data-bs-dismiss="modal">キャンセル</button>
-                  <button id="btn_submitId" name="mode" value="btn_submit" class="applicant_button" onclick="requestSubmit()">申込</button>
-                </div>
+              <div class="modal-header" style="background:linear-gradient(111deg, #87D782 0%, #22BC8E 100%);color:white; height: 40px;border-top-left-radius:13px;border-top-right-radius:13px">
+                <h5 class="modal-title" id="exampleModalLabel">ITスキル診断</h5>
+                <!-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(100%);"></button> -->
               </div>
+              <div class="modal-body fs-5" style="padding-bottom:0; text-align:center">
+              <div id="requestMessage">申し込みますか？</div>
+              </div>
+              <div class="modal-footer  border-top-0" style="margin-bottom:8px; justify-content:center;">
+                <button type="button" class="applicant_cancel" data-bs-dismiss="modal">キャンセル</button>
+                <button id="btn_submitId" name="mode" value="btn_submit" class="applicant_button" onclick="requestSubmit()">申込</button>
+              </div>
+            </div>
           </div>
         </div>
         </form>
@@ -133,9 +133,13 @@
 var form = document.getElementById('form');
 var skillSelect = document.querySelector('select[name="skill"]');
 var class1stBox = document.getElementById('class1stSelect');
+var Applicantclass1stSpanSelect=document.getElementById('spanclass1stSelect');
+
 var class2ndSelect = document.getElementById('typeSelect');
 var class2ndSpanSelect = document.getElementById('spanTypeSelect');
 var careerInput = document.getElementById('career');
+var ApplicantCareerInput = document.getElementById('spanCareer');
+
 var certificatesInput = document.querySelector('input[name="certificates"]');
 var otherTextarea = document.querySelector('textarea[name="other"]');
 
@@ -186,31 +190,44 @@ function SkillSelectChange(element) {
     var value = element.value; 
 
     if (value === '1') {
-        for (var i = 0; i < class1stBox.options.length - 1; i++) {
-            class1stBox.options[i].hidden= true; 
-        }
-        class2ndSelect.value = "";
-        class1stSelect.value = "";
-        var Option = document.createElement("option");
-        Option.value = "";
-        Option.innerText = "選択してください。";
-        class2ndSelect.appendChild(Option);
-        careerInput.value = "0";
-        career.readOnly = true;
+        // for (var i = 0; i < class1stBox.options.length - 1; i++) {
+        //     class1stBox.options[i].hidden= true; 
+        // }
+        // class2ndSelect.value = "";
+        // class1stSelect.value = "";
+        // var Option = document.createElement("option");
+        // Option.value = "";
+        // Option.innerText = "選択してください。";
+        // class2ndSelect.appendChild(Option);
+        // careerInput.value = "0";
+        // career.readOnly = true;
+        class1stBox.disabled = true
+        class1stBox.style.display = 'none';
+        Applicantclass1stSpanSelect.style.display='none';
+        class2ndSelect.disabled = true;
+        class2ndSelect.style.display = 'none';
+        class2ndSpanSelect.style.display = 'none';
+        careerInput.disabled = true;
+        careerInput.style.display = 'none';
+        ApplicantCareerInput.style.display = 'none';
     } else {
-        for (var i = 0; i < class1stBox.options.length - 1; i++) {
-            class1stBox.options[i].hidden= false;
-        }
         class1stSelect.value = "";
         class2ndSelect.innerText = "";
         class2ndSelect.value = "";
-        careerInput.value = '';
         var defaultOption = document.createElement("option");
         defaultOption.value = "";
         defaultOption.innerText = "選択してください。";
         class2ndSelect.appendChild(defaultOption);
         class2ndSelect.value = "";
-        career.readOnly = false;
+        class1stBox.disabled = false
+        class1stBox.style.display = 'block';
+        Applicantclass1stSpanSelect.style.display='block';
+        class2ndSelect.disabled = false;
+        class2ndSelect.style.display = 'block';
+        class2ndSpanSelect.style.display = 'block';
+        careerInput.disabled = false;
+        careerInput.style.display = 'block';
+        ApplicantCareerInput.style.display = 'block';
     }
 }
 /* ここまで */
@@ -304,37 +321,53 @@ function emailValidationCheck(input){
     return emailValidation.test(input);
 }
 
-function checkKanji(input) {
-    function toHalfWidth(str) {
-        return str.replace(/[！-～]/g, function(s) {
-            return String.fromCharCode(s.charCodeAt(0) - 0xFEE0);
-        }).replace(/　/g, " ");
+function isZenkaku(str) {
+  for (var i = 0; i < str.length; i++) {
+    var code = str.charCodeAt(i);
+    if (code >= 0x20 && code <= 0x7E) {
+      return str.charAt(i);
     }
-
-    var halfWidthInput = toHalfWidth(input);
-    var japaneseRegex = /^[\u4E00-\u9FFF\u3040-\u309F]+$/; // 
-    var katakanaRegex = /^[\u30A0-\u30FF]+$/; // 
-
-    return japaneseRegex.test(halfWidthInput) || katakanaRegex.test(halfWidthInput);
+  }
+  return null;
 }
 
-
 function checkKana(input) {
-    var katakanaRegex = /^[\u30A0-\u30FFー]+$/; 
-    return katakanaRegex.test(input);
+  var katakanaRegex = /^[\u30A0-\u30FFー\s]+$/; 
+  return katakanaRegex.test(input);
 }
 </script>
 
 <!-- 必須項目有効性検査 -->
 <script>
-    function applicationConfirm() {
+  function validationAndConfirm() {
+    // const postForm = new FormData();
+    // postForm.append("email", form.email.value);
+
+    // const xhr = new XMLHttpRequest();
+    // xhr.open("POST", "./duplication", true);
+    // xhr.send(postForm);
+    // xhr.onload = () => {
+    //     if (xhr.status == 200) {
+    //         try {
+    //             const result = JSON.parse(xhr.responseText);
+    //             if (result.duplicate === true) {
+    //                 alert("Email is already in use.");
+    //             } else {
+    //                 alert("Email is available.");
+    //             }
+    //         } catch (e) {
+    //             console.error("Failed to parse response", e);
+    //             alert("サーバー応答の解析に失敗しました");
+    //         }
+    //     }
+    // };
       if (form.email.value == "" || !emailValidationCheck(form.email.value)) {
           alert("メールアドレスを入力してください。");
           setTimeout("form.email.focus()",100);
           return false;
       }
 
-      if (form.name.value == "" || !checkKanji(form.name.value)) {
+      if (form.name.value == "" || isZenkaku(form.name.value)) {
           alert("漢字を入力してください。");
           setTimeout("form.name.focus()",100);
           return false;
@@ -375,18 +408,18 @@ function checkKana(input) {
           return false;
       }
 
-      if (form.class1stSelect.value === "") {
+      if (!class1stSelect.disabled && form.class1stSelect.value === "") {
           alert("経験分野を入力してください。");
           setTimeout("form.class1stSelect.focus()",100);
           return false;
       }
-      if (form.typeSelect.value === "選択してください。") {
+      if (!typeSelect.disabled && form.typeSelect.value === "選択してください。") {
           alert("問題種別を入力してください。");
           setTimeout("form.typeSelect.focus()",100);
           return false;
       }
       
-        if (careerInput.value === "" || isNaN(careerInput.value)) {            
+        if (!careerInput.disabled && (careerInput.value === "" || isNaN(careerInput.value))) {
             console.log(form.career.value);
             alert("IT経験年数を入力してください。");
             setTimeout("form.career.focus()",100);

@@ -9,7 +9,7 @@
         <form id="form" name="input_form" enctype="multipart/form-data" action="/applicant/application" method="post">
         <div class="diagnosis_main">
           <span for="email">メール </span>
-          <input class="form-control" name="email" type="email" placeholder="Emailを入力ください。" style="width:80%" maxlength='50'>
+          <input class="form-control" id ="emailId" name="email" type="email" placeholder="Emailを入力ください。" style="width:80%" maxlength='50'>
           
           <span>お名前（漢字）</span>
           <input class="form-control" name="name" type="text" placeholder="漢字を記入してください。"style="width:40%" maxlength='20'>
@@ -106,7 +106,7 @@
               </div>
               <div class="modal-footer  border-top-0" style="margin-bottom:8px; justify-content:center;">
                 <button type="button" class="applicant_cancel" data-bs-dismiss="modal">キャンセル</button>
-                <button id="btn_submitId" name="mode" value="btn_submit" class="applicant_button" onclick="requestSubmit()">申込</button>
+                <button type="submit" id="btn_submitId" name="mode" value="btn_submit" class="applicant_button" onclick="requestSubmit()">申込</button>
               </div>
             </div>
           </div>
@@ -339,28 +339,9 @@ function checkKana(input) {
 
 <!-- 必須項目有効性検査 -->
 <script>
+    const emailId = document.getElementById("emailId");
+	const url = window.location.href;
   function validationAndConfirm() {
-    // const postForm = new FormData();
-    // postForm.append("email", form.email.value);
-
-    // const xhr = new XMLHttpRequest();
-    // xhr.open("POST", "./duplication", true);
-    // xhr.send(postForm);
-    // xhr.onload = () => {
-    //     if (xhr.status == 200) {
-    //         try {
-    //             const result = JSON.parse(xhr.responseText);
-    //             if (result.duplicate === true) {
-    //                 alert("Email is already in use.");
-    //             } else {
-    //                 alert("Email is available.");
-    //             }
-    //         } catch (e) {
-    //             console.error("Failed to parse response", e);
-    //             alert("サーバー応答の解析に失敗しました");
-    //         }
-    //     }
-    // };
       if (form.email.value == "" || !emailValidationCheck(form.email.value)) {
           alert("メールアドレスを入力してください。");
           setTimeout("form.email.focus()",100);
@@ -419,20 +400,40 @@ function checkKana(input) {
           return false;
       }
       
-        if (!careerInput.disabled && (careerInput.value === "" || isNaN(careerInput.value))) {
-            console.log(form.career.value);
-            alert("IT経験年数を入力してください。");
-            setTimeout("form.career.focus()",100);
+      if (!careerInput.disabled && (careerInput.value === "" || isNaN(careerInput.value))) {
+          console.log(form.career.value);
+          alert("IT経験年数を入力してください。");
+          setTimeout("form.career.focus()",100);
+          return false;
+      }
+      /* 
+        作成：丁錫圓
+        修正：丁錫圓
+      */
+      const postForm = new FormData();
+      postForm.append("email", emailId.value);
+      const xhr = new XMLHttpRequest();
+      xhr.open("POST", "./duplication", true);
+      xhr.send(postForm);
+
+      xhr.onload = () => {
+        if (xhr.status == 200) {  
+          const result = xhr.responseText;
+          if (result == "fail") {
+            alert("すでに申込しているメールです。");
+            emailId.focus();
             return false;
+            }
+          else if (result == "success") {
+            var myModal = new bootstrap.Modal(document.getElementById('exampleModal'), {
+              keyboard: false
+            });
+            myModal.show();
+          }
         }
-
-
-        var myModal = new bootstrap.Modal(document.getElementById('exampleModal'), {
-            keyboard: false
-        });
-        myModal.show();
+      }
     }
-
+    // ここまで
     function requestSubmit(){
         const requestbtn= document.getElementById('requestMessage');
         requestbtn.innertext="登録中です。"

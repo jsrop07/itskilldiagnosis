@@ -192,7 +192,19 @@
 	<div></div>
 	
 	<div>
-		<button class="emegra" style="margin-right:10px;" onclick="SendMail()">メール送信</button>
+    <!--
+      作成：朴昰成
+      修正：朴昰成
+      修正前：24/06/03
+    -->
+
+    <!-- 修正前： <?php /* ?>
+      <button class="emegra" style="margin-right:10px;" onclick="SendMail()">メール送信</button>
+    <?php */ ?> -->
+
+    <!-- 修正前： -->
+    <button class="emegra" style="margin-right:10px;" onclick="SendMail()">結果送信</button>
+    <!-- ここまで -->
 		<button class="emegra" style="width:150px; margin-right:10px;" onclick="Request()">ITスキル診断依頼</button>
 		<button class="emegra" onclick="self.window.location='./input'">新規登録</button>
 		</div>	
@@ -292,7 +304,19 @@
 		}
 
 		if (!isChecked) {
-			alert("依頼するデータを選んでください。");
+      /*
+        作成：朴昰成
+        修正：朴昰成
+        修正日：24/06/03
+      */
+
+      /* 修正前：
+        alert("依頼するデータを選んでください。");
+      */
+
+      /* 修正後： */
+        alert("依頼する診断者情報を選択してください。");
+      /* ここまで */
 			return false;
 		}
 		idxs = idxs.join(",");
@@ -332,12 +356,36 @@
 		}
 
 		if (!isChecked) {
-			alert("送信するデータを選んでください。");
+      /*
+        作成：朴昰成
+        修正：朴昰成
+        修正日：24/06/03
+      */
+
+      /* 修正前：
+        alert("送信するデータを選んでください。");
+      */
+
+      /* 修正後： */
+      alert("送信する診断者情報を選択してください。");
+      /* ここまで */
 			return false;
 		}
 		idxs = idxs.join(",");
 
-    if (confirm("メールを送信しますか？") === false) { return false; }
+    /*
+      作成：朴昰成
+      修正：朴昰成
+      修正日：24/06/03
+    */
+
+    /* 修正前：
+      if (confirm("メールを送信しますか？") === false) { return false; }
+    */
+
+    /* 修正後： */
+    if (confirm("結果を送信しますか？") === false) { return false; }
+    /* ここまで */
 
     const postForm = new FormData();
     postForm.append("idxs", idxs);
@@ -355,7 +403,19 @@
         else {
           try {
             let idxDatas = JSON.parse(result);
-            alert("送信てきないデータがあります。");
+            /*
+              作成：朴昰成
+              修正：朴昰成
+              修正日：24/06/03
+            */
+
+            /* 修正前：
+              alert("送信てきないデータがあります。");
+            */
+
+            /* 修正後： */
+            alert("送信できない診断者情報があります。");
+            /* ここまで */
             return false;
           } catch (e) {
             alert("error");

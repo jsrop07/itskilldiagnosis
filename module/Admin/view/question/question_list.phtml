@@ -312,7 +312,9 @@
           alert("承認しました。");
           location.reload(true);
         }
-        else if (result == "fail") { alert("承認できたデータがあります。"); }
+        else if (result == "fail") {
+					alert("承認できたデータがあります。");
+				}
         else {
           alert("Error");
           console.log($result);

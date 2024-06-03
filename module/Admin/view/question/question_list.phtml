@@ -97,7 +97,19 @@
 <content class="header">
   <div class="title">ITスキル診断問項管理</div>
   <div class="info-num">
-    <div class="count">問項総計<div class="num"><?php echo $totalNum; ?></div>問題</div>
+    <!--
+      作成：朴昰成
+      修正：朴昰成
+      修正日：24/06/03
+    -->
+
+    <!-- 修正前： <?php /* ?>
+      <div class="count">問項総計<div class="num"><?php echo $totalNum; ?></div>問題</div>
+    <?php */ ?> -->
+
+    <!-- 修正後： -->
+    <div class="count">問項総計<div class="num"><?php echo $totalNum; ?></div>問項</div>
+    <!-- ここまで -->
   </div>
 </content>
 
@@ -292,7 +304,19 @@
     }
 
     if (idxs == "") {
-      alert("承認するデータを選択してください。");
+      /*
+        作成：朴昰成
+        修正：朴昰成
+        修正日：24/06/03
+      */
+
+      /* 修正前：
+        alert("承認するデータを選択してください。");
+      */
+
+      /* 修正後： */
+      alert("承認する問項を選択してください。");
+      /* ここまで */
       return false;
     }
 
@@ -313,7 +337,19 @@
           location.reload(true);
         }
         else if (result == "fail") {
-					alert("承認できたデータがあります。");
+          /*
+            作成：朴昰成
+            修正：朴昰成
+            修正日：24/06/03
+          */
+
+          /* 修正前：
+            alert("承認できたデータがあります。");
+          */
+
+          /* 修正後： */
+          alert("承認できた問項があります。");
+          /* ここまで */
 				}
         else {
           alert("Error");
@@ -332,7 +368,19 @@
     }
 
     if (idxs == "") {
-      alert("削除するデータを選択してください。");
+      /*
+        作成：朴昰成
+        修正：朴昰成
+        修正日：24/06/03
+      */
+
+      /* 修正前：
+        alert("削除するデータを選択してください。");
+      */
+
+      /* 修正後： */
+      alert("削除する問項を選択してください。");
+      /* ここまで */
       return false;
     }
 

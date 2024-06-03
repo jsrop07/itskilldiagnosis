@@ -120,8 +120,21 @@ class QuestionController extends AbstractActionController
 	/** When you click 新規登録 button on 一覧 page */
 	public function inputAction() {
 		$this->ChkLogin();
-		$datas["breadcrumbData"] = ["ITスキル診断問項管理", "問題登録"];
-		$datas["title"] = "問題登録";
+		/*
+			作成：朴昰成
+			修正：朴昰成
+			修正日：24/06/03
+		*/
+
+		/* 修正前：
+			$datas["breadcrumbData"] = ["ITスキル診断問項管理", "問題登録"];
+			$datas["title"] = "問題登録";
+		*/
+
+		/* 修正後： */
+		$datas["breadcrumbData"] = ["ITスキル診断問項管理", "問項登録"];
+		$datas["title"] = "問項登録";
+		/* ここまで */
 		$datas["optionDatas"] = $this->GetOptionDatasForInput();
 		$datas["languageCodeDatas"] = ["ko" => "韓国語"];
 
@@ -135,7 +148,19 @@ class QuestionController extends AbstractActionController
 	/** When you click 登録 button on 問題登録 page */
 	public function confirmAction() {
 		$this->ChkLogin();
-		$datas["breadcrumbData"] = ["ITスキル診断問項管理", "問題登録", "登録確認"];
+		/*
+			作成：朴昰成
+			修正：朴昰成
+			修正日：24/06/03
+		*/
+
+		/* 修正前：
+			$datas["breadcrumbData"] = ["ITスキル診断問項管理", "問題登録", "登録確認"];
+		*/
+
+		/* 修正後： */
+		$datas["breadcrumbData"] = ["ITスキル診断問項管理", "問項登録", "登録確認"];
+		/* ここまで */
 		$datas["title"] = "登録確認";
 		$datas["optionDatas"] = $this->GetOptionDatas();
 		$datas["languageCodeDatas"] = ["ko" => "韓国語"];
@@ -154,7 +179,19 @@ class QuestionController extends AbstractActionController
 	/** When you choose list data on 問題一覧 page */
 	public function detailAction() {
 		$this->ChkLogin();
-		$datas["breadcrumbData"] = ["ITスキル診断問項管理", "問題詳細"];		
+		/*
+			作成：朴昰成
+			修正：朴昰成
+			修正日：24/06/03
+		*/
+
+		/* 修正前：
+			$datas["breadcrumbData"] = ["ITスキル診断問項管理", "問題詳細"];
+		*/
+
+		/* 修正後： */
+		$datas["breadcrumbData"] = ["ITスキル診断問項管理", "問項詳細"];
+		/* ここまで */
 		$datas["optionDatas"] = $this->GetOptionDatas();
 	
 		$index = $this->params()->fromRoute("index");
@@ -186,8 +223,21 @@ class QuestionController extends AbstractActionController
 	/** When you click 修正 button on 問題詳細 page */
 	public function editAction() {
 		$this->ChkLogin();
-		$datas["breadcrumbData"] = ["ITスキル診断問項管理", "問題詳細", "問題修正"];
-		$datas["title"] = "問題修正";
+		/*
+			作成：朴昰成
+			修正：朴昰成
+			修正日：24/06/03
+		*/
+
+		/* 修正前：
+			$datas["breadcrumbData"] = ["ITスキル診断問項管理", "問題詳細", "問題修正"];
+			$datas["title"] = "問題修正";
+		*/
+
+		/* 修正後： */
+		$datas["breadcrumbData"] = ["ITスキル診断問項管理", "問項詳細", "問項修正"];
+		$datas["title"] = "問項修正";
+		/* ここまで */
 		$datas["optionDatas"] = $this->GetOptionDatasForInput();
 		$datas["languageCodeDatas"] = ["ko" => "韓国語"];
 

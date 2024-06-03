@@ -59,7 +59,19 @@
 			</style>
 			<dl class="emegra setting">
 				<?php if ($isEdit): ?>
-					<dt>職別コード</dt>
+          <!--
+            作成：朴昰成
+            修正：朴昰成
+            修正日：24/06/03
+          -->
+
+          <!-- 修正前： <?php /* ?>
+            <dt>職別コード</dt>
+          <?php */ ?> -->
+
+          <!-- 修正後： -->
+          <dt>問題ID</dt>
+          <!-- ここまで -->
 					<dd><input class="form-control form-control-sm" name="code" style="width: 150px;" readonly value="<?php echo $diagnosisData["code"];?>"/></dd>
 				<?php endif; ?>
 

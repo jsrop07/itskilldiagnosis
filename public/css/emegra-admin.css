@@ -386,24 +386,6 @@ table.emegra td.link:hover { text-decoration: underline; }
 
 
 
-.count {
-	width: 240px;
-	display: flex;
-	border-bottom: 1px solid black;
-	align-items: end;
-
-	font-size: 13px;
-}
-.count > .num {
-	width: 150px;
-	margin-right: 10px;
-	display: flex;
-	justify-content: end;
-
-	line-height: 40px;
-	font-size: 40px;
-}
-
 .table-empty {
 	width: 100%;
 	border: 1px solid var(--line);

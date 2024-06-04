@@ -216,10 +216,10 @@ $question_num = isset($diagnosisData['question_num']) ? $diagnosisData['question
 				<dd> 
 					<select class="form-select" id="majorId" style="width:220px;" onchange="ChangeMajor(this)">
 						<option value="" >未依頼</option>
-                        <option value="IT・ソフトウェア専攻"<?php echo ($isITMajor) ? " selected" : ""; ?>>IT・ソフトウェア専攻</option>
-                        <option value="other"<?php echo ($recordArray["major"] != null && !$isITMajor) ? " selected" : ""; ?>>IT・ソフトウェア以外</option>
-                    </select>
-                    <input class="form-control" style="margin-left: 10px; width:200px;" type="text" placeholder="その他の場合" id="majorInput"  name="major" maxlength='20' value='<?php echo ($recordArray['major']) ?>'  />
+            <option value="IT・ソフトウェア専攻"<?php echo ($isITMajor) ? " selected" : ""; ?>>IT・ソフトウェア専攻</option>
+            <option value="other"<?php echo ($recordArray["major"] != null && !$isITMajor) ? " selected" : ""; ?>>IT・ソフトウェア以外</option>
+            </select>
+            <input class="form-control" style="margin-left: 10px; width:200px;" type="text" placeholder="その他の場合" id="majorInput"  name="major" maxlength='20' value='<?php echo ($recordArray['major']) ?>'  />
 				</dd>
 
 				<dt>その他</dt>
@@ -240,9 +240,9 @@ $question_num = isset($diagnosisData['question_num']) ? $diagnosisData['question
                 <dt class="essential" id="ITskillTitle">ITスキル有無</dt>
 				<dd>
 					<select class="form-select" name="skill" id="ITskillId" style="width:220px;" onchange="SkillSelectChange(this.value)">
-                        <option value="0" <?php echo($isITSkill) ? "selected" : "" ;?>>有</option>
-                        <option value="1" <?php echo(!$isITSkill) ? "selected" : "" ;?>>無</option>
-                    </select>
+            <option value="0" <?php echo($isITSkill) ? "selected" : "" ;?>>有</option>
+            <option value="1" <?php echo(!$isITSkill) ? "selected" : "" ;?>>無</option>
+          </select>
 				</dd>
                 <dt class="essential" id="class1stTitle">経験分野</dt>
 				
@@ -254,7 +254,7 @@ $question_num = isset($diagnosisData['question_num']) ? $diagnosisData['question
             <option value="モバイル" <?php echo($isClass1st3) ? "selected" : "" ;?>>モバイル</option>
             <option value="サーバ" <?php echo($isClass1st4) ? "selected" : "" ;?>>サーバ</option>
             <option value="インフラ" <?php echo($isClass1st5) ? "selected" : "" ;?>>インフラ</option>
-            <option value="その他"<?php echo ($isClass1st1 || $isClass1st2 || $isClass1st3 || $isClass1st4 || $isClass1st5) ? "" : "selected"; ?>>その他</option>
+            <option value="その他"<?php echo ($isClass1st1 || $isClass1st2 || $isClass1st3 || $isClass1st4 || $isClass1st5) ? "" : "selected";?>>その他</option>
           </select>
 				</dd>
 
@@ -268,23 +268,31 @@ $question_num = isset($diagnosisData['question_num']) ? $diagnosisData['question
           }else{
             $dataArray = $optionDatas["class2nd"]['11'];
           }						
-          foreach ($dataArray as $data) {
-            if ($data["idx"] == $recordArray["class2nd"]) {
-                $class2ndText = $data["text"];
-                break;
-            }
-        }
 					?>
-          <option value="<?php echo $recordArray["class2nd"]; ?>" hidden><?php echo $class2ndText; ?></option>
-					<?php foreach ($optionDatas["class2nd"][$recordArray["class1st"]] as $data): ?>
-					<?php endforeach; ?>
+
+          
+          <?php
+          $selectedClass2nd = isset($recordArray['class2nd']) ? $recordArray['class2nd'] : null;
+          if (!empty($dataArray)) {
+              foreach ($dataArray as $data) {
+                  echo '<option value="' . $data['idx'] . '"';
+                    if ($data['idx'] == $selectedClass2nd) {
+                      echo ' selected';
+                    }
+                    echo '>' . $data['text'] . '</option>';
+              }
+          }
+          ?>
+
+
 				<?php endif; ?>
+
 			</select>
 
 				</dd>
 
 				<dt class="essential" id="careerTitle">IT経験年数</dt>
-				<dd><input class="form-control" name="career" id="careerId" type="text" placeholder="経歴を記入してください。" style="font-size:15px; width:220px" maxlength='2' value="<?php echo $applicantArray['career']?>"></dd> 
+				<dd><input class="form-control" name="career" id="careerId" type="text" placeholder="記入" style="font-size:15px; width:80px" maxlength='2' value="<?php echo $applicantArray['career']?>">年</dd> 
 		</dl>
     <!-- <input type="hidden" name="career" id="noSkillCareer"> -->
 
@@ -292,7 +300,7 @@ $question_num = isset($diagnosisData['question_num']) ? $diagnosisData['question
 </div>
 
     <div class="emegra card" style="margin-top: 32px;">
-	<div class="card-header">ITスキル診断問項詳細</div>
+	<div class="card-header">ITスキル診断問題詳細</div>
 
 	<div class="card-body">
 		<style type="text/css">
@@ -302,14 +310,23 @@ $question_num = isset($diagnosisData['question_num']) ? $diagnosisData['question
                 <dt>診断依頼</dt>
 				<dd><input class="form-control"  type="text" style="width:220px;" value="<?php echo $currentDate?>"readonly></dd>
 
-				<dt class="essential">診断問項ID</dt>
+				<dt class="essential">診断問題ID</dt>
 				<dd>
 					<input name="code" type="hidden" style="width:220px;" value="<?php echo $diagnosisData['code'] !=NULL ?  $diagnosisData['code'] : "" ?>">
             <div id="codeDisplay" name="codeName" style="padding-right:5px;cursor:pointer;" 
               <?php echo isset($diagnosisData['idx']) ? "onclick='Link(" . $diagnosisData['idx'] . ");'" : '' ?>>
               <?php echo isset($diagnosisData['code']) && $diagnosisData['code'] !== false ? $diagnosisData['code'] : "未登録" ?>
             </div>
-					<button type="button" data-bs-toggle="modal" data-bs-target="#staticBackdrop" style="padding: 0px 10px ;border-radius: 8px; background:linear-gradient(111deg, #50D7C7 0%, #40ADF0 100%); color:white;" onclick="diagnosisData();">検索</button>
+             <!-- /* log
+          作成：丁錫圓
+          修正：丁錫圓
+          修正日：24/06/03
+        */ -->
+        <!-- 修正前： -->
+        <!-- <button type="button" data-bs-toggle="modal" data-bs-target="#staticBackdrop" style="padding: 0px 10px ;border-radius: 8px; background:linear-gradient(111deg, #50D7C7 0%, #40ADF0 100%); color:white;" onclick="diagnosisData();">検索</button> -->
+        <!-- 修正後： -->
+					<button type="button" id="diagnosisId" style="padding: 0px 10px ;border-radius: 8px; background:linear-gradient(111deg, #50D7C7 0%, #40ADF0 100%); color:white;" onclick="diagnosisValidation();">検索</button>
+          <!-- ここまで -->
 				</dd> 
         <script>
           function Link(idx) {
@@ -320,24 +337,23 @@ $question_num = isset($diagnosisData['question_num']) ? $diagnosisData['question
 			<div class="modal modal-sheet py-5" style="backdrop-filter: blur(5px); " tabindex="-1" role="dialog" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
 				<div class="modal-dialog" style="margin-top:150px;" role="document">
 					<div class="modal-content rounded-4" style=>
-          <div class="modal-header border-bottom-0" style="background:linear-gradient(111deg, #50D7C7 0%, #40ADF0 100%); color:white; height: 40px;border-top-left-radius:13px;border-top-right-radius:13px">
+            <div class="modal-header border-bottom-0" style="background:linear-gradient(111deg, #50D7C7 0%, #40ADF0 100%); color:white; height: 40px;border-top-left-radius:13px;border-top-right-radius:13px">
               <h3 class="modal-title fs-6" id="exampleModalLabel">診断書検索</h3>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(100%);"></button>
-					  </div>
+            </div>
               <div class="modal-body fs-5">
-                  <table class="table" style="text-align:center; font-size:12px;">
-                    <thead>
+                <table class="table" style="text-align:center; font-size:12px;">
+                  <thead>
                     <tr>
-                        <th>No</th>
-                        <th style="text-align:left;">タイトル</th>
-                        <th>診断書番号</th>
-                        <th>選択</th>
-                      </tr>
-                      </thead>
-                      <tbody style="text-align:center">
-                      
-                      </tbody>
-                    </table>
+                      <th>No</th>
+                      <th style="text-align:left;">タイトル</th>
+                      <th>診断問題ID番号</th>
+                      <th>選択</th>
+                    </tr>
+                  </thead>
+                    <tbody style="text-align:center">
+                    </tbody>
+                  </table>
               </div>
               <div class="modal-footer flex-column border-top-0" style="margin-bottom:8px;">
                 <button type="button" class="btn btn-lg  w-75 mx-0" data-bs-dismiss="modal" style="background:linear-gradient(111deg, #50D7C7 0%, #40ADF0 100%); color:white;">閉じる</button>
@@ -345,6 +361,7 @@ $question_num = isset($diagnosisData['question_num']) ? $diagnosisData['question
           </div>
 				</div>
 			</div>
+
 				<dt class="essential">レベル</dt>
 				<dd><select class="form-select" name="level" type="text" style="width:100px;">
 					<option value="0"<?php echo $isLevel0 ? "selected" : "" ;?>>無級</option>
@@ -354,7 +371,7 @@ $question_num = isset($diagnosisData['question_num']) ? $diagnosisData['question
 					</select>
 					
 				</dd>
-				<dt class="essential">問項数別</dt>
+				<dt class="essential">問題数別</dt>
           <dd>
             <input id="question_numId" class="form-control" type="text" style="width:50px;text-align:center;" value="<?php echo $question_num ?>" readonly>問
           </dd>		             
@@ -421,8 +438,8 @@ $question_num = isset($diagnosisData['question_num']) ? $diagnosisData['question
   
 <div class="btn-place" style="margin-top: 32px;">
 	<button type="button" class="emegra cancel" onclick="self.location.href='../../situation/list';">戻る</button>
-  <button class="emegra"  id="btn_save" name="editDatas" value="btn_save"  style="width:150px;" onclick=saveConfirm()>一時保存</button>
-	<button class="emegra"  id="btn_submit" name="editDatas" value="btn_submit"  style="width:150px;" onclick=editConfirm()>ITスキル診断依頼</button>
+  <button class="emegra" id="btn_save" name="editDatas" value="btn_save"  style="width:150px;" onclick="saveConfirm()">一時保存</button>
+	<button class="emegra" id="btn_submit" name="editDatas" value="btn_submit"  style="width:150px;" onclick="editConfirm()">ITスキル診断依頼</button>
 </div>
 
 <!-- Request send modal -->
@@ -437,7 +454,6 @@ $question_num = isset($diagnosisData['question_num']) ? $diagnosisData['question
 </div>
 
 </form>
-
 <script type="text/javascript">
 	const form = document.getElementById("form");
     var selectElement = document.getElementById('majorId');
@@ -519,10 +535,15 @@ $question_num = isset($diagnosisData['question_num']) ? $diagnosisData['question
 </script>
 
 <script>
-	window.onload=function(){
-		// console.log(form.major);
-		randomPW();
-	}
+window.onload = function() {
+    randomPW();
+
+    var selectedClass2nd = <?php echo json_encode($selectedClass2nd); ?>;
+
+    if (form.skill.value == 1 && selectedClass2nd == null) {
+        SkillSelectChange();
+    }
+};
 </script>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -649,9 +670,42 @@ switch (element.value) {
 	}
 }
 </script>
+<!-- 漢字カナ入力時有効性検査 -->
+<script>
+function emailValidationCheck(input){
+    var emailValidation =  /^[A-Za-z0-9_\.\-]+@[A-Za-z0-9\-]+\.[A-Za-z0-9\-]+/;
+    return emailValidation.test(input);
+}
+
+function isZenkaku(str) {
+  for (var i = 0; i < str.length; i++) {
+    var code = str.charCodeAt(i);
+    if (code >= 0x20 && code <= 0x7E) {
+      return str.charAt(i);
+    }
+  }
+  return null;
+}
+
+function checkKana(input) {
+  var katakanaRegex = /^[\u30A0-\u30FFー\s]+$/; 
+  return katakanaRegex.test(input);
+}
+</script>
 
 <script>
 	function editConfirm(){
+    if (form.name.value == "" || isZenkaku(form.name.value)) {
+          alert("漢字を入力してください。");
+          setTimeout("form.name.focus()",100);
+          return false;
+      }
+
+      if (form.kana.value == "" || !checkKana(form.kana.value)) {
+          alert("カナを入力してください。");
+          setTimeout("form.kana.focus()",100);
+          return false;
+      }
         if (form.skill.value == "") {
             alert("ITスキル有無を入力してください。");
             setTimeout("form.skill.focus()",100);
@@ -686,10 +740,10 @@ switch (element.value) {
             return false;
         }
         if (form.code.value == "") {
-            alert("診断問項IDを入力してください。");
-            setTimeout("form.code.focus()",100);
-            event.preventDefault();
-            return false;
+          alert("診断問題IDを入力してください。");
+          setTimeout("form.code.focus()",100);
+          event.preventDefault();
+          return false;
         }
 
 		var submitConfirm=confirm("依頼しますか？");
@@ -707,6 +761,19 @@ switch (element.value) {
 		
 	}
   function saveConfirm(){
+    if (form.name.value == "" || isZenkaku(form.name.value)) {
+          alert("漢字を入力してください。");
+          setTimeout("form.name.focus()",100);
+          event.preventDefault();
+          return false;
+      }
+
+      if (form.kana.value == "" || !checkKana(form.kana.value)) {
+          alert("カナを入力してください。");
+          setTimeout("form.kana.focus()",100);
+          event.preventDefault();
+          return false;
+      }
     if (form.skill.value == "") {
             alert("ITスキル有無を入力してください。");
             setTimeout("form.skill.focus()",100);
@@ -733,7 +800,6 @@ switch (element.value) {
             event.preventDefault();
             return false;
         }
-        // console.log(class2nd.value);
         if ((isNaN(form.careerId.value) || form.careerId.value === "")) {
             alert("IT経験年数を入力してください。");
             setTimeout("form.careerInput.focus()",100);
@@ -741,12 +807,11 @@ switch (element.value) {
             return false;
         }
         if (form.code.value == "") {
-            alert("診断問項IDを入力してください。");
+            alert("診断問題IDを入力してください。");
             setTimeout("form.code.focus()",100);
             event.preventDefault();
             return false;
         }
-       
         var submitConfirm=confirm("保存しますか？");
             if (!submitConfirm){
                     event.preventDefault();
@@ -772,6 +837,29 @@ switch (element.value) {
 </script>
 
 <script>
+function diagnosisValidation(){
+  // <!-- /* log
+  //         作成：丁錫圓
+  //         修正日：24/06/03
+  //       */ -->
+  //       <!-- 修正前： -->
+  if (form.class1stId.value === "") {
+    alert("経験分野を入力してください。");
+    setTimeout("form.class1stId.focus()",100);
+    document.getElementById('diagnosisId').setAttribute('data-bs-toggle', 'false');
+    return false;
+  }
+  if (form.class2ndId.value == "選択してください。") {
+    alert("問題種別を入力してください。");
+    setTimeout("form.class2ndId.focus()",100);
+    document.getElementById('diagnosisId').setAttribute('data-bs-toggle', 'false');
+    return false;
+  }
+  var diagnosisIdModal = new bootstrap.Modal(document.getElementById('staticBackdrop'));
+  diagnosisIdModal.show();
+  diagnosisData();
+}
+// ここまで
 function diagnosisData() {
   var skillElement = document.querySelector('select[name="skill"]');
   var levelElement = document.querySelector('select[name="level"]');
@@ -779,8 +867,7 @@ function diagnosisData() {
   var skillValue = skillElement.options[skillElement.selectedIndex].value;
   var levelValue = levelElement.options[levelElement.selectedIndex].value;
   var class2ndValue = class2ndElement.options[class2ndElement.selectedIndex].value;
-  console.log(skillValue);
-
+ 
   const url = window.location.href;
   const postForm = new FormData();
   postForm.append("level", levelValue);
@@ -792,10 +879,9 @@ function diagnosisData() {
     if (xhr.status == 200) {
         try {
             const result = JSON.parse(xhr.responseText);
-            // console.log(result);
             if (result === "wrong") {
               updateTable("wrong");
-                return;
+              return;
             }
             updateTable(result);
         } catch (e) {
@@ -810,13 +896,12 @@ function diagnosisData() {
     const tableBody = document.querySelector(".table tbody");
     tableBody.innerHTML = ""; 
     if (data === "wrong" || data.length === 0) {
-        const row = document.createElement("tr");
-        const messageCell = document.createElement("td");
-        messageCell.setAttribute("colspan", "4");
-        messageCell.textContent = "データがありません";
-        row.appendChild(messageCell);
-
-        tableBody.appendChild(row);
+      const row = document.createElement("tr");
+      const messageCell = document.createElement("td");
+      messageCell.setAttribute("colspan", "4");
+      messageCell.textContent = "診断問題IDがありません。";
+      row.appendChild(messageCell);
+      tableBody.appendChild(row);
     } else {
       data.forEach((item, index) => {
         const row = document.createElement("tr");
@@ -846,7 +931,7 @@ function diagnosisData() {
         button.addEventListener("click", () => {
           selectCode(item.code,item.title);
           selectQuestionNum(item.question_num);
-          const modalElement = document.querySelector('#staticBackdrop');
+          document.querySelector('.btn-close').click();        
         });
         
         selectCell.appendChild(button);
@@ -860,7 +945,7 @@ function selectCode(code, title) {
   const codeElement = document.querySelector('input[name="code"]');
   const displayElement = document.querySelector('#codeDisplay');
   codeElement.value =code ;
-  displayElement.textContent = title+ "　("+code+")";
+  displayElement.textContent = title+ " ("+code+")";
 }
 </script>
 

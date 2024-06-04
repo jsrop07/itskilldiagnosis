@@ -138,7 +138,7 @@ function InitStyle() { return " font-style: italic; color: ;"; }
 </div>
 
     <div class="emegra card" style="margin-top: 32px;">
-	<div class="card-header">ITスキル診断問項詳細</div>
+	<div class="card-header">ITスキル診断問題詳細</div>
 
 	<div class="card-body">
 		<style type="text/css">
@@ -148,11 +148,11 @@ function InitStyle() { return " font-style: italic; color: ;"; }
         <dt>診断依頼</dt>
 				<dd><input class="form-control"  type="text" style="width:220px;" value="<?php echo $currentDate?>"readonly></dd>
         
-        <dt class="essential">診断問項ID</dt>
+        <dt class="essential">診断問題ID</dt>
 				<dd>
 					<input name="code" type="hidden" style="width:220px;">
           <div id="codeDisplay" style="padding-right:5px"></div>
-					<button type="button" data-bs-toggle="modal" data-bs-target="#staticBackdrop" style="padding: 0px 10px ;border-radius: 8px; background:linear-gradient(111deg, #50D7C7 0%, #40ADF0 100%); color:white;" onclick="diagnosisData();">検索</button>
+					<button type="button" style="padding: 0px 10px ;border-radius: 8px; background:linear-gradient(111deg, #50D7C7 0%, #40ADF0 100%); color:white;" onclick="diagnosisValidation();">検索</button>
 				</dd> 
 				
 			<div class="modal modal-sheet py-5" style="backdrop-filter: blur(5px); " tabindex="-1" role="dialog" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -168,7 +168,7 @@ function InitStyle() { return " font-style: italic; color: ;"; }
                     <tr>
                       <th>No</th>
                       <th style="text-align:left;">タイトル</th>
-                      <th>診断書番号</th>
+                      <th>診断問題ID番号</th>
                       <th>選択</th>
                     </tr>
                   </thead>
@@ -193,7 +193,7 @@ function InitStyle() { return " font-style: italic; color: ;"; }
           </select>
 				</dd>
 
-				<dt class="essential">問項数別</dt>
+				<dt class="essential">問題数別</dt>
 				<dd><input class="form-control" name="question_num" type="text" style="width:50px;text-align:center;">問</dd>
 		
 				<dt class="essential">診断方法</dt>
@@ -419,24 +419,19 @@ function emailValidationCheck(input){
     return emailValidation.test(input);
 }
 
-function checkKanji(input) {
-    function toHalfWidth(str) {
-        return str.replace(/[！-～]/g, function(s) {
-            return String.fromCharCode(s.charCodeAt(0) - 0xFEE0);
-        }).replace(/　/g, " ");
+function isZenkaku(str) {
+  for (var i = 0; i < str.length; i++) {
+    var code = str.charCodeAt(i);
+    if (code >= 0x20 && code <= 0x7E) {
+      return str.charAt(i);
     }
-
-    var halfWidthInput = toHalfWidth(input);
-    var japaneseRegex = /^[\u4E00-\u9FFF\u3040-\u309F]+$/; // 
-    var katakanaRegex = /^[\u30A0-\u30FF]+$/; // 
-
-    return japaneseRegex.test(halfWidthInput) || katakanaRegex.test(halfWidthInput);
+  }
+  return null;
 }
 
-
 function checkKana(input) {
-    var katakanaRegex = /^[\u30A0-\u30FFー]+$/; 
-    return katakanaRegex.test(input);
+  var katakanaRegex = /^[\u30A0-\u30FFー\s]+$/; 
+  return katakanaRegex.test(input);
 }
 </script>
 
@@ -449,7 +444,7 @@ function checkKana(input) {
             return false;
         }
 
-        if (form.name.value == "" || !checkKanji(form.name.value)) {
+        if (form.name.value == "" || isZenkaku(form.name.value)) {
             alert("漢字を入力してください。");
             setTimeout("form.name.focus()",100);
             event.preventDefault();
@@ -523,7 +518,7 @@ function checkKana(input) {
             return false;
         }
         if (form.code.value == "") {
-            alert("診断問項IDを入力してください。");
+            alert("診断問題IDを入力してください。");
             setTimeout("form.code.focus()",100);
             event.preventDefault();
             return false;
@@ -549,7 +544,7 @@ function checkKana(input) {
             return false;
         }
 
-        if (form.name.value == "" || !checkKanji(form.name.value)) {
+        if (form.name.value == "" || isZenkaku(form.name.value)) {
             alert("漢字を入力してください。");
             setTimeout("form.name.focus()",100);
             event.preventDefault();
@@ -623,7 +618,7 @@ function checkKana(input) {
             return false;
         }
         if (form.code.value == "") {
-            alert("診断問項IDを入力してください。");
+            alert("診断問題IDを入力してください。");
             setTimeout("form.code.focus()",100);
             event.preventDefault();
             return false;
@@ -662,7 +657,31 @@ function checkKana(input) {
             }
 	}
 </script>
+
 <script>
+function diagnosisValidation(){
+  // <!-- /* log
+  //         作成：丁錫圓
+  //         修正日：24/06/04
+  //       */ -->
+  //       <!-- 修正前： -->
+  if (form.class1stId.value === "") {
+    alert("経験分野を入力してください。");
+    setTimeout("form.class1stId.focus()",100);
+    document.getElementById('diagnosisId').setAttribute('data-bs-toggle', 'false');
+    return false;
+  }
+  if (form.class2ndId.value == "選択してください。") {
+    alert("問題種別を入力してください。");
+    setTimeout("form.class2ndId.focus()",100);
+    document.getElementById('diagnosisId').setAttribute('data-bs-toggle', 'false');
+    return false;
+  }
+  var diagnosisIdModal = new bootstrap.Modal(document.getElementById('staticBackdrop'));
+  diagnosisIdModal.show();
+  diagnosisData();
+}
+// ここまで
 function diagnosisData() {
   var levelElement = document.querySelector('select[name="level"]');
   var class2ndElement = document.querySelector('select[name="class2nd"]');

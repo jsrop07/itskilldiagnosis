@@ -94,6 +94,22 @@ class ApplicantController extends AbstractActionController
 
 	return $viewModel;
   }
+	
+	/* log
+	作成：丁錫圓
+	修正：丁錫圓
+	修正日：24/06/04
+	*/ 
+  function duplicationAction(){
+	$p = $this->params()->fromPost();
+	$tbl=$this->getServiceLocator()->get('ApplicationTable');
+
+	if (isset($p["email"])) {
+	$result = $tbl->emailDuplicateCheck($p["email"]);
+	die($result);
+	}
+	}
+	// ここまで
 
   function applicationclearAction() {
 	$this->layout("/applicant/applicationclear");
@@ -154,7 +170,6 @@ class ApplicantController extends AbstractActionController
 				$session = new Container("applicant");
 				$session["id"] = $p["id"];
 			}
-			// print_r("Asd");
 			die($result);
     }
 

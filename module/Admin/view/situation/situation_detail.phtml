@@ -151,7 +151,19 @@
 		<button class="emegra" style="width:150px;" onclick="Request();">ITスキル診断依頼</button>
   <?php else: ?>
     <?php if ($recordData["rank"] != null && $recordData["date_mail"] == null): ?>
-      <button class="emegra" onclick="SendMail();">メール送信</button>
+      <!--
+        作成：朴昰成
+        修正：朴昰成
+        修正前：24/06/03
+      -->
+
+      <!-- 修正前： <?php /* ?>
+        <button class="emegra" onclick="SendMail();">メール送信</button>
+      <?php */ ?> -->
+
+      <!-- 修正前： -->
+      <button class="emegra" onclick="SendMail();">結果送信</button>
+      <!-- ここまで -->
     <?php endif; ?>
 	<?php endif; ?>
 </div>
@@ -184,7 +196,19 @@
 	}
 
   function SendMail() {
-    if (confirm("メールを送信しますか？") === false) { return false; }
+    /*
+      作成：朴昰成
+      修正：朴昰成
+      修正日：24/06/03
+    */
+
+    /* 修正前：
+      if (confirm("メールを送信しますか？") === false) { return false; }
+    */
+
+    /* 修正後： */
+    if (confirm("結果を送信しますか？") === false) { return false; }
+    /* ここまで */
 
     const postForm = new FormData();
     postForm.append("idxs", idx);
@@ -203,6 +227,12 @@
           try {
             let idxDatas = JSON.parse(result);
             alert("すでに送信しました。");
+            /*
+              作成：朴昰成
+              作成日：24/06/03
+            */
+            location.reload(true);
+            /* ここまで */
             return false;
           } catch (e) {
             alert("error");

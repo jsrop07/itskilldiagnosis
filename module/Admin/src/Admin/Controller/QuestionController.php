@@ -29,6 +29,13 @@ class QuestionController extends AbstractActionController
 		$this->ChkLogin();
 		$datas["breadcrumbData"] = ["ITスキル診断問項管理"];
 		$datas["optionDatas"] = $this->GetOptionDatas();
+		/*
+			作成：朴昰成
+			作成日：24/06/04
+		*/
+		$selectValueDatas = $this->ReadOptionOrganizeByType();
+		$datas["selectValueDatas"] = $this->ReadOptionOrganizeByType();
+		/* ここまで */
 
 		// Data of login user
 		$session = new Container("user");
@@ -58,6 +65,12 @@ class QuestionController extends AbstractActionController
 			$datas["searchDatas"]["title"] = $query["title"];
 		}
 
+		/*
+			作成：朴昰成
+			削除：朴昰成
+			削除日：24/06/04
+		
+		削除前：
 		// Set Align data
 		$sqlOrder = array();
 		if (isset($query["align"])) {
@@ -65,6 +78,35 @@ class QuestionController extends AbstractActionController
 			$sqlOrder["seq"] = explode("-", $query["align"])[1];
 			$datas["searchDatas"]["align"] = $query["align"];
 		}
+		ここまで */
+		/*
+			作成：朴昰成
+			作成日：24/06/04
+		*/
+		if (isset($query["select"])) {
+			$optionTb = $this->getServiceLocator()->get("OptionTable");
+
+			$selectData = explode("-", $query["select"]);
+			if ($selectData[1] == "Cpp") { $selectData[1] = "C++"; }
+
+			if ($selectData[0] == "level") {
+				$sqlWhere["level"] = $selectData[1];
+			}
+			else if ($selectData[0] == "class2nd") {
+				$optionDatas = $optionTb->ReadByOption(["text" => $selectData[1]]);
+
+				foreach ($optionDatas as $data) {
+					$sqlWhere["class2nd"][] = $data["idx"];
+				}
+			}
+			else {
+				$optionData = $optionTb->ReadByText($selectData[1]);
+				$sqlWhere[$selectData[0]] = $optionData["idx"];
+			}
+
+			$datas["searchDatas"]["select"] = $selectData;
+		}
+		/* ここまで */
 
 		$questionDatas = "";
 		// Check User Level
@@ -120,8 +162,21 @@ class QuestionController extends AbstractActionController
 	/** When you click 新規登録 button on 一覧 page */
 	public function inputAction() {
 		$this->ChkLogin();
-		$datas["breadcrumbData"] = ["ITスキル診断問項管理", "問題登録"];
-		$datas["title"] = "問題登録";
+		/*
+			作成：朴昰成
+			修正：朴昰成
+			修正日：24/06/03
+		*/
+
+		/* 修正前：
+			$datas["breadcrumbData"] = ["ITスキル診断問項管理", "問題登録"];
+			$datas["title"] = "問題登録";
+		*/
+
+		/* 修正後： */
+		$datas["breadcrumbData"] = ["ITスキル診断問項管理", "問項登録"];
+		$datas["title"] = "問項登録";
+		/* ここまで */
 		$datas["optionDatas"] = $this->GetOptionDatasForInput();
 		$datas["languageCodeDatas"] = ["ko" => "韓国語"];
 
@@ -135,7 +190,19 @@ class QuestionController extends AbstractActionController
 	/** When you click 登録 button on 問題登録 page */
 	public function confirmAction() {
 		$this->ChkLogin();
-		$datas["breadcrumbData"] = ["ITスキル診断問項管理", "問題登録", "登録確認"];
+		/*
+			作成：朴昰成
+			修正：朴昰成
+			修正日：24/06/03
+		*/
+
+		/* 修正前：
+			$datas["breadcrumbData"] = ["ITスキル診断問項管理", "問題登録", "登録確認"];
+		*/
+
+		/* 修正後： */
+		$datas["breadcrumbData"] = ["ITスキル診断問項管理", "問項登録", "登録確認"];
+		/* ここまで */
 		$datas["title"] = "登録確認";
 		$datas["optionDatas"] = $this->GetOptionDatas();
 		$datas["languageCodeDatas"] = ["ko" => "韓国語"];
@@ -154,7 +221,19 @@ class QuestionController extends AbstractActionController
 	/** When you choose list data on 問題一覧 page */
 	public function detailAction() {
 		$this->ChkLogin();
-		$datas["breadcrumbData"] = ["ITスキル診断問項管理", "問題詳細"];		
+		/*
+			作成：朴昰成
+			修正：朴昰成
+			修正日：24/06/03
+		*/
+
+		/* 修正前：
+			$datas["breadcrumbData"] = ["ITスキル診断問項管理", "問題詳細"];
+		*/
+
+		/* 修正後： */
+		$datas["breadcrumbData"] = ["ITスキル診断問項管理", "問項詳細"];
+		/* ここまで */
 		$datas["optionDatas"] = $this->GetOptionDatas();
 	
 		$index = $this->params()->fromRoute("index");
@@ -186,8 +265,21 @@ class QuestionController extends AbstractActionController
 	/** When you click 修正 button on 問題詳細 page */
 	public function editAction() {
 		$this->ChkLogin();
-		$datas["breadcrumbData"] = ["ITスキル診断問項管理", "問題詳細", "問題修正"];
-		$datas["title"] = "問題修正";
+		/*
+			作成：朴昰成
+			修正：朴昰成
+			修正日：24/06/03
+		*/
+
+		/* 修正前：
+			$datas["breadcrumbData"] = ["ITスキル診断問項管理", "問題詳細", "問題修正"];
+			$datas["title"] = "問題修正";
+		*/
+
+		/* 修正後： */
+		$datas["breadcrumbData"] = ["ITスキル診断問項管理", "問項詳細", "問項修正"];
+		$datas["title"] = "問項修正";
+		/* ここまで */
 		$datas["optionDatas"] = $this->GetOptionDatasForInput();
 		$datas["languageCodeDatas"] = ["ko" => "韓国語"];
 
@@ -452,36 +544,125 @@ class QuestionController extends AbstractActionController
 		die("success");
 	}
 
-	public function sortArrByKey($arr, $alignData) {
+	/*
+		作成：朴昰成
+		作成日：24/06/04
+	*/
+	/** Read Option datas Organize by Type (class2nd's idx is text)
+	 * @return array $optionDatas ["type" => "text"]
+	 */
+	public function ReadOptionOrganizeByType() {
+		$beforeOptionDatas = array();
 		$optionTb = $this->getServiceLocator()->get("OptionTable");
+		try { $beforeOptionDatas = $optionTb->ReadValid(); }
+		catch (\Exception $e) { print_r($e->getMessage()); exit; }
 
-		$key = explode("_", $alignData)[0];
-		$align = explode("_", $alignData)[1];
-
-		$tempArr = array();
-		if ($key == "regist") {
-			$key = "date_regist";
-			foreach ($arr as $idx => $data) {
-				$tempArr[$idx] = $data[$key];
+		$optionDatas = array();
+		$class2ndDatas = array();
+		$other = array();
+		foreach ($beforeOptionDatas as $data) {
+			if ($data["text"] == "その他") {
+				$other = $data;
+				continue;
 			}
-		} else {
-			foreach ($arr as $idx => $data) {
-				$data[$key] = $optionTb->ReadOption(["idx" => $data[$key]])["text"];
-				$arr[$idx][$key] = $data[$key];
-				$tempArr[$idx] = $data[$key];
+			if ($data["type"] == "class2nd") {
+				$class2ndDatas[] = $data;
+				continue;
+			}
+
+			if (!isset($optionDatas[$data["type"]])) {
+				$optionDatas[$data["type"]] = array();
+			}
+			$optionDatas[$data["type"]][] = $data;
+		}
+
+		$optionDatas["class1st"][] = $other;
+
+		$optionDatas["class2nd"] = array();
+		foreach ($class2ndDatas as $data) {
+			if (!isset($optionDatas["class2nd"][$data["text"]])) {
+				$data["idx"] = $data["text"];
+				$optionDatas["class2nd"][$data["text"]] = $data;
 			}
 		}
 
-		if ($align == "ASC") { array_multisort($tempArr, SORT_ASC, $arr); }
-		else { array_multisort($tempArr, SORT_DESC, $arr); }
-		unset($tempArr);
-
-		if ($key == "date_regist") { return $arr; }
-
-		foreach ($arr as $idx => $data) {
-			$arr[$idx][$key] = $optionTb->ReadOption(["text" => $data[$key]])["idx"];
-		}
-
-		return $arr;
+		return $optionDatas;
 	}
+
+	/* ここまで */
+	/* comment out don't use code
+		作成：朴昰成
+		修正：朴昰成
+		修正日：24/06/04
+	*/
+
+	/* 修正前：
+		public function sortArrByKey($arr, $alignData) {
+			$optionTb = $this->getServiceLocator()->get("OptionTable");
+
+			$key = explode("_", $alignData)[0];
+			$align = explode("_", $alignData)[1];
+
+			$tempArr = array();
+			if ($key == "regist") {
+				$key = "date_regist";
+				foreach ($arr as $idx => $data) {
+					$tempArr[$idx] = $data[$key];
+				}
+			} else {
+				foreach ($arr as $idx => $data) {
+					$data[$key] = $optionTb->ReadOption(["idx" => $data[$key]])["text"];
+					$arr[$idx][$key] = $data[$key];
+					$tempArr[$idx] = $data[$key];
+				}
+			}
+
+			if ($align == "ASC") { array_multisort($tempArr, SORT_ASC, $arr); }
+			else { array_multisort($tempArr, SORT_DESC, $arr); }
+			unset($tempArr);
+
+			if ($key == "date_regist") { return $arr; }
+
+			foreach ($arr as $idx => $data) {
+				$arr[$idx][$key] = $optionTb->ReadOption(["text" => $data[$key]])["idx"];
+			}
+
+			return $arr;
+		}
+	*/
+
+	/* 修正後： */
+	// public function sortArrByKey($arr, $alignData) {
+	// 	$optionTb = $this->getServiceLocator()->get("OptionTable");
+
+	// 	$key = explode("_", $alignData)[0];
+	// 	$align = explode("_", $alignData)[1];
+
+	// 	$tempArr = array();
+	// 	if ($key == "regist") {
+	// 		$key = "date_regist";
+	// 		foreach ($arr as $idx => $data) {
+	// 			$tempArr[$idx] = $data[$key];
+	// 		}
+	// 	} else {
+	// 		foreach ($arr as $idx => $data) {
+	// 			$data[$key] = $optionTb->ReadOption(["idx" => $data[$key]])["text"];
+	// 			$arr[$idx][$key] = $data[$key];
+	// 			$tempArr[$idx] = $data[$key];
+	// 		}
+	// 	}
+
+	// 	if ($align == "ASC") { array_multisort($tempArr, SORT_ASC, $arr); }
+	// 	else { array_multisort($tempArr, SORT_DESC, $arr); }
+	// 	unset($tempArr);
+
+	// 	if ($key == "date_regist") { return $arr; }
+
+	// 	foreach ($arr as $idx => $data) {
+	// 		$arr[$idx][$key] = $optionTb->ReadOption(["text" => $data[$key]])["idx"];
+	// 	}
+
+	// 	return $arr;
+	// }
+	/* ここまで */
 }

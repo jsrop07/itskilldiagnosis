@@ -1,4 +1,17 @@
 <?php
+  /* move from 27
+    作成：朴昰成
+    作成日：24/06/03
+  */
+
+  $title = array(
+    "manager" => "ITスキル診断管理者管理",
+    "situation" => "ITスキル診断状況管理",
+    "diagnosis" => "ITスキル診断問題管理",
+    "question" => "ITスキル診断問項管理",
+  );
+
+  /* ここまで */
 	if (!isset($_SESSION)) { session_start(); }
 	$userData = $_SESSION["user"];
 
@@ -11,10 +24,17 @@
 	}
 
 	$breadcrumb = json_decode($this->breadcrumb, true);
-	$title["question"] = "ITスキル診断問題管理";
-	$title["diagnosis"] = "ITスキル診断書管理";
-	$title["situation"] = "ITスキル診断状況管理";
-	$title["manager"] = "ITスキル診断管理者管理";
+  /* move to 2
+    作成：朴昰成
+    削除：朴昰成
+    削除日：24/06/03
+
+  削除前：
+  $title["question"] = "ITスキル診断問題管理";
+  $title["diagnosis"] = "ITスキル診断書管理";
+  $title["situation"] = "ITスキル診断状況管理";
+  $title["manager"] = "ITスキル診断管理者管理";
+  ここまで */
 ?>
 
 <html lang="jp">
@@ -67,8 +87,21 @@
 				<button class="btn-sub <?php echo $title[$mainMenu] == "ITスキル診断管理者管理" ? " active" : ""; ?>" onclick="self.location.href='/admin/manager/list'">ITスキル診断管理者管理</button>
 			<?php endif; ?>
 			<button class="btn-sub <?php echo $title[$mainMenu] == "ITスキル診断状況管理" ? " active" : ""; ?>" onclick="self.location.href='/admin/situation/list'">ITスキル診断状況管理</button>
-			<button class="btn-sub <?php echo $title[$mainMenu] == "ITスキル診断書管理" ? " active" : ""; ?>" onclick="self.location.href='/admin/diagnosis/list'">ITスキル診断書診断管理</button>
-			<button class="btn-sub <?php echo $title[$mainMenu] == "ITスキル診断問題管理" ? " active" : ""; ?>" onclick="self.location.href='/admin/question/list'">ITスキル診断問題管理</button>
+      <!--
+        作成：朴昰成
+        修正：朴昰成
+        修正日：24/06/03
+      -->
+
+      <!-- 修正前： <?php /* ?>
+        <button class="btn-sub <?php echo $title[$mainMenu] == "ITスキル診断書管理" ? " active" : ""; ?>" onclick="self.location.href='/admin/diagnosis/list'">ITスキル診断書診断管理</button>
+        <button class="btn-sub <?php echo $title[$mainMenu] == "ITスキル診断問題管理" ? " active" : ""; ?>" onclick="self.location.href='/admin/question/list'">ITスキル診断問題管理</button>
+      <?php */ ?> -->
+
+      <!-- 修正後： -->
+      <button class="btn-sub <?php echo $title[$mainMenu] == "ITスキル診断問題管理" ? " active" : ""; ?>" onclick="self.location.href='/admin/diagnosis/list'">ITスキル診断問題管理</button>
+      <button class="btn-sub <?php echo $title[$mainMenu] == "ITスキル診断問項管理" ? " active" : ""; ?>" onclick="self.location.href='/admin/question/list'">ITスキル診断問項管理</button>
+      <!-- ここまで -->
 		</aside>
 		
 		<main>

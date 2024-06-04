@@ -357,11 +357,35 @@
   </div>
 
   <?php if (empty(iterator_to_array($questionDatas))): ?>
-    <div class="table-empty" style="margin-top: 16px;">
+    <!--
+      作成：朴昰成
+      修正：朴昰成
+      修正日：24/06/04
+    -->
+
+    <!-- 修正前： <?php /* ?>
+      <div class="table-empty" style="margin-top: 16px;">
+    <?php */ ?> -->
+
+    <!-- 修正後： -->
+    <div class="table-empty" style="min-width: 1200px; margin-top: 16px;">
+    <!-- ここまで -->
       データがありません。
     </div>
   <?php else: ?>
-    <table class="emegra" style="margin-top: 8px;">
+    <!--
+      作成：朴昰成
+      修正：朴昰成
+      修正日：24/06/04
+    -->
+
+    <!-- 修正前： <?php /* ?>
+      <table class="emegra" style="margin-top: 8px;">
+    <?php */ ?> -->
+
+    <!-- 修正後： -->
+    <table class="emegra" style="min-width: 1200px; margin-top: 8px;">
+    <!-- ここまで -->
       <thead>
         <tr class="index">
           <th style="grid-area: no">No</th>

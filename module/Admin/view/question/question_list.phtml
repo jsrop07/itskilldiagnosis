@@ -23,12 +23,10 @@
     作成：朴昰成
     作成日：24/06/04
   */
-  $statusTexts = ["新規", "承認済", "承認依頼"];
 
   $selectTypeDatas = array(
     "status" => "ステータス",
-    "class1st" => "大分類",
-    "class2nd" => "小分類",
+    "class" => "問項種別",
     "level" => "レベル",
   );
   /* ここまで */
@@ -57,9 +55,23 @@
   $firstNo = $questionDatas->getTotalItemCount();
   $firstNo -= (($questionDatas->getCurrentPageNumber() - 1) * $questionDatas->getitemCountPerPage());
 
-  // check align
-  $isAlign = false;
-  if (isset($searchDatas["align"])) { $isAlign = true; }
+  /*
+    作成：朴昰成
+    修正：朴昰成
+    修正日：24/06/04
+  */
+
+  /* 修正前：
+    // check align
+    $isAlign = false;
+    if (isset($searchDatas["align"])) { $isAlign = true; }
+  */
+
+  /* 修正後： */
+  // check select
+  $isSelect = false;
+  if (isset($searchDatas["select"])) { $isSelect = true; }
+  /* ここまで */
 
   // check authority
   $isApprover = false;
@@ -189,32 +201,36 @@
     </div>
 
     <div style="display: flex;">
-      <p style="display: flex; align-items: center;">絞り</p>
-      <select class="form-select form-select-sm" id="select-type" style="width: 120px; margin-left: 8px;" onchange="ChangeValue(this.value);">
+      <select class="form-select form-select-sm" id="select-type" style="width: 120px; margin-left: 8px;" onchange="ChangeSelectOption(this);">
         <option value="">全て</option>
         <?php foreach ($selectTypeDatas as $value => $text): ?>
-          <option value="<?= $value; ?>"<?php echo (isset($searchDatas["select"]) && $searchDatas["select"][0] == $value) ? " selected" : ""?>><?= $text; ?></option>
+          <option value="<?= $value; ?>"<?php echo ($isSelect && $searchDatas["select"][0] == $value) ? " selected" : ""?>><?= $text; ?></option>
         <?php endforeach; ?>
       </select>
-      <select class="form-select form-select-sm" id="select-value" style="width: 150px; margin-left: 8px;" onchange="Select(this.value);">
-        <?php if (isset($searchDatas["select"])): ?>
-          <?php if ($searchDatas["select"][0] == "status"): ?>
-            <?php foreach($statusTexts as $status): ?>
-              <option value="<?= $status; ?>"<?php echo ($searchDatas["select"][1] == $status) ? " selected" : ""; ?>><?= $status; ?></option>
-            <?php endforeach; ?>
-          <?php elseif ($searchDatas["select"][0] == "class1st"): ?>
-            <?php foreach($selectValueDatas["class1st"] as $data): ?>
-              <option value="<?php echo $data["text"]; ?>"<?php echo ($searchDatas["select"][1] == $data["text"]) ? " selected" : ""?>><?php echo $data["text"]; ?></option>
-            <?php endforeach; ?>
-          <?php elseif ($searchDatas["select"][0] == "class2nd"): ?>
-            <?php foreach($selectValueDatas["class2nd"] as $data): ?>
-              <option value="<?php echo ($data["text"] == "C++") ? "Cpp" : $data["text"]; ?>"<?php echo ($searchDatas["select"][1] == $data["text"]) ? " selected" : ""?>><?php echo $data["text"]; ?></option>
-            <?php endforeach; ?>
-          <?php elseif ($searchDatas["select"][0] == "level"): ?>
-            <?php for($i = 0; $i <= 3; $i++): ?>
+      <select class="form-select form-select-sm" id="select-value" style="width: 120px; margin-left: 8px;"<?php echo ($isSelect) ? "" : " disabled"; ?> onchange="Select(this);">
+        <?php if ($isSelect): ?>
+          <?php if ($searchDatas["select"][0] == "level"): ?>
+            <?php for ($i = 0; $i <= 3; $i++): ?>
               <option value="<?= $i; ?>"<?php echo ($searchDatas["select"][1] == $i) ? " selected" : ""?>><?= $levelTexts[$i]; ?></option>
             <?php endfor; ?>
+          <?php elseif ($searchDatas["select"][0] == "class"): ?>
+            <?php foreach($selectValueDatas["class1st"] as $data): ?>
+              <option value="<?php echo $data["idx"]; ?>"<?php echo ($searchDatas["select"][1] == $data["idx"]) ? " selected" : ""?>><?php echo $data["text"]; ?></option>
+            <?php endforeach; ?>
+          <?php else: ?>
+            <?php foreach($selectValueDatas[$searchDatas["select"][0]] as $data): ?>
+              <option value="<?php echo $data["idx"]; ?>"<?php echo ($searchDatas["select"][1] == $data["idx"]) ? " selected" : ""?>><?php echo $data["text"]; ?></option>
+            <?php endforeach; ?>
           <?php endif; ?>
+        <?php else: ?>
+          <option hidden>選択</option>
+        <?php endif; ?>
+      </select>
+      <select class="form-select form-select-sm" id="select-class" style="width: 120px; margin-left: 8px; visibility: <?php echo ($isSelect && $searchDatas["select"][0] == "class") ? "visible" : "hidden"?>" onchange="Select(this);">
+        <?php if ($isSelect && $searchDatas["select"][0] == "class"): ?>
+          <?php foreach($selectValueDatas["class2nd"][$searchDatas["select"][1]] as $data): ?>
+            <option value="<?php echo $data["idx"]; ?>"<?php echo ($searchDatas["select"][2] == $data["idx"]) ? " selected" : ""?>><?php echo $data["text"]; ?></option>
+          <?php endforeach; ?>
         <?php else: ?>
           <option hidden>選択</option>
         <?php endif; ?>
@@ -229,49 +245,44 @@
     <script>
       const selectType = document.getElementById("select-type");
       const selectValue = document.getElementById("select-value");
+      const selectClass = document.getElementById("select-class");
 
-      function ChangeValue(value) {
-        if (value == "") { Select(value); }
+      function ChangeSelectOption(element) {
+        let value = element.value;
+        if (value == "") { Select(element); }
+        selectValue.disabled = false;
+        
+        selectClass.replaceChildren();
+        selectClass.style.visibility = "hidden";
+        var option = document.createElement("option");
+        option.hidden = true;
+        option.innerText = "選択";
+        selectClass.appendChild(option);
 
         selectValue.replaceChildren();
-
-        var option = document.createElement("option");
+        option = document.createElement("option");
         option.hidden = true;
         option.innerText = "選択";
         selectValue.appendChild(option);
 
         switch(value) {
           case "status":
-            option = document.createElement("option");
-            option.value = "新規";
-            option.innerText = "新規";
-            selectValue.appendChild(option);
-            
-            option = document.createElement("option");
-            option.value = "承認済";
-            option.innerText = "承認済";
-            selectValue.appendChild(option);
-            
-            option = document.createElement("option");
-            option.value = "承認依頼";
-            option.innerText = "承認依頼";
-            selectValue.appendChild(option);
+            <?php foreach ($selectValueDatas["status"] as $data): ?>
+              option = document.createElement("option");
+              option.value = "<?php echo $data["idx"]; ?>";
+              option.innerText = "<?php echo $data["text"]; ?>";
+              selectValue.appendChild(option);
+            <?php endforeach; ?>
             break;
-          case "class1st":
+          case "class":
             <?php foreach ($selectValueDatas["class1st"] as $data): ?>
               option = document.createElement("option");
-              option.value = "<?php echo $data["text"]; ?>";
+              option.value = "<?php echo $data["idx"]; ?>";
               option.innerText = "<?php echo $data["text"]; ?>";
               selectValue.appendChild(option);
             <?php endforeach; ?>
-            break;
-          case "class2nd":
-            <?php foreach ($selectValueDatas["class2nd"] as $data): ?>
-              option = document.createElement("option");
-              option.value = "<?php echo ($data["text"] == "C++") ? "Cpp" : $data["text"]; ?>";
-              option.innerText = "<?php echo $data["text"]; ?>";
-              selectValue.appendChild(option);
-            <?php endforeach; ?>
+
+            selectClass.style.visibility = "visible";
             break;
           case "level":
             <?php for ($i = 0; $i <= 3; $i++): ?>
@@ -284,7 +295,13 @@
         }
       }
 
-      function Select(value) {
+      function Select(element) {
+        let value = element.value
+        if (selectType.value == "class" && element != selectClass) {
+          ChangeClassOption(value);
+          return false;
+        }
+
         <?php
           $newQuery = "?";
 
@@ -302,10 +319,38 @@
 
         let url = "<?= $url; ?>";
 
-        if (value != "") { url += "select=" + selectType.value + "-" + value + "&"; }
+        if (selectType.value == "class") {
+          url += "select=" + selectType.value + "-" + selectValue.value + "-" + value + "&";
+        }
+        else {
+          if (value != "") { url += "select=" + selectType.value + "-" + value + "&"; }
+        }
         url = url.slice(0, -1);
 
         self.window.location = url;
+      }
+
+      function ChangeClassOption(value) {
+        console.log(value);
+        selectClass.replaceChildren();
+
+        var option = document.createElement("option");
+        option.hidden = true;
+        option.innerText = "選択";
+        selectClass.appendChild(option);
+
+        switch(value) {
+          <?php foreach ($selectValueDatas["class2nd"] as $class1stIdx => $class2ndDatas): ?>
+            case "<?php echo $class1stIdx; ?>":
+              <?php foreach ($class2ndDatas as $data): ?>
+                option = document.createElement("option");
+                option.value = "<?php echo $data["idx"]; ?>";
+                option.innerText = "<?php echo $data["text"]; ?>";
+                selectClass.appendChild(option);
+              <?php endforeach; ?>
+              break;
+          <?php endforeach; ?>
+        }
       }
     </script>
     <!-- ここまで -->

@@ -33,8 +33,13 @@ class QuestionController extends AbstractActionController
 			作成：朴昰成
 			作成日：24/06/04
 		*/
-		$selectValueDatas = $this->ReadOptionOrganizeByType();
-		$datas["selectValueDatas"] = $this->ReadOptionOrganizeByType();
+
+		$optionTb = $this->getServiceLocator()->get("OptionTable");
+		$selectValueDatas = $this->GetOptionDatasForInput();
+		$selectValueDatas["status"][] = $optionTb->ReadByText("新規");
+		$selectValueDatas["status"][] = $optionTb->ReadByText("承認依頼");
+		$selectValueDatas["status"][] = $optionTb->ReadByText("承認済");
+		$datas["selectValueDatas"] = $selectValueDatas;
 		/* ここまで */
 
 		// Data of login user
@@ -84,24 +89,13 @@ class QuestionController extends AbstractActionController
 			作成日：24/06/04
 		*/
 		if (isset($query["select"])) {
-			$optionTb = $this->getServiceLocator()->get("OptionTable");
-
 			$selectData = explode("-", $query["select"]);
-			if ($selectData[1] == "Cpp") { $selectData[1] = "C++"; }
 
-			if ($selectData[0] == "level") {
-				$sqlWhere["level"] = $selectData[1];
-			}
-			else if ($selectData[0] == "class2nd") {
-				$optionDatas = $optionTb->ReadByOption(["text" => $selectData[1]]);
-
-				foreach ($optionDatas as $data) {
-					$sqlWhere["class2nd"][] = $data["idx"];
-				}
+			if ($selectData[0] == "class") {
+				$sqlWhere["class2nd"] = $selectData[2];
 			}
 			else {
-				$optionData = $optionTb->ReadByText($selectData[1]);
-				$sqlWhere[$selectData[0]] = $optionData["idx"];
+				$sqlWhere[$selectData[0]] = $selectData[1];
 			}
 
 			$datas["searchDatas"]["select"] = $selectData;

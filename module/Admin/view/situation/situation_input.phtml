@@ -143,6 +143,7 @@ function InitStyle() { return " font-style: italic; color: ;"; }
 	<div class="card-body">
 		<style type="text/css">
 			dl.emegra.detail { grid-template-columns: repeat(2, 140px 1fr); }
+      
 		</style>
 		<dl class="emegra detail">
         <dt>診断依頼</dt>
@@ -285,30 +286,73 @@ function InitStyle() { return " font-style: italic; color: ;"; }
   function SkillSelectChange(value){
     class2ndSelect.replaceChildren();
     if (form.skill.value === '1') {
-      for (var i = 0; i < class1stBox.options.length - 1; i++) {
-        class1stBox.options[i].style.display = 'none';
-      }
-      class2ndId.value = "";
-      class1stId.value = "";
+      class1stId.replaceChildren();
+      var class1stOption1 = document.createElement("option");
+      class1stOption1.textContent = "選択してください。";
+      class1stOption1.value = "";
+      class1stOption1.hidden = true;
+      class1stBox.appendChild(class1stOption1);
+
+      var class1stOption2 = document.createElement("option");
+      class1stOption2.value = "その他";
+      class1stOption2.textContent = "その他";
+      class1stBox.appendChild(class1stOption2);
+
       var option = document.createElement("option");
       option.hidden = true;
       option.innerText = "選択してください。";
       class2ndSelect.appendChild(option);
+      
       careerSelect.value = "0";
       careerId.readOnly =  true;
+
     } else {
-      for (var i = 0; i < class1stBox.options.length - 1; i++) {
-        class1stBox.options[i].style.display = 'block';
-      }
+      class2ndId.value = "";
       class1stId.value = "";
-      class2ndSelect.innerText = "";
-      class2ndSelect.value = "";
-      careerSelect.value = '';
+      class1stId.replaceChildren();
+      var class1stOption1 = document.createElement("option");
+      class1stOption1.textContent = "選択してください。";
+      class1stOption1.hidden = true;
+      class1stBox.appendChild(class1stOption1);
+
+      var class1stOption2 = document.createElement("option");
+      class1stOption2.value = "WEB";
+      class1stOption2.textContent = "WEB";
+      class1stBox.appendChild(class1stOption2);
+
+      var class1stOption3 = document.createElement("option");
+      class1stOption3.value = "IT基礎";
+      class1stOption3.textContent = "IT基礎";
+      class1stBox.appendChild(class1stOption3);
+
+      var class1stOption4 = document.createElement("option");
+      class1stOption4.value = "モバイル";
+      class1stOption4.textContent = "モバイル";
+      class1stBox.appendChild(class1stOption4);
+
+      var class1stOption5 = document.createElement("option");
+      class1stOption5.value = "サーバ";
+      class1stOption5.textContent = "サーバ";
+      class1stBox.appendChild(class1stOption5);
+
+      var class1stOption6 = document.createElement("option");
+      class1stOption6.value = "インフラ";
+      class1stOption6.textContent = "インフラ";
+      class1stBox.appendChild(class1stOption6);
+
+      var class1stOption7 = document.createElement("option");
+      class1stOption7.value = "その他";
+      class1stOption7.textContent = "その他";
+      class1stBox.appendChild(class1stOption7);
+
       var defaultOption = document.createElement("option");
+      defaultOption.hidden = true;
       defaultOption.value = "";
       defaultOption.innerText = "選択してください。";
       class2ndSelect.appendChild(defaultOption);
       class2ndSelect.value = "";
+
+      careerSelect.value = "";
       careerId.readOnly =  false;
     }
   }	
@@ -665,7 +709,7 @@ function diagnosisValidation(){
   //         修正日：24/06/04
   //       */ -->
   //       <!-- 修正前： -->
-  if (form.class1stId.value === "") {
+  if (form.class1stId.value === "選択してください。") {
     alert("経験分野を入力してください。");
     setTimeout("form.class1stId.focus()",100);
     document.getElementById('diagnosisId').setAttribute('data-bs-toggle', 'false');
@@ -752,7 +796,7 @@ function diagnosisData() {
         button.addEventListener("click", () => {
           selectCode(item.code,item.title);
           selectQuestionNum(item.question_num);
-          const modalElement = document.querySelector('#staticBackdrop');
+          document.querySelector('.btn-close').click();        
         });
         
         selectCell.appendChild(button);

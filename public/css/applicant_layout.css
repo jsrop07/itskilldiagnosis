@@ -8,7 +8,10 @@
 	--emegra-green: #27A374;
 	--font: #6C757D;
 }
-
+.modal {
+    -webkit-backdrop-filter: blur(5px); /* Safari and older versions of Chrome */
+    backdrop-filter: blur(5px); /* Standard syntax for modern browsers */
+}
 body {
 	min-height: 100vh;
 	background: var(--background);

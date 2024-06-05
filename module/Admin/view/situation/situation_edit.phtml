@@ -25,6 +25,7 @@ $isLevel0 = false;
 $isLevel1 = false;
 $isLevel2 = false;
 $isLevel3 = false;
+$isLanguage = false;
 /* log
 	作成：丁錫圓
 	修正日：24/06/01
@@ -119,6 +120,7 @@ if (isset($diagnosisData["level"]) && is_string($diagnosisData["level"])) {
   $isLevel2 = false;
   $isLevel3 = false;
 }
+
 /* log
 	作成：丁錫圓
 	修正日：24/06/01
@@ -130,6 +132,11 @@ if ($recordArray["mail_delay"] === NULL) {
 if ($recordArray["mail_delay"] !== NULL) {
   $isMail = true;
 }
+//言語
+if ($recordArray["language"] == "0") {
+  $isLanguage = true;
+}
+
 // ここまで
 // editHTML show question_num
 $question_num = isset($diagnosisData['question_num']) ? $diagnosisData['question_num'] : null;
@@ -387,8 +394,8 @@ $question_num = isset($diagnosisData['question_num']) ? $diagnosisData['question
         <dt class="essential">言語選択</dt>
         <dd>
           <select class="form-select" name="language" style="width:100px;" onchange="ChangeInputStyle(this)" >
-            <option value="0" selected>日本語</option>
-            <option value="1">韓国語</option>
+            <option value="0" <?php echo($isLanguage) ? "selected" : "" ?>>日本語</option>
+            <option value="1" <?php echo(!$isLanguage) ? "selected" : "" ?>>韓国語</option>
           </select>
 				</dd>
         <dt class="essential">メール転送</dt>

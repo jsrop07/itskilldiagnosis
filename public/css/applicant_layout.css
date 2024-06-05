@@ -106,12 +106,6 @@ main{
     content: none;
 }
 
-.diagnosis_main input {
-    grid-column: 2 / 3; 
-
-}
-
-
 .diagnosis_main #otherEducationInput,.diagnosis_main #otherclass1stInput,.diagnosis_main #otherMajorInput {
     grid-column: 2 / 3; 
     margin-top:10px;

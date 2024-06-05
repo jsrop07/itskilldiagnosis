@@ -40,13 +40,38 @@
 		font-weight: 400;
 	}
 
-	table.emegra tr { grid-template-columns: 50px 100px 60px 1fr repeat(2, 80px) 50px 60px 60px; }
+  /*
+    作成：朴昰成
+    修正：朴昰成
+    修正日：24/06/05
+  */
+
+  /* 修正前：
+    table.emegra tr { grid-template-columns: 50px 100px 60px 1fr repeat(2, 80px) 50px 60px 60px; }
+  */
+
+  /* 修正後： */
+	table.emegra tr { grid-template-columns: 50px 100px repeat(2, 80px) 60px 1fr 50px 60px 60px; }
+  /* ここまで */
 	table.emegra tr.index {
 		padding-top: 8px;
 		padding-bottom: 4px;
 		grid-template-areas:
-		"no question question title  class    class   num criteria update"
-		"no    id     level  title class1st class2nd num criteria update";
+    /*
+      作成：朴昰成
+      修正：朴昰成
+      修正日：24/06/05
+    */
+
+    /* 修正前：
+      "no question question title  class    class   num criteria update"
+      "no    id     level  title class1st class2nd num criteria update";
+    */
+
+    /* 修正後： */
+    "no id  class    class   level title num criteria update"
+    "no id class1st class2nd level title num criteria update";
+    /* ここまで */
 	}
 	table.emegra tr.index > th {
 		padding: 0;
@@ -145,43 +170,74 @@
 		<table class="emegra" style="margin-top: 8px;">
 			<thead>
 				<tr class="index">
-					<th style="grid-area: no">No</th>
-					<th style="grid-area: question">診断問題</th>
-					<th style="grid-area: title">タイトル</th>
-					<th style="grid-area: class">種別</th>
-					<th style="grid-area: num">問項数</th>
-					<th style="grid-area: criteria">合格基準</th>
-					<th style="grid-area: update">変更日</th>
           <!--
             作成：朴昰成
             修正：朴昰成
-            修正日：24/06/03
+            修正日：24/06/05
           -->
 
           <!-- 修正前： <?php /* ?>
+            <th style="grid-area: no">No</th>
+            <th style="grid-area: question">診断問題</th>
+            <th style="grid-area: title">タイトル</th>
+            <th style="grid-area: class">種別</th>
+            <th style="grid-area: num">問項数</th>
+            <th style="grid-area: criteria">合格基準</th>
+            <th style="grid-area: update">変更日</th>
             <th style="grid-area: id">職別コード</th>
+            <th style="grid-area: level">レベル</th>
+            <th style="grid-area: class1st">大分類</th>
+            <th style="grid-area: class2nd">小分類</th>
           <?php */ ?> -->
 
           <!-- 修正後： -->
+          <th style="grid-area: no">No</th>
+
+          <th style="grid-area: class">種別</th>
+          <th style="grid-area: class1st">大分類</th>
+          <th style="grid-area: class2nd">小分類</th>
+
+          <th style="grid-area: level">レベル</th>
+          <th style="grid-area: title">タイトル</th>
+          <th style="grid-area: num">問項数</th>
+          <th style="grid-area: criteria">合格基準</th>
+          <th style="grid-area: update">変更日</th>
           <th style="grid-area: id">問題ID</th>
           <!-- ここまで -->
-					<th style="grid-area: level">レベル</th>
-					<th style="grid-area: class1st">大分類</th>
-					<th style="grid-area: class2nd">小分類</th>
 				</tr>
 			</thead>
 			<tbody>
 				<?php foreach ($diagnosisDatas as $index => $data): ?>
 					<tr>
-						<td><?php echo $firstNo - $index ; ?></td>
-						<td><?php echo $data["code"]; ?></td>
-						<td><?php echo $levelTexts[$data["level"]]; ?></td>
-						<td class="link left" onclick="self.location.href='./detail/<?php echo $data['idx']; ?>'"><?php echo $data["title"]; ?></td>
-						<td><?php echo $optionDatas[$data["class1st"]]; ?></td>
-						<td><?php echo $optionDatas[$data["class2nd"]]; ?></td>
-						<td><?php echo $data["question_num"]; ?>問題</td>
-						<td>100点</td>
-						<td><?php echo date("y.m.d", strtotime($data["date_start"])); ?></td>
+            <!--
+              作成：朴昰成
+              修正：朴昰成
+              修正日：24/06/05
+            -->
+
+            <!-- 修正前： <?php /* ?>
+              <td><?php echo $firstNo - $index ; ?></td>
+              <td><?php echo $data["code"]; ?></td>
+              <td><?php echo $levelTexts[$data["level"]]; ?></td>
+              <td class="link left" onclick="self.location.href='./detail/<?php echo $data['idx']; ?>'"><?php echo $data["title"]; ?></td>
+              <td><?php echo $optionDatas[$data["class1st"]]; ?></td>
+              <td><?php echo $optionDatas[$data["class2nd"]]; ?></td>
+              <td><?php echo $data["question_num"]; ?>問題</td>
+              <td>100点</td>
+              <td><?php echo date("y.m.d", strtotime($data["date_start"])); ?></td>
+            <?php */ ?> -->
+
+            <!-- 修正後： -->
+            <td><?php echo $firstNo - $index ; ?></td>
+            <td><?php echo $data["code"]; ?></td>
+            <td><?php echo $optionDatas[$data["class1st"]]; ?></td>
+            <td><?php echo $optionDatas[$data["class2nd"]]; ?></td>
+            <td><?php echo $levelTexts[$data["level"]]; ?></td>
+            <td class="link left" onclick="self.location.href='./detail/<?php echo $data['idx']; ?>'"><?php echo $data["title"]; ?></td>
+            <td><?php echo $data["question_num"]; ?>問題</td>
+            <td>100点</td>
+            <td><?php echo date("y.m.d", strtotime($data["date_start"])); ?></td>
+            <!-- ここまで -->
 					</tr>
 				<?php endforeach; ?>
 			</tbody>

@@ -13,6 +13,8 @@ function InitStyle() { return " font-style: italic; color: ;"; }
 	<style type="text/css">
 		option { color: black; }
 		input::placeholder { font-style: italic; }
+  .modal {-webkit-backdrop-filter: blur(5px); /* Safari and older versions of Chrome */backdrop-filter: blur(5px); /* Standard syntax for modern browsers */}
+
 	</style>
 
 	<div class="emegra card">
@@ -21,7 +23,6 @@ function InitStyle() { return " font-style: italic; color: ;"; }
 		<div class="card-body">
 			<style type="text/css">
 				dl.emegra.info { grid-template-columns:  repeat(2, 170px 1fr) }
-        .modal {-webkit-backdrop-filter: blur(5px); /* Safari and older versions of Chrome */backdrop-filter: blur(5px); /* Standard syntax for modern browsers */}
 			</style>
 			<dl class="emegra info">
 				<dt class="essential">ID</dt>
@@ -154,7 +155,7 @@ function InitStyle() { return " font-style: italic; color: ;"; }
 				<dd>
 					<input name="code" type="hidden" style="width:220px;">
           <div id="codeDisplay" style="padding-right:5px"></div>
-					<button type="button" style="padding: 0px 10px ;border-radius: 8px; background:linear-gradient(111deg, #50D7C7 0%, #40ADF0 100%); color:white;" onclick="diagnosisValidation();">検索</button>
+					<button type="button" id="diagnosisId" style="padding: 0px 10px ;border-radius: 8px; background:linear-gradient(111deg, #50D7C7 0%, #40ADF0 100%); color:white;" onclick="diagnosisValidation();">検索</button>
 				</dd> 
 				
 			<div class="modal modal-sheet py-5" style="backdrop-filter: blur(5px); " tabindex="-1" role="dialog" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -710,7 +711,13 @@ function diagnosisValidation(){
   //         修正日：24/06/04
   //       */ -->
   //       <!-- 修正前： -->
-  if (form.class1stId.value === "選択してください。") {
+  if (form.ITskillId.value === "") {
+    alert("ITスキル有無を入力してください。");
+    setTimeout("form.ITskillId.focus()",100);
+    document.getElementById('diagnosisId').setAttribute('data-bs-toggle', 'false');
+    return false;
+  }
+  if (form.class1stId.value === "") {
     alert("経験分野を入力してください。");
     setTimeout("form.class1stId.focus()",100);
     document.getElementById('diagnosisId').setAttribute('data-bs-toggle', 'false');

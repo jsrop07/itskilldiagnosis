@@ -5,7 +5,7 @@ $dateSchedule = date("Y-m-d H:i");
 
 $urlLink = "../../diagnosis/detail/";
 
-function InitStyle() { return " font-style: italic; color: ;"; }
+// function InitStyle() { return " ; color: ;"; }
 $isGenderNull = false;
 $isGender = false;
 
@@ -150,6 +150,7 @@ $question_num = isset($diagnosisData['question_num']) ? $diagnosisData['question
 		<div class="card-body">
 			<style type="text/css">
 				dl.emegra.info { grid-template-columns:  repeat(2, 170px 1fr) }
+        .modal {-webkit-backdrop-filter: blur(5px); /* Safari and older versions of Chrome */backdrop-filter: blur(5px); /* Standard syntax for modern browsers */}
 			</style>
 			<dl class="emegra info">
 				<dt>ID</dt>
@@ -186,7 +187,7 @@ $question_num = isset($diagnosisData['question_num']) ? $diagnosisData['question
                 <dt>性別</dt>
 				<dd> 
 				<select class="form-select"  name="gender" id="gender" style="width:220px">
-					<option value="" <?php echo ($isGenderNull) ? "selected" : "未依頼" ?>>未依頼</option>
+					<option value="" <?php echo ($isGenderNull) ? "selected" : "" ?> hidden>未登録</option>
 					<option value="0" <?php echo (!$isGenderNull && $isGender) ? "selected" : "" ?>>男</option>
 					<option value="1" <?php echo (!$isGenderNull && !$isGender) ? "selected" : "" ?>>女</option>
 				</select>
@@ -207,7 +208,7 @@ $question_num = isset($diagnosisData['question_num']) ? $diagnosisData['question
 				</dd>
 
 				<dt>IT関連資格</dt>
-				<dd><input class="form-control" id="certificatesId" name="certificates" type="text"  style="width:220px" value="<?php echo ($applicantArray["certificates"] == null) ? "未設定" : $applicantArray["certificates"]; ?>"></dd> 
+				<dd><input class="form-control" id="certificatesId" name="certificates" type="text"  style="width:220px" placeholder="未登録" value="<?php echo ($applicantArray["certificates"] == null) ? "" : $applicantArray["certificates"]; ?>"></dd> 
 
         <dt class="essential">生年月日</dt>
 				<dd><input class="form-control" id="birth" name="birth" type="text" placeholder="YYYY-MM-DD" autocomplete="off"  style="width:220px" value="<?php echo $applicantArray["birth"] ?>"></dd> 
@@ -215,7 +216,7 @@ $question_num = isset($diagnosisData['question_num']) ? $diagnosisData['question
 				<dt>専攻</dt>
 				<dd> 
 					<select class="form-select" id="majorId" style="width:220px;" onchange="ChangeMajor(this)">
-						<option value="" >未依頼</option>
+						<option value=""hidden>未登録</option>
             <option value="IT・ソフトウェア専攻"<?php echo ($isITMajor) ? " selected" : ""; ?>>IT・ソフトウェア専攻</option>
             <option value="other"<?php echo ($recordArray["major"] != null && !$isITMajor) ? " selected" : ""; ?>>IT・ソフトウェア以外</option>
             </select>
@@ -223,7 +224,7 @@ $question_num = isset($diagnosisData['question_num']) ? $diagnosisData['question
 				</dd>
 
 				<dt>その他</dt>
-				<dd><input class="form-control" id="other" name="other" type="text"  style="width:220px" value="<?php echo ($applicantArray["other"] == null) ? "未設定" : $applicantArray["other"]; ?>"></dd> 
+				<dd><input class="form-control" id="other" name="other" type="text"  style="width:220px" placeholder="未登録" value="<?php echo ($applicantArray["other"] == null) ? "" : $applicantArray["other"]; ?>"></dd> 
 			</dl>
 		</div>
 	</div>
@@ -334,7 +335,7 @@ $question_num = isset($diagnosisData['question_num']) ? $diagnosisData['question
           }
         </script>
 				
-			<div class="modal modal-sheet py-5" style="backdrop-filter: blur(5px); " tabindex="-1" role="dialog" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+			<div class="modal modal-sheet py-5" tabindex="-1" role="dialog" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
 				<div class="modal-dialog" style="margin-top:150px;" role="document">
 					<div class="modal-content rounded-4" style=>
             <div class="modal-header border-bottom-0" style="background:linear-gradient(111deg, #50D7C7 0%, #40ADF0 100%); color:white; height: 40px;border-top-left-radius:13px;border-top-right-radius:13px">

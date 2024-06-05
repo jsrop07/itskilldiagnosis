@@ -100,7 +100,19 @@
 
 		<div style="display: flex; justify-content: right;padding-top: 24px;">
       <input type="text" class="form-control form-control-sm" id="search-name" style="width: 150px; margin-right: 8px;" placeholder="診断者名" value="<?php echo (isset($searchDatas["name"])) ? $searchDatas["name"] : ""; ?>">
-      <input type="date" class="form-control form-control-sm" id="search-date" style="width: 150px; margin-right: 8px;" value="<?php echo (isset($searchDatas["date"])) ? date("Y-m-d", strtotime($searchDatas["date"])) : ""; ?>">
+      <!--
+        作成：朴昰成
+        修正：朴昰成
+        修正日：24/06/05
+      -->
+
+      <!-- 修正前： <?php /* ?>
+        <input type="date" class="form-control form-control-sm" id="search-date" style="width: 150px; margin-right: 8px;" value="<?php echo (isset($searchDatas["date"])) ? date("Y-m-d", strtotime($searchDatas["date"])) : ""; ?>">
+      <?php */ ?> -->
+
+      <!-- 修正後： -->
+      <input type="date" class="form-control form-control-sm" id="search-date" style="width: 150px; margin-right: 8px;" value="<?php echo (isset($searchDatas["date"])) ? date("Y-m-d", strtotime($searchDatas["date"])) : ""; ?>" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="診断予定日" data-bs-html="false">
+      <!-- ここまで -->
 			<button class="emegra search confirm" style="margin-right: 8px;" onclick="Search()">検索</button>
 			<div id="div-search" style="width: 150px;">
 				<select class="form-select form-select-sm" id="search-align" style="width: 150px; margin-right: 8px;" onchange="Select(this.value)">
@@ -211,6 +223,13 @@
 	</div>
 </content>
 
+<!-- Add for Popover
+  作成：朴昰成
+  修正：朴昰成
+  修正日：24/06/05
+-->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+<!-- ここまで -->
 <script type="text/javascript">
 	const searchName = document.getElementById("search-name");
 	const searchAlign = document.getElementById("search-align");
@@ -315,7 +334,7 @@
       */
 
       /* 修正後： */
-        alert("依頼する診断者情報を選択してください。");
+      alert("依頼する診断者情報を選択してください。");
       /* ここまで */
 			return false;
 		}

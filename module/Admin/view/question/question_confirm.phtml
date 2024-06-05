@@ -30,7 +30,19 @@
 				<dt>レベル</dt>
 				<dd><?php echo $levelTexts[$questionData["level"]]; ?></dd>
 
-				<dt>問題タイプ</dt>
+        <!--
+          作成：朴昰成
+          修正：朴昰成
+          修正日：24/06/05
+        -->
+
+        <!-- 修正前： <?php /* ?>
+          <dt>問題タイプ</dt>
+        <?php */ ?> -->
+
+        <!-- 修正後： -->
+        <dt>問項タイプ</dt>
+        <!-- ここまで -->
 				<dd><?php echo $optionDatas[$questionData["type"]]; ?></dd>
 		
 				<dt>タイトル</dt>

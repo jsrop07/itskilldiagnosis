@@ -194,10 +194,29 @@ class SituationController extends AbstractActionController {
 					$data = array_merge($diagnosisData, $data);
 				}
 
-				if ($data["request_date"] == null) { $data["status"] = "新規"; }
-				else if ($data["execute_date"] == null) { $data["status"] = "診断"; }
-				else if ($data["rank"] == "F") { $data["status"] = "失格"; }
-				else { $data["status"] = "終了"; }
+				/*
+					作成：朴昰成
+					修正：朴昰成
+					修正日：24/06/05
+				*/
+
+				/* 修正前：
+					if ($data["request_date"] == null) { $data["status"] = "新規"; }
+					else if ($data["execute_date"] == null) { $data["status"] = "診断"; }
+					else if ($data["rank"] == "F") { $data["status"] = "失格"; }
+					else { $data["status"] = "終了"; }
+				*/
+
+				/* 修正後： */
+				if (is_null($data["request_date"])) {
+					$data["status"] = "新規";
+				}
+				else {
+					if (is_null($data["rank"])) { $data["status"] = "診断"; }
+					else if ($data["rank"] == "F") { $data["status"] = "失格"; }
+					else { $data["status"] = "終了"; }
+				}
+				/* ここまで */
 
 				$data["num"] = $datas["totalData"] - (($page - 1) * 10) - $index;
 				

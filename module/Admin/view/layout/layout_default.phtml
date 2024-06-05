@@ -127,6 +127,16 @@
 				let popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl));
 			}
 
+      /*
+        作成：朴昰成
+        作成日：24/06/05
+      */
+      if (typeof tooltipTriggerList === "undefined") {
+        let tooltipTriggerList = document.querySelectorAll("[data-bs-toggle='tooltip']")
+        let tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+      }
+      /* ここまで */
+
 			function logout() { document.getElementById("form_logout").submit(); }
 			function setCookie(name, value, options = {}) {
 				options = { path: "/" };

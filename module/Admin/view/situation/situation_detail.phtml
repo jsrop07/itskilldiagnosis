@@ -78,35 +78,81 @@
 			dl.emegra.setting { grid-template-columns: repeat(2, 170px 1fr); }
 		</style>
 		<dl class="emegra setting">
-			<dt>ITスキル有無</dt>
-			<dd><?php echo $skillTexts[$recordData["skill"]]; ?></dd>
+      <!-- debug
+        作成：朴昰成
+        修正：朴昰成
+        修正日：24/06/05
+      -->
 
-			<dt>経験分野</dt>
-			<dd><?php echo $recordData["class1st"]; ?></dd>
+      <!-- 修正前： <?php /* ?>
+        <dt>ITスキル有無</dt>
+        <dd><?php echo $skillTexts[$recordData["skill"]]; ?></dd>
 
-			<dt>IT経験年数</dt>
-			<dd><?php echo ($recordData["career"] != null) ? $recordData["career"] . "年" : "無"; ?></dd>
+        <dt>経験分野</dt>
+        <dd><?php echo $recordData["class1st"]; ?></dd>
 
-			<dt>問題種別</dt>
-			<dd><?php echo $optionDatas[$recordData["class2nd"]]; ?></dd>
+        <dt>IT経験年数</dt>
+        <dd><?php echo ($recordData["career"] != null) ? $recordData["career"] . "年" : "無"; ?></dd>
 
-			<dt>診断問項ID</dt>
-			<dd><?php echo $recordData["diagnosis_code"]; ?></dd>
+        <dt>問題種別</dt>
+        <dd><?php echo $optionDatas[$recordData["class2nd"]]; ?></dd>
 
-			<dt>レベル</dt>
-			<dd><?php echo $levelTexts[$recordData["level"]]; ?></dd>
+        <dt>診断問項ID</dt>
+        <dd><?php echo $recordData["diagnosis_code"]; ?></dd>
 
-			<dt>問項数別</dt>
-			<dd><?php echo $recordData["question_num"]; ?>問項</dd>
+        <dt>レベル</dt>
+        <dd><?php echo $levelTexts[$recordData["level"]]; ?></dd>
 
-			<dt>診断方法</dt>
-			<dd><?php echo $recordData["method"]; ?></dd>
-	
-			<dt>診断依頼</dt>
-			<dd><?php echo ($recordData["request_date"] != null) ? date("y.m.d", strtotime($recordData["request_date"])) : "未依頼"; ?></dd>
+        <dt>問項数別</dt>
+        <dd><?php echo $recordData["question_num"]; ?>問項</dd>
+
+        <dt>診断方法</dt>
+        <dd><?php echo $recordData["method"]; ?></dd>
+    
+        <dt>診断依頼</dt>
+        <dd><?php echo ($recordData["request_date"] != null) ? date("y.m.d", strtotime($recordData["request_date"])) : "未依頼"; ?></dd>
+
+        <dt>言語</dt>
+        <dd><?php echo ($recordData["language"] == null) ? "未設定" : $languageTexts[$recordData["language"]]; ?></dd>
+      <?php */ ?> -->
+
+      <!-- 修正後： -->
+      <dt>ITスキル有無</dt>
+      <dd><?php echo $skillTexts[$recordData["skill"]]; ?></dd>
+
+      <dt>IT経験年数</dt>
+      <dd><?php echo ($recordData["career"] != null) ? $recordData["career"] . "年" : "無"; ?></dd>
+
+      <dt>経験分野</dt>
+      <dd><?php echo $recordData["class1st"]; ?></dd>
+
+      <dt>問題種別</dt>
+      <dd><?php echo $optionDatas[$recordData["class2nd"]]; ?></dd>
+
+      <dt>診断問項ID</dt>
+      <dd><?php echo $recordData["diagnosis_code"]; ?></dd>
+
+      <dt>レベル</dt>
+      <dd><?php echo $levelTexts[$recordData["level"]]; ?></dd>
+
+      <dt>問項数別</dt>
+      <dd><?php echo $recordData["question_num"]; ?>問項</dd>
 
       <dt>言語</dt>
-			<dd><?php echo ($recordData["language"] == null) ? "未設定" : $languageTexts[$recordData["language"]]; ?></dd>
+      <dd><?php echo (is_null($recordData["language"])) ? "未設定" : $languageTexts[$recordData["language"]]; ?></dd>
+
+      <dt>診断方法</dt>
+      <dd><?php echo $recordData["method"]; ?></dd>
+
+      <dt>メール転送</dt>
+      <dd><?php echo (is_null($recordData["mail_delay"])) ? "手動" : "自動"; ?></dd>
+  
+      <dt>診断予定日時</dt>
+      <dd><?php echo (is_null($recordData["date_schedule"])) ? "未依頼" : date("y.m.d H:i", strtotime($recordData["date_schedule"])); ?></dd>
+  
+      <dt>診断依頼</dt>
+      <dd><?php echo (is_null($recordData["request_date"])) ? "未依頼" : date("y.m.d", strtotime($recordData["request_date"])); ?></dd>
+      <!-- ここまで -->
 		</dl>
 	</div>
 </div>
@@ -123,6 +169,14 @@
 				<dt>診断実施日</dt>
 				<dd><?php echo date("y.m.d", strtotime($recordData["execute_date"])); ?></dd>
 
+        <!-- move from 191
+          作成：朴昰成
+          作成日：24/06/05
+        -->
+        <dt>結果送信日</dt>
+        <dd><?php echo ($recordData["date_mail"] != null) ? date("y.m.d", strtotime($recordData["date_mail"])) : "未送信"; ?></dd>
+
+        <!-- ここまで -->
 				<dt>得点</dt>
 				<dd><?php echo $recordData["get_point"]; ?></dd>
 
@@ -134,9 +188,16 @@
 
 				<dt>備考</dt>
 				<dd><?php echo $recordData["comment"]; ?></dd>
+        <!-- move to 172 
+          作成：朴昰成
+          削除：朴昰成
+          削除日：24/06/05
+        
+        削除前： <?php /* ?>
 
-        <dt>結果送信日</dt>
-        <dd><?php echo ($recordData["date_mail"] != null) ? date("y.m.d", strtotime($recordData["date_mail"])) : "未送信"; ?></dd>
+          <dt>結果送信日</dt>
+          <dd><?php echo ($recordData["date_mail"] != null) ? date("y.m.d", strtotime($recordData["date_mail"])) : "未送信"; ?></dd>
+        <?php */ ?> -->
 			<?php else: ?>
 				<div style="grid-column: 1 / 6; display: flex; align-items: center; justify-content: center;">未受験</div>
 			<?php endif; ?>

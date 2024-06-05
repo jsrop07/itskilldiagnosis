@@ -9,9 +9,23 @@
 	$isExecute = false;
 	if ($recordData["request_date"] != null) {
 		$isRequest = true;
-		if ($recordData["execute_date"] != null) {
-			$isExecute = true;
-		}
+    /*
+      作成：朴昰成
+      修正：朴昰成
+      修正日：24/06/03
+    */
+
+    /* 修正前：
+      if ($recordData["execute_date"] != null) {
+        $isExecute = true;
+      }
+    */
+
+    /* 修正後： */
+    if (isset($recordData["rank"])) {
+      $isExecute = true;
+    }
+    /* ここまで */
 	}
 ?>
 
@@ -169,7 +183,7 @@
 				<dt>診断実施日</dt>
 				<dd><?php echo date("y.m.d", strtotime($recordData["execute_date"])); ?></dd>
 
-        <!-- move from 191
+        <!-- move from 217
           作成：朴昰成
           作成日：24/06/05
         -->
@@ -184,11 +198,23 @@
 				<dd><?php echo $recordData["rank"]; ?></dd>
 
 				<dt>診断者のコメント</dt>
-				<dd><?php echo $recordData["comment"]; ?></dd>
+        <!-- debug
+          作成：朴昰成
+          修正：朴昰成
+          修正日：24/06/05
+        -->
+
+        <!-- 修正前： <?php /* ?>
+          <dd><?php echo $recordData["comment"]; ?></dd>
+        <?php */ ?> -->
+
+        <!-- 修正後： -->
+        <dd><?php echo $recordData["diagnosis_comment"]; ?></dd>
+        <!-- ここまで -->
 
 				<dt>備考</dt>
 				<dd><?php echo $recordData["comment"]; ?></dd>
-        <!-- move to 172 
+        <!-- move to 186
           作成：朴昰成
           削除：朴昰成
           削除日：24/06/05

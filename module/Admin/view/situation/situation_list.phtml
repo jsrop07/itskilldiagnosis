@@ -315,7 +315,19 @@
 						<td><?php echo (isset($data["level"])) ? $levelTexts[$data["level"]] : "未設定"; ?></td>
 						<td><?php echo ($data["diagnosis_code"] != null) ? $data["diagnosis_code"] : "未設定"; ?></td>
 
-						<?php if ($data["execute_date"] != null): ?>
+            <!-- change condition
+              作成：朴昰成
+              修正：朴昰成
+              修正日：24/06/05
+            -->
+
+            <!-- 修正前： <?php /* ?>
+              <?php if ($data["execute_date"] != null): ?>
+            <?php */ ?> -->
+
+            <!-- 修正後： -->
+            <?php if (isset($data["rank"])): ?>
+            <!-- ここまで -->
 							<td><?php echo date("y.m.d", strtotime($data["execute_date"])); ?></td>
 							<td><?php echo $data["get_point"]; ?>/100</td>
 							<td><?php echo $data["rank"]; ?></td>

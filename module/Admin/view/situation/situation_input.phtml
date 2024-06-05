@@ -717,7 +717,7 @@ function diagnosisValidation(){
     document.getElementById('diagnosisId').setAttribute('data-bs-toggle', 'false');
     return false;
   }
-  if (form.class1stId.value === "") {
+  if (form.class1stId.value === "" || form.class1stId.value === "選択してください。") {
     alert("経験分野を入力してください。");
     setTimeout("form.class1stId.focus()",100);
     document.getElementById('diagnosisId').setAttribute('data-bs-toggle', 'false');

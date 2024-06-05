@@ -9,22 +9,81 @@
 		$queryDatas = explode("&", $url[1]);
 	}
 
-  $selectDatas = array(
-    "apply" => "新規",
-    "request" => "診断",
-    "execute" => "終了",
-    "rank-F" => "失格",
-    "case-0" => "新卒",
-    "case-1" => "中途",
-    "education-高卒" => "高卒", 
-    "education-専門卒" => "専門卒",
-    "education-大学卒" => "大学卒",
-    "education-大学院卒" => "大学院卒",
-    "rank-A" => "等級A",
-    "rank-B" => "等級B",
-    "rank-C" => "等級C",
-    "rank-D" => "等級D"
+  /*
+    作成：朴昰成
+    修正：朴昰成
+    修正日：24/06/05
+  */
+
+  /* 修正前：
+    $selectDatas = array(
+      "apply" => "新規",
+      "request" => "診断",
+      "execute" => "終了",
+      "rank-F" => "失格",
+      "case-0" => "新卒",
+      "case-1" => "中途",
+      "education-高卒" => "高卒", 
+      "education-専門卒" => "専門卒",
+      "education-大学卒" => "大学卒",
+      "education-大学院卒" => "大学院卒",
+      "rank-A" => "等級A",
+      "rank-B" => "等級B",
+      "rank-C" => "等級C",
+      "rank-D" => "等級D"
+    );
+  */
+
+  /* 修正後： */
+  $selectTypeDatas = array(
+    "status" => "ステータス",
+    "case" => "応募区分",
+    "education" => "最終学歴",
+    "rank" => "等級結果",
   );
+  $selectValueDatas = array(
+    "status" => array(
+      "apply" => "新規",
+      "request" => "診断",
+      "execute" => "終了",
+      "unexecute" => "失格",
+    ),
+    "case" => ["新卒", "中途"],
+    "education" => array(
+      "high" => "高卒", 
+      "voca" => "専門卒",
+      "uni" => "大学卒",
+      "grad" => "大学院卒",
+    ),
+    "rank" => array(
+      "A" => "等級A",
+      "B" => "等級B",
+      "C" => "等級C",
+      "D" => "等級D",
+    ),
+  );
+
+  $isSearch = array(
+    "select" => false,
+  );
+  $queryDatasN = array();
+  if (isset($queryDatas)) {
+
+    $queryDatasN = array();
+    foreach ($queryDatas as $query) {
+      $queryData = explode("=", $query);
+
+      if ($queryData[0] == "select") {
+        $queryDatasN["select"] = explode("-", $queryData[1]);
+        $isSearch["select"] = true;
+      }
+      else {
+        $queryDatasN[$queryData[0]] = $queryData[1];
+        $isSearch[$queryData[0]] = true;
+      }
+    }
+    }
+    /* ここまで */
 
 	$firstNo = $this->noticelist->getTotalItemCount();
 	$firstNo -= (($this->noticelist->getCurrentPageNumber() - 1) * $this->noticelist->getitemCountPerPage());
@@ -114,15 +173,97 @@
       <input type="date" class="form-control form-control-sm" id="search-date" style="width: 150px; margin-right: 8px;" value="<?php echo (isset($searchDatas["date"])) ? date("Y-m-d", strtotime($searchDatas["date"])) : ""; ?>" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="診断予定日" data-bs-html="false">
       <!-- ここまで -->
 			<button class="emegra search confirm" style="margin-right: 8px;" onclick="Search()">検索</button>
-			<div id="div-search" style="width: 150px;">
-				<select class="form-select form-select-sm" id="search-align" style="width: 150px; margin-right: 8px;" onchange="Select(this.value)">
-					<option value="">全て</option>
+      <!--
+        作成：朴昰成
+        修正：朴昰成
+        修正日：24/06/05
+      -->
 
-					<?php foreach ($selectDatas as $value => $text): ?>
-						<option value="<?= $value; ?>"<?php echo ($isPick && $searchDatas["pick"] == $value) ? " selected" : ""; ?>><?= $text; ?></option>
-					<?php endforeach; ?>
-				</select>
-			</div>
+      <!-- 修正前： <?php /* ?>
+        <div id="div-search" style="width: 150px;">
+          <select class="form-select form-select-sm" id="search-align" style="width: 150px; margin-right: 8px;" onchange="Select(this.value)">
+            <option value="">全て</option>
+
+            <?php foreach ($selectDatas as $value => $text): ?>
+              <option value="<?= $value; ?>"<?php echo ($isPick && $searchDatas["pick"] == $value) ? " selected" : ""; ?>><?= $text; ?></option>
+            <?php endforeach; ?>
+          </select>
+        </div>
+      <?php */ ?> -->
+
+      <!-- 修正後： -->
+      <select class="form-select form-select-sm" id="select-select_type" style="width: 150px; margin-right: 8px;" onchange="ChangeValue(this)">
+        <option value="">全て</option>
+
+        <?php foreach ($selectTypeDatas as $value => $text): ?>
+          <option value="<?= $value; ?>"<?php echo ($isSearch["select"] && $queryDatasN["select"][0] == $value) ? " selected" : ""; ?>><?= $text; ?></option>
+        <?php endforeach; ?>
+      </select>
+
+      <select class="form-select form-select-sm" id="select-select_value" style="width: 150px;" onchange="Selecting(this)">
+        <option hidden>選択</option>
+
+        <?php if ($isSearch["select"]): ?>
+          <?php foreach ($selectValueDatas[$queryDatasN["select"][0]] as $value => $text): ?>
+            <option value="<?= $value; ?>"<?php echo ($queryDatasN["select"][1] == $value) ? " selected" : ""; ?>><?= $text; ?></option>
+          <?php endforeach; ?>
+        <?php endif; ?>
+      </select>
+
+
+
+      <script type="text/javascript">
+        const selectType = document.getElementById("select-select_type");
+        const selectValue = document.getElementById("select-select_value");
+
+        function ChangeValue(element) {
+          if (element.value == "") { Selecting(element); return false; }
+
+          selectValue.replaceChildren();
+
+          var option = document.createElement("option");
+          option.hidden = true;
+          option.innerText = "選択";
+          selectValue.appendChild(option);
+          
+          switch (element.value) {
+            <?php foreach ($selectValueDatas as $type => $datas): ?>
+              case "<?= $type; ?>":
+                <?php foreach ($datas as $value => $text): ?>
+                  var option = document.createElement("option");
+                  option.value = "<?= $value; ?>";
+                  option.innerText = "<?= $text; ?>";
+                  selectValue.appendChild(option);
+                <?php endforeach; ?>
+                break;
+            <?php endforeach; ?>
+          }
+        }
+
+        function Selecting(element) {
+          <?php
+            $newQuery = "?";
+
+            if (!empty($queryDatasN)) {
+              foreach ($queryDatasN as $key => $data) {
+                if ($key == "select") { continue; }
+
+                $newQuery .= $key . "=" . $data . "&";
+              }
+            }
+
+            $url = $route . $newQuery;
+          ?>
+
+          let url = "<?= $url; ?>";
+
+          if (element.value != "") { url += "select=" + selectType.value + "-" + element.value + "&"; }
+          url = url.slice(0, -1);
+
+          self.window.location = url;
+        }
+      </script>
+      <!-- ここまで -->
 		</div>
 	</div>
 

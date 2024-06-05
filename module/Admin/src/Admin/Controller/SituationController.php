@@ -54,24 +54,81 @@ class SituationController extends AbstractActionController {
 			if (isset($query["name"])) { $sqlWhere["name"] = $query["name"]; }
 			if (isset($query["date"])) { $sqlWhere["date"] = $query["date"]; }
 
-			if (isset($query["pick"])) {
-				switch ($query["pick"]) {
-					case "apply":
-						$sqlWhere["request_date"] = "null";
+			/*
+				作成：朴昰成
+				修正：朴昰成
+				修正日：24/06/05
+			*/
+
+			/* 修正前：
+				if (isset($query["pick"])) {
+					switch ($query["pick"]) {
+						case "apply":
+							$sqlWhere["request_date"] = "null";
+							break;
+						case "request":
+							$sqlWhere["request_date"] = "not null";
+							$sqlWhere["execute_date"] = "null";
+							break;
+						case "execute";
+							$sqlWhere["execute_date"] = "not null";
+							break;
+						default:
+							$dict = explode("-", $query["pick"]);
+							$sqlWhere[$dict[0]] = $dict[1];
+							break;
+					}
+				}
+			*/
+
+			/* 修正後： */
+			if (isset($query["select"])) {
+				$data = explode("-", $query["select"]);
+
+				switch ($data[0]) {
+					case "status":
+						switch ($data[1]) {
+							case "apply":
+								$sqlWhere["request_date"] = "null";
+								break;
+							case "request":
+								$sqlWhere["request_date"] = "not null";
+								$sqlWhere["rank"] = "null";
+								break;
+							case "execute":
+								$sqlWhere["request_date"] = "not null";
+								$sqlWhere["execute_date"] = "not null";
+								$sqlWhere["get_point"] = "not null";
+								break;
+							case "unexecute":
+								$sqlWhere["request_date"] = "not null";
+								$sqlWhere["execute_date"] = "not null";
+								$sqlWhere["rank"] = "F";
+								break;
+						}
 						break;
-					case "request":
-						$sqlWhere["request_date"] = "not null";
-						$sqlWhere["execute_date"] = "null";
-						break;
-					case "execute";
-						$sqlWhere["execute_date"] = "not null";
+					case "education":
+						switch ($data[1]) {
+							case "high":
+								$sqlWhere["education"] = "高卒";
+								break;
+							case "voca":
+								$sqlWhere["education"] = "専門卒";
+								break;
+							case "uni":
+								$sqlWhere["education"] = "大卒";
+								break;
+							case "grad":
+								$sqlWhere["education"] = "大学院卒";
+								break;
+						}
 						break;
 					default:
-						$dict = explode("-", $query["pick"]);
-						$sqlWhere[$dict[0]] = $dict[1];
+						$sqlWhere[$data[0]] = $data[1];
 						break;
 				}
 			}
+			/* ここまで */
 			try { $newRecordDatas = $recordTb->ReadNewListBySearchnOffset($sqlWhere, $offset); }
 			catch (\Exception $e) { print_r($e->getMessage()); exit; }
 

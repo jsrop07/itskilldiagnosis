@@ -399,7 +399,19 @@ $question_num = isset($diagnosisData['question_num']) ? $diagnosisData['question
             <option value="1" <?php echo(!$isLanguage) ? "selected" : "" ?>>韓国語</option>
           </select>
 				</dd>
-        <dt class="essential">メール転送</dt>
+        <!-- // 修正の時
+        /*
+          作成：名前
+          修正：名前
+          修正日：24/06/06
+        */
+
+        /* 修正前：
+        メール転送
+        */ -->
+        <!-- /* 修正後： */ -->
+        <dt class="essential">結果転送</dt>
+        <!-- /* ここまで */ -->
         <dd>
         <!-- /* log
           作成：丁錫圓
@@ -444,14 +456,20 @@ $question_num = isset($diagnosisData['question_num']) ? $diagnosisData['question
 		</div>
 	</div>
 
-  
+  <!-- // 修正の時
+/*
+	作成：名前
+	修正：名前
+	修正日：24/06/06
+*/ -->
+<!-- /* 修正前：
 <div class="btn-place" style="margin-top: 32px;">
 	<button type="button" class="emegra cancel" onclick="self.location.href='../../situation/list';">戻る</button>
   <button class="emegra" id="btn_save" name="editDatas" value="btn_save"  style="width:150px;" onclick="saveConfirm()">一時保存</button>
 	<button class="emegra" id="btn_submit" name="editDatas" value="btn_submit"  style="width:150px;" onclick="editConfirm()">ITスキル診断依頼</button>
 </div>
 
-<!-- Request send modal -->
+ Request send modal 
 <div class="modal" tabindex="-1" role="dialog" id="submitLoading">
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
@@ -461,7 +479,30 @@ $question_num = isset($diagnosisData['question_num']) ? $diagnosisData['question
     </div>
   </div>
 </div>
+*/ -->
+<!-- /* 修正後： */ -->
+<div class="btn-place" style="margin-top: 32px;">
+	<button type="button" class="emegra cancel" onclick="self.location.href='../../situation/list';">戻る</button>
+  <button class="emegra" id="btn_save" name="editDatas" value="btn_save"  style="width:150px;" onclick="saveConfirm()">保存</button>
+	<button class="emegra" id="btn_submit" name="editDatas" value="btn_submit"  style="width:150px;" onclick="editConfirm()">ITスキル診断依頼</button>
+</div>
 
+<!-- Request send modal -->
+<div class="modal" tabindex="-1" role="dialog" id="submitLoading">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <h3 style="text-align:center;" id="processing" style="margin-top: -200px;"></h3>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.getElementById('processing').innerHTML = "<div class='spinner-border' role='status'></div> <span style='font-size: 20px;'> 診断依頼中。。。少々お待ちください。</span>";
+
+</script>
+<!-- /* ここまで */ -->
 </form>
 <script type="text/javascript">
 	const form = document.getElementById("form");
@@ -739,7 +780,7 @@ function emailValidationCheck(input){
 function isZenkaku(str) {
   for (var i = 0; i < str.length; i++) {
     var code = str.charCodeAt(i);
-    if (code >= 0x20 && code <= 0x7E) {
+    if (code >= 0x21 && code <= 0x7E) {
       return str.charAt(i);
     }
   }
@@ -755,13 +796,13 @@ function checkKana(input) {
 <script>
 	function editConfirm(){
     if (form.name.value == "" || isZenkaku(form.name.value)) {
-          alert("漢字を入力してください。");
+          alert("お名前（漢字）を入力してください。");
           setTimeout("form.name.focus()",100);
           return false;
       }
 
       if (form.kana.value == "" || !checkKana(form.kana.value)) {
-          alert("カナを入力してください。");
+          alert("お名前（カナ）を入力してください。");
           setTimeout("form.kana.focus()",100);
           return false;
       }

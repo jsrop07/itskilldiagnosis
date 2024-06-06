@@ -9,7 +9,7 @@
         <form id="form" name="input_form" enctype="multipart/form-data" action="/applicant/application" method="post">
           <div class="diagnosis_main">
             <span for="email">メール </span>
-            <input class="form-control" name="email" type="email" placeholder="Emailを入力ください。" style="width:80%" maxlength='50'>
+            <input class="form-control" id ="emailId" name="email" type="email" placeholder="Emailを入力ください。" style="width:80%" maxlength='50'>
           
             <span>お名前（漢字）</span>
             <input class="form-control" name="name" type="text" placeholder="漢字を記入してください。"style="width:40%" maxlength='20'>
@@ -106,24 +106,26 @@
                 </div>
                 <div class="modal-footer  border-top-0" style="margin-bottom:8px; justify-content:center;">
                   <button type="button" class="applicant_cancel" data-bs-dismiss="modal">キャンセル</button>
-                  <button id="btn_submitId" name="mode" value="btn_submit" class="applicant_button" onclick="requestSubmit()">申込</button>
+                  <button id="btn_submitId" name="mode" value="btn_submit" class="applicant_button">申込</button>
                 </div>
               </div>
             </div>
           </div>
       </form>
     </div>
+
     <script>
   document.addEventListener("DOMContentLoaded", function() {
     let submitButton = document.getElementById("btn_submitId");
     let confirmContent = document.getElementById("requestMessage");
 
     submitButton.addEventListener("click", function(event) {
-      confirmContent.innerHTML = '診断申込中です。。。';
+      confirmContent.innerHTML = "<div class='spinner-border' role='status' style='width:20px;height:20px;'><span class='visually-hidden'></span></div>  申込中。。。少々お待ちください。";
+      btn_submitId.hidden=true;
     });
 });
 </script>
-<footer><a>GOMS Order・Received・Service.</a> Copyright G&GService. All Right Reserved.</footer>
+<footer>© 2024 G&G Service All Rights Reserved.</footer>
 </body>
 </html>
 </div>
@@ -214,6 +216,7 @@ function SkillSelectChange(element) {
         class1stSelect.value = "";
         class2ndSelect.innerText = "";
         class2ndSelect.value = "";
+        careerInput.value = "";
         var defaultOption = document.createElement("option");
         defaultOption.value = "";
         defaultOption.innerText = "選択してください。";
@@ -324,12 +327,13 @@ function emailValidationCheck(input){
 function isZenkaku(str) {
   for (var i = 0; i < str.length; i++) {
     var code = str.charCodeAt(i);
-    if (code >= 0x20 && code <= 0x7E) {
+    if (code >= 0x21 && code <= 0x7E) {
       return str.charAt(i);
     }
   }
   return null;
 }
+
 
 function checkKana(input) {
   var katakanaRegex = /^[\u30A0-\u30FFー\s]+$/; 
@@ -368,13 +372,13 @@ function checkKana(input) {
       }
 
       if (form.name.value == "" || isZenkaku(form.name.value)) {
-          alert("漢字を入力してください。");
+          alert("お名前（漢字）を入力してください。");
           setTimeout("form.name.focus()",100);
           return false;
       }
 
       if (form.kana.value == "" || !checkKana(form.kana.value)) {
-          alert("カナを入力してください。");
+          alert("お名前（カタカナ）を入力してください。");
           setTimeout("form.kana.focus()",100);
           return false;
       }
@@ -420,23 +424,38 @@ function checkKana(input) {
       }
       
         if (!careerInput.disabled && (careerInput.value === "" || isNaN(careerInput.value))) {
-            console.log(form.career.value);
             alert("IT経験年数を入力してください。");
             setTimeout("form.career.focus()",100);
             return false;
         }
+ /* 
+        作成：丁錫圓
+        修正：丁錫圓
+      */
+      const postForm = new FormData();
+      postForm.append("email", emailId.value);
+      const xhr = new XMLHttpRequest();
+      xhr.open("POST", "./duplication", true);
+      xhr.send(postForm);
 
-
-        var myModal = new bootstrap.Modal(document.getElementById('exampleModal'), {
-            keyboard: false
-        });
-        myModal.show();
+      xhr.onload = () => {
+        if (xhr.status == 200) {  
+          const result = xhr.responseText;
+          if (result == "fail") {
+            alert("すでに申込しているメールです。");
+            emailId.focus();
+            return false;
+            }
+          else if (result == "success") {
+            var myModal = new bootstrap.Modal(document.getElementById('exampleModal'), {
+              keyboard: false
+            });
+            myModal.show();
+          }
+        }
     }
+  }
 
-    function requestSubmit(){
-        const requestbtn= document.getElementById('requestMessage');
-        requestbtn.innertext="登録中です。"
-    }
 </script>
 
 

@@ -163,7 +163,7 @@ class ApplicationTable
       $dateInterval = $currentDateTimeObj->diff($applyDateObj);
       $minutesDifference = ($dateInterval->days * 24 * 60) + ($dateInterval->h * 60) + $dateInterval->i; // turn days, hour, minute to minute
       
-      if ($minutesDifference >= 10 && $currentDateTimeObj > $applyDateObj) {
+      if ($minutesDifference >= 30 && $currentDateTimeObj > $applyDateObj) {
         return "success";
       } else {
         return "fail";

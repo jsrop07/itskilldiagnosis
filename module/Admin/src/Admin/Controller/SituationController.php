@@ -298,7 +298,19 @@ class SituationController extends AbstractActionController {
 				$this->mailByRequest($adminData, $applicantData);
 				$this->mailByAdmin($applicantData, $skillText, $caseText, $adminData, $recordData);
 
-				try { $recordTb->RequestByIdx($idx); }
+				/*
+					作成：朴昰成
+					修正：朴昰成
+					修正日：24/06/06
+				*/
+
+				/* 修正前：
+					try { $recordTb->RequestByIdx($idx); }
+				*/
+
+				/* 修正後： */
+				try { $recordTb->RequestByIdx($recordData["idx"]); }
+				/* ここまで */
 				catch (\Exception $e) { die($e->getMessage()); }
 			}
 		}
@@ -349,7 +361,19 @@ class SituationController extends AbstractActionController {
 
 			// update applicant table
 			$sqlSet["date_mail"] = date("Y-m-d H:i:s");
-			$recordTb->UpdateByIdx($idx, $sqlSet);
+			/*
+				作成：朴昰成
+				修正：朴昰成
+				修正日：24/06/06
+			*/
+
+			/* 修正前：
+				$recordTb->UpdateByIdx($idx, $sqlSet);
+			*/
+
+			/* 修正後： */
+			$recordTb->UpdateByIdx($data["idx"], $sqlSet);
+			/* ここまで */
 		}
 
 		die("success");

@@ -315,21 +315,21 @@
 						<td><?php echo (isset($data["level"])) ? $levelTexts[$data["level"]] : "未設定"; ?></td>
 						<td><?php echo ($data["diagnosis_code"] != null) ? $data["diagnosis_code"] : "未設定"; ?></td>
 
-            <!-- change condition
-              作成：朴昰成
-              修正：朴昰成
-              修正日：24/06/05
-            -->
-
-            <!-- 修正前： <?php /* ?>
-              <?php if ($data["execute_date"] != null): ?>
-            <?php */ ?> -->
-
-            <!-- 修正後： -->
-            <?php if (isset($data["rank"])): ?>
-            <!-- ここまで -->
+						<?php if ($data["execute_date"] != null): ?>
 							<td><?php echo date("y.m.d", strtotime($data["execute_date"])); ?></td>
-							<td><?php echo $data["get_point"]; ?>/100</td>
+              <!--
+                作成：朴昰成
+                修正：朴昰成
+                修正前：24/06/06
+              -->
+
+              <!-- 修正前： <?php /* ?>
+                <td><?php echo $data["get_point"]; ?>/100</td>
+              <?php */ ?> -->
+
+              <!-- 修正前： -->
+              <td><?php echo ($data["rank"] == "F") ? "失格" : $data["get_point"] . "/100"; ?></td>
+              <!-- ここまで -->
 							<td><?php echo $data["rank"]; ?></td>
 						<?php else: ?>
 							<td>未実行</td>

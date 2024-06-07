@@ -89,7 +89,7 @@ $lineChange = "<br>";
       <!-- <div id="confirmComment"></div> -->
       </div>
       <div class="modal-footer  border-top-0" style="margin-bottom:8px; justify-content:center;">
-    <button type="button" class="applicant_cancel" data-bs-dismiss="modal">キャンセル</button>
+    <button type="button" id="submitcancel" class="applicant_cancel" data-bs-dismiss="modal">キャンセル</button>
     <button type="submit" class="exam_submit" name="submit_post" value="btn_submit" id="submittingId">提出</button>
     </div>
   </div>
@@ -570,6 +570,7 @@ function confirmExam() {
     submitButton.addEventListener("click", function(event) {
       confirmContent.innerHTML = "<div class='spinner-border' role='status' style='width:20px;height:20px;'><span class='visually-hidden'></span></div>  結果転送中。。。少々お待ちください。";
       submittingId.hidden=true;
+      submitcancel.hidden = true;
     });
 });
 </script>

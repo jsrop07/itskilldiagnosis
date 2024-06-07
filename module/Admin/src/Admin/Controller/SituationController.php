@@ -173,6 +173,12 @@ class SituationController extends AbstractActionController {
 			try {
 				$datas["totalApply"] = $recordTb->CountApplyData();
 				$datas["totalRequest"] = $recordTb->CountRequestData();
+				/*
+					作成：朴昰成
+					作成日：24/06/07
+				*/
+				$datas["countOver"] = $recordTb->CountOverData();
+				/* ここまで */
 				$datas["totalData"] = $recordTb->CountAllData();
 			} catch (\Exception $e) {
 				print_r($e->getMessage());

@@ -188,12 +188,37 @@ class RecordTable {
 	}
 	public function CountRequestData() {
 		$where = new Where();
-		$where->isNotNull("request_date")->and->isNull("execute_date");
+		/*
+			作成：朴昰成
+			修正：朴昰成
+			修正日：24/06/07
+		*/
+
+		/* 修正前：
+			$where->isNotNull("request_date")->and->isNull("execute_date");
+		*/
+
+		/* 修正後： */
+		$where->isNotNull("request_date")->and->isNull("rank");
+		/* ここまで */
 
 		$qry = $this->sql->select("record")->where($where)->columns(array('COUNT'=>new \Zend\Db\Sql\Expression('COUNT(*)')));
 		$result = $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
 		return $result["COUNT"];
 	}
+	/*
+		作成：朴昰成
+		作成日：24/06/07
+	*/
+	public function CountOverData() {
+		$where = new Where();
+		$where->isNotNull("request_date")->and->isNotNull("rank");
+
+		$qry = $this->sql->select("record")->where($where)->columns(array("COUNT"=>new \Zend\Db\Sql\Expression("COUNT(*)")));
+		$result = $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
+		return $result["COUNT"];
+	}
+	/* ここまで */
 	public function CountNewData() {
 		$qry = $this->sql->select("record")->where(["diagnosis_date" => null])->columns(array('COUNT'=>new \Zend\Db\Sql\Expression('COUNT(*)')));
 		$result = $this->sql->prepareStatementForSqlObject($qry)->execute()->current();

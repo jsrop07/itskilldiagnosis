@@ -172,7 +172,7 @@
     <!--
       作成：朴昰成
       修正：朴昰成
-      修正日：24/06/04
+      修正日：24/06/06
     -->
 
     <!-- 修正前： <?php /* ?>
@@ -207,7 +207,7 @@
           <option value="<?= $value; ?>"<?php echo ($isSelect && $searchDatas["select"][0] == $value) ? " selected" : ""?>><?= $text; ?></option>
         <?php endforeach; ?>
       </select>
-      <select class="form-select form-select-sm" id="select-value" style="width: 120px; margin-left: 8px;"<?php echo ($isSelect) ? "" : " disabled"; ?> onchange="Select(this);">
+      <select class="form-select form-select-sm" id="select-value" style="width: 120px; margin-left: 8px;" onchange="Select(this);">
         <?php if ($isSelect): ?>
           <?php if ($searchDatas["select"][0] == "level"): ?>
             <?php for ($i = 0; $i <= 3; $i++): ?>
@@ -226,7 +226,7 @@
           <option hidden>選択</option>
         <?php endif; ?>
       </select>
-      <select class="form-select form-select-sm" id="select-class" style="width: 120px; margin-left: 8px; visibility: <?php echo ($isSelect && $searchDatas["select"][0] == "class") ? "visible" : "hidden"?>" onchange="Select(this);">
+      <select class="form-select form-select-sm" id="select-class" style="width: 120px; margin-left: 8px;" onchange="Select(this);">
         <?php if ($isSelect && $searchDatas["select"][0] == "class"): ?>
           <?php foreach($selectValueDatas["class2nd"][$searchDatas["select"][1]] as $data): ?>
             <option value="<?php echo $data["idx"]; ?>"<?php echo ($searchDatas["select"][2] == $data["idx"]) ? " selected" : ""?>><?php echo $data["text"]; ?></option>
@@ -250,10 +250,8 @@
       function ChangeSelectOption(element) {
         let value = element.value;
         if (value == "") { Select(element); }
-        selectValue.disabled = false;
         
         selectClass.replaceChildren();
-        selectClass.style.visibility = "hidden";
         var option = document.createElement("option");
         option.hidden = true;
         option.innerText = "選択";
@@ -281,8 +279,6 @@
               option.innerText = "<?php echo $data["text"]; ?>";
               selectValue.appendChild(option);
             <?php endforeach; ?>
-
-            selectClass.style.visibility = "visible";
             break;
           case "level":
             <?php for ($i = 0; $i <= 3; $i++): ?>

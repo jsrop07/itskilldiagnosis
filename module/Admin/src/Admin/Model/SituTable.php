@@ -182,14 +182,12 @@ public function updateRecordInfo($recordlWhere, $recordSet){
 
 	// $result = $this->adapter->query($sqlString, Adapter::QUERY_MODE_EXECUTE);
 	try {
-    $result = $this->adapter->query($sqlString, Adapter::QUERY_MODE_EXECUTE);
-} catch (\Exception $e) {
-    echo 'Caught exception: ',  $e->getMessage(), "\n";
-    $result = null; 
-}
+		$result = $this->adapter->query($sqlString, Adapter::QUERY_MODE_EXECUTE);
+	} catch (\Exception $e) {
+		echo 'Caught exception: ',  $e->getMessage(), "\n";
+	}	
 
-return $result;
-
+	return $result;   
 	}
 	public function saveApplicantInfo($applicantWhere, $applicantSet){
 	if (!isset($applicantSet['gender']) || $applicantSet['gender'] === '') {

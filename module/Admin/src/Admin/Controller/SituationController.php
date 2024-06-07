@@ -307,17 +307,18 @@ class SituationController extends AbstractActionController {
 				/*
 					作成：朴昰成
 					修正：朴昰成
-					修正日：24/06/06
+					修正日：24/06/07
 				*/
 
 				/* 修正前：
 					try { $recordTb->RequestByIdx($idx); }
+					catch (\Exception $e) { die($e->getMessage()); }
 				*/
 
 				/* 修正後： */
 				try { $recordTb->RequestByIdx($recordData["idx"]); }
+				catch (\Exception $e) { die($this->SaveLog($e->getMessage())); }
 				/* ここまで */
-				catch (\Exception $e) { die($e->getMessage()); }
 			}
 		}
 
@@ -370,7 +371,7 @@ class SituationController extends AbstractActionController {
 			/*
 				作成：朴昰成
 				修正：朴昰成
-				修正日：24/06/06
+				修正日：24/06/07
 			*/
 
 			/* 修正前：
@@ -378,7 +379,8 @@ class SituationController extends AbstractActionController {
 			*/
 
 			/* 修正後： */
-			$recordTb->UpdateByIdx($data["idx"], $sqlSet);
+			try { $recordTb->UpdateByIdx($data["idx"], $sqlSet); }
+			catch (\Exception $e) { die($this->SaveLog($e->getMessage())); }
 			/* ここまで */
 		}
 
@@ -1078,47 +1080,23 @@ class SituationController extends AbstractActionController {
 
 		return $status;
   }
+	/*
+	作成：朴昰成
+	作成日：24/06/07
+	*/
+	/** save log in public/log.txt
+	 * @param string $log
+	 * @return string $log
+	 */
+	function SaveLog($log) {
+		$DOCUMENT_ROOT = $_SERVER["DOCUMENT_ROOT"];
+		$datetime = date("y-m-d h:i:s");
 
-	function mailByApplicantExam($applicantInfo,$sqlSet,$managerArray,$examRecordIdx){
-		$mail = new MailRequest();
+		$fp = fopen($DOCUMENT_ROOT . "/log.txt", "a");
+		fwrite($fp, $datetime . "\n" . $log . "\n");
+		fclose($fp);
 
-		// load basic setting for MailSender
-		$param["config"] = $this->getConfig();
-
-		$param["title"]="{{user_name}}様、{$applicantInfo["name"]}診断者の試験結果が出ました。";
-		$param["content"] = "以下の診断者の試験結果をご参照ください。\n\nお名前（漢字）：{$applicantInfo["name"]}\nお名前（カナ）：{$applicantInfo["kana"]}\nメールアドレス：{$applicantInfo["email"]}\n得点：{$sqlSet["get_point"]}\n評価：{$sqlSet["rank"]}\n評価結果：{$sqlSet["diagnosis_comment"]}\n\n診断者ページ：http://18.181.4.65/admin/situation/detail/{$examRecordIdx}";
-
-		// 사람이름이나, URL등 고유하게 변경해야 하는 것은 이렇게 처리한다.
-		// 메일 제목과 내용 부분 모두 변환처리.
-		$param['title']=str_replace("{{user_name}}","担当者",$param['title']);
-		// print_r($param['title']);
-		// $param['content']=str_replace("{{user_name}}","変換する試験受け者名",$param['content']);
-		$param['content']=str_replace("{{URL}}","テスト",$param['content']);
-
-
-		// 수신자 이메일과 이름 설정
-		// $param['managerEmail']=$managerArray[0];
-		$param['email']=$managerArray[0];
-		$param['password']=$managerArray[1];
-		$param['name']=$managerArray[2];
-		$param['smtp_password']=$managerArray[3];
-
-		// 전송
-		$result = $mail->mailsender($param);
-		// $result = $this->getServiceLocator()->get("mailsender");
-
-		$result_row = $result['transport']->getConnection()->getResponse();
-
-		$results = str_replace("\r","",str_replace("\n","",str_replace(" ","",$result_row[0])));
-		switch(substr(strtolower($results),0,5)){
-			// 250ok 가 나오면 전송 의뢰 성공이다.
-				case "250ok":
-					$status = 'OK';
-						break;
-				// 그외의 것은 모두 실패로 처리한다.
-				default:
-					$status = 'FALSE';
-						break;
-			}
-		}
+		return $log;
+	}
+	/* ここまで */
 }

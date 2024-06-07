@@ -181,11 +181,8 @@ public function updateRecordInfo($recordlWhere, $recordSet){
 	$sqlString = $qry->getSqlStringForSqlObject($update);
 
 	// $result = $this->adapter->query($sqlString, Adapter::QUERY_MODE_EXECUTE);
-	try {
-		$result = $this->adapter->query($sqlString, Adapter::QUERY_MODE_EXECUTE);
-	} catch (\Exception $e) {
-		echo 'Caught exception: ',  $e->getMessage(), "\n";
-	}	
+	$result = $this->adapter->query($sqlString, Adapter::QUERY_MODE_EXECUTE);
+	
 
 	return $result;   
 	}

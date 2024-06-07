@@ -489,21 +489,22 @@
 <div class="button-place" style="margin-top: 10px; justify-content:space-between;">
 	<div></div>
 	
-	<div>
+  <div>
     <!--
       作成：朴昰成
       修正：朴昰成
-      修正前：24/06/03
+      修正前：24/06/07
     -->
 
     <!-- 修正前： <?php /* ?>
       <button class="emegra" style="margin-right:10px;" onclick="SendMail()">メール送信</button>
+      <button class="emegra" style="width:150px; margin-right:10px;" onclick="Request()">ITスキル診断依頼</button>
     <?php */ ?> -->
 
     <!-- 修正前： -->
-    <button class="emegra" style="margin-right:10px;" onclick="SendMail()">結果送信</button>
+    <button class="emegra" style="margin-right:10px;" onclick="SendMail(this)">結果送信</button>
+    <button class="emegra" style="width:150px; margin-right:10px;" onclick="Request(this)">ITスキル診断依頼</button>
     <!-- ここまで -->
-		<button class="emegra" style="width:150px; margin-right:10px;" onclick="Request()">ITスキル診断依頼</button>
 		<button class="emegra" onclick="self.window.location='./input'">新規登録</button>
 		</div>	
 	</div>
@@ -597,7 +598,19 @@
     self.window.location = url;
 	}
 
-	function Request() {
+  /*
+    作成：朴昰成
+    修正：朴昰成
+    修正日：24/06/07
+  */
+
+  /* 修正前：
+    function Request() {
+  */
+
+  /* 修正後： */
+	function Request(button) {
+  /* ここまで */
 		idxs = [];
 		isChecked = false;
 		for (let i = 0; i < check_idxs.length; i++) {
@@ -628,6 +641,24 @@
 
 		if (confirm("依頼しますか？") === false) { return false; }
 
+    /*
+      作成：朴昰成
+      作成日：24/06/07
+    */
+    button.replaceChildren();
+
+    var span = document.createElement("span");
+    span.classList.add("spinner-border");
+    span.classList.add("spinner-border-sm");
+    span.ariaHidden = "true";
+    button.appendChild(span);
+
+    var span = document.createElement("span");
+    span.role = "status";
+    span.innerText = "送信中...";
+    button.appendChild(span);
+
+    /* ここまで */
 		const postForm = new FormData();
 		postForm.append("idxs", idxs);
 		const xhr = new XMLHttpRequest();
@@ -642,14 +673,53 @@
 					location.reload(true);
 				}
 				else {
-					alert("error");
-					console.log(result);
+          /*
+            作成：朴昰成
+            修正：朴昰成
+            修正日：24/06/07
+          */
+
+          /* 修正前：
+          alert("error");
+          console.log(result);
+          */
+
+          /* 修正後： */
+          try {
+            applicantDatas = JSON.parse(result);
+          }
+          catch (e) {
+            alert("error");
+            console.log(result);
+            location.reload(true);
+          }
+
+          $alert = "依頼ができませんでした。\n";
+          $alert = "できなかった方の名前\n";
+          for (let i = 0; i < applicantDatas.length; i++) {
+            $alert += applicantDatas[i]["name"] + "、";
+          }
+          alert($alert);
+					location.reload(true);
+          /* ここまで */
 				}
 			}
 		}
 	}
 
-  function SendMail() {
+  /*
+    作成：朴昰成
+    修正：朴昰成
+    修正日：24/06/07
+  */
+
+  /* 修正前：
+    function SendMail() {
+  */
+
+  /* 修正後： */
+  function SendMail(button) {
+  /* ここまで */
 		idxs = [];
 		isChecked = false;
 		for (let i = 0; i < check_idxs.length; i++) {
@@ -692,6 +762,24 @@
     if (confirm("結果を送信しますか？") === false) { return false; }
     /* ここまで */
 
+    /*
+      作成：朴昰成
+      作成日：24/06/07
+    */
+    button.replaceChildren();
+
+    var span = document.createElement("span");
+    span.classList.add("spinner-border");
+    span.classList.add("spinner-border-sm");
+    span.ariaHidden = "true";
+    button.appendChild(span);
+
+    var span = document.createElement("span");
+    span.role = "status";
+    span.innerText = "送信中...";
+    button.appendChild(span);
+
+    /* ここまで */
     const postForm = new FormData();
     postForm.append("idxs", idxs);
     const xhr = new XMLHttpRequest();
@@ -707,7 +795,6 @@
         }
         else {
           try {
-            let idxDatas = JSON.parse(result);
             /*
               作成：朴昰成
               修正：朴昰成
@@ -715,11 +802,24 @@
             */
 
             /* 修正前：
+              let idxDatas = JSON.parse(result);
               alert("送信てきないデータがあります。");
             */
 
             /* 修正後： */
-            alert("送信できない診断者情報があります。");
+            let recordDatas = JSON.parse(result);
+
+            console.log(recordDatas);
+
+            let alertString = "依頼ができませんでした。\n\n";
+            alertString += "できない方の名前\n";
+            for (let i = 0; i < recordDatas.length; i++) {
+              alertString += recordDatas[i]["name"] + "、";
+            }
+            alertString = alertString.slice(0, -1);
+
+            alert(alertString);
+            location.reload(true);
             /* ここまで */
             return false;
           } catch (e) {

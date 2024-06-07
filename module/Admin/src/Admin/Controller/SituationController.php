@@ -57,7 +57,7 @@ class SituationController extends AbstractActionController {
 			/*
 				作成：朴昰成
 				修正：朴昰成
-				修正日：24/06/05
+				修正日：24/06/07
 			*/
 
 			/* 修正前：
@@ -98,7 +98,10 @@ class SituationController extends AbstractActionController {
 							case "execute":
 								$sqlWhere["request_date"] = "not null";
 								$sqlWhere["execute_date"] = "not null";
-								$sqlWhere["get_point"] = "not null";
+								$sqlWhere["rank"] = "A";
+								$sqlWhere["rank"] = "B";
+								$sqlWhere["rank"] = "C";
+								$sqlWhere["rank"] = "D";
 								break;
 							case "unexecute":
 								$sqlWhere["request_date"] = "not null";
@@ -279,14 +282,46 @@ class SituationController extends AbstractActionController {
 		$adminTb = $this->getServiceLocator()->get("AdminTable");
 
 		$recordDatas = array();
+    /*
+      作成：朴昰成
+      作成日：24/06/07
+    */
+		$errorRecordDatas = array();
+    /* ここまで */
 		foreach ($recordIdxs as $idx) {
 			try { $recordData = $recordTb->ReadByIdx($idx); }
 			catch (\Exception $e) { die($e->getMessage()); }
 
-			if ($recordData["request_date"] != null) { die("fale"); }
+			/*
+				作成：朴昰成
+				修正：朴昰成
+				修正日：24/06/07
+			*/
+
+			/* 修正前：
+				if ($recordData["request_date"] != null) { die("fale"); }
+			*/
+
+			/* 修正後： */
+			if ($recordData["request_date"] != null) { $errorRecordDatas[] = $recordData; }
+			/* ここまで */
 			$recordDatas[] = $recordData;
 		}
 
+    /*
+      作成：朴昰成
+      作成日：24/06/07
+    */
+		if ($errorRecordDatas) {
+			$applicnatDatas = array();
+			foreach ($errorRecordDatas as $recordData) {
+				try { $applicnatDatas[] = $applicantTb->ReadByIdx($recordData["applicant_idx"]); }
+				catch (\Exception $e) { die($e->getMessage()); }
+			}
+			die(json_encode($applicnatDatas));
+		}
+
+    /* ここまで */
 		try { $PICDatas = $adminTb->ReadPIC(); }
 		catch (\Exception $e) { die($e->getMessage()); }
 
@@ -339,16 +374,52 @@ class SituationController extends AbstractActionController {
 			try { $recordData = $recordTb->ReadByIdx($idx); }
 			catch (\Exception $e) { die($e->getMessage()); }
 
+			/*
+				作成：朴昰成
+				修正：朴昰成
+				修正日：24/06/07
+			*/
+
+			/* 修正前：
+				// when test didn't ended	
+				if ($recordData["rank"] == null) { $recordIdxDatas[] = $idx; }
+				// when mail already sent
+				if ($recordData["date_mail"] != null) { $recordIdxDatas[] = $idx; }
+			*/
+
+			/* 修正後： */
 			// when test didn't ended	
-			if ($recordData["rank"] == null) { $recordIdxDatas[] = $idx; }
+			if ($recordData["rank"] == null) { $recordIdxDatas[] = $recordData; }
 			// when mail already sent
-			if ($recordData["date_mail"] != null) { $recordIdxDatas[] = $idx; }
+			if ($recordData["date_mail"] != null) { $recordIdxDatas[] = $recordData; }
+			/* ここまで */
 
 			$recordDatas[] = $recordData;
 		}
 
 		// return record idx that sent mail
-		if (!empty($recordIdxDatas)) { die(json_encode($recordIdxDatas)); }
+		/*
+			作成：朴昰成
+			修正：朴昰成
+			修正日：24/06/07
+		*/
+
+		/* 修正前：
+			if (!empty($recordIdxDatas)) { die(json_encode($recordIdxDatas)); }
+		*/
+
+		/* 修正後： */
+		if (!empty($recordIdxDatas)) {
+			$applicantTb = $this->getServiceLocator()->get("ApplicantTable-Admin");
+
+			$applicantDatas = array();
+			foreach ($recordIdxDatas as $recordData) {
+				$applicantDatas[] = $applicantTb->ReadByIdx($recordData["applicant_idx"]);
+			}
+
+			die(json_encode($applicantDatas));
+		}
+		/* ここまで */
 
 		// read pic_admin data
 		$adminTb = $this->getServiceLocator()->get("AdminTable");
@@ -364,7 +435,20 @@ class SituationController extends AbstractActionController {
 			try { $applicantData = $applicantTb->ReadByIdx($data["applicant_idx"]); }
 			catch (\Exception $e) { die($e->getMessage()); }
 
+			/*
+				作成：朴昰成
+				修正：朴昰成
+				修正日：24/06/07
+			*/
+
+			/* 修正前：
 			$this->SendResultMailToApplicantByPICAdmin($applicantData, $data, $PicDatas[0]);
+			*/
+
+			/* 修正後： */
+			$result = $this->SendResultMailToApplicantByPICAdmin($applicantData, $data, $PicDatas[0]);
+			if ($result == "exception" || $result == "fale") { return "fail"; }
+			/* ここまで */
 
 			// update applicant table
 			$sqlSet["date_mail"] = date("Y-m-d H:i:s");
@@ -379,8 +463,13 @@ class SituationController extends AbstractActionController {
 			*/
 
 			/* 修正後： */
-			try { $recordTb->UpdateByIdx($data["idx"], $sqlSet); }
-			catch (\Exception $e) { die($this->SaveLog($e->getMessage())); }
+			try {
+				$recordTb->UpdateByIdx($data["idx"], $sqlSet);
+			}
+			catch (\Exception $e) {
+				$this->SaveLog($e->getMessage());
+				return json_encode($applicantData);
+			}
 			/* ここまで */
 		}
 
@@ -1067,6 +1156,15 @@ class SituationController extends AbstractActionController {
 
 		$result = $mail->mailsender($param);
 		// $result = $this->getServiceLocator()->get("mailsender");
+		/*
+		作成：朴昰成
+		作成日：24/06/07
+		*/
+		if (isset($result["exception"])) {
+			$this->SaveLog($result["exception"]);
+			return "exception";
+		}
+		/* ここまで */
 
 		$result_row = $result["transport"]->getConnection()->getResponse();
 
@@ -1090,7 +1188,7 @@ class SituationController extends AbstractActionController {
 	 */
 	function SaveLog($log) {
 		$DOCUMENT_ROOT = $_SERVER["DOCUMENT_ROOT"];
-		$datetime = date("y-m-d h:i:s");
+		$datetime = date("Y-m-d H:i:s");
 
 		$fp = fopen($DOCUMENT_ROOT . "/log.txt", "a");
 		fwrite($fp, $datetime . "\n" . $log . "\n");

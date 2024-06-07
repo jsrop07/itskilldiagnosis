@@ -882,7 +882,7 @@ function checkKana(input) {
             return false;
         }
 
-        if (form.class1stId.value === "") {
+        if (form.class1stId.value === "" || form.class1stId.value === "選択してください。") {
             alert("経験分野を入力してください。");
             setTimeout("form.class1stId.focus()",100);
             event.preventDefault();
@@ -895,7 +895,7 @@ function checkKana(input) {
         //     return false;
         // }
 
-        if (form.class2ndId.value == "") {
+        if (form.class2ndId.value == "" ||  form.class2ndId.value === "選択してください。") {
             alert("問題種別を入力してください。");
             setTimeout("form.class2ndId.focus()",100);
             event.preventDefault();
@@ -907,12 +907,12 @@ function checkKana(input) {
             event.preventDefault();
             return false;
         }
-        if (form.code.value == "") {
-            alert("診断問題IDを入力してください。");
-            setTimeout("form.code.focus()",100);
-            event.preventDefault();
-            return false;
-        }
+        // if (form.code.value == "") {
+        //     alert("診断問題IDを入力してください。");
+        //     setTimeout("form.code.focus()",100);
+        //     event.preventDefault();
+        //     return false;
+        // }
         var submitConfirm=confirm("保存しますか？");
             if (!submitConfirm){
                     event.preventDefault();

@@ -449,7 +449,7 @@
 
               <td><?php echo date("y.m.d", strtotime($data["apply_date"])); ?></td>
               <td><?php echo $caseTexts[$data["case"]]; ?></td>
-              <td class="link" onclick="self.location.href='./<?php echo ($data['diagnosis_date'] == null) ? 'edit' : 'detail'; ?>/<?php echo $data['idx']; ?>';" style="text-align: center; color: blue"><?php echo $data["name"]; ?></td>
+              <td class="link" onclick="self.location.href='./<?php echo ($data['diagnosis_date'] == null) ? 'edit' : 'detail'; ?>/<?php echo $data['idx']; ?>';" style="text-align: center; color: blue;cursor:pointer"><?php echo $data["name"]; ?></td>
               <td><?php echo $data["education"]; ?></td>
               <td><?php echo ($data["major"] != null) ? $data["major"] : "無"; ?></td>
               <td><?php echo ($data["career"] != null) ? $data["career"] . "年" : "無"; ?></td>

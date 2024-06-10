@@ -380,7 +380,7 @@ $question_num = isset($diagnosisData['question_num']) ? $diagnosisData['question
 				</div>
 			</div>
 
-				<dt class="essential">問題数別</dt>
+				<dt class="essential">問題数</dt>
           <dd>
             <input id="question_numId" class="form-control" type="text" style="width:50px;text-align:center;" value="<?php echo $question_num ?>" readonly>問
           </dd>		             
@@ -448,8 +448,8 @@ $question_num = isset($diagnosisData['question_num']) ? $diagnosisData['question
       <dt class="essential">診断予定日</dt>
       <dd><input class="form-control" name="schedule" id="scheduleId" type="text" style="width:220px;" value="<?php echo $recordArray['date_schedule'] ? $recordArray['date_schedule'] : $dateSchedule ?>"></dd>
 
-      <dt>備考</dt>
-      <dd><input class="form-control" name="note" type="text" style="width:220px; " value="<?php echo $recordArray['note']?>"></dd>
+      <!-- <dt hidden>備考</dt>
+      <dd><input class="form-control" name="note" type="text" style="width:220px; " value="<?php echo $recordArray['note']?>" hidden></dd> -->
 
       <input type="hidden" name="recordindex" value="<?php echo $index?>"></div>
       <input type="hidden" name="applicantindex" value="<?php echo $applicantArray['idx']?>"></div>

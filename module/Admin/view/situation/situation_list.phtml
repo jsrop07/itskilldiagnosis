@@ -309,7 +309,7 @@
     <!--
       作成：丁錫圓
       修正：朴昰成
-      修正前：24/06/07
+      修正前：24/06/10
     -->
 
     <!-- 修正前： <?php /* ?>
@@ -379,39 +379,6 @@
     <?php */ ?> -->
 
     <!-- 修正後： -->
-    <style type="text/css">
-      div.emegra-table {
-        min-width: 1200px;
-        margin-top: 8px;
-        border-radius: 6px;
-        border: 1px solid var(--line);
-        overflow: hidden;
-      }
-      div.emegra-table table {
-        margin: 0;
-
-        border-collapse: collapse;
-        border-style: hidden;
-      }
-      div.emegra-table th, div.emegra-table td {
-        vertical-align: middle;
-        text-align: center;
-      }
-      div.emegra-table th {
-        padding: 8px;
-        background: var(--emegra-blue);
-
-        font-size: 14px;
-        font-weight: 700;
-        color: white;
-      }
-      div.emegra-table td {
-        padding: 16px 0;
-        border: 1px 0 solid var(--line);
-        font-size: 14px;
-        font-weight: 400;
-      }
-    </style>
     <div class="emegra-table">
       <table class="table table-bordered">
         <thead>
@@ -449,9 +416,9 @@
 
               <td><?php echo date("y.m.d", strtotime($data["apply_date"])); ?></td>
               <td><?php echo $caseTexts[$data["case"]]; ?></td>
-              <td class="link" onclick="self.location.href='./<?php echo ($data['diagnosis_date'] == null) ? 'edit' : 'detail'; ?>/<?php echo $data['idx']; ?>';" style="text-align: center; color: blue"><?php echo $data["name"]; ?></td>
+              <td><a onclick="self.location.href='./<?php echo ($data['diagnosis_date'] == null) ? 'edit' : 'detail'; ?>/<?php echo $data['idx']; ?>';"><?php echo $data["name"]; ?></a></td>
               <td><?php echo $data["education"]; ?></td>
-              <td><?php echo ($data["major"] != null) ? $data["major"] : "無"; ?></td>
+              <td><?php echo (empty($data["major"])) ? "無" : "有"; ?></td>
               <td><?php echo ($data["career"] != null) ? $data["career"] . "年" : "無"; ?></td>
 
               <td><?php echo ($data["request_date"] != null) ? date("y.m.d", strtotime($data["request_date"])) : "未依頼"; ?></td>

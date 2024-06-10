@@ -442,7 +442,7 @@
               <td><?php echo $optionDatas[$data["class1st"]]; ?></td>
               <td><?php echo $optionDatas[$data["class2nd"]]; ?></td>
               <td><?php echo $levelTexts[$data["level"]]; ?></td>
-              <td class="link left" onclick="self.location.href='./detail/<?php echo $data['idx']; ?>';"><?php echo $data["title"]; ?></td>
+              <td class="start" style="padding: 0 8px;"><a onclick="self.location.href='./detail/<?php echo $data['idx']; ?>';"><?php echo $data["title"]; ?></a></td>
               <td><?php echo $optionDatas[$data["type"]]; ?></td>
               <td><?php echo $data["point"]; ?></td>
               <td><?php echo date("y.m.d", strtotime($data["date_regist"])); ?></td>

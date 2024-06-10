@@ -433,3 +433,10 @@ div.emegra-table td {
   font-size: 14px;
   font-weight: 400;
 }
+div.emegra-table td.start { text-align: start; }
+div.emegra-table a { color: blue !important; }
+div.emegra-table a:hover {
+  text-decoration: underline !important;
+
+  cursor: pointer;
+}

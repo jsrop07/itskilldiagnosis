@@ -27,19 +27,7 @@ class DiagnosisController extends AbstractActionController {
 
 	public function listAction() {
 		$this->ChkLogin();
-		/*
-			作成：朴昰成
-			修正：朴昰成
-			修正日：24/06/03
-		*/
-
-		/* 修正前：
-			$datas["breadcrumbData"] = ["ITスキル診断書管理"];
-		*/
-
-		/* 修正後： */
 		$datas["breadcrumbData"] = ["ITスキル診断問題管理"];
-		/* ここまで */
 		$datas["optionDatas"] = $this->GetOptionDatas();
 		$datas["inputOptionDatas"] = $this->GetOptionDatasForInput();
 
@@ -92,21 +80,8 @@ class DiagnosisController extends AbstractActionController {
 	/** When you click 新規登録 button on 一覧 page */
 	public function inputAction() {
 		$this->ChkLogin();
-		/*
-			作成：朴昰成
-			修正：朴昰成
-			修正日：24/06/03
-		*/
-
-		/* 修正前：
-			$datas["breadcrumbData"] = ["ITスキル診断書管理", "診断書登録"];
-			$datas["title"] = "診断書登録";
-		*/
-
-		/* 修正後： */
 		$datas["breadcrumbData"] = ["ITスキル診断問題管理", "診断問題登録"];
 		$datas["title"] = "診断問題登録";
-		/* ここまで */
 		$datas["optionDatas"] = $this->GetOptionDatasForInput();
 		$datas["resultDatas"] = $this->GetResultDatas();
 

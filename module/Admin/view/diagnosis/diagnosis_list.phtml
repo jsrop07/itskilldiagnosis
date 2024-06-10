@@ -113,53 +113,110 @@
 		</div>
 	</div>
 
-	<?php if (empty(iterator_to_array($diagnosisDatas))): ?>
-		<div class="table-empty" style="margin-top: 16px;">
-			データがありません。
-		</div>
-	<?php else: ?>
-    <div class="emegra-table">
-      <table class="table table-bordered">
-        <thead>
-            <th rowspan="2">No</th>
-            <th rowspan="2">問題ID</th>
-            <th colspan="2">種別</th>
-            <th rowspan="2">レベル</th>
-            <th rowspan="2">タイトル</th>
-            <th rowspan="2">問項数</th>
-            <th rowspan="2">合格基準</th>
-            <th rowspan="2">変更日</th>
-          </tr>
-            <th>大分類</th>
-            <th>小分類</th>
-          <tr>
+	<!--
+		作成：朴昰成
+		修正：朴昰成
+		修正日：24/06/10
+	-->
 
-          </tr>
-        </thead>
-        <tbody>
+	<!-- 修正前： <?php /* ?>
+    <?php if (empty(iterator_to_array($diagnosisDatas))): ?>
+      <div class="table-empty" style="margin-top: 16px;">
+        データがありません。
+      </div>
+    <?php else: ?>
+      <div class="emegra-table">
+        <table class="table table-bordered">
+          <thead>
+              <th rowspan="2">No</th>
+              <th rowspan="2">問題ID</th>
+              <th colspan="2">種別</th>
+              <th rowspan="2">レベル</th>
+              <th rowspan="2">タイトル</th>
+              <th rowspan="2">問項数</th>
+              <th rowspan="2">合格基準</th>
+              <th rowspan="2">変更日</th>
+            </tr>
+              <th>大分類</th>
+              <th>小分類</th>
+            <tr>
+
+            </tr>
+          </thead>
+          <tbody>
+            <?php foreach ($diagnosisDatas as $index => $data): ?>
+
+              <?php
+                $points = explode(",", $data["result_points"]);
+                $passPoint = $points[2];
+              ?>
+
+              <tr>
+                <td><?php echo $firstNo - $index ; ?></td>
+                <td><?php echo $data["code"]; ?></td>
+                <td><?php echo $optionDatas[$data["class1st"]]; ?></td>
+                <td><?php echo $optionDatas[$data["class2nd"]]; ?></td>
+                <td><?php echo $levelTexts[$data["level"]]; ?></td>
+                <td class="start" style="padding: 0 8px;"><a onclick="self.location.href='./detail/<?php echo $data['idx']; ?>'"><?php echo $data["title"]; ?></a></td>
+                <td><?php echo $data["question_num"]; ?>問題</td>
+                <td><?php echo $passPoint; ?>点</td>
+                <td><?php echo date("y.m.d", strtotime($data["date_start"])); ?></td>
+              </tr>
+            <?php endforeach; ?>
+          </tbody>
+        </table>
+      </div>
+    <?php endif; ?>
+  <?php */ ?> -->
+
+  <!-- 修正後： -->
+  <div class="emegra-table">
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th rowspan="2">No</th>
+          <th rowspan="2">問題ID</th>
+          <th colspan="2">種別</th>
+          <th rowspan="2">レベル</th>
+          <th rowspan="2">タイトル</th>
+          <th rowspan="2">問項数</th>
+          <th rowspan="2">合格基準</th>
+          <th rowspan="2">変更日</th>
+        </tr>
+        <tr>
+          <th>大分類</th>
+          <th>小分類</th>
+        </tr>
+      </thead>
+      <tbody>
+        <?php if (empty(iterator_to_array($diagnosisDatas))): ?>
+          <td colspan="9"> データがありません。</td>
+        <?php else: ?>
           <?php foreach ($diagnosisDatas as $index => $data): ?>
-
-            <?php
-              $points = explode(",", $data["result_points"]);
-              $passPoint = $points[2];
-            ?>
-
             <tr>
               <td><?php echo $firstNo - $index ; ?></td>
               <td><?php echo $data["code"]; ?></td>
+
               <td><?php echo $optionDatas[$data["class1st"]]; ?></td>
               <td><?php echo $optionDatas[$data["class2nd"]]; ?></td>
+
               <td><?php echo $levelTexts[$data["level"]]; ?></td>
-              <td class="start" style="padding: 0 8px;"><a onclick="self.location.href='./detail/<?php echo $data['idx']; ?>'"><?php echo $data["title"]; ?></a></td>
-              <td><?php echo $data["question_num"]; ?>問題</td>
+              <td class="start"><a onclick="self.location.href='./detail/<?php echo $data['idx']; ?>'"><?php echo $data["title"]; ?></a></td>
+              <td><?php echo $data["question_num"]; ?>問項</td>
+
+              <?php
+                $points = explode(",", $data["result_points"]);
+                $passPoint = $points[count($points) - 2];
+              ?>
               <td><?php echo $passPoint; ?>点</td>
               <td><?php echo date("y.m.d", strtotime($data["date_start"])); ?></td>
             </tr>
           <?php endforeach; ?>
-        </tbody>
-      </table>
-    </div>
-	<?php endif; ?>
+        <?php endif; ?>
+      </tbody>
+    </table>
+  </div>
+  <!-- ここまで -->
 
 	<div class="pagination-place" style="margin-top: 10px;">
 		<?php echo $this->paginationControl($diagnosisDatas, "sliding", array("pagination", "Notice"), array("url" => "")); ?>

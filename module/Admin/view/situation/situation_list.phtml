@@ -81,18 +81,25 @@
 		justify-content: space-between ;
 	}
 
-	table.emegra tr {
-		min-width: 1200px;
-		grid-template-columns: 30px repeat(13, 1fr) 30px;
-	}
-	table.emegra tr.index {
-		padding-top: 8px;
-		padding-bottom: 4px;
-		grid-template-areas:
-		"no  status  applicant_info applicant_info        applicant_info applicant_info applicant_info  applicant_info  dianosis_detail dianosis_detail dianosis_detail  dianosis_status  dianosis_status  dianosis_status check "
-		"no  status  applicant_date application_category  name           education      develop         career          request_date    level           test             execute_date     get_point        grade           check";
-	}
+  /*
+    作成：朴昰成
+    削除：朴昰成
+    削除日：24/06/10
 
+  削除前：
+    table.emegra tr {
+      min-width: 1200px;
+      grid-template-columns: 30px repeat(13, 1fr) 30px;
+    }
+    table.emegra tr.index {
+      padding-top: 8px;
+      padding-bottom: 4px;
+      grid-template-areas:
+      "no  status  applicant_info applicant_info        applicant_info applicant_info applicant_info  applicant_info  dianosis_detail dianosis_detail dianosis_detail  dianosis_status  dianosis_status  dianosis_status check "
+      "no  status  applicant_date application_category  name           education      develop         career          request_date    level           test             execute_date     get_point        grade           check";
+    }
+
+  ここまで */
 	button.emegra.search.confirm {
 		height: 30px;
 		width: 100px;
@@ -101,13 +108,20 @@
 		font-weight: 400;
 	}
 
-	table.emegra tr.index > th {
-		padding: 0;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-	}
+  /*
+    作成：朴昰成
+    削除：朴昰成
+    削除日：24/06/10
 
+  削除前：
+    table.emegra tr.index > th {
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+  ここまで */
 	.pagination-place, .button-place {
 		margin-top: 10px;
 		display: flex;
@@ -312,7 +326,7 @@
           <th rowspan="2">No</th>
           <th rowspan="2">ステータス</th>
           <th colspan="5">IT診断者情報</th>
-          <th colspan="3">診断問項詳細</th>
+          <th colspan="4">診断問題詳細</th>
           <th colspan="4">診断状況</th>
           <th rowspan="2"><input id="checkAll" type="checkbox" onclick="Checking(this);" style="cursor: pointer;"></th>
         </tr>
@@ -322,21 +336,22 @@
           <th>応募区分</th>
           <th>名前</th>
           <th>学歴</th>
-          <th>経験分野</th>
-          <th>経験年数</th>
+          <th>ITスキル有無</th>
+
+          <th>大分類</th>
+          <th>小分類</th>
+          <th>レベル</th>
+          <th>診断問題ID</th>
 
           <th>診断依頼</th>
-          <th>レベル</th>
-          <th>診断問題</th>
-
-          <th>試験日</th>
+          <th>診断日</th>
           <th>得点</th>
           <th>等級</th>
         </tr>
       </thead>
       <tbody>
         <?php if (empty($recordDatas)): ?>
-          <td colspan="15">データがありません。</td>
+          <td colspan="16">データがありません。</td>
         <?php else: ?>
           <?php foreach ($recordDatas as $index => $data): ?>
             <tr <?php echo ($data["diagnosis_date"] == null) ? "style='background: lightcyan;'" : ""; ?>>
@@ -348,20 +363,21 @@
               <td><a onclick="self.location.href='./<?php echo ($data['diagnosis_date'] == null) ? 'edit' : 'detail'; ?>/<?php echo $data['idx']; ?>';"><?php echo $data["name"]; ?></a></td>
               <td><?php echo $data["education"]; ?></td>
               <td><?php echo (empty($data["major"])) ? "無" : "有"; ?></td>
-              <td><?php echo ($data["career"] != null) ? $data["career"] . "年" : "無"; ?></td>
 
-              <td><?php echo ($data["request_date"] != null) ? date("y.m.d", strtotime($data["request_date"])) : "未依頼"; ?></td>
+              <td><?php echo (isset($data["class1st"])) ? $data["class1st"] : "未設定"; ?></td>
+              <td><?php echo (isset($data["class2nd"])) ? $optionDatas[$data["class2nd"]] : "未設定"; ?></td>
               <td><?php echo (isset($data["level"])) ? $levelTexts[$data["level"]] : "未設定"; ?></td>
-              <td><?php echo ($data["diagnosis_code"] != null) ? $data["diagnosis_code"] : "未設定"; ?></td>
+              <td><?php echo (isset($data["diagnosis_code"])) ? $data["diagnosis_code"] : "未設定"; ?></td>
 
+              <td><?php echo (isset($data["request_date"])) ? "依頼" : "未依頼"; ?></td>
               <?php if (isset($data["rank"])): ?>
-                <td><?php echo date("y.m.d", strtotime($data["execute_date"])); ?></td>
-                <td><?php echo ($data["rank"] == "F") ? "失格" : $data["get_point"] . "/100"; ?></td>
+                <td><?php echo (isset($data["execute_date"])) ?  date("y.m.d", strtotime($data["execute_date"])) : "未受験"; ?></td>
+                <td><?php echo ($data["rank"] != "F") ? $data["get_point"] . "/100" : "失格"; ?></td>
                 <td><?php echo $data["rank"]; ?></td>
               <?php else: ?>
-                <td>未実行</td>
-                <td>未実行</td>
-                <td>未実行</td>
+                <td>未受験</td>
+                <td>未受験</td>
+                <td>未受験</td>
               <?php endif; ?>
 
               <?php

@@ -1,7 +1,7 @@
 <?php 
 echo $this->partial("breadcrumb", ["datas" => $breadcrumbData]); 
 $currentDate = date("Y-m-d H:i:s");
-$dateSchedule = date("Y-m-d H:i");
+$dateSchedule = date("Y-m-d H:i", strtotime($currentDate . ' +30 minutes'));
 
 $urlLink = "../../diagnosis/detail/";
 
@@ -149,7 +149,10 @@ $question_num = isset($diagnosisData['question_num']) ? $diagnosisData['question
 	<style type="text/css">
 		option { color: black; }
 		/* input::placeholder { font-style: italic; } */
-  .modal {-webkit-backdrop-filter: blur(5px); /* Safari and older versions of Chrome */backdrop-filter: blur(5px); /* Standard syntax for modern browsers */}
+  .modal {
+    -webkit-backdrop-filter: blur(5px); /* Safari and older versions of Chrome */
+    backdrop-filter: blur(5px); /* Standard syntax for modern browsers */
+  }
 
 	</style>
 
@@ -267,7 +270,7 @@ $question_num = isset($diagnosisData['question_num']) ? $diagnosisData['question
           </select>
 				</dd>
 
-				<dt class="essential" id=class2ndTitle>問題種別</dt>
+				<dt class="essential" id=class2ndTitle>経験分野詳細</dt>
 				<dd>
 				<select class="form-select" name="class2nd" id="class2ndId" style="width:220px;" onchange="ChangeInputStyle(this)">
 				<?php if (true): ?>
@@ -300,7 +303,7 @@ $question_num = isset($diagnosisData['question_num']) ? $diagnosisData['question
 
 				</dd>
 
-				<dt class="essential" id="careerTitle">IT経験年数</dt>
+				<dt class="essential" id="careerTitle">経験年数</dt>
 				<dd><input class="form-control" name="career" id="careerId" type="text" placeholder="記入" style="font-size:15px; width:80px" maxlength='2' value="<?php echo $applicantArray['career']?>">年</dd> 
 		</dl>
     <!-- <input type="hidden" name="career" id="noSkillCareer"> -->
@@ -316,10 +319,16 @@ $question_num = isset($diagnosisData['question_num']) ? $diagnosisData['question
 			dl.emegra.detail { grid-template-columns: repeat(2, 140px 1fr); }
 		</style>
 		<dl class="emegra detail">
-                <dt>診断依頼</dt>
-				<dd><input class="form-control"  type="text" style="width:220px;" value="<?php echo $currentDate?>"readonly></dd>
+       <dt class="essential">レベル</dt>
+				<dd><select class="form-select" name="level" type="text" style="width:100px;">
+					<option value="0"<?php echo $isLevel0 ? "selected" : "" ;?>>無級</option>
+					<option value="1"<?php echo $isLevel1 ? "selected" : "" ?>>初級</option>
+					<option value="2"<?php echo $isLevel2 ? "selected" : "" ?>>中級</option>
+					<option value="3"<?php echo $isLevel3 ? "selected" : "" ?>>高級</option>
+					</select>
+				</dd>
 
-				<dt class="essential">診断問題ID</dt>
+				<dt class="essential">問題ID</dt>
 				<dd>
 					<input name="code" type="hidden" style="width:220px;" value="<?php echo $diagnosisData['code'] !=NULL ?  $diagnosisData['code'] : "" ?>">
             <div id="codeDisplay" name="codeName" style="padding-right:5px;cursor:pointer;" 
@@ -356,7 +365,7 @@ $question_num = isset($diagnosisData['question_num']) ? $diagnosisData['question
                     <tr>
                       <th>No</th>
                       <th style="text-align:left;">タイトル</th>
-                      <th>診断問題ID番号</th>
+                      <th>問題ID番号</th>
                       <th>選択</th>
                     </tr>
                   </thead>
@@ -371,15 +380,6 @@ $question_num = isset($diagnosisData['question_num']) ? $diagnosisData['question
 				</div>
 			</div>
 
-				<dt class="essential">レベル</dt>
-				<dd><select class="form-select" name="level" type="text" style="width:100px;">
-					<option value="0"<?php echo $isLevel0 ? "selected" : "" ;?>>無級</option>
-					<option value="1"<?php echo $isLevel1 ? "selected" : "" ?>>初級</option>
-					<option value="2"<?php echo $isLevel2 ? "selected" : "" ?>>中級</option>
-					<option value="3"<?php echo $isLevel3 ? "selected" : "" ?>>高級</option>
-					</select>
-					
-				</dd>
 				<dt class="essential">問題数別</dt>
           <dd>
             <input id="question_numId" class="form-control" type="text" style="width:50px;text-align:center;" value="<?php echo $question_num ?>" readonly>問
@@ -431,30 +431,31 @@ $question_num = isset($diagnosisData['question_num']) ? $diagnosisData['question
           </select>
           <!-- /* ここまで */ -->
 				</dd>
-        <dt class="essential">診断日</dt>
-        <dd><input class="form-control" name="schedule" type="text" style="width:220px;" value="<?php echo $recordArray['date_schedule'] ? $recordArray['date_schedule'] : $dateSchedule ?>"></dd>
-
 		</dl>
 	</div>
 </div>
 <div class="emegra card" style="margin-top: 32px;">
-		<div class="card-header">ITスキル診断状況</div>
+  <div class="card-header">ITスキル診断状況</div>
 
-		<div class="card-body">
-			<style type="text/css">
-			dl.emegra.detail { grid-template-columns: repeat(2, 150px 1fr); }
-			</style>
-			<dl class="emegra detail"> 
+  <div class="card-body">
+    <style type="text/css">
+    dl.emegra.detail { grid-template-columns: repeat(2, 150px 1fr); }
+    </style>
+    <dl class="emegra detail"> 
+      <dt>診断依頼</dt>
+      <dd><input class="form-control" type="text" style="width:220px;" id="currentDateTime" readonly></dd>
 
-				<dt>備考</dt>
-				<dd><input class="form-control" name="note" type="text" style="width:220px; " value="<?php echo $recordArray['note']?>"></dd>
+      <dt class="essential">診断予定日</dt>
+      <dd><input class="form-control" name="schedule" id="scheduleId" type="text" style="width:220px;" value="<?php echo $recordArray['date_schedule'] ? $recordArray['date_schedule'] : $dateSchedule ?>"></dd>
 
-        <input type="hidden" name="recordindex" value="<?php echo $index?>"></div>
-        <input type="hidden" name="applicantindex" value="<?php echo $applicantArray['idx']?>"></div>
+      <dt>備考</dt>
+      <dd><input class="form-control" name="note" type="text" style="width:220px; " value="<?php echo $recordArray['note']?>"></dd>
 
-			</dl>
-		</div>
-	</div>
+      <input type="hidden" name="recordindex" value="<?php echo $index?>"></div>
+      <input type="hidden" name="applicantindex" value="<?php echo $applicantArray['idx']?>"></div>
+    </dl>
+  </div>
+</div>
 
   <!-- // 修正の時
 /*
@@ -586,16 +587,17 @@ $question_num = isset($diagnosisData['question_num']) ? $diagnosisData['question
 
 <script>
 window.onload = function() {
-    randomPW();
+  startTime();
+  randomPW();
 
-    var selectedClass2nd = <?php echo json_encode($selectedClass2nd); ?>;
+  var selectedClass2nd = <?php echo json_encode($selectedClass2nd); ?>;
 
-    if (form.skill.value == 1 && selectedClass2nd == null) {
-        SkillSelectChange();
-    }
-    else if(form.skill.value ==1){
-      SkillSelectChange2();
-    }
+  if (form.skill.value == 1 && selectedClass2nd == null) {
+      SkillSelectChange();
+  }
+  else if(form.skill.value ==1){
+    SkillSelectChange2();
+  }
 };
 </script>
 
@@ -796,6 +798,7 @@ function checkKana(input) {
 
 <script>
 	function editConfirm(){
+    let scheduleInput = document.getElementById('scheduleId').value;
     if (form.name.value == "" || isZenkaku(form.name.value)) {
           alert("お名前（漢字）を入力してください。");
           setTimeout("form.name.focus()",100);
@@ -841,16 +844,21 @@ function checkKana(input) {
             return false;
         }
         if (form.code.value == "") {
-          alert("診断問題IDを入力してください。");
+          alert("問題IDを入力してください。");
           setTimeout("form.code.focus()",100);
           event.preventDefault();
           return false;
         }
-
-		var submitConfirm=confirm("依頼しますか？");
-		if (!submitConfirm){
-            event.preventDefault();
-            return false;
+        if (form.scheduleId.value == "") {
+          alert("診断予定日を入力してください。");
+          setTimeout("form.scheduleId.focus()",100);
+          event.preventDefault();
+          return false;
+        }
+        var submitConfirm = confirm("診断予定日は " + scheduleInput + " です。\n依頼しますか？");
+        if (!submitConfirm){
+          event.preventDefault();
+          return false;
         }
         else if(submitConfirm==true){
         form.submit();
@@ -908,7 +916,7 @@ function checkKana(input) {
             return false;
         }
         // if (form.code.value == "") {
-        //     alert("診断問題IDを入力してください。");
+        //     alert("問題IDを入力してください。");
         //     setTimeout("form.code.focus()",100);
         //     event.preventDefault();
         //     return false;
@@ -1000,7 +1008,7 @@ function diagnosisData() {
       const row = document.createElement("tr");
       const messageCell = document.createElement("td");
       messageCell.setAttribute("colspan", "4");
-      messageCell.textContent = "診断問題IDがありません。";
+      messageCell.innerHTML = "該当する診断問題がありません。<br>経験分野、経験分野詳細、レベルを確認ください。";
       row.appendChild(messageCell);
       tableBody.appendChild(row);
     } else {
@@ -1065,4 +1073,26 @@ if (questionNumElement) {
     questionNumElement.value = question_num;
 }
 }
+</script>
+<script>
+  function startTime() {
+      const today = new Date();
+      let y = today.getFullYear();
+      let mo = today.getMonth() + 1; // Months are zero-based
+      let d = today.getDate();
+      let h = today.getHours();
+      let m = today.getMinutes();
+      let s = today.getSeconds();
+      mo = checkTime(mo);
+      d = checkTime(d);
+      m = checkTime(m);
+      s = checkTime(s);
+      document.getElementById('currentDateTime').value = `${y}-${mo}-${d} ${h}:${m}:${s}`;
+      setTimeout(startTime, 1000);
+  }
+
+  function checkTime(i) {
+      if (i < 10) {i = "0" + i};  // Add zero in front of numbers < 10
+      return i;
+  }
 </script>

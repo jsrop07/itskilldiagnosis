@@ -1,7 +1,7 @@
 <?php 
 echo $this->partial("breadcrumb", ["datas" => $breadcrumbData]); 
-$currentDate = date("Y-m-d H:i:s");
-$dateSchedule = date("Y-m-d H:i");
+$currentDate = date("Y-m-d H:i");
+$dateSchedule = date("Y-m-d H:i", strtotime($currentDate . ' +30 minutes'));
 
 function InitStyle() { return " font-style: italic; color: ;"; }
 ?>
@@ -13,10 +13,12 @@ function InitStyle() { return " font-style: italic; color: ;"; }
 	<style type="text/css">
 		option { color: black; }
 		input::placeholder { font-style: italic; }
-  .modal {-webkit-backdrop-filter: blur(5px); /* Safari and older versions of Chrome */backdrop-filter: blur(5px); /* Standard syntax for modern browsers */}
+    .modal {
+      -webkit-backdrop-filter: blur(5px); /* Safari and older versions of Chrome */
+      backdrop-filter: blur(5px); /* Standard syntax for modern browsers */
+    }
 
 	</style>
-
 	<div class="emegra card">
 		<div class="card-header">ITスキル診断者情報</div>
 
@@ -51,7 +53,7 @@ function InitStyle() { return " font-style: italic; color: ;"; }
             <option value="その他">その他</option>
           </select>
           <div id="otherEducationInput" style=" margin-left: 10px; display:none; width:200px;">
-              <input class="form-control" type="text" placeholder="その他の場合の、記入" id="otherEducation" name="education" maxlength='20'>
+            <input class="form-control" type="text" placeholder="その他の場合の、記入" id="otherEducation" name="education" maxlength='20'>
           </div>
 				</dd>      
         
@@ -125,15 +127,15 @@ function InitStyle() { return " font-style: italic; color: ;"; }
           </select>
 				</dd>
 
-				<dt class="essential" id=class2ndTitle>問題種別</dt>
+				<dt class="essential" id=class2ndTitle>経験分野詳細</dt>
 				<dd>
           <select class="form-select" name="class2nd" style="width:220px;" id="class2ndId">
             <option value=""  >選択してください。</option>
           </select>
 				</dd>
 
-				<dt class="essential" id="careerTitle">IT経験年数</dt>
-				<dd><input class="form-control" id="careerId" name="career" type="text" placeholder="経歴を記入してください。" style="font-size:15px; width:220px;" maxlength='2'></dd> 
+				<dt class="essential" id="careerTitle">経験年数</dt>
+				<dd><input class="form-control" id="careerId" name="career" type="text" placeholder="記入" style="font-size:15px; width:80px;" maxlength='2'>年</dd> 
 		</dl>
 	</div>
 
@@ -147,11 +149,18 @@ function InitStyle() { return " font-style: italic; color: ;"; }
 			dl.emegra.detail { grid-template-columns: repeat(2, 140px 1fr); }
       
 		</style>
-		<dl class="emegra detail">
-        <dt>診断依頼</dt>
-				<dd><input class="form-control"  type="text" style="width:220px;" value="<?php echo $currentDate?>"readonly></dd>
-        
-        <dt class="essential">診断問題ID</dt>
+		<dl class="emegra detail">  
+      <dt class="essential">レベル</dt>
+      <dd>
+        <select class="form-select" name="level" type="text" style="width:100px;">
+          <option value="0">無級</option>
+          <option value="1">初級</option>
+          <option value="2">中級</option>
+          <option value="3">高級</option>
+        </select>
+      </dd>
+
+      <dt class="essential">問題ID</dt>
 				<dd>
 					<input name="code" type="hidden" style="width:220px;">
           <div id="codeDisplay" style="padding-right:5px"></div>
@@ -162,7 +171,7 @@ function InitStyle() { return " font-style: italic; color: ;"; }
 				<div class="modal-dialog" style="margin-top:150px;" role="document">
 					<div class="modal-content rounded-4">
             <div class="modal-header border-bottom-0" style="background:linear-gradient(111deg, #50D7C7 0%, #40ADF0 100%); color:white; height: 40px;border-top-left-radius:13px;border-top-right-radius:13px">
-              <h3 class="modal-title fs-6" id="exampleModalLabel">診断書検索</h3>
+              <h3 class="modal-title fs-6" id="exampleModalLabel">診断問題検索</h3>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(100%);"></button>
 					  </div>
               <div class="modal-body fs-5">
@@ -171,7 +180,7 @@ function InitStyle() { return " font-style: italic; color: ;"; }
                     <tr>
                       <th>No</th>
                       <th style="text-align:left;">タイトル</th>
-                      <th>診断問題ID番号</th>
+                      <th>問題ID番号</th>
                       <th>選択</th>
                     </tr>
                   </thead>
@@ -185,16 +194,6 @@ function InitStyle() { return " font-style: italic; color: ;"; }
           </div>
 				</div>
 			</div>
-
-				<dt class="essential">レベル</dt>
-				<dd>
-          <select class="form-select" name="level" type="text" style="width:100px;">
-            <option value="0">無級</option>
-            <option value="1">初級</option>
-            <option value="2">中級</option>
-            <option value="3">高級</option>
-          </select>
-				</dd>
 
 				<dt class="essential">問題数別</dt>
 				<dd><input class="form-control" name="question_num" type="text" style="width:50px;text-align:center;">問</dd>
@@ -222,11 +221,24 @@ function InitStyle() { return " font-style: italic; color: ;"; }
             <option value="0">自動</option>
           </select>
 				</dd>
-
-        <dt class="essential">診断日</dt>
-        <dd><input class="form-control" name="schedule" type="text" style="width:220px;" value="<?php echo $dateSchedule?>"></dd>
 		</dl>
 	</div>
+</div>
+
+<div class="emegra card" style="margin-top: 32px;">
+  <div class="card-header">ITスキル診断状況</div>
+
+  <div class="card-body">
+    <style type="text/css">
+    dl.emegra.detail { grid-template-columns: repeat(2, 150px 1fr); }
+    </style>
+    <dl class="emegra detail"> 
+    <dt>診断依頼</dt>
+    <dd><input class="form-control" type="text" style="width:220px;" id="currentDateTime" readonly></dd>                 
+    <dt class="essential">診断予定日</dt>
+    <dd><input class="form-control" name="schedule" id="scheduleId" type="text" style="width:220px;" value="<?php echo $dateSchedule?>"></dd>
+    </dl>
+  </div>
 </div>
 
 <div class="btn-place" style="margin-top: 32px;">
@@ -277,7 +289,7 @@ function InitStyle() { return " font-style: italic; color: ;"; }
 
 <script>
 	window.onload=function(){
-		// console.log(form.major);
+		startTime()
 		randomPW();
 	}
 </script>
@@ -487,6 +499,8 @@ function checkKana(input) {
 
 <script>
     function inputConfirm() {
+      var scheduleInput = document.getElementById('scheduleId').value;
+
         if (form.email.value == "" || !emailValidationCheck(form.email.value)) {
             alert("メールアドレスを入力してください。");
             setTimeout("form.email.focus()",100);
@@ -568,13 +582,18 @@ function checkKana(input) {
             return false;
         }
         if (form.code.value == "") {
-            alert("診断問題IDを入力してください。");
+            alert("問題IDを入力してください。");
             setTimeout("form.code.focus()",100);
             event.preventDefault();
             return false;
         }
-
-        var submitConfirm=confirm("依頼しますか？");
+        if (form.scheduleId.value == "") {
+            alert("診断予定日を入力してください。");
+            setTimeout("form.scheduleId.focus()",100);
+            event.preventDefault();
+            return false;
+        }
+        var submitConfirm = confirm("診断予定日は " + scheduleInput + " です。\n依頼しますか？");
         if (!submitConfirm){
             event.preventDefault();
             return false;
@@ -668,7 +687,7 @@ function checkKana(input) {
             return false;
         }
         // if (form.code.value == "") {
-        //     alert("診断問題IDを入力してください。");
+        //     alert("問題IDを入力してください。");
         //     setTimeout("form.code.focus()",100);
         //     event.preventDefault();
         //     return false;
@@ -686,26 +705,26 @@ function checkKana(input) {
 <script>
     	function ChangeClass1st(element) {
 
-		class2ndSelect.replaceChildren();
-		
-		switch (element.value) {
-        <?php foreach ($optionDatas["class2nd"] as $value => $class2nd): ?>
-            case "<?php echo $optionDatas["class1st"][array_search($value, array_column($optionDatas["class1st"], "idx"))]["text"]; ?>":
-                var option = document.createElement("option");
-                option.hidden = true;
-                option.innerText = "選択してください。";
-                class2ndSelect.appendChild(option);
+  class2ndSelect.replaceChildren();
+  
+  switch (element.value) {
+    <?php foreach ($optionDatas["class2nd"] as $value => $class2nd): ?>
+      case "<?php echo $optionDatas["class1st"][array_search($value, array_column($optionDatas["class1st"], "idx"))]["text"]; ?>":
+        var option = document.createElement("option");
+        option.hidden = true;
+        option.innerText = "選択してください。";
+        class2ndSelect.appendChild(option);
 
-                <?php foreach ($class2nd as $data): ?>
-                    var option = document.createElement("option");
-                    option.value = <?php echo $data["idx"]; ?>;
-                    option.innerText = "<?php echo $data["text"]; ?>";
-                    class2ndSelect.appendChild(option);
-                <?php endforeach; ?>
-                break;
-                <?php endforeach; ?>
-            }
-	}
+        <?php foreach ($class2nd as $data): ?>
+          var option = document.createElement("option");
+          option.value = <?php echo $data["idx"]; ?>;
+          option.innerText = "<?php echo $data["text"]; ?>";
+          class2ndSelect.appendChild(option);
+        <?php endforeach; ?>
+        break;
+        <?php endforeach; ?>
+  }
+}
 </script>
 
 <script>
@@ -776,7 +795,7 @@ function diagnosisData() {
 
         const messageCell = document.createElement("td");
         messageCell.setAttribute("colspan", "4");
-        messageCell.textContent = "診断問題IDがありません。";
+        messageCell.innerHTML = "該当する診断問題がありません。<br>経験分野、経験分野詳細、レベルを確認ください。";
         row.appendChild(messageCell);
 
         tableBody.appendChild(row);
@@ -835,4 +854,26 @@ function selectCode(code, title) {
     }
   }
 
+</script>
+<script>
+  function startTime() {
+      const today = new Date();
+      let y = today.getFullYear();
+      let mo = today.getMonth() + 1; // Months are zero-based
+      let d = today.getDate();
+      let h = today.getHours();
+      let m = today.getMinutes();
+      let s = today.getSeconds();
+      mo = checkTime(mo);
+      d = checkTime(d);
+      m = checkTime(m);
+      s = checkTime(s);
+      document.getElementById('currentDateTime').value = `${y}-${mo}-${d} ${h}:${m}:${s}`;
+      setTimeout(startTime, 1000);
+  }
+
+  function checkTime(i) {
+      if (i < 10) {i = "0" + i};  // Add zero in front of numbers < 10
+      return i;
+  }
 </script>

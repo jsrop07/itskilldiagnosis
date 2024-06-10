@@ -118,49 +118,6 @@
 			データがありません。
 		</div>
 	<?php else: ?>
-    <!--
-      作成：朴昰成
-      修正：朴昰成
-      修正日：24/06/10
-    -->
-
-    <!-- 修正前： <?php /* ?>
-      <table class="emegra" style="margin-top: 8px;">
-        <thead>
-          <tr class="index">
-            <th style="grid-area: no">No</th>
-
-            <th style="grid-area: class">種別</th>
-            <th style="grid-area: class1st">大分類</th>
-            <th style="grid-area: class2nd">小分類</th>
-
-            <th style="grid-area: level">レベル</th>
-            <th style="grid-area: title">タイトル</th>
-            <th style="grid-area: num">問項数</th>
-            <th style="grid-area: criteria">合格基準</th>
-            <th style="grid-area: update">変更日</th>
-            <th style="grid-area: id">問題ID</th>
-          </tr>
-        </thead>
-        <tbody>
-          <?php foreach ($diagnosisDatas as $index => $data): ?>
-            <tr>
-              <td><?php echo $firstNo - $index ; ?></td>
-              <td><?php echo $data["code"]; ?></td>
-              <td><?php echo $optionDatas[$data["class1st"]]; ?></td>
-              <td><?php echo $optionDatas[$data["class2nd"]]; ?></td>
-              <td><?php echo $levelTexts[$data["level"]]; ?></td>
-              <td class="link left" onclick="self.location.href='./detail/<?php echo $data['idx']; ?>'"><?php echo $data["title"]; ?></td>
-              <td><?php echo $data["question_num"]; ?>問題</td>
-              <td>100点</td>
-              <td><?php echo date("y.m.d", strtotime($data["date_start"])); ?></td>
-            </tr>
-          <?php endforeach; ?>
-        </tbody>
-      </table>
-    <?php */ ?> -->
-
-		<!-- 修正後： -->
     <div class="emegra-table">
       <table class="table table-bordered">
         <thead>
@@ -181,17 +138,12 @@
         </thead>
         <tbody>
           <?php foreach ($diagnosisDatas as $index => $data): ?>
-            <!--
-              作成：朴昰成
-                作成日：24/06/10
-            -->
 
             <?php
               $points = explode(",", $data["result_points"]);
               $passPoint = $points[2];
             ?>
 
-            <!-- ここまで -->
             <tr>
               <td><?php echo $firstNo - $index ; ?></td>
               <td><?php echo $data["code"]; ?></td>
@@ -207,7 +159,6 @@
         </tbody>
       </table>
     </div>
-		<!-- ここまで -->
 	<?php endif; ?>
 
 	<div class="pagination-place" style="margin-top: 10px;">

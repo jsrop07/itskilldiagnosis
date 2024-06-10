@@ -203,6 +203,7 @@ class ApplicantController extends AbstractActionController
 	  // Read applicant info
 	  $applicantExamTbl = $this->getServiceLocator()->get("ApplicantExamTable");
 	  $applicantInfo    = $applicantExamTbl->readById($emailId);
+		$datas['emailId'] = $emailId;
 		$situTbl= $this->getServiceLocator()->get("SituTable");
 		$diagnosisTb = $this->getServiceLocator()->get("DiagnosisTable-Admin");
 		$recordIdx = $situTbl->getRecord();
@@ -229,7 +230,8 @@ class ApplicantController extends AbstractActionController
 
 	  // $diagnosisInfo = $applicantExamTbl->readByDiagnosisCode($recordCode);
 		$diagnosisInfo = $diagnosisTb->ReadForRecordByCodenDate($recordCode, $examRecordInfo["diagnosis_date"]);
-
+		// print_r($diagnosisInfo);
+		// exit;
     // Read diagnosis's question_num field data & time_limit data
 	  $datas["question_num"] = $diagnosisInfo["question_num"];
 	  $datas["time_limit"]   = $diagnosisInfo["time_limit"];
@@ -277,8 +279,10 @@ class ApplicantController extends AbstractActionController
 				$get_point+=$outputPoint[$i];// plus point 
 
 			}
-
 		}
+
+		// $percentPoint = ceil($get_point/$diagnosisInfo["point_total"]*100);
+
 		$selectedRank = [];
 		$resultPoints = explode(',', $diagnosisInfo["result_points"]);
 		$resultTexts = explode(',', $diagnosisInfo["result_texts"]);
@@ -352,14 +356,14 @@ class ApplicantController extends AbstractActionController
 		  }
 		  
 		  if($submit_post=='cancel'){
-			if (isset($session->id)) {
-				$emailId = $session->id;
-				unset($emailId);
-				$applicantExamTbl->deletePasswordByIdx($applicantInfo["idx"]);
-        $applicantExamTbl->disqualificationByCancel($examRecordInfo['idx']);
-				session_unset(); 
-				$this->CancelToLogin();	
-			}
+				if (isset($session->id)) {
+					$emailId = $session->id;
+					unset($emailId);
+					$applicantExamTbl->deletePasswordByIdx($applicantInfo["idx"]);
+					$applicantExamTbl->disqualificationByCancel($examRecordInfo['idx']);
+					session_unset(); 
+					$this->CancelToLogin();	
+				}
 		  }
 	  // Set variables to be passed to the layout
 	  $viewModel = new ViewModel($datas);
@@ -369,6 +373,35 @@ class ApplicantController extends AbstractActionController
 
 	  return $viewModel;
   }
+
+	/* log
+	作成：丁錫圓
+	作成日：24/06/07
+	*/ 
+	public function timeoutAction()
+	{
+			$post = $this->params()->fromPost();
+			$examIdx = $post['idx']; 
+			$applicantExamTbl = $this->getServiceLocator()->get("ApplicantExamTable");
+			$timeout = $applicantExamTbl->timeout($examIdx); 
+			if ($timeout === 'timeout') {
+				$session = new Container("applicant");
+				if (isset($session->id)) {
+					$emailId = $session->id;
+					$applicantInfo = $applicantExamTbl->readById($emailId);
+					$applicantExamTbl->deletePasswordByIdx($applicantInfo['idx']);
+					unset($emailId);
+					session_unset(); 
+					die($timeout);
+				}
+			}
+			elseif($timeout === "success"){					
+				die($timeout);
+			}
+
+		
+	}
+		// ここまで
 
 function mailByApplicantExam($applicantInfo,$sqlSet,$managerArray,$examRecordIdx){
 	$mail = new MailSender();
@@ -421,14 +454,42 @@ function mailByApplicantExam($applicantInfo,$sqlSet,$managerArray,$examRecordIdx
 	$param['config']=$this->getConfig();
 	// 메일 제목 지정 (일반적으로 DB에 메일폼 테이블을 만들어서 그것을 가져와서 아래의 title contents에 넣지만, 이건 샘플이므로 간단히.)
 	// 사람마다 변환해야 할 부분은 {{이렇게}} 메일폼에 넣어놓는다.
-	$param['title']="{$applicantInfo["name"]}様、診断試験結果が出ました。";
-	$param["content"] = "株式会社ジエンジサービスから、ITスキル診断結果が到着しましたのでご確認をお願いいたします。\n\n申請者：{$applicantInfo["name"]}\nお名前（カナ）：{$applicantInfo["kana"]}\n応募区分：{$caseText}\n学歴：{$examRecordRecent["education"]}\n専攻：{$majorText}\n試験日：{$examRecordRecent["execute_date"]}\n\n得点：{$examRecordRecent["get_point"]}\n評価：{$examRecordRecent["rank"]}\n評価結果：{$examRecordRecent["diagnosis_comment"]}\n\n※ITスキル診断に不明点などありましたら下記の問い合わせ先にご連絡ください。\nお問い合わせ先\n担当者：{$managerArray[2]}\n連絡先：{$managerArray[0]}\n\n※このメールに返信しないでください。";
+	$param['title']="診断試験の結果について。";
+	// $param['title']=str_replace("{{applicant_name}}",$applicantInfo["name"],$param['title']);
 
-	// 사람이름이나, URL등 고유하게 변경해야 하는 것은 이렇게 처리한다.
-	// 메일 제목과 내용 부분 모두 변환처리.
-	$param['title']=str_replace("{{user_name}}","ITスキル診断担当者",$param['title']);
-	$param['content']=str_replace("{{URL}}","テスト",$param['content']);
 
+	$param["content"] = "{{applicant_name1}}様\n"
+										. "お世話になっております。\n"
+										. "株式会社ジエンジサービス　ITスキル診断担当です。\n\n"
+										. "ITスキル診断を受験いただき、ありがとうございました。\n"
+										. "結果が出ましたので、ご確認人のほどよろしくお願いいたします。\n\n"
+										. "申請者：{{applicant_name}}\n"
+										. "お名前（カナ）：{{kana}}\n"
+										. "応募区分：{{case}}\n"
+										. "学歴：{{education}}\n"
+										. "専攻：{{major}}\n"
+										. "試験日：{{execute_date}}\n\n"
+										. "得点：{{get_point}}\n"
+										. "評価：{{rank}}\n"
+										. "評価結果：{{diagnosis_comment}}\n\n"
+										. "※ITスキル診断に不明点などありましたら下記の問い合わせ先にご連絡ください。\n\n"
+										. "お問い合わせ先\n"
+										. "担当者：{{admin_name}}\n"
+										. "連絡先：{{admin_id}}\n\n"
+										. "以上、よろしくお願いいたします。\n"
+										. "※このメールに返信しないでください。";
+	$param['content']=str_replace("{{applicant_name1}}",$applicantInfo["name"],$param['content']);
+	$param['content']=str_replace("{{applicant_name}}",$applicantInfo["name"],$param['content']);
+	$param['content']=str_replace("{{kana}}",$applicantInfo['kana'],$param['content']);
+	$param['content']=str_replace("{{case}}",$caseText,$param['content']);
+	$param['content']=str_replace("{{education}}",$examRecordRecent["education"],$param['content']);
+	$param['content']=str_replace("{{major}}",$majorText,$param['content']);
+	$param['content']=str_replace("{{execute_date}}",$examRecordRecent["execute_date"],$param['content']);
+	$param['content']=str_replace("{{get_point}}",$examRecordRecent["get_point"],$param['content']);
+	$param['content']=str_replace("{{rank}}",$examRecordRecent["rank"],$param['content']);
+	$param['content']=str_replace("{{diagnosis_comment}}",$examRecordRecent["diagnosis_comment"],$param['content']);
+	$param['content']=str_replace("{{admin_name}}",$managerArray[2],$param['content']);
+	$param['content']=str_replace("{{admin_id}}",$managerArray[0],$param['content']);
 
 	// 수신자 이메일과 이름 설정
 	$param['managerEmail']=$managerArray[0];

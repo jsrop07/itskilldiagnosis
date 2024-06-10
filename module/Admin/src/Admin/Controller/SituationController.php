@@ -614,7 +614,7 @@ class SituationController extends AbstractActionController {
 		// 사람마다 변환해야 할 부분은 {{이렇게}} 메일폼에 넣어놓는다.
 
 		$param['title']="{$recentPassword["name"]}様、株式会社ジエンジサービスから、ITスキル診断依頼が到着しています。";
-		$param["content"] = "以下URLより「ITスキル診断サイト」にログインし診断を行ってください。\n\nログインID：{$recentPassword["email"]}\nログインPWD：{$recentPassword["password"]}\n\n＜ITスキル診断URL＞\nhttp://18.181.4.65/applicant/login\n\n※ITスキル診断の有効時間は{$applicantInfo["date_schedule"]}分からです。\n診断時間から30分以内に始めないと、受験できません。\n\n\n※このメールに返信しないでください。";
+		$param["content"] = "お世話になっております。\n以下URLより「ITスキル診断サイト」にログインし診断を行ってください。\n\nログインID：{$recentPassword["email"]}\nログインPWD：{$recentPassword["password"]}\n\n＜ITスキル診断URL＞\nhttp://18.181.4.65/applicant/login\n\n※ITスキル診断の有効時間は{$applicantInfo["date_schedule"]}分からです。\n診断時間から30分以内に始めないと、受験できません。\n\n\n以上、よろしくお願いいたします。\n※このメールに返信しないでください。";
 /* ここまで */
 
 		// 사람이름이나, URL등 고유하게 변경해야 하는 것은 이렇게 처리한다.
@@ -1116,12 +1116,15 @@ class SituationController extends AbstractActionController {
 		// load basic setting for MailSender
 		$param["config"] = $this->getConfig();
 		
-		$param["title"] = "{{applicant_name}}様、診断試験結果が出ました。";
-		$param["title"] = str_replace("{{applicant_name}}", $applicantData["name"], $param["title"]);
+		$param["title"] = "診断試験の結果について。";
 		
 		$caseText = "新卒";
 		if ($recordData["case"] == 1) { $caseText = "中途"; }
-		$param["content"] = "株式会社ジエンジサービスから、ITスキル診断結果が到着しましたのでご確認をお願いいたします。\n\n"
+		$param["content"] = "{{applicant_name}}様\n"
+											. "お世話になっております。\n"
+											.	"株式会社ジエンジサービス　ITスキル診断担当です。\n\n"
+											. "ITスキル診断を受験いただき、ありがとうございました。\n"
+											. "結果が出ましたので、ご確認人のほどよろしくお願いいたします。\n\n"
 											. "申請者：{{applicant_name}}\n"
 											. "お名前（カナ）：{{kana}}\n"
 											. "応募区分：{{case}}\n"
@@ -1131,10 +1134,11 @@ class SituationController extends AbstractActionController {
 											. "得点：{{get_point}}\n"
 											. "評価：{{rank}}\n"
 											. "評価結果：{{diagnosis_comment}}\n\n"
-											. "※ITスキル診断に不明点などありましたら下記の問い合わせ先にご連絡ください。\n"
+											. "※ITスキル診断に不明点などありましたら下記の問い合わせ先にご連絡ください。\n\n"
 											. "お問い合わせ先\n"
 											. "担当者：{{admin_name}}\n"
 											. "連絡先：{{admin_id}}\n\n"
+											. "以上、よろしくお願いいたします。\n"
 											. "※このメールに返信しないでください。";
 		$param["content"] = str_replace("{{applicant_name}}", $applicantData["name"], $param["content"]);
 		$param["content"] = str_replace("{{kana}}", $applicantData["kana"], $param["content"]);

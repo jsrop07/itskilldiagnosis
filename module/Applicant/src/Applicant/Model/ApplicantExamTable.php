@@ -143,4 +143,33 @@ class ApplicantExamTable
 
     return $result;     
   }
+
+  public function timeOut($idx)
+  {
+    $qry = new Sql($this->adapter);
+    $select = $qry->select('record');
+    $select->where(['idx' => $idx]);
+    $select->order('apply_date DESC'); 
+    $selectSqlString = $qry->getSqlStringForSqlObject($select);
+    $result = $this->adapter->query($selectSqlString, Adapter::QUERY_MODE_EXECUTE);
+    $row = $result->current();
+
+    $currentDateTime = date("Y-m-d H:i:s"); // current time
+    $dateSchedule = $row['date_schedule']; // diagnosis schedule time 
+
+    $currentDateTimeObj = date_create($currentDateTime); //turn to datetime object by cureenttDateTime 
+    $dateScheduleObj = date_create($dateSchedule); // turn to datetime object by dateScheduleTime
+    
+    $dateInterval = $currentDateTimeObj -> diff($dateScheduleObj); // calculate dateScheduletime - cureentDateTime
+    $minutesDifference = ($dateInterval->days * 24 * 60) + ($dateInterval->h * 60) + $dateInterval->i; //turn days, hour, minute to minute
+
+
+    if($minutesDifference <= 30 && $currentDateTimeObj > $dateScheduleObj){
+      return "success";
+    } elseif($minutesDifference > 30 && $currentDateTimeObj > $dateScheduleObj){
+      $updateQry = $this->sql->update('record')->set(array('rank' => 'F'))->where(array('idx' => $row['idx']));
+      $updateResult = $this->sql->prepareStatementForSqlObject($updateQry)->execute();
+      return "timeout";
+    }
+  }
 }

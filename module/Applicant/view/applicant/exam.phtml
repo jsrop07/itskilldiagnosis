@@ -19,7 +19,7 @@ $lineChange = "<br>";
 	<div class="middle-column" style="font-size:bold">ITスキル診断</div>
 	<div class="right-column"> 
     <div id="date-container" style="display:flex; align-items:center"></div>
-    <div style="text-align:center;display:flex; align-items:center;margin-left: 10px; "><?php echo $name; ?></div>
+    <div style="text-align:center;display:flex; align-items:center;margin-left: 10px; "><?php echo $name; ?>様</div>
     <div id="timerDisplay" style=" display:flex; align-items:center"></div>
 </div>
 </header>	     
@@ -89,7 +89,7 @@ $lineChange = "<br>";
       <!-- <div id="confirmComment"></div> -->
       </div>
       <div class="modal-footer  border-top-0" style="margin-bottom:8px; justify-content:center;">
-    <button type="button" class="applicant_cancel" data-bs-dismiss="modal">キャンセル</button>
+    <button type="button" id="submitcancel" class="applicant_cancel" data-bs-dismiss="modal">キャンセル</button>
     <button type="submit" class="exam_submit" name="submit_post" value="btn_submit" id="submittingId">提出</button>
     </div>
   </div>
@@ -163,7 +163,7 @@ $lineChange = "<br>";
           submitButton.innerText = '提出';
           submitButton.id ='btn_submit'
           stopBtn.hidden = true;
-          welcomeId.innerText = 'お疲れ様でした。診断は終了いたしました。\n下の提出ボタンを押してください。';
+          welcomeId.innerText = 'お疲れ様でした。以上で診断試験は終了でございます。\n下記の提出ボタンを押してください。';
           welcomeId.style.paddingBottom = '16px';
           welcomeId.style.textAlign = 'center';
           welcomeId.style.fontSize = '20px';
@@ -418,6 +418,26 @@ document.addEventListener('keydown', notReload);
 
 </script> -->
 
+<script>
+window.addEventListener('beforeunload', function (event) {
+  // 서버로 AJAX 요청 보내기
+  const payload = {
+    examid: <?= json_encode($examIdx) ?>,
+    emailId: <?= json_encode($emailId) ?>
+  };
+  console.log('Sending payload:', payload);  // 디버깅을 위해 콘솔에 출력
+  
+  const xhr = new XMLHttpRequest();
+  xhr.open('POST', './timeout');
+  xhr.setRequestHeader('Content-Type', 'application/json');
+  xhr.send(JSON.stringify(payload));
+});
+
+</script>
+
+
+
+
 <!-- Do not press EnterKey -->
 <script>
   document.addEventListener("DOMContentLoaded", function() {
@@ -550,7 +570,42 @@ function confirmExam() {
     submitButton.addEventListener("click", function(event) {
       confirmContent.innerHTML = "<div class='spinner-border' role='status' style='width:20px;height:20px;'><span class='visually-hidden'></span></div>  結果転送中。。。少々お待ちください。";
       submittingId.hidden=true;
+      submitcancel.hidden = true;
     });
 });
 </script>
+<!-- log
+	作成：丁錫圓
+	作成日：24/06/07
+-->
+<script>
+const interval = 60000; 
+
+function sendRequest() {
+    const postForm = new FormData();
+    postForm.append("idx", <?= json_encode($examIdx) ?>);
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", './timeout', true);
+    xhr.send(postForm);
+
+    xhr.onload = () => {
+        if (xhr.status == 200) {
+            const result = xhr.responseText;
+            if (result == "timeout") {
+                alert("診断可能な時間が過ぎたので、受験できません。");
+                self.location.href='/applicant/login';
+            } else if (result == "success") {
+              console.log("success");
+            }
+        }
+    };
+}
+
+sendRequest();
+
+setInterval(sendRequest, interval);
+
+</script>
+<!-- ここまで -->
+
 <?php endif; ?>

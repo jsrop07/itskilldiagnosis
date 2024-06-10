@@ -105,7 +105,7 @@
                   <div id="requestMessage">申し込みますか？</div>
                 </div>
                 <div class="modal-footer  border-top-0" style="margin-bottom:8px; justify-content:center;">
-                  <button type="button" class="applicant_cancel" data-bs-dismiss="modal">キャンセル</button>
+                  <button id="btn_cancelId" type="button" class="applicant_cancel" data-bs-dismiss="modal">キャンセル</button>
                   <button id="btn_submitId" name="mode" value="btn_submit" class="applicant_button">申込</button>
                 </div>
               </div>
@@ -122,6 +122,7 @@
     submitButton.addEventListener("click", function(event) {
       confirmContent.innerHTML = "<div class='spinner-border' role='status' style='width:20px;height:20px;'><span class='visually-hidden'></span></div>  申込中。。。少々お待ちください。";
       btn_submitId.hidden=true;
+      btn_cancelId.hidden = true;
     });
 });
 </script>

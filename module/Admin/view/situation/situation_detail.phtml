@@ -219,18 +219,18 @@
       dl.emegra.detail { grid-template-columns: repeat(2, 150px 1fr); }
     </style>
     <dl class="emegra detail">
-    <dt>診断予定日時</dt>
-    <dd><?php echo (is_null($recordData["date_schedule"])) ? "未依頼" : date("y.m.d H:i", strtotime($recordData["date_schedule"])); ?></dd>
-
     <dt>診断依頼</dt>
-    <dd><?php echo (is_null($recordData["request_date"])) ? "未依頼" : date("y.m.d", strtotime($recordData["request_date"])); ?></dd>
+    <dd><?php echo (is_null($recordData["request_date"])) ? "未依頼" : date("y.m.d H:i:s", strtotime($recordData["request_date"])); ?></dd>
+
+    <dt>診断予定日時</dt>
+    <dd><?php echo (is_null($recordData["date_schedule"])) ? "未依頼" : date("y.m.d H:i:s", strtotime($recordData["date_schedule"])); ?></dd>
       <?php if ($isExecute): ?>
 
         <dt>診断実施日</dt>
-        <dd><?php echo date("y.m.d", strtotime($recordData["execute_date"])); ?></dd>
+        <dd><?php echo date("y.m.d H:i:s", strtotime($recordData["execute_date"])); ?></dd>
 
         <dt>結果送信日</dt>
-        <dd><?php echo ($recordData["date_mail"] != null) ? date("y.m.d", strtotime($recordData["date_mail"])) : "未送信"; ?></dd>
+        <dd><?php echo ($recordData["date_mail"] != null) ? date("y.m.d H:i:s", strtotime($recordData["date_mail"])) : "未送信"; ?></dd>
 
         <dt>得点</dt>
         <dd><?php echo $recordData["get_point"]; ?></dd>

@@ -9,23 +9,9 @@
 	$isExecute = false;
 	if ($recordData["request_date"] != null) {
 		$isRequest = true;
-    /*
-      作成：朴昰成
-      修正：朴昰成
-      修正日：24/06/03
-    */
-
-    /* 修正前：
-      if ($recordData["execute_date"] != null) {
-        $isExecute = true;
-      }
-    */
-
-    /* 修正後： */
     if (isset($recordData["rank"])) {
       $isExecute = true;
     }
-    /* ここまで */
 	}
 ?>
 
@@ -92,45 +78,6 @@
 			dl.emegra.setting { grid-template-columns: repeat(2, 170px 1fr); }
 		</style>
 		<dl class="emegra setting">
-      <!-- debug
-        作成：朴昰成
-        修正：朴昰成
-        修正日：24/06/05
-      -->
-
-      <!-- 修正前： <?php /* ?>
-        <dt>ITスキル有無</dt>
-        <dd><?php echo $skillTexts[$recordData["skill"]]; ?></dd>
-
-        <dt>経験分野</dt>
-        <dd><?php echo $recordData["class1st"]; ?></dd>
-
-        <dt>IT経験年数</dt>
-        <dd><?php echo ($recordData["career"] != null) ? $recordData["career"] . "年" : "無"; ?></dd>
-
-        <dt>問題種別</dt>
-        <dd><?php echo $optionDatas[$recordData["class2nd"]]; ?></dd>
-
-        <dt>診断問項ID</dt>
-        <dd><?php echo $recordData["diagnosis_code"]; ?></dd>
-
-        <dt>レベル</dt>
-        <dd><?php echo $levelTexts[$recordData["level"]]; ?></dd>
-
-        <dt>問項数別</dt>
-        <dd><?php echo $recordData["question_num"]; ?>問項</dd>
-
-        <dt>診断方法</dt>
-        <dd><?php echo $recordData["method"]; ?></dd>
-    
-        <dt>診断依頼</dt>
-        <dd><?php echo ($recordData["request_date"] != null) ? date("y.m.d", strtotime($recordData["request_date"])) : "未依頼"; ?></dd>
-
-        <dt>言語</dt>
-        <dd><?php echo ($recordData["language"] == null) ? "未設定" : $languageTexts[$recordData["language"]]; ?></dd>
-      <?php */ ?> -->
-
-      <!-- 修正後： -->
       <dt>ITスキル有無</dt>
       <dd><?php echo $skillTexts[$recordData["skill"]]; ?></dd>
 
@@ -166,7 +113,6 @@
   
       <dt>診断依頼</dt>
       <dd><?php echo (is_null($recordData["request_date"])) ? "未依頼" : date("y.m.d", strtotime($recordData["request_date"])); ?></dd>
-      <!-- ここまで -->
 		</dl>
 	</div>
 </div>
@@ -183,14 +129,9 @@
 				<dt>診断実施日</dt>
 				<dd><?php echo date("y.m.d", strtotime($recordData["execute_date"])); ?></dd>
 
-        <!-- move from 217
-          作成：朴昰成
-          作成日：24/06/05
-        -->
         <dt>結果送信日</dt>
         <dd><?php echo ($recordData["date_mail"] != null) ? date("y.m.d", strtotime($recordData["date_mail"])) : "未送信"; ?></dd>
 
-        <!-- ここまで -->
 				<dt>得点</dt>
 				<dd><?php echo $recordData["get_point"]; ?></dd>
 
@@ -198,32 +139,10 @@
 				<dd><?php echo $recordData["rank"]; ?></dd>
 
 				<dt>診断者のコメント</dt>
-        <!-- debug
-          作成：朴昰成
-          修正：朴昰成
-          修正日：24/06/05
-        -->
-
-        <!-- 修正前： <?php /* ?>
-          <dd><?php echo $recordData["comment"]; ?></dd>
-        <?php */ ?> -->
-
-        <!-- 修正後： -->
         <dd><?php echo $recordData["diagnosis_comment"]; ?></dd>
-        <!-- ここまで -->
 
 				<dt>備考</dt>
 				<dd><?php echo $recordData["comment"]; ?></dd>
-        <!-- move to 186
-          作成：朴昰成
-          削除：朴昰成
-          削除日：24/06/05
-        
-        削除前： <?php /* ?>
-
-          <dt>結果送信日</dt>
-          <dd><?php echo ($recordData["date_mail"] != null) ? date("y.m.d", strtotime($recordData["date_mail"])) : "未送信"; ?></dd>
-        <?php */ ?> -->
 			<?php else: ?>
 				<div style="grid-column: 1 / 6; display: flex; align-items: center; justify-content: center;">未受験</div>
 			<?php endif; ?>
@@ -235,34 +154,10 @@
   <button class="emegra cancel" onclick="history.back();">戻る</button>
 	<?php if (!$isRequest): ?>
     <button class="emegra" style="background:orange;" onclick="self.location.href='../edit/<?php echo $recordData['idx']	?>';">修正</button>
-    <!--
-      作成：朴昰成
-      修正：朴昰成
-      修正前：24/06/07
-    -->
-
-    <!-- 修正前： <?php /* ?>
-      <button class="emegra" style="width:150px;" onclick="Request();">ITスキル診断依頼</button>
-    <?php */ ?> -->
-
-    <!-- 修正前： -->
     <button class="emegra" style="width:150px;" onclick="Request(this);">ITスキル診断依頼</button>
-    <!-- ここまで -->
   <?php else: ?>
     <?php if ($recordData["rank"] != null && $recordData["date_mail"] == null): ?>
-      <!--
-        作成：朴昰成
-        修正：朴昰成
-        修正前：24/06/07
-      -->
-
-      <!-- 修正前： <?php /* ?>
-        <button class="emegra" onclick="SendMail();">メール送信</button>
-      <?php */ ?> -->
-
-      <!-- 修正前： -->
       <button class="emegra" onclick="SendMail(this);">結果送信</button>
-      <!-- ここまで -->
     <?php endif; ?>
 	<?php endif; ?>
 </div>
@@ -270,39 +165,11 @@
 <script type="text/javascript">
 	const idx = <?php echo $recordData["idx"]; ?>
 
-  /*
-    作成：朴昰成
-    修正：朴昰成
-    修正日：24/06/07
-  */
-
-  /* 修正前：
-    function Request() {
-  */
-
-  /* 修正後： */
   function Request(button) {
-  /* ここまで */
 		if (confirm("依頼しますか？") === false) { return false; }
 
-    /*
-      作成：朴昰成
-      修正：朴昰成
-      修正日：24/06/03
-    */
-
-    /* 修正前：
-      if (confirm("メールを送信しますか？") === false) { return false; }
-    */
-
-    /* 修正後： */
     if (confirm("結果を送信しますか？") === false) { return false; }
-    /* ここまで */
 
-    /*
-      作成：朴昰成
-      作成日：24/06/07
-    */
     button.replaceChildren();
 
     var span = document.createElement("span");
@@ -316,7 +183,6 @@
     span.innerText = "送信中...";
     button.appendChild(span);
 
-    /* ここまで */
 		const postForm = new FormData();
 		postForm.append("idxs", idx);
 		const xhr = new XMLHttpRequest();
@@ -338,51 +204,9 @@
 		}
 	}
 
-  /*
-    作成：朴昰成
-    修正：朴昰成
-    修正日：24/06/07
-  */
-
-  /* 修正前：
-    function SendMail() {
-  */
-
-  /* 修正後： */
   function SendMail(button) {
-  /* ここまで */
-    /*
-      作成：朴昰成
-      修正：朴昰成
-      修正日：24/06/03
-    */
-
-    /* 修正前：
-      if (confirm("メールを送信しますか？") === false) { return false; }
-    */
-
-    /* 修正後： */
     if (confirm("結果を送信しますか？") === false) { return false; }
-    /* ここまで */
 
-    /*
-      作成：朴昰成
-      修正：朴昰成
-      修正日：24/06/03
-    */
-
-    /* 修正前：
-      if (confirm("メールを送信しますか？") === false) { return false; }
-    */
-
-    /* 修正後： */
-    if (confirm("結果を送信しますか？") === false) { return false; }
-    /* ここまで */
-
-    /*
-      作成：朴昰成
-      作成日：24/06/07
-    */
     button.replaceChildren();
 
     var span = document.createElement("span");
@@ -396,7 +220,6 @@
     span.innerText = "送信中...";
     button.appendChild(span);
 
-    /* ここまで */
     const postForm = new FormData();
     postForm.append("idxs", idx);
     const xhr = new XMLHttpRequest();
@@ -414,12 +237,7 @@
           try {
             let idxDatas = JSON.parse(result);
             alert("すでに送信しました。");
-            /*
-              作成：朴昰成
-              作成日：24/06/03
-            */
             location.reload(true);
-            /* ここまで */
             return false;
           } catch (e) {
             alert("error");

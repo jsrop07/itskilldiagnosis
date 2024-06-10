@@ -585,7 +585,7 @@ class SituationController extends AbstractActionController {
 /* log
 	作成：丁錫圓
 	修正：丁錫圓
-	修正日：24/05/31
+	修正日：24/06/10
 */
 
 /* 修正前：
@@ -597,8 +597,29 @@ class SituationController extends AbstractActionController {
 		// 메일 제목 지정 (일반적으로 DB에 메일폼 테이블을 만들어서 그것을 가져와서 아래의 title contents에 넣지만, 이건 샘플이므로 간단히.)
 		// 사람마다 변환해야 할 부분은 {{이렇게}} 메일폼에 넣어놓는다.
 
-		$param['title']="{$recentPassword["name"]}様、株式会社ジエンジサービスから、ITスキル診断依頼が到着しています。";
-		$param["content"] = "以下URLより「ITスキル診断サイト」にログインし診断を行ってください。\n\nログインID：{$recentPassword["email"]}\nログインPWD：{$recentPassword["password"]}\n\n＜ITスキル診断URL＞\nhttp://18.181.4.65/applicant/login\n\n※ITスキル診断の有効時間は{$recordSet["date_schedule"]}分からです。\n診断時間から30分以内に始めないと、受験できません。\n\n\n※このメールに返信しないでください。";
+			$param['title']="ITスキル診断依頼のお知らせ（ジエンジサービス）";
+		$param["content"] = "{{applicant_name}}様\n"
+											. "お世話になっております。\n\n"
+											. "ITスキル診断についてお知らせさせていただきます。\n"
+                      . "以下URLより「ITスキル診断サイト」にログインし診断を行ってください。\n\n"
+											. "ログインID：{{login_id}}\n"
+											. "ログインPWD：{{login_password}}\n\n"
+											. "＜ITスキル診断URL＞\n"
+											. "http://18.181.4.65/applicant/login\n\n"
+											. "※ITスキル診断が可能な有効期限は{{dateSchedule}}分 ~ {{dateSchduleEnd}}です。\n"
+											. "   有効期限内に受験を受けない場合、自動的に失格となりますのでご了承ください。\n\n"
+											. "※ITスキル診断に不明点などございましたら下記の宛先まで\n"
+											. "   お問い合わせください。\n\n"
+											. "＜問い合わせ先＞\n"
+											. "担当者：ITスキル診断担当\n"
+											. "連絡先：tech@gngs.co.jp\n\n"
+											. "以上、よろしくお願いいたします。\n"
+											. "※このメールに返信しないでください。";
+		$param["content"] = str_replace("{{applicant_name}}", $recentPassword["name"], $param["content"]);
+		$param["content"] = str_replace("{{login_id}}", $recentPassword["email"], $param["content"]);
+		$param["content"] = str_replace("{{login_password}}", $recentPassword["password"], $param["content"]);
+		$param["content"] = str_replace("{{dateSchedule}}", $applicantInfo["date_schedule"], $param["content"]);
+		$param["content"] = str_replace("{{dateSchduleEnd}}", $dateSchduleEnd, $param["content"]);
 */
 
 /* 修正後： */
@@ -607,24 +628,39 @@ class SituationController extends AbstractActionController {
 		$applicantTb = $this->getServiceLocator()->get("ApplicantExamTable");
 
 		$applicantInfo = $applicantTb->readByApplicantIdx($recentPassword);
-
+		$dateSchduleEnd = date("Y-m-d H:i:s", strtotime($applicantInfo["date_schedule"] . ' +30 minutes'));
 		// 기본 메일 전송 관련 설정 로드
 		$param['config']=$this->getConfig();
 		// 메일 제목 지정 (일반적으로 DB에 메일폼 테이블을 만들어서 그것을 가져와서 아래의 title contents에 넣지만, 이건 샘플이므로 간단히.)
 		// 사람마다 변환해야 할 부분은 {{이렇게}} 메일폼에 넣어놓는다.
 
-		$param['title']="{$recentPassword["name"]}様、株式会社ジエンジサービスから、ITスキル診断依頼が到着しています。";
-		$param["content"] = "お世話になっております。\n以下URLより「ITスキル診断サイト」にログインし診断を行ってください。\n\nログインID：{$recentPassword["email"]}\nログインPWD：{$recentPassword["password"]}\n\n＜ITスキル診断URL＞\nhttp://18.181.4.65/applicant/login\n\n※ITスキル診断の有効時間は{$applicantInfo["date_schedule"]}分からです。\n診断時間から30分以内に始めないと、受験できません。\n\n\n以上、よろしくお願いいたします。\n※このメールに返信しないでください。";
+		$param['title']="ITスキル診断依頼のお知らせ（ジエンジサービス）";
+		$param["content"] = "{{applicant_name}}様\n"
+											. "お世話になっております。\n\n"
+											. "ITスキル診断についてお知らせさせていただきます。\n"
+                      . "以下URLより「ITスキル診断サイト」にログインし診断を行ってください。\n\n"
+											. "ログインID：{{login_id}}\n"
+											. "ログインPWD：{{login_password}}\n\n"
+											. "＜ITスキル診断URL＞\n"
+											. "http://18.181.4.65/applicant/login\n\n"
+											. "※ITスキル診断が可能な有効期限は{{dateSchedule}}分 ~ {{dateSchduleEnd}}です。\n"
+											. "   有効期限内に受験を受けない場合、自動的に失格となりますのでご了承ください。\n\n"
+											. "※ITスキル診断に不明点などございましたら下記の宛先まで\n"
+											. "   お問い合わせください。\n\n"
+											. "＜問い合わせ先＞\n"
+											. "担当者：ITスキル診断担当\n"
+											. "連絡先：tech@gngs.co.jp\n\n"
+											. "以上、よろしくお願いいたします。\n"
+											. "※このメールに返信しないでください。";
 /* ここまで */
 
-		// 사람이름이나, URL등 고유하게 변경해야 하는 것은 이렇게 처리한다.
-		// 메일 제목과 내용 부분 모두 변환처리.
-		$param['title']=str_replace("{{user_name}}","担当者",$param['title']);
 		// print_r($param['title']);
 		// $param['content']=str_replace("{{user_name}}","変換する試験受け者名",$param['content']);
-		$param['content']=str_replace("{{URL}}","テスト",$param['content']);
-	
-
+		$param["content"] = str_replace("{{applicant_name}}", $recentPassword["name"], $param["content"]);
+		$param["content"] = str_replace("{{login_id}}", $recentPassword["email"], $param["content"]);
+		$param["content"] = str_replace("{{login_password}}", $recentPassword["password"], $param["content"]);
+		$param["content"] = str_replace("{{dateSchedule}}", $applicantInfo["date_schedule"], $param["content"]);
+		$param["content"] = str_replace("{{dateSchduleEnd}}", $dateSchduleEnd, $param["content"]);
 		// 수신자 이메일과 이름 설정
 		$param['managerEmail']=$managerInfo["id"];
 		$param['email']=$recentPassword["email"];;

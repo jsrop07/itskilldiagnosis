@@ -331,35 +331,8 @@
 					self.location.href = "../list";
 				}
 				else {
-          /*
-            作成：朴昰成
-            修正：朴昰成
-            修正日：24/06/07
-          */
-
-          /* 修正前：
-            alert("error");
-            console.log(result);
-          */
-
-          /* 修正後： */
-          try {
-            let recordDatas = JSON.parse(result);
-
-            $alertString = "すでに依頼したデータがあります。";
-            for (let i = 0; i < recordDatas.length; i++) {
-              console.log(recordDatas[i]);
-              $alertString += "\n名前：" + recordDatas[i]["name"];
-            }
-            alert($alertString);
-            return false;
-            // location.reload(true);
-          } catch (e) {
-            alert("error");
-            console.log(result);
-            // location.reload(true);
-          }
-          /* ここまで */
+					alert("error");
+					console.log(result);
 				}
 			}
 		}

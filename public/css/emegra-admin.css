@@ -398,3 +398,38 @@ table.emegra td.link:hover { text-decoration: underline; }
 	font-weight: 400;
 	color: #343A40;
 }
+
+
+
+
+div.emegra-table {
+  min-width: 1200px;
+  margin-top: 8px;
+  border-radius: 6px;
+  border: 1px solid var(--line);
+  overflow: hidden;
+}
+div.emegra-table table {
+  margin: 0;
+
+  border-collapse: collapse;
+  border-style: hidden;
+}
+div.emegra-table th, div.emegra-table td {
+  vertical-align: middle;
+  text-align: center;
+}
+div.emegra-table th {
+  padding: 8px;
+  background: var(--emegra-blue);
+
+  font-size: 14px;
+  font-weight: 700;
+  color: white;
+}
+div.emegra-table td {
+  padding: 16px 0;
+  border: 1px 0 solid var(--line);
+  font-size: 14px;
+  font-weight: 400;
+}

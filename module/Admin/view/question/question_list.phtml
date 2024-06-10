@@ -372,50 +372,88 @@
     <!--
       作成：朴昰成
       修正：朴昰成
-      修正日：24/06/04
+      修正日：24/06/10
     -->
 
     <!-- 修正前： <?php /* ?>
       <table class="emegra" style="margin-top: 8px;">
+        <thead>
+          <tr class="index">
+            <th style="grid-area: no">No</th>
+            <th style="grid-area: status">ステータス</th>
+            <th style="grid-area: class">問項種別</th>
+            <th style="grid-area: level">レベル</th>
+            <th style="grid-area: title">タイトル</th>
+            <th style="grid-area: type">タイプ</th>
+            <th style="grid-area: point">点数</th>
+            <th style="grid-area: confirm">作成日</th>
+            <th style="grid-area: update">承認日</th>
+            <th style="grid-area: select"><input id="checkAll" type="checkbox" onclick="Checking(this);" style="cursor: pointer;"></th>
+            <th style="grid-area: class_l">大分類</th>
+            <th style="grid-area: class_s">小分類</th>
+          </tr>
+        </thead>
+        <tbody>
+          <?php foreach($questionDatas as $index => $data): ?>
+            <tr>
+              <td><?php echo $firstNo - $index ; ?></td>
+              <td><?php echo $optionDatas[$data["status"]]; ?></td>
+              <td><?php echo $optionDatas[$data["class1st"]]; ?></td>
+              <td><?php echo $optionDatas[$data["class2nd"]]; ?></td>
+              <td><?php echo $levelTexts[$data["level"]]; ?></td>
+              <td class="link left" onclick="self.location.href='./detail/<?php echo $data['idx']; ?>';"><?php echo $data["title"]; ?></td>
+              <td><?php echo $optionDatas[$data["type"]]; ?></td>
+              <td><?php echo $data["point"]; ?></td>
+              <td><?php echo date("y.m.d", strtotime($data["date_regist"])); ?></td>
+              <td><?php echo (isset($data["date_approve"])) ? date("y.m.d", strtotime($data["date_approve"])) : "未承認"; ?></td>
+              <td><input name="checkIdx" type="checkbox" value="<?php echo $data["idx"]; ?>" onclick="Checking(this);" style="cursor: pointer;"<?php echo ($isApprover || ChkDeleter($data, $optionDatas)) ? "" : " disabled"; ?>></td>
+            </tr>
+          <?php endforeach; ?>
+        </tbody>
+      </table>
     <?php */ ?> -->
 
     <!-- 修正後： -->
-    <table class="emegra" style="min-width: 1200px; margin-top: 8px;">
-    <!-- ここまで -->
-      <thead>
-        <tr class="index">
-          <th style="grid-area: no">No</th>
-          <th style="grid-area: status">ステータス</th>
-          <th style="grid-area: class">問項種別</th>
-          <th style="grid-area: level">レベル</th>
-          <th style="grid-area: title">タイトル</th>
-          <th style="grid-area: type">タイプ</th>
-          <th style="grid-area: point">点数</th>
-          <th style="grid-area: confirm">作成日</th>
-          <th style="grid-area: update">承認日</th>
-          <th style="grid-area: select"><input id="checkAll" type="checkbox" onclick="Checking(this);" style="cursor: pointer;"></th>
-          <th style="grid-area: class_l">大分類</th>
-          <th style="grid-area: class_s">小分類</th>
-        </tr>
-      </thead>
-      <tbody>
-        <?php foreach($questionDatas as $index => $data): ?>
+    <div class="emegra-table">
+      <table class="table table-bordered">
+        <thead>
           <tr>
-            <td><?php echo $firstNo - $index ; ?></td>
-            <td><?php echo $optionDatas[$data["status"]]; ?></td>
-            <td><?php echo $optionDatas[$data["class1st"]]; ?></td>
-            <td><?php echo $optionDatas[$data["class2nd"]]; ?></td>
-            <td><?php echo $levelTexts[$data["level"]]; ?></td>
-            <td class="link left" onclick="self.location.href='./detail/<?php echo $data['idx']; ?>';"><?php echo $data["title"]; ?></td>
-            <td><?php echo $optionDatas[$data["type"]]; ?></td>
-            <td><?php echo $data["point"]; ?></td>
-            <td><?php echo date("y.m.d", strtotime($data["date_regist"])); ?></td>
-            <td><?php echo (isset($data["date_approve"])) ? date("y.m.d", strtotime($data["date_approve"])) : "未承認"; ?></td>
-            <td><input name="checkIdx" type="checkbox" value="<?php echo $data["idx"]; ?>" onclick="Checking(this);" style="cursor: pointer;"<?php echo ($isApprover || ChkDeleter($data, $optionDatas)) ? "" : " disabled"; ?>></td>
+            <th rowspan="2">No</th>
+            <th rowspan="2">ステータス</th>
+            <th colspan="2">問項種別</th>
+            <th rowspan="2">レベル</th>
+            <th rowspan="2">タイトル</th>
+            <th rowspan="2">タイプ</th>
+            <th rowspan="2">点数</th>
+            <th rowspan="2">作成日</th>
+            <th rowspan="2">承認日</th>
+            <th rowspan="2"><input id="checkAll" type="checkbox" onclick="Checking(this);" style="cursor: pointer;"></th>
           </tr>
-        <?php endforeach; ?>
-      </tbody>
-    </table>
+          <tr>
+            <th>大分類</th>
+            <th>小分類</th>
+          </tr>
+        </thead>
+        <tbody>
+          <?php foreach($questionDatas as $index => $data): ?>
+            <tr>
+              <td><?php echo $firstNo - $index ; ?></td>
+              <td><?php echo $optionDatas[$data["status"]]; ?></td>
+              <td><?php echo $optionDatas[$data["class1st"]]; ?></td>
+              <td><?php echo $optionDatas[$data["class2nd"]]; ?></td>
+              <td><?php echo $levelTexts[$data["level"]]; ?></td>
+              <td class="link left" onclick="self.location.href='./detail/<?php echo $data['idx']; ?>';"><?php echo $data["title"]; ?></td>
+              <td><?php echo $optionDatas[$data["type"]]; ?></td>
+              <td><?php echo $data["point"]; ?></td>
+              <td><?php echo date("y.m.d", strtotime($data["date_regist"])); ?></td>
+              <td><?php echo (isset($data["date_approve"])) ? date("y.m.d", strtotime($data["date_approve"])) : "未承認"; ?></td>
+              <td><input name="checkIdx" type="checkbox" value="<?php echo $data["idx"]; ?>" onclick="Checking(this);" style="cursor: pointer;"<?php echo ($isApprover || ChkDeleter($data, $optionDatas)) ? "" : " disabled"; ?>></td>
+            </tr>
+          <?php endforeach; ?>
+        </tbody>
+      </table>
+    </div>
+    <!-- ここまで -->
   <?php endif; ?>
 
   <div class="pagination-place" style="margin-top: 10px;">

@@ -144,22 +144,22 @@
                 <?php */ ?> -->
 
                 <!-- 修正後： -->
-                <dd><textarea row="1" wrap="off" class="form-control" name="question" placeholder="問題を入力してください"><?php echo ($isSet) ? htmlspecialchars($questionData["question"], ENT_QUOTES) : ""; ?></textarea></dd>
+                <dd class="expand"><textarea rows="5" wrap="off" class="form-control" name="question" placeholder="問題を入力してください"><?php echo ($isSet) ? str_replace("{{n}}", "\n", htmlspecialchars($questionData["question"], ENT_QUOTES)) : ""; ?></textarea></dd>
                 <!-- ここまで -->
 
                 <dt class="essential">選択肢</dt>
                 <div class="grid answers" name="answers" id="answers">
                   <?php if ($isSet): ?>
                     <?php for ($i = 1; $i <= $answerNum; $i++): ?>
-                      <div>
+                      <div style="margin-bottom: 8px;">
                         <dt class="essential"><?= $numTexts[$i - 1]; ?></dt>
-                        <dd><input class="form-control" name="answer<?= $i; ?>" type="text" placeholder="選択肢を入力してください" value="<?php echo htmlspecialchars($questionData["answer" . $i], ENT_QUOTES); ?>"></dd>
+                        <dd class="expand"><textarea class="form-control" name="answer<?= $i; ?>" type="text" placeholder="選択肢を入力してください"><?php echo str_replace("{{n}}", "\n", htmlspecialchars($questionData["answer" . $i], ENT_QUOTES)); ?></textarea></dd>
                       </div>
                     <?php endfor; ?>
                     <?php for ($i = $answerNum + 1; $i <= 5; $i++): ?>
-                      <div hidden>
+                      <div style="margin-bottom: 8px;" hidden>
                         <dt class="essential"><?= $numTexts[$i - 1]; ?></dt>
-                        <dd><input class="form-control" name="answer<?= $i; ?>" type="text" placeholder="選択肢を入力してください" disabled/></dd>
+                        <dd class="expand"><textarea class="form-control" name="answer<?= $i; ?>" type="text" placeholder="選択肢を入力してください" disabled></textarea></dd>
                       </div>
                     <?php endfor; ?>
                   <?php else: ?>

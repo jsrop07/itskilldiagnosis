@@ -70,85 +70,184 @@
 	</div>
 </div>
 
-<div class="emegra card" style="margin-top: 32px;">
-	<div class="card-header">ITスキル診断問項詳細</div>
+<!--
+  作成：朴昰成
+  修正：朴昰成
+  修正日：24/06/10
+-->
 
-	<div class="card-body">
-		<style type="text/css">
-			dl.emegra.setting { grid-template-columns: repeat(2, 170px 1fr); }
-		</style>
-		<dl class="emegra setting">
+<!-- 修正前： <?php /* ?>
+  <div class="emegra card" style="margin-top: 32px;">
+    <div class="card-header">ITスキル診断問項詳細</div>
+
+    <div class="card-body">
+      <style type="text/css">
+        dl.emegra.setting { grid-template-columns: repeat(2, 170px 1fr); }
+      </style>
+      <dl class="emegra setting">
+        <dt>ITスキル有無</dt>
+        <dd><?php echo $skillTexts[$recordData["skill"]]; ?></dd>
+
+        <dt>IT経験年数</dt>
+        <dd><?php echo ($recordData["career"] != null) ? $recordData["career"] . "年" : "無"; ?></dd>
+
+        <dt>経験分野</dt>
+        <dd><?php echo $recordData["class1st"]; ?></dd>
+
+        <dt>問題種別</dt>
+        <dd><?php echo $optionDatas[$recordData["class2nd"]]; ?></dd>
+
+        <dt>診断問項ID</dt>
+        <dd><?php echo $recordData["diagnosis_code"]; ?></dd>
+
+        <dt>レベル</dt>
+        <dd><?php echo $levelTexts[$recordData["level"]]; ?></dd>
+
+        <dt>問項数別</dt>
+        <dd><?php echo $recordData["question_num"]; ?>問項</dd>
+
+        <dt>言語</dt>
+        <dd><?php echo (is_null($recordData["language"])) ? "未設定" : $languageTexts[$recordData["language"]]; ?></dd>
+
+        <dt>診断方法</dt>
+        <dd><?php echo $recordData["method"]; ?></dd>
+
+        <dt>メール転送</dt>
+        <dd><?php echo (is_null($recordData["mail_delay"])) ? "手動" : "自動"; ?></dd>
+    
+        <dt>診断予定日時</dt>
+        <dd><?php echo (is_null($recordData["date_schedule"])) ? "未依頼" : date("y.m.d H:i", strtotime($recordData["date_schedule"])); ?></dd>
+    
+        <dt>診断依頼</dt>
+        <dd><?php echo (is_null($recordData["request_date"])) ? "未依頼" : date("y.m.d", strtotime($recordData["request_date"])); ?></dd>
+      </dl>
+    </div>
+  </div>
+
+  <div class="emegra card" style="margin-top: 32px;">
+    <div class="card-header">ITスキル診断状況</div>
+
+    <div class="card-body">
+      <style type="text/css">
+        dl.emegra.detail { grid-template-columns: repeat(2, 150px 1fr); }
+      </style>
+      <dl class="emegra detail">
+        <?php if ($isExecute): ?>
+          <dt>診断実施日</dt>
+          <dd><?php echo date("y.m.d", strtotime($recordData["execute_date"])); ?></dd>
+
+          <dt>結果送信日</dt>
+          <dd><?php echo ($recordData["date_mail"] != null) ? date("y.m.d", strtotime($recordData["date_mail"])) : "未送信"; ?></dd>
+
+          <dt>得点</dt>
+          <dd><?php echo $recordData["get_point"]; ?></dd>
+
+          <dt>評価等級</dt>
+          <dd><?php echo $recordData["rank"]; ?></dd>
+
+          <dt>診断者のコメント</dt>
+          <dd><?php echo $recordData["diagnosis_comment"]; ?></dd>
+
+          <dt>備考</dt>
+          <dd><?php echo $recordData["comment"]; ?></dd>
+        <?php else: ?>
+          <div style="grid-column: 1 / 6; display: flex; align-items: center; justify-content: center;">未受験</div>
+        <?php endif; ?>
+      </dl>
+    </div>
+  </div>
+<?php */ ?> -->
+
+<!-- 修正後： -->
+<div class="emegra card" style="margin-top: 32px;">
+  <div class="card-header">診断者ITスキル有無</div>
+
+  <div class="card-body">
+    <style type="text/css">
+      dl.emegra.skill { grid-template-columns: 170px 1fr; }
+    </style>
+    <dl class="emegra skill">
       <dt>ITスキル有無</dt>
       <dd><?php echo $skillTexts[$recordData["skill"]]; ?></dd>
-
-      <dt>IT経験年数</dt>
-      <dd><?php echo ($recordData["career"] != null) ? $recordData["career"] . "年" : "無"; ?></dd>
 
       <dt>経験分野</dt>
       <dd><?php echo $recordData["class1st"]; ?></dd>
 
-      <dt>問題種別</dt>
+      <dt>経験分野詳細</dt>
       <dd><?php echo $optionDatas[$recordData["class2nd"]]; ?></dd>
 
-      <dt>診断問項ID</dt>
-      <dd><?php echo $recordData["diagnosis_code"]; ?></dd>
+      <dt>経験年数</dt>
+      <dd><?php echo ($recordData["career"] != null) ? $recordData["career"] . "年" : "無"; ?></dd>
+    </dl>
+  </div>
+</div>
 
+<div class="emegra card" style="margin-top: 32px;">
+  <div class="card-header">ITスキル診断問題詳細</div>
+
+  <div class="card-body">
+    <style type="text/css">
+      dl.emegra.setting { grid-template-columns: repeat(2, 170px 1fr); }
+    </style>
+    <dl class="emegra setting">
       <dt>レベル</dt>
       <dd><?php echo $levelTexts[$recordData["level"]]; ?></dd>
 
-      <dt>問項数別</dt>
-      <dd><?php echo $recordData["question_num"]; ?>問項</dd>
+      <dt>問題ID</dt>
+      <dd><?php echo $recordData["diagnosis_code"]; ?></dd>
 
-      <dt>言語</dt>
-      <dd><?php echo (is_null($recordData["language"])) ? "未設定" : $languageTexts[$recordData["language"]]; ?></dd>
+      <dt>問項数</dt>
+      <dd><?php echo $recordData["question_num"]; ?>問項</dd>
 
       <dt>診断方法</dt>
       <dd><?php echo $recordData["method"]; ?></dd>
 
-      <dt>メール転送</dt>
+      <dt>言語選択</dt>
+      <dd><?php echo (is_null($recordData["language"])) ? "未設定" : $languageTexts[$recordData["language"]]; ?></dd>
+
+      <dt>結果転送</dt>
       <dd><?php echo (is_null($recordData["mail_delay"])) ? "手動" : "自動"; ?></dd>
-  
-      <dt>診断予定日時</dt>
-      <dd><?php echo (is_null($recordData["date_schedule"])) ? "未依頼" : date("y.m.d H:i", strtotime($recordData["date_schedule"])); ?></dd>
-  
-      <dt>診断依頼</dt>
-      <dd><?php echo (is_null($recordData["request_date"])) ? "未依頼" : date("y.m.d", strtotime($recordData["request_date"])); ?></dd>
-		</dl>
-	</div>
+    </dl>
+  </div>
 </div>
 
 <div class="emegra card" style="margin-top: 32px;">
-	<div class="card-header">ITスキル診断状況</div>
+  <div class="card-header">ITスキル診断状況</div>
 
-	<div class="card-body">
-		<style type="text/css">
-			dl.emegra.detail { grid-template-columns: repeat(2, 150px 1fr); }
-		</style>
-		<dl class="emegra detail">
-			<?php if ($isExecute): ?>
-				<dt>診断実施日</dt>
-				<dd><?php echo date("y.m.d", strtotime($recordData["execute_date"])); ?></dd>
+  <div class="card-body">
+    <style type="text/css">
+      dl.emegra.detail { grid-template-columns: repeat(2, 150px 1fr); }
+    </style>
+    <dl class="emegra detail">
+    <dt>診断予定日時</dt>
+    <dd><?php echo (is_null($recordData["date_schedule"])) ? "未依頼" : date("y.m.d H:i", strtotime($recordData["date_schedule"])); ?></dd>
+
+    <dt>診断依頼</dt>
+    <dd><?php echo (is_null($recordData["request_date"])) ? "未依頼" : date("y.m.d", strtotime($recordData["request_date"])); ?></dd>
+      <?php if ($isExecute): ?>
+
+        <dt>診断実施日</dt>
+        <dd><?php echo date("y.m.d", strtotime($recordData["execute_date"])); ?></dd>
 
         <dt>結果送信日</dt>
         <dd><?php echo ($recordData["date_mail"] != null) ? date("y.m.d", strtotime($recordData["date_mail"])) : "未送信"; ?></dd>
 
-				<dt>得点</dt>
-				<dd><?php echo $recordData["get_point"]; ?></dd>
+        <dt>得点</dt>
+        <dd><?php echo $recordData["get_point"]; ?></dd>
 
-				<dt>評価等級</dt>
-				<dd><?php echo $recordData["rank"]; ?></dd>
+        <dt>評価等級</dt>
+        <dd><?php echo $recordData["rank"]; ?></dd>
 
-				<dt>診断者のコメント</dt>
+        <dt>診断者のコメント</dt>
         <dd><?php echo $recordData["diagnosis_comment"]; ?></dd>
 
-				<dt>備考</dt>
-				<dd><?php echo $recordData["comment"]; ?></dd>
-			<?php else: ?>
-				<div style="grid-column: 1 / 6; display: flex; align-items: center; justify-content: center;">未受験</div>
-			<?php endif; ?>
-		</dl>
-	</div>
+        <dt>備考</dt>
+        <dd><?php echo $recordData["comment"]; ?></dd>
+      <?php endif; ?>
+    </dl>
+  </div>
 </div>
+<!-- ここまで -->
 
 <div class="btn-place" style="margin-top: 32px;">
   <button class="emegra cancel" onclick="history.back();">戻る</button>

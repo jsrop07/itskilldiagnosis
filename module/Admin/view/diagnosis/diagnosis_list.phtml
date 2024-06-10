@@ -121,7 +121,7 @@
     <!--
       作成：朴昰成
       修正：朴昰成
-      修正日：240610
+      修正日：24/06/10
     -->
 
     <!-- 修正前： <?php /* ?>
@@ -165,13 +165,13 @@
       <table class="table table-bordered">
         <thead>
             <th rowspan="2">No</th>
+            <th rowspan="2">問題ID</th>
             <th colspan="2">種別</th>
             <th rowspan="2">レベル</th>
             <th rowspan="2">タイトル</th>
             <th rowspan="2">問項数</th>
             <th rowspan="2">合格基準</th>
             <th rowspan="2">変更日</th>
-            <th rowspan="2">問題ID</th>
           </tr>
             <th>大分類</th>
             <th>小分類</th>
@@ -181,6 +181,17 @@
         </thead>
         <tbody>
           <?php foreach ($diagnosisDatas as $index => $data): ?>
+            <!--
+              作成：朴昰成
+                作成日：24/06/10
+            -->
+
+            <?php
+              $points = explode(",", $data["result_points"]);
+              $passPoint = $points[2];
+            ?>
+
+            <!-- ここまで -->
             <tr>
               <td><?php echo $firstNo - $index ; ?></td>
               <td><?php echo $data["code"]; ?></td>
@@ -189,7 +200,7 @@
               <td><?php echo $levelTexts[$data["level"]]; ?></td>
               <td class="start" style="padding: 0 8px;"><a onclick="self.location.href='./detail/<?php echo $data['idx']; ?>'"><?php echo $data["title"]; ?></a></td>
               <td><?php echo $data["question_num"]; ?>問題</td>
-              <td>100点</td>
+              <td><?php echo $passPoint; ?>点</td>
               <td><?php echo date("y.m.d", strtotime($data["date_start"])); ?></td>
             </tr>
           <?php endforeach; ?>

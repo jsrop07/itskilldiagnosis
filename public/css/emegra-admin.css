@@ -428,7 +428,7 @@ div.emegra-table th {
   color: white;
 }
 div.emegra-table td {
-  padding: 16px 0;
+  padding: 16px 8px;
   border: 1px 0 solid var(--line);
   font-size: 14px;
   font-weight: 400;

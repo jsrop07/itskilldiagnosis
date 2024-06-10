@@ -103,7 +103,7 @@ class MailRequest extends AbstractActionController
 			$transport->send($mail);
 		}
 		catch (\Exception $e) {
-			$result["log"] = $e->getMessage();
+			$result["exception"] = $e->getMessage();
 			$result["status"] = "fail";
 			return $result;
 		}

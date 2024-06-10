@@ -39,10 +39,26 @@ class OptionTable
 		return iterator_to_array($this->sql->prepareStatementForSqlObject($qry)->execute());
 	}
 
+	/*
+		作成：朴昰成
+		修正：朴昰成
+		修正日：24/06/11
+	*/
+
+	/* 修正前：
+		public function ReadValid() {
+			$qry = $this->sql->select("option")->where(["del_flag" => "N"])->order("text");
+			return iterator_to_array($this->sql->prepareStatementForSqlObject($qry)->execute());
+		}
+	*/
+
+	/* 修正後： */
 	public function ReadValid() {
-		$qry = $this->sql->select("option")->where(["del_flag" => "N"])->order("text");
-		return iterator_to_array($this->sql->prepareStatementForSqlObject($qry)->execute());
+		$qry = $this->sql->select("option")->columns(["idx", "type", "text", "class_upper"])->where(["del_flag" => "N"])->order("text");
+		$result = $this->sql->prepareStatementForSqlObject($qry)->execute();
+		return iterator_to_array($result);
 	}
+	/* ここまで */
 
 	public function ReadByOption($whereData) {
 		$qry = $this->sql->select("option")->where($whereData);

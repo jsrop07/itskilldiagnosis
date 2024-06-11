@@ -91,7 +91,19 @@
 							<?php endforeach; ?>
 							<tr>
 								<td style="grid-column: 1 / 4;"></td>
-								<td><?php echo $diagnosisData["totalPoint"]; ?>点</td>
+                <!--
+                  作成：朴昰成
+                  修正：朴昰成
+                  修正日：24/06/11
+                -->
+
+                <!-- 修正前： <?php /* ?>
+                  <td><?php echo $diagnosisData["totalPoint"]; ?>点</td>
+                <?php */ ?> -->
+
+                <!-- 修正後： -->
+                <td><?php echo $diagnosisData["point_total"]; ?>点</td>
+                <!-- ここまで -->
 							</tr>
 					</table>
 				</div>

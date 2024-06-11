@@ -119,10 +119,11 @@ class ApplicantController extends AbstractActionController
 	$mail = new MailSender();
 	// 기본 메일 전송 관련 설정 로드
 	$param['config']=$this->getConfig();
+	
 	// 메일 제목 지정 (일반적으로 DB에 메일폼 테이블을 만들어서 그것을 가져와서 아래의 title contents에 넣지만, 이건 샘플이므로 간단히.)
 	// 사람마다 변환해야 할 부분은 {{이렇게}} 메일폼에 넣어놓는다.
 	$param['title']="{{user_name}}様、新しい試験診断の申し込みがあります。";
-	$param["content"] = "以下の申込者の情報をご参照ください。\n\nお名前（漢字）：{$arr["name"]}\nお名前（カナ）：{$arr["kana"]}\n応募区分：{$caseText}\nITスキル：{$skillText}\n\n診断者ページ：http://18.181.4.65/admin/situation/edit/{$applicantInfo["idx"]}";
+	$param["content"] = "以下の申込者の情報をご参照ください。\n\nお名前（漢字）：{$arr["name"]}\nお名前（カナ）：{$arr["kana"]}\n応募区分：{$caseText}\nITスキル：{$skillText}\n\n診断者ページ：{$param['config']['user-url']['admin']}/situation/edit/{$applicantInfo["idx"]}";
 
 	// 사람이름이나, URL등 고유하게 변경해야 하는 것은 이렇게 처리한다.
 	// 메일 제목과 내용 부분 모두 변환처리.
@@ -130,7 +131,6 @@ class ApplicantController extends AbstractActionController
 	// print_r($param['config']);
 	// $param['content']=str_replace("{{user_name}}","変換する試験受け者名",$param['content']);
 	$param['content']=str_replace("{{URL}}","テスト",$param['content']);
-
 
 	// 수신자 이메일과 이름 설정
 	$param['email']=$managerArray[0];
@@ -422,7 +422,7 @@ function mailByApplicantExam($applicantInfo,$sqlSet,$managerArray,$examRecordIdx
 	// 메일 제목 지정 (일반적으로 DB에 메일폼 테이블을 만들어서 그것을 가져와서 아래의 title contents에 넣지만, 이건 샘플이므로 간단히.)
 	// 사람마다 변환해야 할 부분은 {{이렇게}} 메일폼에 넣어놓는다.
 	$param['title']="{{user_name}}様、{$applicantInfo["name"]}診断者の試験結果が出ました。";
-	$param["content"] = "以下の診断者の試験結果をご参照ください。\n\nお名前（漢字）：{$applicantInfo["name"]}\nお名前（カナ）：{$applicantInfo["kana"]}\nメールアドレス：{$applicantInfo["email"]}\n得点：{$sqlSet["get_point"]}\n評価：{$sqlSet["rank"]}\n評価結果：{$sqlSet["diagnosis_comment"]}\n\n診断者ページ：http://18.181.4.65/admin/situation/detail/{$examRecordIdx}";
+	$param["content"] = "以下の診断者の試験結果をご参照ください。\n\nお名前（漢字）：{$applicantInfo["name"]}\nお名前（カナ）：{$applicantInfo["kana"]}\nメールアドレス：{$applicantInfo["email"]}\n得点：{$sqlSet["get_point"]}\n評価：{$sqlSet["rank"]}\n評価結果：{$sqlSet["diagnosis_comment"]}\n\n診断者ページ：{$param['config']['user-url']['admin']}/situation/detail/{$examRecordIdx}";
 
 	// 사람이름이나, URL등 고유하게 변경해야 하는 것은 이렇게 처리한다.
 	// 메일 제목과 내용 부분 모두 변환처리.
@@ -430,7 +430,6 @@ function mailByApplicantExam($applicantInfo,$sqlSet,$managerArray,$examRecordIdx
 	// print_r($param['title']);
 	// $param['content']=str_replace("{{user_name}}","変換する試験受け者名",$param['content']);
 	$param['content']=str_replace("{{URL}}","テスト",$param['content']);
-
 
 	// 수신자 이메일과 이름 설정
 	// $param['managerEmail']=$managerArray[0];
@@ -474,11 +473,11 @@ function mailByApplicantExam($applicantInfo,$sqlSet,$managerArray,$examRecordIdx
 										. "ITスキル診断結果が出ましたので、お知らせさせて頂きます。\n"
 										. "診断内容についてご確認をお願いいたします。\n\n"
 										. "＜申請者情報＞\n"
-										. "申 請 者 ：{{applicant_name}}（{{kana}}）\n"
-										. "応募区分  ：{{case}}\n"
-										. "学   歴  ：{{education}}\n"
-										. "専   攻  ：{{major}}\n"
-										. "試 験 日 ：{{execute_date}}\n\n"
+										. "申 請 者：{{applicant_name}}（{{kana}}）\n"
+										. "応募区分：{{case}}\n"
+										. "学　　歴：{{education}}\n"
+										. "専　　攻：{{major}}\n"
+										. "試 験 日：{{execute_date}}\n\n"
 										. "＜診断結果＞\n"
 										. "得     点：{{get_point}}\n"
 										. "評     価：{{rank}}/（A~F）\n"

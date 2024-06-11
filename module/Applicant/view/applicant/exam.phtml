@@ -571,7 +571,7 @@ function confirmExam() {
     let confirmContent = document.getElementById("confirmContent");
 
     submitButton.addEventListener("click", function(event) {
-      confirmContent.innerHTML = "<div class='spinner-border' role='status' style='width:20px;height:20px;'><span class='visually-hidden'></span></div>  結果転送中。。。少々お待ちください。";
+      confirmContent.innerHTML = "<div class='spinner-border' role='status' style='width:20px;height:20px;'><span class='visually-hidden'></span></div>  結果転送中。。。<br>少々お待ちください。";
       submittingId.hidden=true;
       submitcancel.hidden = true;
     });

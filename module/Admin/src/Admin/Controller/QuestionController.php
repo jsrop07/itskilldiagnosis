@@ -451,6 +451,13 @@ class QuestionController extends AbstractActionController
 
 		$questionTb = $this->getServiceLocator()->get("QuestionTable");
 
+		/*
+			作成：朴昰成
+			修正：朴昰成
+			修正日：24/06/12
+		*/
+
+		/* 修正前：
 		$beforeNotes = array();
 		foreach ($idxDatas as $idx) {
 			try { $result = $questionTb->ReadByIdx($idx); }
@@ -458,6 +465,23 @@ class QuestionController extends AbstractActionController
 			if ($result["date_approve"] != null) { die("fail"); }
 			else { array_push($beforeNotes, $result["note"]); }
 		}
+		*/
+
+		/* 修正後： */
+		$approvedIdxDatas = array();
+		$beforeNotes = array();
+		foreach ($idxDatas as $idx) {
+			try { $result = $questionTb->ReadByIdx($idx); }
+			catch (\Exception $e) { die($e->getMessage()); }
+			if ($result["date_approve"] != null) { $approvedIdxDatas[] = $result["idx"]; }
+			else { array_push($beforeNotes, $result["note"]); }
+		}
+
+		if ($approvedIdxDatas) {
+			$error = ["reason" => "approved", "data_discrip" => "array of approved data's idx", "data" => $approvedIdxDatas];
+			die(json_encode($error));
+		}
+		/* ここまで */
 		
 		$log = "承認　" . date("Y.m.d") . "　" . $session["name"] . "\n";
 

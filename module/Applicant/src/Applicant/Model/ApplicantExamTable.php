@@ -177,13 +177,13 @@ class ApplicantExamTable
     $dateInterval = $currentDateTimeObj -> diff($dateScheduleObj); // calculate dateScheduletime - cureentDateTime
     $minutesDifference = ($dateInterval->days * 24 * 60) + ($dateInterval->h * 60) + $dateInterval->i; //turn days, hour, minute to minute
     if($minutesDifference <= $time_limit && $currentDateTimeObj > $dateScheduleObj){
-      print_r($minutesDifference);
-      print_r("<br>");
-      print_r($time_limit);
-      print_r("<br>");
-      print_r($currentDateTimeObj);
-      print_r("<br>");
-      print_r($dateScheduleObj);
+      // print_r($minutesDifference);
+      // print_r("<br>");
+      // print_r($time_limit);
+      // print_r("<br>");
+      // print_r($currentDateTimeObj);
+      // print_r("<br>");
+      // print_r($dateScheduleObj);
 
       return "success";
     } elseif($minutesDifference > $time_limit && $currentDateTimeObj > $dateScheduleObj){

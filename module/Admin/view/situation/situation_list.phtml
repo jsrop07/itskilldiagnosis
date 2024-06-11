@@ -211,7 +211,19 @@
           <th rowspan="2">ステータス</th>
           <th colspan="5">IT診断者情報</th>
           <th colspan="4">診断問題詳細</th>
-          <th colspan="4">診断状況</th>
+          <!--
+            作成：朴昰成
+            修正：朴昰成
+            修正日：24/06/11
+          -->
+
+          <!-- 修正前： <?php /* />
+            <th colspan="4">診断状況</th>
+          <?php */ ?> -->
+
+          <!-- 修正後： -->
+          <th colspan="5">診断状況</th>
+          <!-- ここまで -->
           <th rowspan="2"><input id="checkAll" type="checkbox" onclick="Checking(this);" style="cursor: pointer;"></th>
         </tr>
         
@@ -229,8 +241,22 @@
 
           <th>診断依頼</th>
           <th>診断日</th>
+          <!--
+            作成：朴昰成
+            修正：朴昰成
+            修正日：24/06/11
+          -->
+
+          <!-- 修正前： <?php /* />
+            <th>得点</th>
+            <th>等級</th>
+          <?php */ ?> -->
+
+          <!-- 修正後： -->
+          <th>診断時間</th>
           <th>得点</th>
-          <th>等級</th>
+          <th>結果通知</th>
+          <!-- ここまで -->
         </tr>
       </thead>
       <tbody>
@@ -255,14 +281,34 @@
 
               <td><?php echo (isset($data["request_date"])) ? "依頼" : "未依頼"; ?></td>
               <?php if (isset($data["rank"])): ?>
+                <!--
+                  作成：朴昰成
+                  修正：朴昰成
+                  修正日：24/06/11
+                -->
+
+                <!-- 修正前： <?php /* />
+                  <td><?php echo (isset($data["execute_date"])) ?  date("y.m.d", strtotime($data["execute_date"])) : "未受験"; ?></td>
+                  <td><?php echo ($data["rank"] != "F") ? $data["get_point"] . "/100" : "失格"; ?></td>
+                  <td><?php echo $data["rank"]; ?></td>
+                <?php */ ?> -->
+
+                <!-- 修正後： -->
                 <td><?php echo (isset($data["execute_date"])) ?  date("y.m.d", strtotime($data["execute_date"])) : "未受験"; ?></td>
+                <td><?php echo (isset($data["solve_time"])) ? $data["solve_time"] : "0"; ?>分</td>
                 <td><?php echo ($data["rank"] != "F") ? $data["get_point"] . "/100" : "失格"; ?></td>
-                <td><?php echo $data["rank"]; ?></td>
+                <!-- ここまで -->
               <?php else: ?>
                 <td>未受験</td>
                 <td>未受験</td>
                 <td>未受験</td>
               <?php endif; ?>
+              <!--
+                作成：朴昰成
+                作成日：24/06/11
+              -->
+              <td><?php echo (isset($data["date_mail"])) ? "通知" : "未通知"; ?></td>
+              <!-- ここまで -->
 
               <?php
                 $isAbleCheck = false;

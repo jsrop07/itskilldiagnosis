@@ -327,8 +327,8 @@ class DiagnosisController extends AbstractActionController {
 				$questionTb = $this->getServiceLocator()->get("QuestionTable");
 				$questionIdxsByScore = $this->ReadQuestionIdxsByScore($sqlWhere);
 
-				$questionIdxsByScore = $this->CreateQuestionList($questionIdxsByScore, $post["question_num"]);
-				$questionIdxs = $this->QuestionIdxsByScoreToQuestionIdxs($questionIdxsByScore);
+				$questionIdxs = $this->CreateQuestionList($questionIdxsByScore, $post["question_num"]);
+				// $questionIdxs = $this->QuestionIdxsByScoreToQuestionIdxs($questionIdxsByScore);
 				die(json_encode($questionIdxs));
 				break;
 		}
@@ -702,6 +702,13 @@ class DiagnosisController extends AbstractActionController {
 	}
 
 	function CreateQuestionList($beforeQuestionIdxsByScore, $question_num) {
+		/*
+			作成：朴昰成
+			修正：朴昰成
+			修正日：24/06/11
+		*/
+
+		/* 修正前：
 		$questionIdxsByScore = array();
 		for ($i = 1; $i <= 5; $i++) {
 			$questionIdxsByScore[$i] = array();
@@ -756,6 +763,16 @@ class DiagnosisController extends AbstractActionController {
 		}
 
 		return $questionIdxsByScore;
+		*/
+
+		/* 修正後： */
+		$questionDatas = array();
+		foreach ($beforeQuestionIdxsByScore as $datas) {
+			$questionDatas = array_merge($datas, $questionDatas);
+		}
+		/* ここまで */
+
+		return $questionDatas;
 	}
 
 	function QuestionIdxsByScoreToQuestionIdxs($questionIdxsByScore) {

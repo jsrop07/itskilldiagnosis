@@ -339,8 +339,10 @@ class ApplicantController extends AbstractActionController
 			$sqlSet["get_point"] = $get_point;
 			$sqlSet['rank']=$recordRank;
 			$sqlSet['diagnosis_comment']=$recordExamResult;
+			$sqlSet['solve_time']=$post['solveTime'];
 
 			$applicantExamTbl->updateExam($sqlWhere, $sqlSet);			
+
 			$examRecordRecent =  $applicantExamTbl->readByApplicantIdx($applicantInfo);
 			$applicantExamTbl->deletePasswordByIdx($applicantInfo["idx"]);
 			$this->mailByApplicantExam($applicantInfo,$sqlSet,$managerArray,$examRecordIdx);
@@ -383,11 +385,20 @@ class ApplicantController extends AbstractActionController
 			$post = $this->params()->fromPost();
 			$examIdx = $post['idx']; 
 			$applicantExamTbl = $this->getServiceLocator()->get("ApplicantExamTable");
-			$timeout = $applicantExamTbl->timeout($examIdx); 
+			
+			$session = new Container("applicant");
+			$emailId = $session->id;
+			$diagnosisTb = $this->getServiceLocator()->get("DiagnosisTable-Admin");
+			$applicantInfo    = $applicantExamTbl->readById($emailId);
+			$examRecordInfo =  $applicantExamTbl->readByApplicantIdx($applicantInfo);
+			$recordCode    = $examRecordInfo["diagnosis_code"];	
+			$diagnosisInfo = $diagnosisTb->ReadForRecordByCodenDate($recordCode, $examRecordInfo["diagnosis_date"]);	
+			$diagnosisTime = $diagnosisInfo['time_limit'];
+
+			$timeout = $applicantExamTbl->timeout($examIdx,$diagnosisTime); 
 			if ($timeout === 'timeout') {
-				$session = new Container("applicant");
 				if (isset($session->id)) {
-					$emailId = $session->id;
+					// $emailId = $session->id;
 					$applicantInfo = $applicantExamTbl->readById($emailId);
 					$applicantExamTbl->deletePasswordByIdx($applicantInfo['idx']);
 					unset($emailId);
@@ -463,14 +474,14 @@ function mailByApplicantExam($applicantInfo,$sqlSet,$managerArray,$examRecordIdx
 										. "ITスキル診断結果が出ましたので、お知らせさせて頂きます。\n"
 										. "診断内容についてご確認をお願いいたします。\n\n"
 										. "＜申請者情報＞\n"
-										. "申 請 者：{{applicant_name}}\n"
-										. "応募区分：{{case}}\n"
-										. "学   歴：{{education}}\n"
-										. "専   攻：{{major}}\n"
-										. "試 験 日：{{execute_date}}\n\n"
+										. "申 請 者 ：{{applicant_name}}（{{kana}}）\n"
+										. "応募区分  ：{{case}}\n"
+										. "学   歴  ：{{education}}\n"
+										. "専   攻  ：{{major}}\n"
+										. "試 験 日 ：{{execute_date}}\n\n"
 										. "＜診断結果＞\n"
-										. "得   点：{{get_point}}\n"
-										. "評   価：{{rank}}/(A~F)\n"
+										. "得     点：{{get_point}}\n"
+										. "評     価：{{rank}}/（A~F）\n"
 										. "評価結果：{{diagnosis_comment}}\n\n"
 										. "※ITスキル診断に不明点などございましたら下記の宛先まで\n"
 										. "   お問い合わせください。\n\n"

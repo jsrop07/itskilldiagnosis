@@ -28,6 +28,7 @@ $lineChange = "<br>";
   <div class="card emegra" >
     <div class="card-body"style="margin-top:70px;">
     <form id="myForm" name="input_form" action="/applicant/exam" method="post">
+      <input type="hidden" id="solveTime" name="solveTime" value=""/>
         <div class="welcomeText" id="welcomeId">
           <p>与えられた問題に従って回答してください。</p>			
           <!-- 240531 丁錫圓 作成-->
@@ -319,6 +320,7 @@ document.getElementById("startBtn").addEventListener("click", function() {
   var examTime = <?php echo $time_limit; ?>; 
   var stopTime = 10; 
 
+
   var examTimeInSeconds = examTime * 60;
   var stopTimeInSeconds = stopTime * 60;
 
@@ -337,6 +339,9 @@ document.getElementById("startBtn").addEventListener("click", function() {
       var minutes = Math.floor(remainingTime / 60);
       var seconds = remainingTime % 60;
 
+      let solveTime = examTimeInSeconds - remainingTime;
+      let solveMinutes = Math.floor(solveTime / 60);
+      document.getElementById("solveTime").value = solveMinutes ;
       timerDisplay.innerHTML = "残り時間: " + minutes + "分 " + seconds + "秒";
 
       if (remainingTime <= 0) {
@@ -424,9 +429,7 @@ window.addEventListener('beforeunload', function (event) {
   const payload = {
     examid: <?= json_encode($examIdx) ?>,
     emailId: <?= json_encode($emailId) ?>
-  };
-  console.log('Sending payload:', payload);  // 디버깅을 위해 콘솔에 출력
-  
+  };  
   const xhr = new XMLHttpRequest();
   xhr.open('POST', './timeout');
   xhr.setRequestHeader('Content-Type', 'application/json');

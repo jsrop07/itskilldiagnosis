@@ -144,7 +144,19 @@
       </thead>
       <tbody>
         <?php if (empty(iterator_to_array($diagnosisDatas))): ?>
-          <td colspan="9"> データがありません。</td>
+          <!--
+            作成：朴昰成
+            修正：朴昰成
+            修正日：24/06/12
+          -->
+
+          <!-- 修正前： <?php /* ?>
+            <td colspan="9"> データがありません。</td>
+          <?php */ ?> -->
+
+          <!-- 修正後： -->
+          <td colspan="9">問題がありません。</td>
+          <!-- ここまで -->
         <?php else: ?>
           <?php foreach ($diagnosisDatas as $index => $data): ?>
             <tr>

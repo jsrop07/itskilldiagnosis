@@ -2,7 +2,19 @@
   $levelTexts = ["無級", "初級", "中級", "高級"];
   $selectTypeDatas = array(
     "level" => "レベル",
-    "class" => "問項種別",
+    /*
+      作成：朴昰成
+      修正：朴昰成
+      修正日：24/06/12
+    */
+
+    /* 修正前：
+      "class" => "問項種別",
+    */
+
+    /* 修正後： */
+      "class" => "問題種別",
+    /* ここまで */
   );
 
   if (!isset($_SESSION)) { session_start(); }

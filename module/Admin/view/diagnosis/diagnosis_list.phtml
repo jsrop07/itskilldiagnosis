@@ -64,7 +64,23 @@
 <content class="main">
 	<div style="width: 100%; display: flex; align-items: end; justify-content: space-between;">
 		<div class="info-num">
-      <div class="count">診断問題総計<div class="num"><?php echo $totalNum; ?></div>部</div>
+      <style type="text/css">
+        .count {
+          border-bottom: 1px solid black;
+          display: flex;
+          justify-content: space-between;
+
+          font-size: 13px;
+        }
+        .count span.num {
+          margin-right: 10px;
+            
+          line-height: 40px;
+          font-size: 40px;
+        }
+        .count { width: 200px; }
+      </style>
+      <div class="count"><p>診断問題総計</p><p><span class="num"><?php echo $totalNum; ?></span>部</p></div>
 		</div>
 
 		<div style="display: flex;">
@@ -77,6 +93,8 @@
       </select>
 
       <select class="form-select form-select-sm" id="select-select_value" style="width: 120px; margin-right: 8px;" onchange="ChangeSelectValue(this)">
+        <option value="" hidden>選択</option>
+
         <?php if ($isSearch["select"]): ?>
           <?php if ($queryDatas["select"][0] == "level"): ?>
             <?php foreach ($levelTexts as $value => $text): ?>
@@ -91,18 +109,16 @@
               <option value="<?php echo $data["idx"]; ?>"<?php echo ($queryDatas["select"][1] == $data["idx"]) ? " selected" : ""; ?>><?php echo $data["text"]; ?></option>
             <?php endforeach; ?>
           <?php endif; ?>
-        <?php else: ?>
-          <option value="" hidden>選択</option>
         <?php endif; ?>
       </select>
 
       <select class="form-select form-select-sm" id="select-select_class" style="width: 120px;" onchange="Select(this)">
+        <option value="" hidden>選択</option>
+
         <?php if ($queryDatas["select"][0] == "class"): ?>
           <?php foreach ($optionDatas["class2nd"][$queryDatas["select"][1]] as $data): ?>
-            <option value="<?php echo $data["idx"]; ?>"<?php echo ($data["idx"] == $queryDatas["select"][2]) ? " selected" : ""; ?>><?php echo $data["text"]; ?></option>
+            <option value="<?php echo $data["idx"]; ?>"<?php echo ($queryDatas["select"][2] = $data["idx"]) ? " selected" : ""; ?>><?php echo $data["text"]; ?></option>
           <?php endforeach; ?>
-        <?php else: ?>
-          <option value="" hidden>選択</option>
         <?php endif; ?>
       </select>
 		</div>

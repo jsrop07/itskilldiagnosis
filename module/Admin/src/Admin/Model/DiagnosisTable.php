@@ -62,6 +62,26 @@ class DiagnosisTable {
 		return new Paginator($paginatorAdapter);
 	}
 
+	/*
+		作成：朴昰成
+		作成日：24/06/11
+	*/
+	/** Read for List by Search data 
+	 * @param array $whereDatas [key => data]
+	 * @return mixed Records Array
+	*/
+	public function GetListBySearch($whereDatas) {
+		$where = new Where();
+		$where->isNull("date_end");
+		foreach ($whereDatas as $field => $data) {
+			$where->and->equalTo($field, $data);
+		}
+
+		$qry = $this->sql->select("diagnosis")->where($where)->order("date_start DESC");
+		$paginatorAdapter = new DbSelect($qry, $this->adapter);
+		return new Paginator($paginatorAdapter);
+	}
+	/* ここまで */
 	/** Read Table record By idx
 	 * @param int $idx
 	 * @return mixed Record

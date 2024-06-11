@@ -397,6 +397,19 @@ class QuestionController extends AbstractActionController
 		$idx = ["idx" => $post["idx"]];
 		unset($post["idx"]);
 
+		/*
+			作成：朴昰成
+			作成日：24/06/11
+		*/
+		foreach ($post as $index => $data) {
+			if ($data == null) {
+				$post[$index] = "";
+				continue;
+			}
+			$post[$index] = str_replace("\n", "{{n}}", $data);
+		}
+
+		/* ここまで */
 		$post["admin_approve"] = null;
 		$post["date_approve"] = null;
 

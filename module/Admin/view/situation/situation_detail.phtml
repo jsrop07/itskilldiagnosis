@@ -133,8 +133,29 @@
     <dt>診断依頼</dt>
     <dd><?php echo (is_null($recordData["request_date"])) ? "未依頼" : date("y.m.d H:i:s", strtotime($recordData["request_date"])); ?></dd>
 
+    <!--
+      作成：朴昰成
+      修正：朴昰成
+      修正日：24/06/12
+    -->
+
+    <!-- 修正前： <?php /* ?>
+      <dt>診断予定日時</dt>
+      <dd><?php echo (is_null($recordData["date_schedule"])) ? "未依頼" : date("y.m.d H:i:s", strtotime($recordData["date_schedule"])); ?></dd>
+    <?php */ ?> -->
+
+    <!-- 修正後： -->
+    <?php
+      $isExpire = false;
+      if (isset($recordData["date_schedule"])) {
+        if (($recordData["date_schedule"] < date("y.m.d H:i:m")) && is_null($recordData["rank"])) {
+          $isExpire = true;
+        }
+      }
+    ?>
     <dt>診断予定日時</dt>
-    <dd><?php echo (is_null($recordData["date_schedule"])) ? "未依頼" : date("y.m.d H:i:s", strtotime($recordData["date_schedule"])); ?></dd>
+    <dd style="<?php echo ($isExpire) ? "color: red;" : ""; ?>"><?php echo (is_null($recordData["date_schedule"])) ? "未依頼" : date("y.m.d H:i:s", strtotime($recordData["date_schedule"])); ?></dd>
+    <!-- ここまで -->
       <?php if ($isExecute): ?>
 
         <dt>診断実施日</dt>
@@ -177,6 +198,16 @@
   function Request(button) {
 		if (confirm("依頼しますか？") === false) { return false; }
 
+    /*
+      作成：朴昰成
+      作成日：24/06/12
+    */
+    if (<?php echo $isExpire; ?>) {
+      alert("診断予定日時を確認してください。");
+      return false;
+    }
+
+    /* ここまで */
     button.replaceChildren();
 
     var span = document.createElement("span");
@@ -189,6 +220,12 @@
     span.role = "status";
     span.innerText = "送信中...";
     button.appendChild(span);
+    /*
+      作成：朴昰成
+      作成日：24/06/12
+    */
+    button.disabled = true;
+    /* ここまで */
 
 		const postForm = new FormData();
 		postForm.append("idxs", idx);
@@ -209,6 +246,12 @@
 				}
 			}
 		}
+    /*
+      作成：朴昰成
+      作成日：24/06/12
+    */
+    location.reload(true);
+    /* ここまで */
 	}
 
   function SendMail(button) {
@@ -226,6 +269,12 @@
     span.role = "status";
     span.innerText = "送信中...";
     button.appendChild(span);
+    /*
+      作成：朴昰成
+      作成日：24/06/12
+    */
+    button.disabled = true;
+    /* ここまで */
 
     const postForm = new FormData();
     postForm.append("idxs", idx);
@@ -249,6 +298,12 @@
           } catch (e) {
             alert("error");
             console.log(result);
+            /*
+              作成：朴昰成
+              作成日：24/06/12
+            */
+            location.reload(true);
+            /* ここまで */
             return false;
           }
         }

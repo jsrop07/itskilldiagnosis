@@ -409,6 +409,12 @@ function checkKana(input) {
           return false;
       }
 
+      if (form.majorSelect.value == "IT・ソフトウェア以外" && form.otherMajor.value=="") {
+          alert("その他の場合の、記入してください。");
+          setTimeout("form.otherMajor.focus()",100);
+          return false;
+      }
+
       if (form.skill.value == "選択") {
           alert("ITスキル有無を入力してください。");
           setTimeout("form.skill.focus()",100);

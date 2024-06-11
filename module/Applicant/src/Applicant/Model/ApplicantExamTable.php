@@ -89,16 +89,30 @@ class ApplicantExamTable
       return $resultSet;
   }
   public function executeExam($idx){
-    $qry=new sql($this->adapter);
-    $update=$qry->update('record');
-    
+    $qry = new sql($this->adapter);
+
+    // Step 1: Check if execute_date is already set
+    $select = $qry->select('record');
+    $select->columns(['execute_date'])->where(['idx' => $idx]);
+
+    $sqlString = $qry->getSqlStringForSqlObject($select);
+    $result = $this->adapter->query($sqlString, Adapter::QUERY_MODE_EXECUTE)->current();
+
+    if ($result && $result['execute_date']) {
+        // execute_date already set, do not update
+        return false;
+    }
+
+    // Step 2: Execute the update if execute_date is not set
+    $update = $qry->update('record');
     $update->set(['execute_date' => date("Y-m-d H:i:s")])->where(['idx' => $idx]);
 
     $sqlString = $qry->getSqlStringForSqlObject($update);
-
     $result = $this->adapter->query($sqlString, Adapter::QUERY_MODE_EXECUTE);
+
     return $result;
-  }
+}
+
 
   public function updateExam($sqlWhere, $sqlSet){
     $qry=new sql($this->adapter);
@@ -144,7 +158,7 @@ class ApplicantExamTable
     return $result;     
   }
 
-  public function timeOut($idx)
+  public function timeOut($idx,$time_limit)
   {
     $qry = new Sql($this->adapter);
     $select = $qry->select('record');
@@ -155,18 +169,24 @@ class ApplicantExamTable
     $row = $result->current();
 
     $currentDateTime = date("Y-m-d H:i:s"); // current time
-    $dateSchedule = $row['date_schedule']; // diagnosis schedule time 
+    $dateSchedule = $row['execute_date']; // diagnosis schedule time 
 
     $currentDateTimeObj = date_create($currentDateTime); //turn to datetime object by cureenttDateTime 
     $dateScheduleObj = date_create($dateSchedule); // turn to datetime object by dateScheduleTime
     
     $dateInterval = $currentDateTimeObj -> diff($dateScheduleObj); // calculate dateScheduletime - cureentDateTime
     $minutesDifference = ($dateInterval->days * 24 * 60) + ($dateInterval->h * 60) + $dateInterval->i; //turn days, hour, minute to minute
+    if($minutesDifference <= $time_limit && $currentDateTimeObj > $dateScheduleObj){
+      print_r($minutesDifference);
+      print_r("<br>");
+      print_r($time_limit);
+      print_r("<br>");
+      print_r($currentDateTimeObj);
+      print_r("<br>");
+      print_r($dateScheduleObj);
 
-
-    if($minutesDifference <= 30 && $currentDateTimeObj > $dateScheduleObj){
       return "success";
-    } elseif($minutesDifference > 30 && $currentDateTimeObj > $dateScheduleObj){
+    } elseif($minutesDifference > $time_limit && $currentDateTimeObj > $dateScheduleObj){
       $updateQry = $this->sql->update('record')->set(array('rank' => 'F'))->where(array('idx' => $row['idx']));
       $updateResult = $this->sql->prepareStatementForSqlObject($updateQry)->execute();
       return "timeout";

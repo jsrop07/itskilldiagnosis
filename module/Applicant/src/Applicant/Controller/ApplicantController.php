@@ -339,8 +339,10 @@ class ApplicantController extends AbstractActionController
 			$sqlSet["get_point"] = $get_point;
 			$sqlSet['rank']=$recordRank;
 			$sqlSet['diagnosis_comment']=$recordExamResult;
+			$sqlSet['solve_time']=$post['solveTime'];
 
 			$applicantExamTbl->updateExam($sqlWhere, $sqlSet);			
+
 			$examRecordRecent =  $applicantExamTbl->readByApplicantIdx($applicantInfo);
 			$applicantExamTbl->deletePasswordByIdx($applicantInfo["idx"]);
 			$this->mailByApplicantExam($applicantInfo,$sqlSet,$managerArray,$examRecordIdx);
@@ -383,11 +385,20 @@ class ApplicantController extends AbstractActionController
 			$post = $this->params()->fromPost();
 			$examIdx = $post['idx']; 
 			$applicantExamTbl = $this->getServiceLocator()->get("ApplicantExamTable");
-			$timeout = $applicantExamTbl->timeout($examIdx); 
+			
+			$session = new Container("applicant");
+			$emailId = $session->id;
+			$diagnosisTb = $this->getServiceLocator()->get("DiagnosisTable-Admin");
+			$applicantInfo    = $applicantExamTbl->readById($emailId);
+			$examRecordInfo =  $applicantExamTbl->readByApplicantIdx($applicantInfo);
+			$recordCode    = $examRecordInfo["diagnosis_code"];	
+			$diagnosisInfo = $diagnosisTb->ReadForRecordByCodenDate($recordCode, $examRecordInfo["diagnosis_date"]);	
+			$diagnosisTime = $diagnosisInfo['time_limit'];
+
+			$timeout = $applicantExamTbl->timeout($examIdx,$diagnosisTime); 
 			if ($timeout === 'timeout') {
-				$session = new Container("applicant");
 				if (isset($session->id)) {
-					$emailId = $session->id;
+					// $emailId = $session->id;
 					$applicantInfo = $applicantExamTbl->readById($emailId);
 					$applicantExamTbl->deletePasswordByIdx($applicantInfo['idx']);
 					unset($emailId);

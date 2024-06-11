@@ -281,7 +281,7 @@ class ApplicantController extends AbstractActionController
 			}
 		}
 
-		// $percentPoint = ceil($get_point/$diagnosisInfo["point_total"]*100);
+		$percentPoint = ceil($get_point/$diagnosisInfo["point_total"]*100);
 
 		$selectedRank = [];
 		$resultPoints = explode(',', $diagnosisInfo["result_points"]);
@@ -336,13 +336,12 @@ class ApplicantController extends AbstractActionController
 		if($submit_post=='btn_submit'){
 			$sqlWhere["idx"] = $examRecordInfo['idx'];
 			$sqlSet["answer_data"] = $answer_data;
-			$sqlSet["get_point"] = $get_point;
+			$sqlSet["get_point"] = $percentPoint;
 			$sqlSet['rank']=$recordRank;
 			$sqlSet['diagnosis_comment']=$recordExamResult;
 			$sqlSet['solve_time']=$post['solveTime'];
 
 			$applicantExamTbl->updateExam($sqlWhere, $sqlSet);			
-
 			$examRecordRecent =  $applicantExamTbl->readByApplicantIdx($applicantInfo);
 			$applicantExamTbl->deletePasswordByIdx($applicantInfo["idx"]);
 			$this->mailByApplicantExam($applicantInfo,$sqlSet,$managerArray,$examRecordIdx);

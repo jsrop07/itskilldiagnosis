@@ -139,7 +139,19 @@
 			</style>
 			<dl class="emegra question">
 				<dt class="essential">問項数</dt>
-				<dd><input type="number" class="form-control" name="question_num" style="width: 80px;" value="<?php echo ($isSet) ? $diagnosisData["question_num"] : "35"; ?>"/>問題</dd>
+        <!--
+          作成：朴昰成
+          修正：朴昰成
+          修正日：24/06/11
+        -->
+
+        <!-- 修正前： <?php /* ?>
+          <dd><input type="number" class="form-control" name="question_num" style="width: 80px;" value="<?php echo ($isSet) ? $diagnosisData["question_num"] : "35"; ?>"/>問題</dd>
+        <?php */ ?> -->
+
+        <!-- 修正後： -->
+        <dd><input type="number" class="form-control" name="question_num" style="width: 80px;" value="<?php echo ($isSet) ? $diagnosisData["question_num"] : "35"; ?>"/>題項</dd>
+        <!-- ここまで -->
 
 				<dt class="essential">診断時間</dt>
 				<dd><input type="number" class="form-control" name="time_limit" style="width: 80px;" value="<?php echo ($isSet) ? $diagnosisData["time_limit"] : "50"; ?>"/>分</dd>
@@ -225,7 +237,7 @@
                 <?php */ ?> -->
 
                 <!-- 修正後： -->
-                <td style="grid-column: 1 / 6;">データを入力してください。</td>
+                <td style="grid-column: 1 / 6;">設定で大分類、小分類、レベルを選択してください。</td>
                 <!-- ここまで -->
 							</tr>
 						</tbody>
@@ -731,7 +743,7 @@
     var tr = document.createElement("tr");
     var td = document.createElement("td");
     td.style.gridColumn = "1 / 6";
-    td.innerText = "問題項目がありません。";
+    td.innerText = "問項がありません。";
     tr.appendChild(td);
     questionSelectBody.appendChild(tr);
 

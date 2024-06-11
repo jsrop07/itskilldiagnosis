@@ -1152,28 +1152,81 @@ class SituationController extends AbstractActionController {
 		// load basic setting for MailSender
 		$param["config"] = $this->getConfig();
 		
-		$param["title"] = "診断試験の結果について。";
+		/*
+			作成：朴昰成
+			修正：朴昰成
+			修正日：24/06/11
+		*/
+
+		/* 修正前：
+			$param["title"] = "診断試験の結果について。";
+			
+			$caseText = "新卒";
+			if ($recordData["case"] == 1) { $caseText = "中途"; }
+			$param["content"] = "{{applicant_name}}様\n"
+												. "お世話になっております。\n"
+												.	"株式会社ジエンジサービス　ITスキル診断担当です。\n\n"
+												. "ITスキル診断を受験いただき、ありがとうございました。\n"
+												. "結果が出ましたので、ご確認人のほどよろしくお願いいたします。\n\n"
+												. "申請者：{{applicant_name}}\n"
+												. "お名前（カナ）：{{kana}}\n"
+												. "応募区分：{{case}}\n"
+												. "学歴：{{education}}\n"
+												. "専攻：{{major}}\n"
+												. "試験日：{{execute_date}}\n\n"
+												. "得点：{{get_point}}\n"
+												. "評価：{{rank}}\n"
+												. "評価結果：{{diagnosis_comment}}\n\n"
+												. "※ITスキル診断に不明点などありましたら下記の問い合わせ先にご連絡ください。\n\n"
+												. "お問い合わせ先\n"
+												. "担当者：{{admin_name}}\n"
+												. "連絡先：{{admin_id}}\n\n"
+												. "以上、よろしくお願いいたします。\n"
+												. "※このメールに返信しないでください。";
+			$param["content"] = str_replace("{{applicant_name}}", $applicantData["name"], $param["content"]);
+			$param["content"] = str_replace("{{kana}}", $applicantData["kana"], $param["content"]);
+			$param["content"] = str_replace("{{case}}", $caseText, $param["content"]);
+			$param["content"] = str_replace("{{education}}", $recordData["education"], $param["content"]);
+			$param["content"] = str_replace("{{major}}", $recordData["major"], $param["content"]);
+			$param["content"] = str_replace("{{execute_date}}", $recordData["execute_date"], $param["content"]);
+			$param["content"] = str_replace("{{get_point}}", $recordData["get_point"], $param["content"]);
+			$param["content"] = str_replace("{{rank}}", $recordData["rank"], $param["content"]);
+			$param["content"] = str_replace("{{diagnosis_comment}}", $recordData["diagnosis_comment"], $param["content"]);
+			$param["content"] = str_replace("{{admin_name}}", $adminData["name"], $param["content"]);
+			$param["content"] = str_replace("{{admin_id}}", $adminData["id"], $param["content"]);
+		*/
+
+		/* 修正後： */
+		$param["title"] = "ITスキル診断結果のお知らせ（ジエンジサービス）";
 		
 		$caseText = "新卒";
 		if ($recordData["case"] == 1) { $caseText = "中途"; }
 		$param["content"] = "{{applicant_name}}様\n"
 											. "お世話になっております。\n"
-											.	"株式会社ジエンジサービス　ITスキル診断担当です。\n\n"
-											. "ITスキル診断を受験いただき、ありがとうございました。\n"
-											. "結果が出ましたので、ご確認人のほどよろしくお願いいたします。\n\n"
-											. "申請者：{{applicant_name}}\n"
-											. "お名前（カナ）：{{kana}}\n"
+											.	"株式会社ジエンジサービス　ITスキル診断担当です。\n"
+											. "\n"
+											. "株式会社ジエンジサービスのITスキル診断担当者でございます。\n"
+											. "ITスキル診断結果が出ましたので、お知らせさせて頂きます。\n"
+											. "診断内容についてご確認をお願いいたします。\n"
+											. "\n"
+											. "＜申請者情報＞\n"
+											. "申請者：{{applicant_name}}（{{kana}}）\n"
 											. "応募区分：{{case}}\n"
-											. "学歴：{{education}}\n"
-											. "専攻：{{major}}\n"
-											. "試験日：{{execute_date}}\n\n"
-											. "得点：{{get_point}}\n"
-											. "評価：{{rank}}\n"
-											. "評価結果：{{diagnosis_comment}}\n\n"
-											. "※ITスキル診断に不明点などありましたら下記の問い合わせ先にご連絡ください。\n\n"
-											. "お問い合わせ先\n"
+											. "学　　歴：{{education}}\n"
+											. "専　　攻：{{major}}\n"
+											. "試 験 日：{{execute_date}}\n"
+											. "\n"
+											. "得　　点：{{get_point}}/100点\n"
+											. "評　　価：{{rank}}/（A~F）\n"
+											. "診断評価：{{diagnosis_comment}}\n"
+											. "\n"
+											. "※ITスキル診断に不明点などございましたら下記の宛先まで\n"
+											. "　お問い合わせください。\n"
+											. "\n"
+											. "＜問い合わせ先＞\n"
 											. "担当者：{{admin_name}}\n"
-											. "連絡先：{{admin_id}}\n\n"
+											. "連絡先：{{admin_id}}\n"
+											. "\n"
 											. "以上、よろしくお願いいたします。\n"
 											. "※このメールに返信しないでください。";
 		$param["content"] = str_replace("{{applicant_name}}", $applicantData["name"], $param["content"]);
@@ -1187,6 +1240,7 @@ class SituationController extends AbstractActionController {
 		$param["content"] = str_replace("{{diagnosis_comment}}", $recordData["diagnosis_comment"], $param["content"]);
 		$param["content"] = str_replace("{{admin_name}}", $adminData["name"], $param["content"]);
 		$param["content"] = str_replace("{{admin_id}}", $adminData["id"], $param["content"]);
+		/* ここまで */
 
 		$param["managerEmail"] = $adminData["id"];
 		$param["email"] = $applicantData["email"];;

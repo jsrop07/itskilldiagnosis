@@ -639,10 +639,10 @@ class SituationController extends AbstractActionController {
 											. "お世話になっております。\n\n"
 											. "ITスキル診断についてお知らせさせていただきます。\n"
                       . "以下URLより「ITスキル診断サイト」にログインし診断を行ってください。\n\n"
-											. "ログインID：{{login_id}}\n"
+											. "ログインID ：{{login_id}}\n"
 											. "ログインPWD：{{login_password}}\n\n"
 											. "＜ITスキル診断URL＞\n"
-											. "http://18.181.4.65/applicant/login\n\n"
+											. "{$param['config']['user-url']['applicant']}/login\n\n"
 											. "※ITスキル診断が可能な有効期限は{{dateSchedule}}分 ~ {{dateSchduleEnd}}です。\n"
 											. "   有効期限内に受験を受けない場合、自動的に失格となりますのでご了承ください。\n\n"
 											. "※ITスキル診断に不明点などございましたら下記の宛先まで\n"
@@ -697,7 +697,7 @@ class SituationController extends AbstractActionController {
       // 메일 제목 지정 (일반적으로 DB에 메일폼 테이블을 만들어서 그것을 가져와서 아래의 title contents에 넣지만, 이건 샘플이므로 간단히.)
       // 사람마다 변환해야 할 부분은 {{이렇게}} 메일폼에 넣어놓는다.
       $param['title']="{{user_name}}様、新しい試験診断の申し込みがあります。";
-      $param["content"] = "以下の申込者の情報をご参照ください。\n\nお名前（漢字）：{$arr["name"]}\nお名前（カナ）：{$arr["kana"]}\n応募区分：{$caseText}\nITスキル：{$skillText}\n\n診断者ページ：http://gngitskill:84/admin/situation/detail/{$applicantInfo["idx"]}";
+      $param["content"] = "以下の申込者の情報をご参照ください。\n\nお名前（漢字）：{$arr["name"]}\nお名前（カナ）：{$arr["kana"]}\n応募区分：{$caseText}\nITスキル：{$skillText}\n\n診断者ページ：{$param['config']['user-url']['admin']}/situation/detail/{$applicantInfo["idx"]}";
     
       // 사람이름이나, URL등 고유하게 변경해야 하는 것은 이렇게 처리한다.
       // 메일 제목과 내용 부분 모두 변환처리.

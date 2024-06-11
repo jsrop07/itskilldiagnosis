@@ -267,8 +267,6 @@
   function Request(button) {
 		if (confirm("依頼しますか？") === false) { return false; }
 
-    if (confirm("結果を送信しますか？") === false) { return false; }
-
     button.replaceChildren();
 
     var span = document.createElement("span");

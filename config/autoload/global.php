@@ -15,6 +15,10 @@ return array(
 			"buffer_results" => true,
 		),
 	),
+	'user-url'=> array(
+		'applicant' => 'http://18.181.4.65/applicant',
+		'admin' => 'http://18.181.4.65/admin',
+	),
         'service_manager' => array(
                 'factories' => array(
                         'Zend\Db\Adapter\Adapter'

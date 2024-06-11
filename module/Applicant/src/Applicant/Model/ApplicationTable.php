@@ -140,6 +140,36 @@ class ApplicationTable
       $qry = $this->sql->select("admin")->where(["pic" => "y"]);
       return $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
     }
-  
 
+     /* log
+    作成：丁錫圓
+    修正日：24/06/04
+  */ 
+    public function emailDuplicateCheck($email)
+    {
+      $qry = $this->sql->select("applicant")->where(["email" => $email]);
+
+      $result = $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
+
+      if (empty($result)) {
+        return "success";
+      } 
+      // if applicant table has email
+      $applyDate = $result['apply_date'];
+      $currentDateTime = date("Y-m-d H:i:s"); // current time
+      $currentDateTimeObj = date_create($currentDateTime); // turn to datetime object by cureenttDateTime 
+      $applyDateObj = date_create($applyDate); // turn to datetime object by dateScheduleTime
+
+      $dateInterval = $currentDateTimeObj->diff($applyDateObj);
+      $minutesDifference = ($dateInterval->days * 24 * 60) + ($dateInterval->h * 60) + $dateInterval->i; // turn days, hour, minute to minute
+      
+      if ($minutesDifference >= 30 && $currentDateTimeObj > $applyDateObj) {
+        return "success";
+      } else {
+        return "fail";
+      
+      }
+    }
+// ここまで
+    
 }

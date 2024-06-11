@@ -59,7 +59,19 @@
 			</style>
 			<dl class="emegra setting">
 				<?php if ($isEdit): ?>
-					<dt>職別コード</dt>
+          <!--
+            作成：朴昰成
+            修正：朴昰成
+            修正日：24/06/03
+          -->
+
+          <!-- 修正前： <?php /* ?>
+            <dt>職別コード</dt>
+          <?php */ ?> -->
+
+          <!-- 修正後： -->
+          <dt>問題ID</dt>
+          <!-- ここまで -->
 					<dd><input class="form-control form-control-sm" name="code" style="width: 150px;" readonly value="<?php echo $diagnosisData["code"];?>"/></dd>
 				<?php endif; ?>
 
@@ -283,23 +295,13 @@
 <script type="text/javascript">
 	const numTexts = ["①", "②", "③", "④", "⑤"];
 
-	/*
-		作成：朴昰成
-		作成日：24/05/21
-	*/
 	const listCheckbox = document.getElementById("check-question_list");
-	/* ここまで */
 	const questionListBody = document.getElementById("tbody-question_list");
 	const selectInputs = document.getElementsByTagName("select");
 
 	const modalDiv = document.getElementById("modal-question_select");
 	const modal = new bootstrap.Modal(modalDiv);
-	/*
-		作成：朴昰成
-		作成日：24/05/21 id="check-question_list"
-	*/
 	const selectCheckbox = document.getElementById("check-question_select");
-	/* ここまで */
 	const questionSelectBody = document.getElementById("tbody-question_select");
 
 	const form = document.getElementById("form");

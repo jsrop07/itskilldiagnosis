@@ -386,24 +386,6 @@ table.emegra td.link:hover { text-decoration: underline; }
 
 
 
-.count {
-	width: 240px;
-	display: flex;
-	border-bottom: 1px solid black;
-	align-items: end;
-
-	font-size: 13px;
-}
-.count > .num {
-	width: 150px;
-	margin-right: 10px;
-	display: flex;
-	justify-content: end;
-
-	line-height: 40px;
-	font-size: 40px;
-}
-
 .table-empty {
 	width: 100%;
 	border: 1px solid var(--line);
@@ -415,4 +397,46 @@ table.emegra td.link:hover { text-decoration: underline; }
 	font-size: 14px;
 	font-weight: 400;
 	color: #343A40;
+}
+
+
+
+
+div.emegra-table {
+  min-width: 1200px;
+  margin-top: 8px;
+  border-radius: 6px;
+  border: 1px solid var(--line);
+  overflow: hidden;
+}
+div.emegra-table table {
+  margin: 0;
+
+  border-collapse: collapse;
+  border-style: hidden;
+}
+div.emegra-table th, div.emegra-table td {
+  vertical-align: middle;
+  text-align: center;
+}
+div.emegra-table th {
+  padding: 8px;
+  background: var(--emegra-blue);
+
+  font-size: 14px;
+  font-weight: 700;
+  color: white;
+}
+div.emegra-table td {
+  padding: 16px 8px;
+  border: 1px 0 solid var(--line);
+  font-size: 14px;
+  font-weight: 400;
+}
+div.emegra-table td.start { text-align: start; }
+div.emegra-table a { color: blue !important; }
+div.emegra-table a:hover {
+  text-decoration: underline !important;
+
+  cursor: pointer;
 }

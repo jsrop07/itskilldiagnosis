@@ -88,7 +88,27 @@ class MailRequest extends AbstractActionController
 		unset($params['config']['smtp']['fromemail']);
 		$options   = new SmtpOptions($params['config']['smtp']);
 		$transport->setOptions($options);
-		$transport->send($mail);
+		/*
+			作成：丁錫圓
+			修正：朴昰成
+			修正日：24/06/07
+		*/
+
+		/* 修正前：
+			$transport->send($mail);
+		*/
+
+		/* 修正後： */
+		try {
+			$transport->send($mail);
+		}
+		catch (\Exception $e) {
+			$result["exception"] = $e->getMessage();
+			$result["status"] = "fail";
+			return $result;
+		}
+		
+		/* ここまで */
 
 		$ret['transport']=$transport;
 		return $ret;
@@ -161,6 +181,5 @@ class MailRequest extends AbstractActionController
         }
         return $config;
     }
-
 }
 

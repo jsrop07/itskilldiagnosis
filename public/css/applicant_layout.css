@@ -8,7 +8,10 @@
 	--emegra-green: #27A374;
 	--font: #6C757D;
 }
-
+.modal {
+    -webkit-backdrop-filter: blur(5px); /* Safari and older versions of Chrome */
+    backdrop-filter: blur(5px); /* Standard syntax for modern browsers */
+}
 body {
 	min-height: 100vh;
 	background: var(--background);
@@ -105,12 +108,6 @@ main{
 .diagnosis_main span.no_after_style::after {
     content: none;
 }
-
-.diagnosis_main input {
-    grid-column: 2 / 3; 
-
-}
-
 
 .diagnosis_main #otherEducationInput,.diagnosis_main #otherclass1stInput,.diagnosis_main #otherMajorInput {
     grid-column: 2 / 3; 

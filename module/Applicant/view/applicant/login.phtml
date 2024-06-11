@@ -16,63 +16,64 @@ if ($ses_id) {
 	span { margin-bottom: 8px; }
 	input { height: 48px; }
 </style>
+<form id="form" name="login_form" enctype="multipart/form-data" action="/applicant/login" method="get" onsubmit="return submitForm()">
+  <div class="emegra card">
+    <div class="card-header">G&G Service</div>
 
-<div class="emegra card">
-	<div class="card-header">G&G Service</div>
+    <div class="card-body">
+      <span>ログインID</span>
+      <input class="form-control" name='email' id="id" type="text" placeholder="IDを入力ください">
 
-	<div class="card-body">
-		<span>ログインID</span>
-		<input class="form-control" name='email' id="id" type="text" placeholder="IDを入力ください">
+      <span style="margin-top: 24px">パスワード</span>
+      <input class="form-control" name='password' id="password" type="password" placeholder="パスワードを入力ください">
 
-		<span style="margin-top: 24px">パスワード</span>
-		<input class="form-control" name='password' id="password" type="password" placeholder="パスワードを入力ください">
-
-		<button class="emegra" style="margin-top: 40px;" onclick="submit();">ログイン</button>
-	</div>
-</div>
-
+      <button class="emegra" style="margin-top: 40px;" type="submit">ログイン</button>
+    </div>
+  </div>
+</form>
 <script>
-	const id = document.getElementById("id");
-	const password = document.getElementById("password");
-	const url = window.location.href;
+  const id = document.getElementById("id");
+  const password = document.getElementById("password");
+  const url = window.location.href;
 
-	function submit() {
-		if (id.value == "") {
-			alert("IDを入力ください");
-			id.focus();
-			return false;
-		}
+  function submitForm() {
+    if (id.value == "") {
+      alert("IDを入力ください");
+      id.focus();
+      return false;
+    }
 
-		if (password.value == "") {
-			alert("パスワードを入力ください");
-			password.focus();
-			return false;
-		}
+    if (password.value == "") {
+      alert("パスワードを入力ください");
+      password.focus();
+      return false;
+    }
 
-		const postForm = new FormData();
-		postForm.append("id", id.value);
-		postForm.append("password", password.value);
+    const postForm = new FormData();
+    postForm.append("id", id.value);
+    postForm.append("password", password.value);
 
-		const xhr = new XMLHttpRequest();
-		xhr.open("POST", url, true);
-		xhr.send(postForm);
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", url, true);
+    xhr.send(postForm);
 
-		xhr.onload = () => {
-			if (xhr.status == 200) {
-				const result = xhr.responseText;
-				if (result == "wrong info") {
-					alert("有効ではないIDまたはパスワードです。");
-					id.focus();
-				} else if (result == "wrong time") {
-					alert("診断可能な時間に再度お試しください。");
-				} else if (result == "timeout"){
-					alert("診断可能な時間が過ぎたので、受験できません。");
-				} 
-				else if (result == "success") {
+    xhr.onload = () => {
+      if (xhr.status == 200) {
+        const result = xhr.responseText;
+        if (result == "wrong info") {
+          alert("有効ではないIDまたはパスワードです。");
+          id.focus();
+        } else if (result == "wrong time") {
+          alert("診断可能な時間に再度お試しください。（メール参照）");
+        } else if (result == "timeout"){
+          alert("診断可能な時間が過ぎたので、受験できません。");
+        } else if (result == "success") {
           self.location.href = "../applicant/exam";
-				}
-			}
-		}
-	}
+        }
+      }
+    }
+    return false;
+  }
 </script>
+
 <?php endif ?>

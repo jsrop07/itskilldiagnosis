@@ -52,25 +52,86 @@ class SituationController extends AbstractActionController {
 			$datas["searchDatas"] = $query;
 
 			if (isset($query["name"])) { $sqlWhere["name"] = $query["name"]; }
+			if (isset($query["date"])) { $sqlWhere["date"] = $query["date"]; }
 
-			if (isset($query["pick"])) {
-				switch ($query["pick"]) {
-					case "apply":
-						$sqlWhere["request_date"] = "null";
+			/*
+				作成：朴昰成
+				修正：朴昰成
+				修正日：24/06/07
+			*/
+
+			/* 修正前：
+				if (isset($query["pick"])) {
+					switch ($query["pick"]) {
+						case "apply":
+							$sqlWhere["request_date"] = "null";
+							break;
+						case "request":
+							$sqlWhere["request_date"] = "not null";
+							$sqlWhere["execute_date"] = "null";
+							break;
+						case "execute";
+							$sqlWhere["execute_date"] = "not null";
+							break;
+						default:
+							$dict = explode("-", $query["pick"]);
+							$sqlWhere[$dict[0]] = $dict[1];
+							break;
+					}
+				}
+			*/
+
+			/* 修正後： */
+			if (isset($query["select"])) {
+				$data = explode("-", $query["select"]);
+
+				switch ($data[0]) {
+					case "status":
+						switch ($data[1]) {
+							case "apply":
+								$sqlWhere["request_date"] = "null";
+								break;
+							case "request":
+								$sqlWhere["request_date"] = "not null";
+								$sqlWhere["rank"] = "null";
+								break;
+							case "execute":
+								$sqlWhere["request_date"] = "not null";
+								$sqlWhere["execute_date"] = "not null";
+								$sqlWhere["rank"] = "A";
+								$sqlWhere["rank"] = "B";
+								$sqlWhere["rank"] = "C";
+								$sqlWhere["rank"] = "D";
+								break;
+							case "unexecute":
+								$sqlWhere["request_date"] = "not null";
+								$sqlWhere["execute_date"] = "not null";
+								$sqlWhere["rank"] = "F";
+								break;
+						}
 						break;
-					case "request":
-						$sqlWhere["request_date"] = "not null";
-						$sqlWhere["execute_date"] = "null";
-						break;
-					case "execute";
-						$sqlWhere["execute_date"] = "not null";
+					case "education":
+						switch ($data[1]) {
+							case "high":
+								$sqlWhere["education"] = "高卒";
+								break;
+							case "voca":
+								$sqlWhere["education"] = "専門卒";
+								break;
+							case "uni":
+								$sqlWhere["education"] = "大卒";
+								break;
+							case "grad":
+								$sqlWhere["education"] = "大学院卒";
+								break;
+						}
 						break;
 					default:
-						$dict = explode("-", $query["pick"]);
-						$sqlWhere[$dict[0]] = $dict[1];
+						$sqlWhere[$data[0]] = $data[1];
 						break;
 				}
 			}
+			/* ここまで */
 			try { $newRecordDatas = $recordTb->ReadNewListBySearchnOffset($sqlWhere, $offset); }
 			catch (\Exception $e) { print_r($e->getMessage()); exit; }
 
@@ -115,6 +176,12 @@ class SituationController extends AbstractActionController {
 			try {
 				$datas["totalApply"] = $recordTb->CountApplyData();
 				$datas["totalRequest"] = $recordTb->CountRequestData();
+				/*
+					作成：朴昰成
+					作成日：24/06/07
+				*/
+				$datas["countOver"] = $recordTb->CountOverData();
+				/* ここまで */
 				$datas["totalData"] = $recordTb->CountAllData();
 			} catch (\Exception $e) {
 				print_r($e->getMessage());
@@ -136,9 +203,29 @@ class SituationController extends AbstractActionController {
 					$data = array_merge($diagnosisData, $data);
 				}
 
-				if ($data["request_date"] == null) { $data["status"] = "新規"; }
-				else if ($data["execute_date"] == null) { $data["status"] = "診断"; }
-				else { $data["status"] = "終了"; }
+				/*
+					作成：朴昰成
+					修正：朴昰成
+					修正日：24/06/05
+				*/
+
+				/* 修正前：
+					if ($data["request_date"] == null) { $data["status"] = "新規"; }
+					else if ($data["execute_date"] == null) { $data["status"] = "診断"; }
+					else if ($data["rank"] == "F") { $data["status"] = "失格"; }
+					else { $data["status"] = "終了"; }
+				*/
+
+				/* 修正後： */
+				if (is_null($data["request_date"])) {
+					$data["status"] = "新規";
+				}
+				else {
+					if (is_null($data["rank"])) { $data["status"] = "診断"; }
+					else if ($data["rank"] == "F") { $data["status"] = "失格"; }
+					else { $data["status"] = "終了"; }
+				}
+				/* ここまで */
 
 				$data["num"] = $datas["totalData"] - (($page - 1) * 10) - $index;
 				
@@ -194,37 +281,85 @@ class SituationController extends AbstractActionController {
 		$recordTb = $this->getServiceLocator()->get("RecordTable-Admin");
 		$adminTb = $this->getServiceLocator()->get("AdminTable");
 
+		$recordDatas = array();
+    /*
+      作成：朴昰成
+      作成日：24/06/07
+    */
+		$errorRecordDatas = array();
+    /* ここまで */
+		foreach ($recordIdxs as $idx) {
+			try { $recordData = $recordTb->ReadByIdx($idx); }
+			catch (\Exception $e) { die($e->getMessage()); }
+
+			/*
+				作成：朴昰成
+				修正：朴昰成
+				修正日：24/06/07
+			*/
+
+			/* 修正前：
+				if ($recordData["request_date"] != null) { die("fale"); }
+			*/
+
+			/* 修正後： */
+			if ($recordData["request_date"] != null) { $errorRecordDatas[] = $recordData; }
+			/* ここまで */
+			$recordDatas[] = $recordData;
+		}
+
+    /*
+      作成：朴昰成
+      作成日：24/06/07
+    */
+		if ($errorRecordDatas) {
+			$applicnatDatas = array();
+			foreach ($errorRecordDatas as $recordData) {
+				try { $applicnatDatas[] = $applicantTb->ReadByIdx($recordData["applicant_idx"]); }
+				catch (\Exception $e) { die($e->getMessage()); }
+			}
+			die(json_encode($applicnatDatas));
+		}
+
+    /* ここまで */
 		try { $PICDatas = $adminTb->ReadPIC(); }
 		catch (\Exception $e) { die($e->getMessage()); }
-		
+
 		foreach ($PICDatas as $adminData) {
-			foreach ($recordIdxs as $idx) {
-				try { $recordData = $recordTb->ReadByIdx($idx); }
-				catch (\Exception $e) { die($e->getMessage()); }
+			foreach ($recordDatas as $recordData) {
 				try { $applicantData = $applicantTb->ReadByIdx($recordData["applicant_idx"]); }
 				catch (\Exception $e) { die($e->getMessage()); }
 
 				$skillText = "無";
-				if ($recordData["skill"] == 0) { $skillText = "有"; } 
-		
+				if ($recordData["skill"] == 0) { $skillText = "有"; }
+
 				$caseText = "中途（経歴職）";
 				if($recordData["case"] == 0){ $caseText = "新卒"; }
 
 				$this->mailByRequest($adminData, $applicantData);
 				$this->mailByAdmin($applicantData, $skillText, $caseText, $adminData, $recordData);
 
-				try { $recordTb->RequestByIdx($idx); }
-				catch (\Exception $e) { die($e->getMessage()); }
+				/*
+					作成：朴昰成
+					修正：朴昰成
+					修正日：24/06/07
+				*/
+
+				/* 修正前：
+					try { $recordTb->RequestByIdx($idx); }
+					catch (\Exception $e) { die($e->getMessage()); }
+				*/
+
+				/* 修正後： */
+				try { $recordTb->RequestByIdx($recordData["idx"]); }
+				catch (\Exception $e) { die($this->SaveLog($e->getMessage())); }
+				/* ここまで */
 			}
 		}
 
 		die("success");
 	}
 
-	/*
-		作成：朴昰成
-		作成日：24/05/29
-	*/
 	/** When Send Mail for Notice Result */
 	public function mailAction() {
 		$idxs = $this->params()->fromPost("idxs");
@@ -239,16 +374,52 @@ class SituationController extends AbstractActionController {
 			try { $recordData = $recordTb->ReadByIdx($idx); }
 			catch (\Exception $e) { die($e->getMessage()); }
 
+			/*
+				作成：朴昰成
+				修正：朴昰成
+				修正日：24/06/07
+			*/
+
+			/* 修正前：
+				// when test didn't ended	
+				if ($recordData["rank"] == null) { $recordIdxDatas[] = $idx; }
+				// when mail already sent
+				if ($recordData["date_mail"] != null) { $recordIdxDatas[] = $idx; }
+			*/
+
+			/* 修正後： */
 			// when test didn't ended	
-			if ($recordData["rank"] == null) { $recordIdxDatas[] = $idx; }
+			if ($recordData["rank"] == null) { $recordIdxDatas[] = $recordData; }
 			// when mail already sent
-			if ($recordData["date_mail"] != null) { $recordIdxDatas[] = $idx; }
+			if ($recordData["date_mail"] != null) { $recordIdxDatas[] = $recordData; }
+			/* ここまで */
 
 			$recordDatas[] = $recordData;
 		}
 
 		// return record idx that sent mail
-		if (!empty($recordIdxDatas)) { die(json_encode($recordIdxDatas)); }
+		/*
+			作成：朴昰成
+			修正：朴昰成
+			修正日：24/06/07
+		*/
+
+		/* 修正前：
+			if (!empty($recordIdxDatas)) { die(json_encode($recordIdxDatas)); }
+		*/
+
+		/* 修正後： */
+		if (!empty($recordIdxDatas)) {
+			$applicantTb = $this->getServiceLocator()->get("ApplicantTable-Admin");
+
+			$applicantDatas = array();
+			foreach ($recordIdxDatas as $recordData) {
+				$applicantDatas[] = $applicantTb->ReadByIdx($recordData["applicant_idx"]);
+			}
+
+			die(json_encode($applicantDatas));
+		}
+		/* ここまで */
 
 		// read pic_admin data
 		$adminTb = $this->getServiceLocator()->get("AdminTable");
@@ -264,17 +435,47 @@ class SituationController extends AbstractActionController {
 			try { $applicantData = $applicantTb->ReadByIdx($data["applicant_idx"]); }
 			catch (\Exception $e) { die($e->getMessage()); }
 
+			/*
+				作成：朴昰成
+				修正：朴昰成
+				修正日：24/06/07
+			*/
+
+			/* 修正前：
 			$this->SendResultMailToApplicantByPICAdmin($applicantData, $data, $PicDatas[0]);
+			*/
+
+			/* 修正後： */
+			$result = $this->SendResultMailToApplicantByPICAdmin($applicantData, $data, $PicDatas[0]);
+			if ($result == "exception" || $result == "fale") { return "fail"; }
+			/* ここまで */
 
 			// update applicant table
 			$sqlSet["date_mail"] = date("Y-m-d H:i:s");
-			$recordTb->UpdateByIdx($idx, $sqlSet);
+			/*
+				作成：朴昰成
+				修正：朴昰成
+				修正日：24/06/07
+			*/
+
+			/* 修正前：
+				$recordTb->UpdateByIdx($idx, $sqlSet);
+			*/
+
+			/* 修正後： */
+			try {
+				$recordTb->UpdateByIdx($data["idx"], $sqlSet);
+			}
+			catch (\Exception $e) {
+				$this->SaveLog($e->getMessage());
+				return json_encode($applicantData);
+			}
+			/* ここまで */
 		}
 
 		die("success");
 	}
 
-	/* ここまで */
 	/** Set Layout & Make ViewModel with datas and template 
 	 * @param mixed $datas array #ViewModel($datas)
 	 * @param mixed $template string #setTemplate($template) 
@@ -384,7 +585,7 @@ class SituationController extends AbstractActionController {
 /* log
 	作成：丁錫圓
 	修正：丁錫圓
-	修正日：24/05/31
+	修正日：24/06/10
 */
 
 /* 修正前：
@@ -396,8 +597,29 @@ class SituationController extends AbstractActionController {
 		// 메일 제목 지정 (일반적으로 DB에 메일폼 테이블을 만들어서 그것을 가져와서 아래의 title contents에 넣지만, 이건 샘플이므로 간단히.)
 		// 사람마다 변환해야 할 부분은 {{이렇게}} 메일폼에 넣어놓는다.
 
-		$param['title']="{$recentPassword["name"]}様、株式会社ジエンジサービスから、ITスキル診断依頼が到着しています。";
-		$param["content"] = "以下URLより「ITスキル診断サイト」にログインし診断を行ってください。\n\nログインID：{$recentPassword["email"]}\nログインPWD：{$recentPassword["password"]}\n\n＜ITスキル診断URL＞\nhttp://18.181.4.65/applicant/login\n\n※ITスキル診断の有効時間は{$recordSet["date_schedule"]}分からです。\n診断時間から30分以内に始めないと、受験できません。\n\n\n※このメールに返信しないでください。";
+			$param['title']="ITスキル診断依頼のお知らせ（ジエンジサービス）";
+		$param["content"] = "{{applicant_name}}様\n"
+											. "お世話になっております。\n\n"
+											. "ITスキル診断についてお知らせさせていただきます。\n"
+                      . "以下URLより「ITスキル診断サイト」にログインし診断を行ってください。\n\n"
+											. "ログインID：{{login_id}}\n"
+											. "ログインPWD：{{login_password}}\n\n"
+											. "＜ITスキル診断URL＞\n"
+											. "http://18.181.4.65/applicant/login\n\n"
+											. "※ITスキル診断が可能な有効期限は{{dateSchedule}}分 ~ {{dateSchduleEnd}}です。\n"
+											. "   有効期限内に受験を受けない場合、自動的に失格となりますのでご了承ください。\n\n"
+											. "※ITスキル診断に不明点などございましたら下記の宛先まで\n"
+											. "   お問い合わせください。\n\n"
+											. "＜問い合わせ先＞\n"
+											. "担当者：ITスキル診断担当\n"
+											. "連絡先：tech@gngs.co.jp\n\n"
+											. "以上、よろしくお願いいたします。\n"
+											. "※このメールに返信しないでください。";
+		$param["content"] = str_replace("{{applicant_name}}", $recentPassword["name"], $param["content"]);
+		$param["content"] = str_replace("{{login_id}}", $recentPassword["email"], $param["content"]);
+		$param["content"] = str_replace("{{login_password}}", $recentPassword["password"], $param["content"]);
+		$param["content"] = str_replace("{{dateSchedule}}", $applicantInfo["date_schedule"], $param["content"]);
+		$param["content"] = str_replace("{{dateSchduleEnd}}", $dateSchduleEnd, $param["content"]);
 */
 
 /* 修正後： */
@@ -406,24 +628,39 @@ class SituationController extends AbstractActionController {
 		$applicantTb = $this->getServiceLocator()->get("ApplicantExamTable");
 
 		$applicantInfo = $applicantTb->readByApplicantIdx($recentPassword);
-
+		$dateSchduleEnd = date("Y-m-d H:i:s", strtotime($applicantInfo["date_schedule"] . ' +30 minutes'));
 		// 기본 메일 전송 관련 설정 로드
 		$param['config']=$this->getConfig();
 		// 메일 제목 지정 (일반적으로 DB에 메일폼 테이블을 만들어서 그것을 가져와서 아래의 title contents에 넣지만, 이건 샘플이므로 간단히.)
 		// 사람마다 변환해야 할 부분은 {{이렇게}} 메일폼에 넣어놓는다.
 
-		$param['title']="{$recentPassword["name"]}様、株式会社ジエンジサービスから、ITスキル診断依頼が到着しています。";
-		$param["content"] = "以下URLより「ITスキル診断サイト」にログインし診断を行ってください。\n\nログインID：{$recentPassword["email"]}\nログインPWD：{$recentPassword["password"]}\n\n＜ITスキル診断URL＞\nhttp://18.181.4.65/applicant/login\n\n※ITスキル診断の有効時間は{$applicantInfo["date_schedule"]}分からです。\n診断時間から30分以内に始めないと、受験できません。\n\n\n※このメールに返信しないでください。";
+		$param['title']="ITスキル診断依頼のお知らせ（ジエンジサービス）";
+		$param["content"] = "{{applicant_name}}様\n"
+											. "お世話になっております。\n\n"
+											. "ITスキル診断についてお知らせさせていただきます。\n"
+                      . "以下URLより「ITスキル診断サイト」にログインし診断を行ってください。\n\n"
+											. "ログインID ：{{login_id}}\n"
+											. "ログインPWD：{{login_password}}\n\n"
+											. "＜ITスキル診断URL＞\n"
+											. "{$param['config']['user-url']['applicant']}/login\n\n"
+											. "※ITスキル診断が可能な有効期限は{{dateSchedule}}分 ~ {{dateSchduleEnd}}です。\n"
+											. "   有効期限内に受験を受けない場合、自動的に失格となりますのでご了承ください。\n\n"
+											. "※ITスキル診断に不明点などございましたら下記の宛先まで\n"
+											. "   お問い合わせください。\n\n"
+											. "＜問い合わせ先＞\n"
+											. "担当者：ITスキル診断担当\n"
+											. "連絡先：tech@gngs.co.jp\n\n"
+											. "以上、よろしくお願いいたします。\n"
+											. "※このメールに返信しないでください。";
 /* ここまで */
 
-		// 사람이름이나, URL등 고유하게 변경해야 하는 것은 이렇게 처리한다.
-		// 메일 제목과 내용 부분 모두 변환처리.
-		$param['title']=str_replace("{{user_name}}","担当者",$param['title']);
 		// print_r($param['title']);
 		// $param['content']=str_replace("{{user_name}}","変換する試験受け者名",$param['content']);
-		$param['content']=str_replace("{{URL}}","テスト",$param['content']);
-	
-
+		$param["content"] = str_replace("{{applicant_name}}", $recentPassword["name"], $param["content"]);
+		$param["content"] = str_replace("{{login_id}}", $recentPassword["email"], $param["content"]);
+		$param["content"] = str_replace("{{login_password}}", $recentPassword["password"], $param["content"]);
+		$param["content"] = str_replace("{{dateSchedule}}", $applicantInfo["date_schedule"], $param["content"]);
+		$param["content"] = str_replace("{{dateSchduleEnd}}", $dateSchduleEnd, $param["content"]);
 		// 수신자 이메일과 이름 설정
 		$param['managerEmail']=$managerInfo["id"];
 		$param['email']=$recentPassword["email"];;
@@ -460,7 +697,7 @@ class SituationController extends AbstractActionController {
       // 메일 제목 지정 (일반적으로 DB에 메일폼 테이블을 만들어서 그것을 가져와서 아래의 title contents에 넣지만, 이건 샘플이므로 간단히.)
       // 사람마다 변환해야 할 부분은 {{이렇게}} 메일폼에 넣어놓는다.
       $param['title']="{{user_name}}様、新しい試験診断の申し込みがあります。";
-      $param["content"] = "以下の申込者の情報をご参照ください。\n\nお名前（漢字）：{$arr["name"]}\nお名前（カナ）：{$arr["kana"]}\n応募区分：{$caseText}\nITスキル：{$skillText}\n\n診断者ページ：http://gngitskill:84/admin/situation/detail/{$applicantInfo["idx"]}";
+      $param["content"] = "以下の申込者の情報をご参照ください。\n\nお名前（漢字）：{$arr["name"]}\nお名前（カナ）：{$arr["kana"]}\n応募区分：{$caseText}\nITスキル：{$skillText}\n\n診断者ページ：{$param['config']['user-url']['admin']}/situation/detail/{$applicantInfo["idx"]}";
     
       // 사람이름이나, URL등 고유하게 변경해야 하는 것은 이렇게 처리한다.
       // 메일 제목과 내용 부분 모두 변환처리.
@@ -903,16 +1140,11 @@ class SituationController extends AbstractActionController {
 			return $afterOptionDatas;
 		}	
 
-	
-	/* Add Send Result Mail Function from ApplicantController
-		作成：朴昰成
-		作成日：24/05/29
-	*/
 	/** Send Result Mail to Applicant by PIC Admin 
 	 * @param array $applicantData
 	 * @param array $recordData
 	 * @param array $adminData
-	 * @return string "success" or "false"
+	 * @return string "success" or "fale"
 	*/
 	function SendResultMailToApplicantByPICAdmin($applicantData, $recordData, $adminData) {
 		$mail = new MailRequest();
@@ -920,25 +1152,82 @@ class SituationController extends AbstractActionController {
 		// load basic setting for MailSender
 		$param["config"] = $this->getConfig();
 		
-		$param["title"] = "{{applicant_name}}様、診断試験結果が出ました。";
-		$param["title"] = str_replace("{{applicant_name}}", $applicantData["name"], $param["title"]);
+		/*
+			作成：朴昰成
+			修正：朴昰成
+			修正日：24/06/11
+		*/
+
+		/* 修正前：
+			$param["title"] = "診断試験の結果について。";
+			
+			$caseText = "新卒";
+			if ($recordData["case"] == 1) { $caseText = "中途"; }
+			$param["content"] = "{{applicant_name}}様\n"
+												. "お世話になっております。\n"
+												.	"株式会社ジエンジサービス　ITスキル診断担当です。\n\n"
+												. "ITスキル診断を受験いただき、ありがとうございました。\n"
+												. "結果が出ましたので、ご確認人のほどよろしくお願いいたします。\n\n"
+												. "申請者：{{applicant_name}}\n"
+												. "お名前（カナ）：{{kana}}\n"
+												. "応募区分：{{case}}\n"
+												. "学歴：{{education}}\n"
+												. "専攻：{{major}}\n"
+												. "試験日：{{execute_date}}\n\n"
+												. "得点：{{get_point}}\n"
+												. "評価：{{rank}}\n"
+												. "評価結果：{{diagnosis_comment}}\n\n"
+												. "※ITスキル診断に不明点などありましたら下記の問い合わせ先にご連絡ください。\n\n"
+												. "お問い合わせ先\n"
+												. "担当者：{{admin_name}}\n"
+												. "連絡先：{{admin_id}}\n\n"
+												. "以上、よろしくお願いいたします。\n"
+												. "※このメールに返信しないでください。";
+			$param["content"] = str_replace("{{applicant_name}}", $applicantData["name"], $param["content"]);
+			$param["content"] = str_replace("{{kana}}", $applicantData["kana"], $param["content"]);
+			$param["content"] = str_replace("{{case}}", $caseText, $param["content"]);
+			$param["content"] = str_replace("{{education}}", $recordData["education"], $param["content"]);
+			$param["content"] = str_replace("{{major}}", $recordData["major"], $param["content"]);
+			$param["content"] = str_replace("{{execute_date}}", $recordData["execute_date"], $param["content"]);
+			$param["content"] = str_replace("{{get_point}}", $recordData["get_point"], $param["content"]);
+			$param["content"] = str_replace("{{rank}}", $recordData["rank"], $param["content"]);
+			$param["content"] = str_replace("{{diagnosis_comment}}", $recordData["diagnosis_comment"], $param["content"]);
+			$param["content"] = str_replace("{{admin_name}}", $adminData["name"], $param["content"]);
+			$param["content"] = str_replace("{{admin_id}}", $adminData["id"], $param["content"]);
+		*/
+
+		/* 修正後： */
+		$param["title"] = "ITスキル診断結果のお知らせ（ジエンジサービス）";
 		
 		$caseText = "新卒";
 		if ($recordData["case"] == 1) { $caseText = "中途"; }
-		$param["content"] = "株式会社ジエンジサービスから、ITスキル診断結果が到着しましたのでご確認をお願いいたします。\n\n"
-											. "申請者：{{applicant_name}}\n"
-											. "お名前（カナ）：{{kana}}\n"
+		$param["content"] = "{{applicant_name}}様\n"
+											. "お世話になっております。\n"
+											.	"株式会社ジエンジサービス　ITスキル診断担当です。\n"
+											. "\n"
+											. "株式会社ジエンジサービスのITスキル診断担当者でございます。\n"
+											. "ITスキル診断結果が出ましたので、お知らせさせて頂きます。\n"
+											. "診断内容についてご確認をお願いいたします。\n"
+											. "\n"
+											. "＜申請者情報＞\n"
+											. "申請者：{{applicant_name}}（{{kana}}）\n"
 											. "応募区分：{{case}}\n"
-											. "学歴：{{education}}\n"
-											. "専攻：{{major}}\n"
-											. "試験日：{{execute_date}}\n\n"
-											. "得点：{{get_point}}\n"
-											. "評価：{{rank}}\n"
-											. "評価結果：{{diagnosis_comment}}\n\n"
-											. "※ITスキル診断に不明点などありましたら下記の問い合わせ先にご連絡ください。\n"
-											. "お問い合わせ先\n"
+											. "学　　歴：{{education}}\n"
+											. "専　　攻：{{major}}\n"
+											. "試 験 日：{{execute_date}}\n"
+											. "\n"
+											. "得　　点：{{get_point}}/100点\n"
+											. "評　　価：{{rank}}/（A~F）\n"
+											. "診断評価：{{diagnosis_comment}}\n"
+											. "\n"
+											. "※ITスキル診断に不明点などございましたら下記の宛先まで\n"
+											. "　お問い合わせください。\n"
+											. "\n"
+											. "＜問い合わせ先＞\n"
 											. "担当者：{{admin_name}}\n"
-											. "連絡先：{{admin_id}}\n\n"
+											. "連絡先：{{admin_id}}\n"
+											. "\n"
+											. "以上、よろしくお願いいたします。\n"
 											. "※このメールに返信しないでください。";
 		$param["content"] = str_replace("{{applicant_name}}", $applicantData["name"], $param["content"]);
 		$param["content"] = str_replace("{{kana}}", $applicantData["kana"], $param["content"]);
@@ -951,6 +1240,7 @@ class SituationController extends AbstractActionController {
 		$param["content"] = str_replace("{{diagnosis_comment}}", $recordData["diagnosis_comment"], $param["content"]);
 		$param["content"] = str_replace("{{admin_name}}", $adminData["name"], $param["content"]);
 		$param["content"] = str_replace("{{admin_id}}", $adminData["id"], $param["content"]);
+		/* ここまで */
 
 		$param["managerEmail"] = $adminData["id"];
 		$param["email"] = $applicantData["email"];;
@@ -960,6 +1250,15 @@ class SituationController extends AbstractActionController {
 
 		$result = $mail->mailsender($param);
 		// $result = $this->getServiceLocator()->get("mailsender");
+		/*
+		作成：朴昰成
+		作成日：24/06/07
+		*/
+		if (isset($result["exception"])) {
+			$this->SaveLog($result["exception"]);
+			return "exception";
+		}
+		/* ここまで */
 
 		$result_row = $result["transport"]->getConnection()->getResponse();
 
@@ -968,53 +1267,28 @@ class SituationController extends AbstractActionController {
 			case "250ok":
 				$status = "success"; break;
 			default:
-				$status = "false"; break;
+				$status = "fale"; break;
 		}
 
 		return $status;
   }
+	/*
+	作成：朴昰成
+	作成日：24/06/07
+	*/
+	/** save log in public/log.txt
+	 * @param string $log
+	 * @return string $log
+	 */
+	function SaveLog($log) {
+		$DOCUMENT_ROOT = $_SERVER["DOCUMENT_ROOT"];
+		$datetime = date("Y-m-d H:i:s");
 
-	function mailByApplicantExam($applicantInfo,$sqlSet,$managerArray,$examRecordIdx){
-		$mail = new MailRequest();
+		$fp = fopen($DOCUMENT_ROOT . "/log.txt", "a");
+		fwrite($fp, $datetime . "\n" . $log . "\n");
+		fclose($fp);
 
-		// load basic setting for MailSender
-		$param["config"] = $this->getConfig();
-
-		$param["title"]="{{user_name}}様、{$applicantInfo["name"]}診断者の試験結果が出ました。";
-		$param["content"] = "以下の診断者の試験結果をご参照ください。\n\nお名前（漢字）：{$applicantInfo["name"]}\nお名前（カナ）：{$applicantInfo["kana"]}\nメールアドレス：{$applicantInfo["email"]}\n得点：{$sqlSet["get_point"]}\n評価：{$sqlSet["rank"]}\n評価結果：{$sqlSet["diagnosis_comment"]}\n\n診断者ページ：http://18.181.4.65/admin/situation/detail/{$examRecordIdx}";
-
-		// 사람이름이나, URL등 고유하게 변경해야 하는 것은 이렇게 처리한다.
-		// 메일 제목과 내용 부분 모두 변환처리.
-		$param['title']=str_replace("{{user_name}}","担当者",$param['title']);
-		// print_r($param['title']);
-		// $param['content']=str_replace("{{user_name}}","変換する試験受け者名",$param['content']);
-		$param['content']=str_replace("{{URL}}","テスト",$param['content']);
-
-
-		// 수신자 이메일과 이름 설정
-		// $param['managerEmail']=$managerArray[0];
-		$param['email']=$managerArray[0];
-		$param['password']=$managerArray[1];
-		$param['name']=$managerArray[2];
-		$param['smtp_password']=$managerArray[3];
-
-		// 전송
-		$result = $mail->mailsender($param);
-		// $result = $this->getServiceLocator()->get("mailsender");
-
-		$result_row = $result['transport']->getConnection()->getResponse();
-
-		$results = str_replace("\r","",str_replace("\n","",str_replace(" ","",$result_row[0])));
-		switch(substr(strtolower($results),0,5)){
-			// 250ok 가 나오면 전송 의뢰 성공이다.
-				case "250ok":
-					$status = 'OK';
-						break;
-				// 그외의 것은 모두 실패로 처리한다.
-				default:
-					$status = 'FALSE';
-						break;
-			}
-		}
+		return $log;
+	}
 	/* ここまで */
 }

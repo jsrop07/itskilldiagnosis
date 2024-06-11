@@ -1,16 +1,37 @@
 <?php
   $levelTexts = ["無級", "初級", "中級", "高級"];
+  $selectTypeDatas = array(
+    "level" => "レベル",
+    "class" => "問項種別",
+  );
 
-	$url = explode("?", $_SERVER["REQUEST_URI"])[0];
-	if (!isset($_SESSION)) { session_start(); }
+  if (!isset($_SESSION)) { session_start(); }
+  $url = explode("?", $_SERVER["REQUEST_URI"]);
+  $route = $url[0];
+
+  $isSearch = array(
+    "select" => false,
+  );
+
+  $queryDatas = array();
+  if (isset($url[1])) {
+    $querys = explode("&", $url[1]);
+    foreach ($querys as $query) {
+      $queryData = explode("=", $query);
+
+      if ($queryData[0] == "select") {
+        $queryDatas["select"] = explode("-", $queryData[1]);
+        $isSearch["select"] = true;
+      }
+      else {
+        $queryDatas[$queryData[0]] = $queryData[1];
+        $isSearch[$queryData[0]] = true;
+      }
+    }
+  }
 
 	$firstNo = $diagnosisDatas->getTotalItemCount();
 	$firstNo -= (($diagnosisDatas->getCurrentPageNumber() - 1) * $diagnosisDatas->getitemCountPerPage());
-
-	if (isset($searchData)) {
-		$searchKey = array_keys($searchData)[0];
-		$searchValue = $searchData[$searchKey];
-	}
 ?>
 
 <?php echo $this->partial("breadcrumb", ["datas" => $breadcrumbData]); ?>
@@ -20,39 +41,6 @@
 		height: 110px;
 		display: flex;
 		justify-content: space-between;
-	}
-
-	.info-num {
-		height: 100%;
-		display: flex;
-		justify-content: end;
-	}
-
-	input.search {
-		width: 150px;
-	}
-	button.emegra.search.confirm {
-		height: 30px;
-		width: 100px;
-		flex-shrink: 0;
-		
-		font-size: 15px;
-		font-weight: 400;
-	}
-
-	table.emegra tr { grid-template-columns: 50px 100px 60px 1fr repeat(2, 60px) 50px 60px 60px; }
-	table.emegra tr.index {
-		padding-top: 8px;
-		padding-bottom: 4px;
-		grid-template-areas:
-		"no question question title  class    class   num criteria update"
-		"no    id     level  title class1st class2nd num criteria update";
-	}
-	table.emegra tr.index > th {
-		padding: 0;
-		display: flex;
-		align-items: center;
-		justify-content: center;
 	}
 
 	.list-title {
@@ -70,87 +58,118 @@
 	.button-place { justify-content: space-between; }
 </style>
 <content class="header">
-	<div class="title">ITスキル診断書管理</div>
+  <div class="title">ITスキル診断問題管理</div>
 </content>
 
 <content class="main">
 	<div style="width: 100%; display: flex; align-items: end; justify-content: space-between;">
 		<div class="info-num">
-      <div class="count">診断書総計<div class="num"><?php echo $totalNum; ?></div>部</div>
+      <style type="text/css">
+        .count {
+          border-bottom: 1px solid black;
+          display: flex;
+          justify-content: space-between;
+
+          font-size: 13px;
+        }
+        .count span.num {
+          margin-right: 10px;
+            
+          line-height: 40px;
+          font-size: 40px;
+        }
+        .count { width: 200px; }
+      </style>
+      <div class="count"><p>診断問題総計</p><p><span class="num"><?php echo $totalNum; ?></span>部</p></div>
 		</div>
 
 		<div style="display: flex;">
-			<select class="form-select form-select-sm" style="width: 150px; margin-right: 8px;" onchange="ChangeSearch(this.value)">
-				<option value="level"<?php echo (isset($searchData) && $searchKey == "level") ? " selected" : ""; ?>>レベル</option>
-				<option value="class1st"<?php echo (isset($searchData) && $searchKey == "class1st") ? " selected" : ""; ?>>大分類</option>
-				<option value="class2nd"<?php echo (isset($searchData) && $searchKey == "class2nd") ? " selected" : ""; ?>>小分類</option>
-			</select>
-			<div style="width: 150px; margin-right: 8px;">
-				<select class="form-select form-select-sm" id="select-search">
-					<?php if (isset($searchData)): ?>
-						<?php if ($searchKey == "class1st"): ?>
-							<?php foreach ($inputOptionDatas[$searchKey] as $data): ?>
-								<option value="<?php echo $data["idx"]; ?>"<?php echo ($data["idx"] == $searchValue) ? " selected" : ""; ?>><?php echo $data["text"]; ?></option>
-							<?php endforeach; ?>
-						<?php elseif ($searchKey == "class2nd"): ?>
-							<?php foreach ($class2ndDatas as $data): ?>
-								<option value="<?php echo $data; ?>"<?php echo ($data == $searchValue) ? " selected" : ""; ?>><?php echo ($data == "Cpp") ? "C++" : $data; ?></option>
-							<?php endforeach; ?>
-						<?php else: ?>
-							<?php for($i = 0; $i <= 3; $i++): ?>
-								<option value="<?= $i; ?>"<?php echo ($searchValue == $i) ? " selected" : ""; ?>><?= $levelTexts[$i]; ?></option>
-							<?php endfor; ?>
-						<?php endif; ?>
-					<?php else: ?>
-						<option value="" hidden>選択</option>
-						<?php for($i = 0; $i <= 3; $i++): ?>
-							<option value="<?= $i; ?>"><?= $levelTexts[$i]; ?></option>
-						<?php endfor; ?>
-					<?php endif; ?>
-				</select>
-			</div>
-			<button class="emegra search confirm" onclick="SearchDiagnosis()">検索</button>
+      <select class="form-select form-select-sm" id="select-select_type" style="width: 120px; margin-right: 8px;" onchange="ChangeSelectType(this)">
+        <option value="">全て</option>
+
+        <?php foreach ($selectTypeDatas as $value => $text): ?>
+          <option value="<?= $value; ?>"<?php echo ($isSearch["select"] && $queryDatas["select"][0] == $value) ? " selected" : ""?>><?= $text; ?></option>
+        <?php endforeach; ?>
+      </select>
+
+      <select class="form-select form-select-sm" id="select-select_value" style="width: 120px; margin-right: 8px;" onchange="ChangeSelectValue(this)">
+        <option value="" hidden>選択</option>
+
+        <?php if ($isSearch["select"]): ?>
+          <?php if ($queryDatas["select"][0] == "level"): ?>
+            <?php foreach ($levelTexts as $value => $text): ?>
+              <option value="<?= $value; ?>"<?php echo ($queryDatas["select"][1] == $value) ? " selected" : ""; ?>><?= $text; ?></option>
+            <?php endforeach; ?>
+          <?php elseif ($queryDatas["select"][0] == "class"): ?>
+            <?php foreach ($optionDatas["class1st"] as $data): ?>
+              <option value="<?php echo $data["idx"]; ?>"<?php echo ($queryDatas["select"][1] == $data["idx"]) ? " selected" : ""; ?>><?php echo $data["text"]; ?></option>
+            <?php endforeach; ?>
+          <?php else: ?>
+            <?php foreach ($optionDatas[$queryDatas["select"][0]] as $data): ?>
+              <option value="<?php echo $data["idx"]; ?>"<?php echo ($queryDatas["select"][1] == $data["idx"]) ? " selected" : ""; ?>><?php echo $data["text"]; ?></option>
+            <?php endforeach; ?>
+          <?php endif; ?>
+        <?php endif; ?>
+      </select>
+
+      <select class="form-select form-select-sm" id="select-select_class" style="width: 120px;" onchange="Select(this)">
+        <option value="" hidden>選択</option>
+
+        <?php if ($queryDatas["select"][0] == "class"): ?>
+          <?php foreach ($optionDatas["class2nd"][$queryDatas["select"][1]] as $data): ?>
+            <option value="<?php echo $data["idx"]; ?>"<?php echo ($queryDatas["select"][2] = $data["idx"]) ? " selected" : ""; ?>><?php echo $data["text"]; ?></option>
+          <?php endforeach; ?>
+        <?php endif; ?>
+      </select>
 		</div>
 	</div>
 
-	<?php if (empty(iterator_to_array($diagnosisDatas))): ?>
-		<div class="table-empty" style="margin-top: 16px;">
-			データがありません。
-		</div>
-	<?php else: ?>
-		<table class="emegra" style="margin-top: 8px;">
-			<thead>
-				<tr class="index">
-					<th style="grid-area: no">No</th>
-					<th style="grid-area: question">診断問題</th>
-					<th style="grid-area: title">タイトル</th>
-					<th style="grid-area: class">種別</th>
-					<th style="grid-area: num">問項数</th>
-					<th style="grid-area: criteria">合格基準</th>
-					<th style="grid-area: update">変更日</th>
-					<th style="grid-area: id">職別コード</th>
-					<th style="grid-area: level">レベル</th>
-					<th style="grid-area: class1st">大分類</th>
-					<th style="grid-area: class2nd">小分類</th>
-				</tr>
-			</thead>
-			<tbody>
-				<?php foreach ($diagnosisDatas as $index => $data): ?>
-					<tr>
-						<td><?php echo $firstNo - $index ; ?></td>
-						<td><?php echo $data["code"]; ?></td>
-						<td><?php echo $levelTexts[$data["level"]]; ?></td>
-						<td class="link left" onclick="self.location.href='./detail/<?php echo $data['idx']; ?>'"><?php echo $data["title"]; ?></td>
-						<td><?php echo $optionDatas[$data["class1st"]]; ?></td>
-						<td><?php echo $optionDatas[$data["class2nd"]]; ?></td>
-						<td><?php echo $data["question_num"]; ?>問題</td>
-						<td>100点</td>
-						<td><?php echo date("y.m.d", strtotime($data["date_start"])); ?></td>
-					</tr>
-				<?php endforeach; ?>
-			</tbody>
-		</table>
-	<?php endif; ?>
+  <div class="emegra-table">
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th rowspan="2">No</th>
+          <th rowspan="2">問題ID</th>
+          <th colspan="2">種別</th>
+          <th rowspan="2">レベル</th>
+          <th rowspan="2">タイトル</th>
+          <th rowspan="2">問項数</th>
+          <th rowspan="2">合格基準</th>
+          <th rowspan="2">変更日</th>
+        </tr>
+        <tr>
+          <th>大分類</th>
+          <th>小分類</th>
+        </tr>
+      </thead>
+      <tbody>
+        <?php if (empty(iterator_to_array($diagnosisDatas))): ?>
+          <td colspan="9"> データがありません。</td>
+        <?php else: ?>
+          <?php foreach ($diagnosisDatas as $index => $data): ?>
+            <tr>
+              <td><?php echo $firstNo - $index; ?></td>
+              <td><?php echo $data["code"]; ?></td>
+
+              <td><?php echo $optionDatas[$data["class1st"]]; ?></td>
+              <td><?php echo $optionDatas[$data["class2nd"]]; ?></td>
+
+              <td><?php echo $levelTexts[$data["level"]]; ?></td>
+              <td class="start"><a onclick="self.location.href='./detail/<?php echo $data['idx']; ?>'"><?php echo $data["title"]; ?></a></td>
+              <td><?php echo $data["question_num"]; ?>問項</td>
+
+              <?php
+                $points = explode(",", $data["result_points"]);
+                $passPoint = $points[count($points) - 2];
+              ?>
+              <td><?php echo $passPoint; ?>点</td>
+              <td><?php echo date("y.m.d", strtotime($data["date_start"])); ?></td>
+            </tr>
+          <?php endforeach; ?>
+        <?php endif; ?>
+      </tbody>
+    </table>
+  </div>
 
 	<div class="pagination-place" style="margin-top: 10px;">
 		<?php echo $this->paginationControl($diagnosisDatas, "sliding", array("pagination", "Notice"), array("url" => "")); ?>
@@ -166,56 +185,89 @@
 </content>
 
 <script type="text/javascript">
-	const selectSearch = document.getElementById("select-search");
+  const selectSelectType = document.getElementById("select-select_type");
+  const selectSelectValue = document.getElementById("select-select_value");
+  const selectSelectClass = document.getElementById("select-select_class");
 
-	let searchOption = "<?php echo (isset($searchData)) ? $searchKey : "level"; ?>";
+  function ChangeSelectType(element) {
+    if (element.value == "") { Select(element); }
 
-	function ChangeSearch(value) {
-		selectSearch.replaceChildren();
-		searchOption = value;
+    selectSelectValue.replaceChildren();
 
-		var option = document.createElement("option");
-		option.value = "";
-		option.innerText = "選択";
-		option.hidden = true;
-		selectSearch.appendChild(option);
+    var option = document.createElement("option");
+    option.value = "";
+    option.hidden = true;
+    option.innerText = "選択";
+    selectSelectValue.appendChild(option);
 
-		switch(value) {
-			case "level":
-				<?php for ($i = 0; $i <= 3; $i++): ?>
-					var option = document.createElement("option");
-					option.value = <?= $i; ?>;
-					option.innerText = "<?= $levelTexts[$i]; ?>";
-					selectSearch.appendChild(option);
-				<?php endfor; ?>
-				break;
-			case "class1st":
-				<?php foreach ($inputOptionDatas["class1st"] as $data): ?>
-					var option = document.createElement("option");
-					option.value = <?php echo $data["idx"]; ?>;
-					option.innerText = "<?php echo $data["text"]; ?>";
-					selectSearch.appendChild(option);
-				<?php endforeach; ?>
-				break;
-			case "class2nd":
-				<?php foreach ($class2ndDatas as $data): ?>
-					var option = document.createElement("option");
-					option.value = "<?php echo $data; ?>";
-					option.innerText = "<?php echo ($data == "Cpp") ? "C++" : $data; ?>";
-					selectSearch.appendChild(option);
-				<?php endforeach; ?>
-				break;
-		}
-	}
+    switch (element.value) {
+      case "level":
+        <?php foreach ($levelTexts as $value => $text): ?>
+          var option = document.createElement("option");
+          option.value = "<?php echo $value; ?>";
+          option.innerText = "<?php echo $text; ?>";
+          selectSelectValue.appendChild(option);
+        <?php endforeach; ?>
+        break;
+      case "class":
+        <?php foreach ($optionDatas["class1st"] as $data): ?>
+          var option = document.createElement("option");
+          option.value = "<?php echo $data["idx"]; ?>";
+          option.innerText = "<?php echo $data["text"]; ?>";
+          selectSelectValue.appendChild(option);
+        <?php endforeach; ?>
+        break;
+    }
+  }
 
-	function SearchDiagnosis() {
-		if (selectSearch.value == "") {
-			alert("検索するデータを選択してください。");
-			selectSearch.focus();
-			return false;
-		}
+  function ChangeSelectValue(element) {
+    console.log(element.value);
+    if (selectSelectType.value != "class") { Select(element); }
 
-		let url = "<?= $url ?>?" + searchOption + "=" + selectSearch.value;
-		self.window.location = url;
-	}
+    selectSelectClass.replaceChildren();
+
+    var option = document.createElement("option");
+    option.value = "";
+    option.hidden = true;
+    option.innerText = "選択";
+    selectSelectClass.appendChild(option);
+
+    switch (element.value) {
+      <?php foreach ($optionDatas["class1st"] as $class1stData): ?>
+        case "<?php echo $class1stData["idx"]; ?>":
+          <?php foreach ($optionDatas["class2nd"][$class1stData["idx"]] as $class2ndData): ?>
+            var option = document.createElement("option");
+            option.value = "<?php echo $class2ndData["idx"]; ?>";
+            option.innerText = "<?php echo $class2ndData["text"]; ?>";
+            selectSelectClass.appendChild(option);
+          <?php endforeach; ?>
+          break;
+      <?php endforeach; ?>
+    }
+  }
+
+  function Select(element) {
+    <?php
+      $newQuery = "?";
+
+      if (!empty($queryDatas)) {
+        foreach ($queryDatas as $key => $data) {
+          if ($key == "page") { continue; }
+          if ($key == "select") { continue; }
+
+          $newQuery .= $key . "=" . implode("-", $data) . "&";
+        }
+      }
+
+      $url = $route . $newQuery;
+    ?>
+
+    let url = "<?= $url; ?>";
+
+    if (element.value != "") { url += "select=" + selectSelectType.value + "-" + selectSelectValue.value + "-"; }
+    if (element == selectSelectClass) { url += selectSelectClass.value + "-"; }
+    url = url.slice(0, -1);
+
+    self.window.location = url;
+  }
 </script>

@@ -27,9 +27,25 @@ class DiagnosisController extends AbstractActionController {
 
 	public function listAction() {
 		$this->ChkLogin();
-		$datas["breadcrumbData"] = ["ITスキル診断書管理"];
+		$datas["breadcrumbData"] = ["ITスキル診断問題管理"];
 		$datas["optionDatas"] = $this->GetOptionDatas();
-		$datas["inputOptionDatas"] = $this->GetOptionDatasForInput();
+		/*
+			作成：朴昰成
+			修正：朴昰成
+			修正日：24/06/11
+		*/
+
+		/* 修正前：
+			$datas["inputOptionDatas"] = $this->GetOptionDatasForInput();
+		*/
+
+		/* 修正後： */
+		// array_merge occurs error
+		$optionDatas = $this->GetOptionDatasOrganizeByType();
+		foreach ($optionDatas as $type => $data) {
+			$datas["optionDatas"][$type] = $data;
+		}
+		/* ここまで */
 
 		$optionTb = $this->getServiceLocator()->get("OptionTable");
 		$beforeClass2ndDatas = array();
@@ -59,12 +75,35 @@ class DiagnosisController extends AbstractActionController {
 
 		$diagnosisDatas = array();
 		if (!empty($query)) {
-			$datas["searchData"] = $query;
-			if (isset($query["class2nd"]) && $query["class2nd"] == "Cpp") {
-				$query["class2nd"] = "C++";
+			/*
+				作成：朴昰成
+				修正：朴昰成
+				修正日：24/06/11
+			*/
+	
+			/* 修正前：
+				$datas["searchData"] = $query;
+				if (isset($query["class2nd"]) && $query["class2nd"] == "Cpp") {
+					$query["class2nd"] = "C++";
+				}
+				try { $diagnosisDatas = $diagnosisTb->GetListByOption($query); }
+				catch (\Exception $e) { print_r($e->getMessage()); exit; }
+			*/
+	
+			/* 修正後： */
+			if (isset($query["select"])) {
+				$selectData = explode("-", $query["select"]);
+				if ($selectData[0] == "class") {
+					$sqlWhere["class2nd"] = $selectData[2];
+				}
+				else {
+					$sqlWhere[$selectData[0]] = $selectData[1];
+				}
 			}
-			try { $diagnosisDatas = $diagnosisTb->GetListByOption($query); }
+
+			try { $diagnosisDatas = $diagnosisTb->GetListBySearch($sqlWhere); }
 			catch (\Exception $e) { print_r($e->getMessage()); exit; }
+			/* ここまで */
 		}
 		else {
 			try {$diagnosisDatas = $diagnosisTb->GetAllList(); }
@@ -80,8 +119,8 @@ class DiagnosisController extends AbstractActionController {
 	/** When you click 新規登録 button on 一覧 page */
 	public function inputAction() {
 		$this->ChkLogin();
-		$datas["breadcrumbData"] = ["ITスキル診断書管理", "診断書登録"];
-		$datas["title"] = "診断書登録";
+		$datas["breadcrumbData"] = ["ITスキル診断問題管理", "診断問題登録"];
+		$datas["title"] = "診断問題登録";
 		$datas["optionDatas"] = $this->GetOptionDatasForInput();
 		$datas["resultDatas"] = $this->GetResultDatas();
 
@@ -94,11 +133,11 @@ class DiagnosisController extends AbstractActionController {
 		return $this->SetViewModel($datas, "/diagnosis/diagnosis_input.phtml");
 	}
 
-	/** When you click 登録 button on 診断書登録 page */
+	/** When you click 登録 button on 診断問題登録 page */
 	public function confirmAction() {
 		$this->ChkLogin();
-		$datas["breadcrumbData"] = ["ITスキル診断問項管理", "診断書登録" ,"登録確認"];
-		$datas["title"] = "診断書確認";
+		$datas["breadcrumbData"] = ["ITスキル診断問題管理", "診断問題登録" ,"登録確認"];
+		$datas["title"] = "診断問題確認";
 		$datas["optionDatas"] = $this->GetOptionDatas();
 
 		$post = $this->params()->fromPost();
@@ -125,8 +164,8 @@ class DiagnosisController extends AbstractActionController {
 	/** When you choose list data on 問題一覧 page */
 	public function detailAction() {
 		$this->ChkLogin();
-		$datas["breadcrumbData"] = ["ITスキル診断書管理", "診断書詳細"];
-		$datas["title"] = "診断書詳細";
+		$datas["breadcrumbData"] = ["ITスキル診断問題管理", "診断問題詳細"];
+		$datas["title"] = "診断問題詳細";
 		$datas["optionDatas"] = $this->GetOptionDatas();
 
 		// Get Code
@@ -149,11 +188,11 @@ class DiagnosisController extends AbstractActionController {
 		return $this->SetViewModel($datas, "/diagnosis/diagnosis_detail.phtml");
 	}
 
-	/** When you click 修正 button on 診断書詳細 page */
+	/** When you click 修正 button on 診断問題詳細 page */
 	public function editAction() {
 		$this->ChkLogin();
-		$datas["breadcrumbData"] = ["ITスキル診断書管理", "診断書詳細", "診断書修正"];
-		$datas["title"] = "診断書修正";
+		$datas["breadcrumbData"] = ["ITスキル診断問題管理", "診断問題詳細", "診断問題修正"];
+		$datas["title"] = "診断問題修正";
 		$datas["optionDatas"] = $this->GetOptionDatasForInput();
 		$datas["resultDatas"] = $this->GetResultDatas();
 
@@ -480,6 +519,53 @@ class DiagnosisController extends AbstractActionController {
 		return $optionDatas;
 	}
 
+	/*
+		作成：朴昰成
+		作成日：24/06/11
+	*/
+	/** Read Option datas Organize by Type
+	 * @return array $optionDatas ["type" => data] (class2nd = ["class2nd" => ["class_upper" => data]])
+	 */
+	public function GetOptionDatasOrganizeByType() {
+		$optionTb = $this->getServiceLocator()->get("OptionTable");
+
+		$beforeOptionDatas = array();
+		try { $beforeOptionDatas = $optionTb->ReadValid(); }
+		catch (\Exception $e) { print_r($e->getMessage()); exit; }
+
+		$optionDatas = array();
+		$class2ndDatas = array();
+		$other = array();
+		foreach ($beforeOptionDatas as $data) {
+			if ($data["type"] == "level") { continue; }
+			if ($data["text"] == "その他") {
+				$other = $data;
+				continue;
+			}
+			if ($data["type"] == "class2nd") {
+				$class2ndDatas[] = $data;
+				continue;
+			}
+
+			if (!isset($optionDatas[$data["type"]])) {
+				$optionDatas[$data["type"]] = array();
+			}
+			$optionDatas[$data["type"]][] = $data;
+		}
+
+		$optionDatas["class1st"][] = $other;
+
+		foreach ($class2ndDatas as $data) {
+			if (!isset($optionDatas["class2nd"][$data["class_upper"]])) {
+				$optionDatas["class2nd"][$data["class_upper"]] = array();
+			}
+			$optionDatas["class2nd"][$data["class_upper"]][] = $data;
+		}
+
+		return $optionDatas;
+	}
+
+	/* ここまで */
 	function GetResultDatas() {
 		$result["point1"] = 95;
 		$result["point2"] = 90;

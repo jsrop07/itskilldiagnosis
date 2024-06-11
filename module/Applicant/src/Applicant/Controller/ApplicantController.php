@@ -94,6 +94,22 @@ class ApplicantController extends AbstractActionController
 
 	return $viewModel;
   }
+	
+	/* log
+	作成：丁錫圓
+	修正：丁錫圓
+	修正日：24/06/04
+	*/ 
+  function duplicationAction(){
+	$p = $this->params()->fromPost();
+	$tbl=$this->getServiceLocator()->get('ApplicationTable');
+
+	if (isset($p["email"])) {
+	$result = $tbl->emailDuplicateCheck($p["email"]);
+	die($result);
+	}
+	}
+	// ここまで
 
   function applicationclearAction() {
 	$this->layout("/applicant/applicationclear");
@@ -103,10 +119,11 @@ class ApplicantController extends AbstractActionController
 	$mail = new MailSender();
 	// 기본 메일 전송 관련 설정 로드
 	$param['config']=$this->getConfig();
+	
 	// 메일 제목 지정 (일반적으로 DB에 메일폼 테이블을 만들어서 그것을 가져와서 아래의 title contents에 넣지만, 이건 샘플이므로 간단히.)
 	// 사람마다 변환해야 할 부분은 {{이렇게}} 메일폼에 넣어놓는다.
 	$param['title']="{{user_name}}様、新しい試験診断の申し込みがあります。";
-	$param["content"] = "以下の申込者の情報をご参照ください。\n\nお名前（漢字）：{$arr["name"]}\nお名前（カナ）：{$arr["kana"]}\n応募区分：{$caseText}\nITスキル：{$skillText}\n\n診断者ページ：http://18.181.4.65/admin/situation/edit/{$applicantInfo["idx"]}";
+	$param["content"] = "以下の申込者の情報をご参照ください。\n\nお名前（漢字）：{$arr["name"]}\nお名前（カナ）：{$arr["kana"]}\n応募区分：{$caseText}\nITスキル：{$skillText}\n\n診断者ページ：{$param['config']['user-url']['admin']}/situation/edit/{$applicantInfo["idx"]}";
 
 	// 사람이름이나, URL등 고유하게 변경해야 하는 것은 이렇게 처리한다.
 	// 메일 제목과 내용 부분 모두 변환처리.
@@ -114,7 +131,6 @@ class ApplicantController extends AbstractActionController
 	// print_r($param['config']);
 	// $param['content']=str_replace("{{user_name}}","変換する試験受け者名",$param['content']);
 	$param['content']=str_replace("{{URL}}","テスト",$param['content']);
-
 
 	// 수신자 이메일과 이름 설정
 	$param['email']=$managerArray[0];
@@ -154,7 +170,6 @@ class ApplicantController extends AbstractActionController
 				$session = new Container("applicant");
 				$session["id"] = $p["id"];
 			}
-			// print_r("Asd");
 			die($result);
     }
 
@@ -188,6 +203,7 @@ class ApplicantController extends AbstractActionController
 	  // Read applicant info
 	  $applicantExamTbl = $this->getServiceLocator()->get("ApplicantExamTable");
 	  $applicantInfo    = $applicantExamTbl->readById($emailId);
+		$datas['emailId'] = $emailId;
 		$situTbl= $this->getServiceLocator()->get("SituTable");
 		$diagnosisTb = $this->getServiceLocator()->get("DiagnosisTable-Admin");
 		$recordIdx = $situTbl->getRecord();
@@ -214,7 +230,8 @@ class ApplicantController extends AbstractActionController
 
 	  // $diagnosisInfo = $applicantExamTbl->readByDiagnosisCode($recordCode);
 		$diagnosisInfo = $diagnosisTb->ReadForRecordByCodenDate($recordCode, $examRecordInfo["diagnosis_date"]);
-
+		// print_r($diagnosisInfo);
+		// exit;
     // Read diagnosis's question_num field data & time_limit data
 	  $datas["question_num"] = $diagnosisInfo["question_num"];
 	  $datas["time_limit"]   = $diagnosisInfo["time_limit"];
@@ -262,8 +279,10 @@ class ApplicantController extends AbstractActionController
 				$get_point+=$outputPoint[$i];// plus point 
 
 			}
-
 		}
+
+		$percentPoint = ceil($get_point/$diagnosisInfo["point_total"]*100);
+
 		$selectedRank = [];
 		$resultPoints = explode(',', $diagnosisInfo["result_points"]);
 		$resultTexts = explode(',', $diagnosisInfo["result_texts"]);
@@ -317,9 +336,10 @@ class ApplicantController extends AbstractActionController
 		if($submit_post=='btn_submit'){
 			$sqlWhere["idx"] = $examRecordInfo['idx'];
 			$sqlSet["answer_data"] = $answer_data;
-			$sqlSet["get_point"] = $get_point;
+			$sqlSet["get_point"] = $percentPoint;
 			$sqlSet['rank']=$recordRank;
 			$sqlSet['diagnosis_comment']=$recordExamResult;
+			$sqlSet['solve_time']=$post['solveTime'];
 
 			$applicantExamTbl->updateExam($sqlWhere, $sqlSet);			
 			$examRecordRecent =  $applicantExamTbl->readByApplicantIdx($applicantInfo);
@@ -337,14 +357,14 @@ class ApplicantController extends AbstractActionController
 		  }
 		  
 		  if($submit_post=='cancel'){
-			if (isset($session->id)) {
-				$emailId = $session->id;
-				unset($emailId);
-				$applicantExamTbl->deletePasswordByIdx($applicantInfo["idx"]);
-        $applicantExamTbl->disqualificationByCancel($examRecordInfo['idx']);
-				session_unset(); 
-				$this->CancelToLogin();	
-			}
+				if (isset($session->id)) {
+					$emailId = $session->id;
+					unset($emailId);
+					$applicantExamTbl->deletePasswordByIdx($applicantInfo["idx"]);
+					$applicantExamTbl->disqualificationByCancel($examRecordInfo['idx']);
+					session_unset(); 
+					$this->CancelToLogin();	
+				}
 		  }
 	  // Set variables to be passed to the layout
 	  $viewModel = new ViewModel($datas);
@@ -355,6 +375,44 @@ class ApplicantController extends AbstractActionController
 	  return $viewModel;
   }
 
+	/* log
+	作成：丁錫圓
+	作成日：24/06/07
+	*/ 
+	public function timeoutAction()
+	{
+			$post = $this->params()->fromPost();
+			$examIdx = $post['idx']; 
+			$applicantExamTbl = $this->getServiceLocator()->get("ApplicantExamTable");
+			
+			$session = new Container("applicant");
+			$emailId = $session->id;
+			$diagnosisTb = $this->getServiceLocator()->get("DiagnosisTable-Admin");
+			$applicantInfo    = $applicantExamTbl->readById($emailId);
+			$examRecordInfo =  $applicantExamTbl->readByApplicantIdx($applicantInfo);
+			$recordCode    = $examRecordInfo["diagnosis_code"];	
+			$diagnosisInfo = $diagnosisTb->ReadForRecordByCodenDate($recordCode, $examRecordInfo["diagnosis_date"]);	
+			$diagnosisTime = $diagnosisInfo['time_limit'];
+
+			$timeout = $applicantExamTbl->timeout($examIdx,$diagnosisTime); 
+			if ($timeout === 'timeout') {
+				if (isset($session->id)) {
+					// $emailId = $session->id;
+					$applicantInfo = $applicantExamTbl->readById($emailId);
+					$applicantExamTbl->deletePasswordByIdx($applicantInfo['idx']);
+					unset($emailId);
+					session_unset(); 
+					die($timeout);
+				}
+			}
+			elseif($timeout === "success"){					
+				die($timeout);
+			}
+
+		
+	}
+		// ここまで
+
 function mailByApplicantExam($applicantInfo,$sqlSet,$managerArray,$examRecordIdx){
 	$mail = new MailSender();
 
@@ -363,7 +421,7 @@ function mailByApplicantExam($applicantInfo,$sqlSet,$managerArray,$examRecordIdx
 	// 메일 제목 지정 (일반적으로 DB에 메일폼 테이블을 만들어서 그것을 가져와서 아래의 title contents에 넣지만, 이건 샘플이므로 간단히.)
 	// 사람마다 변환해야 할 부분은 {{이렇게}} 메일폼에 넣어놓는다.
 	$param['title']="{{user_name}}様、{$applicantInfo["name"]}診断者の試験結果が出ました。";
-	$param["content"] = "以下の診断者の試験結果をご参照ください。\n\nお名前（漢字）：{$applicantInfo["name"]}\nお名前（カナ）：{$applicantInfo["kana"]}\nメールアドレス：{$applicantInfo["email"]}\n得点：{$sqlSet["get_point"]}\n評価：{$sqlSet["rank"]}\n評価結果：{$sqlSet["diagnosis_comment"]}\n\n診断者ページ：http://18.181.4.65/admin/situation/detail/{$examRecordIdx}";
+	$param["content"] = "以下の診断者の試験結果をご参照ください。\n\nお名前（漢字）：{$applicantInfo["name"]}\nお名前（カナ）：{$applicantInfo["kana"]}\nメールアドレス：{$applicantInfo["email"]}\n得点：{$sqlSet["get_point"]}\n評価：{$sqlSet["rank"]}\n評価結果：{$sqlSet["diagnosis_comment"]}\n\n診断者ページ：{$param['config']['user-url']['admin']}/situation/detail/{$examRecordIdx}";
 
 	// 사람이름이나, URL등 고유하게 변경해야 하는 것은 이렇게 처리한다.
 	// 메일 제목과 내용 부분 모두 변환처리.
@@ -371,7 +429,6 @@ function mailByApplicantExam($applicantInfo,$sqlSet,$managerArray,$examRecordIdx
 	// print_r($param['title']);
 	// $param['content']=str_replace("{{user_name}}","変換する試験受け者名",$param['content']);
 	$param['content']=str_replace("{{URL}}","テスト",$param['content']);
-
 
 	// 수신자 이메일과 이름 설정
 	// $param['managerEmail']=$managerArray[0];
@@ -406,14 +463,42 @@ function mailByApplicantExam($applicantInfo,$sqlSet,$managerArray,$examRecordIdx
 	$param['config']=$this->getConfig();
 	// 메일 제목 지정 (일반적으로 DB에 메일폼 테이블을 만들어서 그것을 가져와서 아래의 title contents에 넣지만, 이건 샘플이므로 간단히.)
 	// 사람마다 변환해야 할 부분은 {{이렇게}} 메일폼에 넣어놓는다.
-	$param['title']="{$applicantInfo["name"]}様、診断試験結果が出ました。";
-	$param["content"] = "株式会社ジエンジサービスから、ITスキル診断結果が到着しましたのでご確認をお願いいたします。\n\n申請者：{$applicantInfo["name"]}\nお名前（カナ）：{$applicantInfo["kana"]}\n応募区分：{$caseText}\n学歴：{$examRecordRecent["education"]}\n専攻：{$majorText}\n試験日：{$examRecordRecent["execute_date"]}\n\n得点：{$examRecordRecent["get_point"]}\n評価：{$examRecordRecent["rank"]}\n評価結果：{$examRecordRecent["diagnosis_comment"]}\n\n※ITスキル診断に不明点などありましたら下記の問い合わせ先にご連絡ください。\nお問い合わせ先\n担当者：{$managerArray[2]}\n連絡先：{$managerArray[0]}\n\n※このメールに返信しないでください。";
+	$param['title']="ITスキル診断結果のお知らせ（ジエンジサービス）";
 
-	// 사람이름이나, URL등 고유하게 변경해야 하는 것은 이렇게 처리한다.
-	// 메일 제목과 내용 부분 모두 변환처리.
-	$param['title']=str_replace("{{user_name}}","ITスキル診断担当者",$param['title']);
-	$param['content']=str_replace("{{URL}}","テスト",$param['content']);
-
+	$param["content"] = "{{applicant_name1}}様\n"
+										. "お世話になっております。\n"
+										. "株式会社ジエンジサービスITスキル診断担当です。\n\n"
+										. "弊社のITスキル診断に受験いただき、誠にありがとうございました。\n"
+										. "ITスキル診断結果が出ましたので、お知らせさせて頂きます。\n"
+										. "診断内容についてご確認をお願いいたします。\n\n"
+										. "＜申請者情報＞\n"
+										. "申 請 者：{{applicant_name}}（{{kana}}）\n"
+										. "応募区分：{{case}}\n"
+										. "学　　歴：{{education}}\n"
+										. "専　　攻：{{major}}\n"
+										. "試 験 日：{{execute_date}}\n\n"
+										. "＜診断結果＞\n"
+										. "得     点：{{get_point}}\n"
+										. "評     価：{{rank}}/（A~F）\n"
+										. "評価結果：{{diagnosis_comment}}\n\n"
+										. "※ITスキル診断に不明点などございましたら下記の宛先まで\n"
+										. "   お問い合わせください。\n\n"
+										. "＜問い合わせ先＞\n"
+										. "担当者：ITスキル診断担当\n"
+										. "連絡先：{{admin_id}}\n\n"
+										. "以上、よろしくお願いいたします。\n"
+										. "※このメールに返信しないでください。";
+	$param['content']=str_replace("{{applicant_name1}}",$applicantInfo["name"],$param['content']);
+	$param['content']=str_replace("{{applicant_name}}",$applicantInfo["name"],$param['content']);
+	$param['content']=str_replace("{{kana}}",$applicantInfo['kana'],$param['content']);
+	$param['content']=str_replace("{{case}}",$caseText,$param['content']);
+	$param['content']=str_replace("{{education}}",$examRecordRecent["education"],$param['content']);
+	$param['content']=str_replace("{{major}}",$majorText,$param['content']);
+	$param['content']=str_replace("{{execute_date}}",$examRecordRecent["execute_date"],$param['content']);
+	$param['content']=str_replace("{{get_point}}",$examRecordRecent["get_point"],$param['content']);
+	$param['content']=str_replace("{{rank}}",$examRecordRecent["rank"],$param['content']);
+	$param['content']=str_replace("{{diagnosis_comment}}",$examRecordRecent["diagnosis_comment"],$param['content']);
+	$param['content']=str_replace("{{admin_id}}",$managerArray[0],$param['content']);
 
 	// 수신자 이메일과 이름 설정
 	$param['managerEmail']=$managerArray[0];

@@ -6,7 +6,19 @@
 
 <?php echo $this->partial("breadcrumb", ["datas" => $breadcrumbData]); ?>
 
-<h1 class="title">診断書修正</h1>
+<!--
+  作成：朴昰成
+  修正：朴昰成
+  修正日：24/06/03
+-->
+
+<!-- 修正前： <?php /* ?>
+  <h1 class="title">診断書修正</h1>
+<?php */ ?> -->
+
+<!-- 修正後： -->
+<h1 class="title">診断問題修正</h1>
+<!-- ここまで -->
 
 <form id="form" method="post" action="./confirm">
 	<input name="question_idxs" value='<?php echo $diagnosisData["question_idxs"]; ?>' hidden/>
@@ -29,7 +41,19 @@
 				dl.emegra.setting { grid-template-columns: 140px 1fr; }
 			</style>
 			<dl class="emegra setting">
-				<dt>職別コード</dt>
+        <!--
+          作成：朴昰成
+          修正：朴昰成
+          修正日：24/06/03
+        -->
+
+        <!-- 修正前： <?php /* ?>
+          <dt>職別コード</dt>
+        <?php */ ?> -->
+
+        <!-- 修正後： -->
+        <dt>問題ID</dt>
+        <!-- ここまで -->
 				<dd><input class="form-control form-control-sm" name="code" style="width: 150px;" readonly value="<?php $diagnosisData["code"]; ?>"/></dd>
 
 				<dt class="essential">大分類</dt>

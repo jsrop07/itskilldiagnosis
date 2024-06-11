@@ -7,123 +7,126 @@
             </h3>
         </div>
         <form id="form" name="input_form" enctype="multipart/form-data" action="/applicant/application" method="post">
-        <div class="diagnosis_main">
-          <span for="email">メール </span>
-          <input class="form-control" name="email" type="email" placeholder="Emailを入力ください。" style="width:80%" maxlength='50'>
+          <div class="diagnosis_main">
+            <span for="email">メール </span>
+            <input class="form-control" id ="emailId" name="email" type="email" placeholder="Emailを入力ください。" style="width:80%" maxlength='50'>
           
-          <span>お名前（漢字）</span>
-          <input class="form-control" name="name" type="text" placeholder="漢字を記入してください。"style="width:40%" maxlength='20'>
+            <span>お名前（漢字）</span>
+            <input class="form-control" name="name" type="text" placeholder="漢字を記入してください。"style="width:40%" maxlength='20'>
 
-          <span>お名前（カナ）</span>
-          <input class="form-control" name="kana" type="text" placeholder="カナを記入してください。"style="width:40%" maxlength='50'>
+            <span>お名前（カナ）</span>
+            <input class="form-control" name="kana" type="text" placeholder="カナを記入してください。"style="width:40%" maxlength='50'>
 
-          <span class="no_after_style">性別</span>
-          <select name="gender" style="width:20%" >
+            <span class="no_after_style">性別</span>
+            <select name="gender" style="width:20%" >
               <option selected disabled hidden>選択</option>
               <option value="0">男</option>
               <option value="1">女</option>
-          </select>
+            </select>
 
-          <span >生年月日</span>
-          <input class="form-control" id="birthId" name="birth" type="text" placeholder="YYYY-MM-DD" autocomplete="off"  style="width:30%">   
+            <span >生年月日</span>
+            <input class="form-control" id="birthId" name="birth" type="text" placeholder="YYYY-MM-DD" autocomplete="off"  style="width:30%">   
 
-          <span >応募区分</span>
-          <select class="" name="case" style="width:40%" >
+            <span >応募区分</span>
+            <select class="" name="case" style="width:40%" >
               <option selected disabled hidden>選択してください。</option>
               <option value="0">新卒</option>
               <option value="1">中途（経歴職）</option>
-          </select>
+            </select>
 
-          <span>学歴</span>
-          <select class="" name="education" style="width:40%" id="educationSelect" >
+            <span>学歴</span>
+            <select class="" name="education" style="width:40%" id="educationSelect" >
               <option selected disabled hidden>選択してください。</option>
               <option value="高卒">高卒</option>
               <option value="専門卒">専門卒</option>
               <option value="大卒">大卒</option>
               <option value="大学院卒">大学院卒</option>
               <option value="その他">その他</option>
-          </select>
-          <div id="otherEducationInput" style=" margin-top:-15px; display:none;">
+            </select>
+            <div id="otherEducationInput" style=" margin-top:-15px; display:none;">
               <input class="form-control" type="text" placeholder="その他の場合の、記入" id="otherEducation" name="education" maxlength='20'>
-          </div>
+            </div>
 
-          <span class="no_after_style">専攻</span>
-          <select class="" name="major" style="width:40%" id="majorSelect" >
+            <span class="no_after_style">専攻</span>
+            <select class="" name="major" style="width:40%" id="majorSelect" >
               <option selected disabled hidden>選択してください。</option>
               <option value="IT・ソフトウェア専攻">IT・ソフトウェア専攻</option>
               <option value="IT・ソフトウェア以外">IT・ソフトウェア以外</option>
-          </select>
-          <div id="otherMajorInput" style=" margin-top:-15px; display:none;">
+            </select>
+            <div id="otherMajorInput" style=" margin-top:-15px; display:none;">
               <input class="form-control" type="text" placeholder="その他の場合の、記入" id="otherMajor" name="major" maxlength='20'>
-          </div>
+            </div>
 
-          <span>ITスキル有無</span>
-          <select class="" name="skill" style="width:20%" onchange="SkillSelectChange(this.value)">
+            <span>ITスキル有無</span>
+            <select class="" name="skill" style="width:20%" onchange="SkillSelectChange(this)">
               <option selected disabled hidden>選択</option>
               <option value="0">有</option>
               <option value="1">無</option>
-          </select>
+            </select>
 
-          <span id="spanclass1stSelect">経験分野</span>
-          <select name="class1st" style="width:40%" id="class1stSelect" onclick="ChangeClass1st(this)">
-          <option value="" selected disabled hidden  >選択してください。</option>
-              <?php foreach ($this->class1st as $row): ?>
-                  <?php $texts = explode(',', $row['text']); ?>
-                  <?php foreach ($texts as $text): ?>
+            <span id="spanclass1stSelect">経験分野</span>
+              <select name="class1st" style="width:40%" id="class1stSelect" onchange="ChangeClass1st(this)">
+                <option value="" selected disabled hidden>選択してください。</option>
+                  <?php foreach ($this->class1st as $row): ?>
+                    <?php $texts = explode(',', $row['text']); ?>
+                    <?php foreach ($texts as $text): ?>
                       <option value="<?php echo $text; ?>"><?php echo $text; ?></option>
+                    <?php endforeach; ?>
                   <?php endforeach; ?>
-              <?php endforeach; ?>
-          </select>
+              </select>
 
-          <span  id="spanTypeSelect">問題種別</span>
-          <select class="" name="class2nd" style="width:40%" id="typeSelect">
-          <option value="" selected disabled hidden  >選択してください。</option>
-          </select>
+            <span id="spanTypeSelect">問題種別</span>
+            <select name="class2nd" style="width:40%" id="typeSelect">
+              <option value="" selected disabled hidden>選択してください。</option>
+            </select>
 
-          <span id='spanCareer'>IT経験年数</span>
-          <input class="form-control" id="career" name="career" type="text" placeholder="経歴を記入してください。" style="font-size:15px; width:40%" maxlength='2'>
+            <span id='spanCareer'>IT経験年数</span>
+            <div id="careerDiv" style="display: flex;align-items: center;gap:3px"><input class="form-control" id="career" name="career" type="text" placeholder="経歴" style="font-size:15px; width: 80px;" maxlength='2'>年</div>
 
-          <span class="no_after_style" id='spanCertificates'>IT関連資格</span>
-          <input class="form-control" name="certificates" type="text" placeholder="資格を記入してください。"style="width:80%" maxlength='50'>
+            <span class="no_after_style" id='spanCertificates'>IT関連資格</span>
+            <input class="form-control" name="certificates" type="text" placeholder="資格を記入してください。"style="width:80%;" maxlength='50'>
 
-          <span class="no_after_style" id='spanOther'>その他</span>
-          <textarea class="form-control" name="other" type="textarea" placeholder="その他を記入してください。"style="width:80%" maxlength='500' ></textarea>
-        </div>
-        <div class="button_box">
-            <button class="applicant_cancel" onclick="window.location.href='../applicant/application';">キャンセル</button>
-            <button type="button" class="applicant_button" onclick="applicationConfirm();">登録</button>
-        </div>
+            <span class="no_after_style" id='spanOther'>その他</span>
+            <textarea class="form-control" name="other" type="textarea" placeholder="その他を記入してください。"style="width:80%" maxlength='500' ></textarea>
+          </div>
+
+          <div class="button_box">
+            <button type="button" class="applicant_cancel" onclick="window.location.href='../applicant/application';">キャンセル</button>
+            <button type="submit" class="applicant_button" onclick="validationAndConfirm();return false;">登録</button>
+          </div>
         
-        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" style="margin-top:150px">
-            <div class="modal-content rounded-4">
+          <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" style="margin-top:150px">
+              <div class="modal-content rounded-4">
                 <div class="modal-header" style="background:linear-gradient(111deg, #87D782 0%, #22BC8E 100%);color:white; height: 40px;border-top-left-radius:13px;border-top-right-radius:13px">
-                  <h5 class="modal-title" id="exampleModalLabel">申し込み案内</h5>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(100%);"></button>
+                  <h5 class="modal-title" id="exampleModalLabel">ITスキル診断</h5>
                 </div>
                 <div class="modal-body fs-5" style="padding-bottom:0; text-align:center">
-                <div id="requestMessage">申し込みますか？</div>
+                  <div id="requestMessage">申し込みますか？</div>
                 </div>
                 <div class="modal-footer  border-top-0" style="margin-bottom:8px; justify-content:center;">
-                  <button type="button" class="applicant_cancel" data-bs-dismiss="modal">キャンセル</button>
-                  <button id="btn_submitId" name="mode" value="btn_submit" class="applicant_button" onclick="requestSubmit()">申込</button>
+                  <button id="btn_cancelId" type="button" class="applicant_cancel" data-bs-dismiss="modal">キャンセル</button>
+                  <button id="btn_submitId" name="mode" value="btn_submit" class="applicant_button">申込</button>
                 </div>
               </div>
+            </div>
           </div>
-        </div>
-        </form>
+      </form>
     </div>
+
     <script>
   document.addEventListener("DOMContentLoaded", function() {
     let submitButton = document.getElementById("btn_submitId");
     let confirmContent = document.getElementById("requestMessage");
 
     submitButton.addEventListener("click", function(event) {
-      confirmContent.innerHTML = '診断申込中です。。。';
+      confirmContent.innerHTML = "<div class='spinner-border' role='status' style='width:20px;height:20px;'><span class='visually-hidden'></span></div>  申込中。。。<br>少々お待ちください。";
+      btn_submitId.hidden=true;
+      btn_cancelId.hidden = true;
     });
 });
 </script>
-<footer><a>GOMS Order・Received・Service.</a> Copyright G&GService. All Right Reserved.</footer>
+<footer>© 2024 G&G Service All Rights Reserved.</footer>
 </body>
 </html>
 </div>
@@ -133,47 +136,128 @@
 var form = document.getElementById('form');
 var skillSelect = document.querySelector('select[name="skill"]');
 var class1stBox = document.getElementById('class1stSelect');
+var Applicantclass1stSpanSelect=document.getElementById('spanclass1stSelect');
+
 var class2ndSelect = document.getElementById('typeSelect');
 var class2ndSpanSelect = document.getElementById('spanTypeSelect');
 var careerInput = document.getElementById('career');
+var ApplicantCareerInput = document.getElementById('spanCareer');
+
 var certificatesInput = document.querySelector('input[name="certificates"]');
 var otherTextarea = document.querySelector('textarea[name="other"]');
 
+// 修正の時
+/* 
+	作成：丁錫圓
+	修正：丁錫圓
+	修正日：24/06/02
+*/
+/* 修正前：
+function SkillSelectChange(value) {
+    class2ndSelect.replaceChildren();
 
-// function SkillSelectChange(value) {
-//     class2ndSelect.replaceChildren();
+    form.skill.value = value;    
+    if (form.skill.value === '1') {
+      for (var i = 0; i < class1stBox.options.length - 1; i++) {
+        class1stBox.options[i].style.display = 'none';
+      }
+      class2ndSelect.value = "";
+      class1stSelect.value = "";
+      var Option = document.createElement("option");
+      Option.value = "";
+      Option.innerText = "選択してください。";
+      class2ndSelect.appendChild(Option);
+      careerInput.value = "0";
+      career.readOnly =  true;
+    } else {
+      for (var i = 0; i < class1stBox.options.length - 1; i++) {
+        class1stBox.options[i].style.display = 'block';
+      }
+        class1stSelect.value = "";
+        class2ndSelect.innerText = "";
+        class2ndSelect.value = "";
+        careerInput.value = '';
+        var defaultOption = document.createElement("option");
+        defaultOption.value = "";
+        defaultOption.innerText = "選択してください。";
+        class2ndSelect.appendChild(defaultOption);
+        class2ndSelect.value = "";
+        career.readOnly =  false;
+    }
+}
+*/
+/* 修正後： */
+function SkillSelectChange(element) {
+    class2ndSelect.replaceChildren();
 
-//     form.skill.value = value;    
-//     if (form.skill.value === '1') {
-//       for (var i = 0; i < class1stBox.options.length - 1; i++) {
-//         class1stBox.options[i].style.display = 'none';
-//       }
-//       class2ndSelect.value = "";
-//       class1stSelect.value = "";
-//       var Option = document.createElement("option");
-//       Option.value = "";
-//       Option.innerText = "選択してください。";
-//       class2ndSelect.appendChild(Option);
-//       careerInput.value = "0";
-//       career.readOnly =  true;
-//     } else {
-//       for (var i = 0; i < class1stBox.options.length - 1; i++) {
-//         class1stBox.options[i].style.display = 'block';
-//       }
-//         class1stSelect.value = "";
-//         class2ndSelect.innerText = "";
-//         class2ndSelect.value = "";
-//         careerInput.value = '';
-//         var defaultOption = document.createElement("option");
-//         defaultOption.value = "";
-//         defaultOption.innerText = "選択してください。";
-//         class2ndSelect.appendChild(defaultOption);
-//         class2ndSelect.value = "";
-//         career.readOnly =  false;
-//     }
-// }
+    var value = element.value; 
 
-// </script>
+    if (value === '1') {
+        // for (var i = 0; i < class1stBox.options.length - 1; i++) {
+        //     class1stBox.options[i].hidden= true; 
+        // }
+        // class2ndSelect.value = "";
+        // class1stSelect.value = "";
+        // var Option = document.createElement("option");
+        // Option.value = "";
+        // Option.innerText = "選択してください。";
+        // class2ndSelect.appendChild(Option);
+        // careerInput.value = "0";
+        // career.readOnly = true;
+        class1stBox.disabled = true
+        class1stBox.style.display = 'none';
+        Applicantclass1stSpanSelect.style.display='none';
+        class2ndSelect.disabled = true;
+        class2ndSelect.style.display = 'none';
+        class2ndSpanSelect.style.display = 'none';
+        careerInput.disabled = true;
+        careerDiv.style.display = 'none';
+        ApplicantCareerInput.style.display = 'none';
+    } else {
+        class1stSelect.value = "";
+        class2ndSelect.innerText = "";
+        class2ndSelect.value = "";
+        careerInput.value = "";
+        var defaultOption = document.createElement("option");
+        defaultOption.value = "";
+        defaultOption.innerText = "選択してください。";
+        class2ndSelect.appendChild(defaultOption);
+        class2ndSelect.value = "";
+        class1stBox.disabled = false
+        class1stBox.style.display = 'block';
+        Applicantclass1stSpanSelect.style.display='block';
+        class2ndSelect.disabled = false;
+        class2ndSelect.style.display = 'block';
+        class2ndSpanSelect.style.display = 'block';
+        careerInput.disabled = false;
+        careerDiv.style.display = 'flex';
+        ApplicantCareerInput.style.display = 'block';
+    }
+}
+/* ここまで */
+
+function ChangeClass1st(element) {
+    const class2ndSelect = document.getElementById("typeSelect");
+    class2ndSelect.replaceChildren();
+
+    switch (element.value) {
+        <?php foreach ($optionDatas["class2nd"] as $value => $class2nd): ?>
+            case "<?php echo $optionDatas["class1st"][array_search($value, array_column($optionDatas["class1st"], "idx"))]["text"]; ?>":
+                var option = document.createElement("option");
+                option.hidden = true;
+                option.innerText = "選択してください。";
+                class2ndSelect.appendChild(option);
+                <?php foreach ($class2nd as $data): ?>
+                    var option = document.createElement("option");
+                    option.value = "<?php echo $data['idx']; ?>";
+                    option.innerText = "<?php echo $data['text']; ?>";
+                    class2ndSelect.appendChild(option);
+                <?php endforeach; ?>
+                break;
+        <?php endforeach; ?>
+    }
+}
+</script>
 
 <!-- educationとclass1stのその他項目画面変化 -->
 <script>
@@ -241,44 +325,63 @@ function emailValidationCheck(input){
     return emailValidation.test(input);
 }
 
-function checkKanji(input) {
-    function toHalfWidth(str) {
-        return str.replace(/[！-～]/g, function(s) {
-            return String.fromCharCode(s.charCodeAt(0) - 0xFEE0);
-        }).replace(/　/g, " ");
+function isZenkaku(str) {
+  for (var i = 0; i < str.length; i++) {
+    var code = str.charCodeAt(i);
+    if ((code >= 0x21 && code <= 0x7E) || 
+        (code >= 0xAC00 && code <= 0xD7A3)) { 
+      return str.charAt(i);
     }
-
-    var halfWidthInput = toHalfWidth(input);
-    var japaneseRegex = /^[\u4E00-\u9FFF\u3040-\u309F]+$/; // 
-    var katakanaRegex = /^[\u30A0-\u30FF]+$/; // 
-
-    return japaneseRegex.test(halfWidthInput) || katakanaRegex.test(halfWidthInput);
+  }
+  return null;
 }
 
 
+
 function checkKana(input) {
-    var katakanaRegex = /^[\u30A0-\u30FFー]+$/; 
-    return katakanaRegex.test(input);
+  var katakanaRegex = /^[\u30A0-\u30FFー\s]+$/; 
+  return katakanaRegex.test(input);
 }
 </script>
 
 <!-- 必須項目有効性検査 -->
 <script>
-    function applicationConfirm() {
+  function validationAndConfirm() {
+    // const postForm = new FormData();
+    // postForm.append("email", form.email.value);
+
+    // const xhr = new XMLHttpRequest();
+    // xhr.open("POST", "./duplication", true);
+    // xhr.send(postForm);
+    // xhr.onload = () => {
+    //     if (xhr.status == 200) {
+    //         try {
+    //             const result = JSON.parse(xhr.responseText);
+    //             if (result.duplicate === true) {
+    //                 alert("Email is already in use.");
+    //             } else {
+    //                 alert("Email is available.");
+    //             }
+    //         } catch (e) {
+    //             console.error("Failed to parse response", e);
+    //             alert("サーバー応答の解析に失敗しました");
+    //         }
+    //     }
+    // };
       if (form.email.value == "" || !emailValidationCheck(form.email.value)) {
           alert("メールアドレスを入力してください。");
           setTimeout("form.email.focus()",100);
           return false;
       }
 
-      if (form.name.value == "" || !checkKanji(form.name.value)) {
-          alert("漢字を入力してください。");
+      if (form.name.value == "" || isZenkaku(form.name.value)) {
+          alert("お名前（漢字）を入力してください。");
           setTimeout("form.name.focus()",100);
           return false;
       }
 
       if (form.kana.value == "" || !checkKana(form.kana.value)) {
-          alert("カナを入力してください。");
+          alert("お名前（カタカナ）を入力してください。");
           setTimeout("form.kana.focus()",100);
           return false;
       }
@@ -306,41 +409,62 @@ function checkKana(input) {
           return false;
       }
 
+      if (form.majorSelect.value == "IT・ソフトウェア以外" && form.otherMajor.value=="") {
+          alert("その他の場合の、記入してください。");
+          setTimeout("form.otherMajor.focus()",100);
+          return false;
+      }
+
       if (form.skill.value == "選択") {
           alert("ITスキル有無を入力してください。");
           setTimeout("form.skill.focus()",100);
           return false;
       }
 
-      if (form.class1stSelect.value === "") {
+      if (!class1stSelect.disabled && form.class1stSelect.value === "") {
           alert("経験分野を入力してください。");
           setTimeout("form.class1stSelect.focus()",100);
           return false;
       }
-      if (form.typeSelect.value === "選択してください。") {
+      if (!typeSelect.disabled && form.typeSelect.value === "選択してください。") {
           alert("問題種別を入力してください。");
           setTimeout("form.typeSelect.focus()",100);
           return false;
       }
       
-        if (careerInput.value === "" || isNaN(careerInput.value)) {            
-            console.log(form.career.value);
+        if (!careerInput.disabled && (careerInput.value === "" || isNaN(careerInput.value))) {
             alert("IT経験年数を入力してください。");
             setTimeout("form.career.focus()",100);
             return false;
         }
+ /* 
+        作成：丁錫圓
+        修正：丁錫圓
+      */
+      const postForm = new FormData();
+      postForm.append("email", emailId.value);
+      const xhr = new XMLHttpRequest();
+      xhr.open("POST", "./duplication", true);
+      xhr.send(postForm);
 
-
-        var myModal = new bootstrap.Modal(document.getElementById('exampleModal'), {
-            keyboard: false
-        });
-        myModal.show();
+      xhr.onload = () => {
+        if (xhr.status == 200) {  
+          const result = xhr.responseText;
+          if (result == "fail") {
+            alert("すでに申込しているメールです。");
+            emailId.focus();
+            return false;
+            }
+          else if (result == "success") {
+            var myModal = new bootstrap.Modal(document.getElementById('exampleModal'), {
+              keyboard: false
+            });
+            myModal.show();
+          }
+        }
     }
+  }
 
-    function requestSubmit(){
-        const requestbtn= document.getElementById('requestMessage');
-        requestbtn.innertext="登録中です。"
-    }
 </script>
 
 
@@ -377,28 +501,4 @@ selectElements.forEach(function(selectElement) {
       endDate: '2010-12-31'
     });
   });
-</script>
-
-<script>
-function ChangeClass1st(element) {
-
-class2ndSelect.replaceChildren();
-
-switch (element.value) {
-  <?php foreach ($optionDatas["class2nd"] as $value => $class2nd): ?>
-    case "<?php echo $optionDatas["class1st"][array_search($value, array_column($optionDatas["class1st"], "idx"))]["text"]; ?>":
-      var option = document.createElement("option");
-      option.hidden = true;
-      option.innerText = "選択してください。";
-      class2ndSelect.appendChild(option);
-      <?php foreach ($class2nd as $data): ?>
-        var option = document.createElement("option");
-        option.value = <?php echo $data["idx"]; ?>;
-        option.innerText = "<?php echo $data["text"]; ?>";
-        class2ndSelect.appendChild(option);
-      <?php endforeach; ?>
-      break;
-      <?php endforeach; ?>
-      }
-}
 </script>

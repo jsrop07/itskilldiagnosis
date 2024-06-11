@@ -81,7 +81,19 @@
 					</select>
 				</dd>
 
-				<dt class="essential">問題タイプ</dt>
+        <!--
+          作成：朴昰成
+          修正：朴昰成
+          修正日：24/06/05
+        -->
+
+        <!-- 修正前： <?php /* ?>
+          <dt class="essential">問題タイプ</dt>
+        <?php */ ?> -->
+
+        <!-- 修正後： -->
+        <dt class="essential">問項タイプ</dt>
+        <!-- ここまで -->
 				<dd>
 					<select class="form-select" name="type" id="type" onchange="ChangeType(this)" style="width: 150px;">
 						<option value="" hidden>選択</option>
@@ -121,7 +133,19 @@
             <div class="tab-pane show active" id="nav" role="tabpanel" aria-labelledby="nav-tab">
               <dl class="emegra question">
                 <dt class="essential">問題</dt>
-                <dd><input class="form-control" name="question" type="text" placeholder="問題を入力してください" value="<?php echo ($isSet) ? htmlspecialchars($questionData["question"], ENT_QUOTES) : ""; ?>"/></dd>
+                <!-- Debug
+                  作成：朴昰成
+                  修正：朴昰成
+                  修正日：24/06/04
+                -->
+
+                <!-- 修正前： <?php /* ?>
+                  <dd><textarea row="1" class="form-control" name="question" placeholder="問題を入力してください" value="<?php echo ($isSet) ? htmlspecialchars($questionData["question"], ENT_QUOTES) : ""; ?>"></textarea></dd>
+                <?php */ ?> -->
+
+                <!-- 修正後： -->
+                <dd><textarea row="1" wrap="off" class="form-control" name="question" placeholder="問題を入力してください"><?php echo ($isSet) ? htmlspecialchars($questionData["question"], ENT_QUOTES) : ""; ?></textarea></dd>
+                <!-- ここまで -->
 
                 <dt class="essential">選択肢</dt>
                 <div class="grid answers" name="answers" id="answers">
@@ -156,7 +180,19 @@
               <div class="tab-pane" id="nav-<?php echo $code; ?>" role="tabpanel" aria-labelledby="nav-<?php echo $code; ?>-tab">
                 <dl class="emegra question">
                   <dt>問題</dt>
-                  <dd><input class="form-control" name="question_<?php echo $code; ?>" type="text" placeholder="問題を入力してください（<?php echo $text; ?>）" value="<?php echo ($isSet) ? htmlspecialchars($questionData["question_" . $code], ENT_QUOTES) : ""; ?>"/></dd>
+                  <!-- Debug
+                    作成：朴昰成
+                    修正：朴昰成
+                    修正日：24/06/04
+                  -->
+
+                  <!-- 修正前： <?php /* ?>
+                    <dd><textarea row="3" class="form-control" name="question_<?php echo $code; ?>" placeholder="問題を入力してください（<?php echo $text; ?>）" value="<?php echo ($isSet) ? htmlspecialchars($questionData["question_" . $code], ENT_QUOTES) : ""; ?>"></textarea></dd>
+                  <?php */ ?> -->
+
+                  <!-- 修正後： -->
+                  <dd><textarea row="1" wrap="off" class="form-control" name="question_<?php echo $code; ?>" placeholder="問題を入力してください（<?php echo $text; ?>）" ><?php echo ($isSet) ? htmlspecialchars($questionData["question_" . $code], ENT_QUOTES) : ""; ?></textarea></dd>
+                  <!-- ここまで -->
 
                   <dt>選択肢</dt>
                   <div class="grid answers" name="answers" id="answers">
@@ -189,7 +225,6 @@
             <?php endforeach; ?>
           </div>
         </div>
-        <!-- ここまで -->
 
 				<dt class="essential" id="correct-title">正解番号</dt>
 				<dd>

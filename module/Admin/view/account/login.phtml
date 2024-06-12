@@ -34,16 +34,52 @@
 		<div class="gngLogo_back"></div>
 		<header class="logo">
 			<img src="/img/hd_logo.png" alt="logo" height="64px" width="auto"/>
+      <!--
+        作成：朴昰成
+        修正：朴昰成
+        修正日：24/06/12
+      -->
+
+      <!-- 修正前： <?php /* ?>
 			<a class="logo-title">ITスキル診断システム<small><small> Ver 0.11</small></small></a>
+      <?php */ ?> -->
+
+      <!-- 修正後： -->
+			<a class="logo-title">ITスキル診断システム<small><small> Ver 1.0</small></small></a>
+      <!-- ここまで -->
 		</header>
 			
 		<main>
 			<div class="emegra card">
+        <!--
+          作成：朴昰成
+          修正：朴昰成
+          修正日：24/06/12
+        -->
+
+        <!-- 修正前： <?php /* ?>
 				<div class="card-header">G&G Service 診断管理</div>
+        <?php */ ?> -->
+
+        <!-- 修正後： -->
+        <div class="card-header">ITスキル診断システム</div>
+        <!-- ここまで -->
 
 				<div class="card-body">
           <span>ログインID</span>
+          <!--
+            作成：朴昰成
+            修正：朴昰成
+            修正日：24/06/12
+          -->
+
+          <!-- 修正前： <?php /* ?>
           <input class="form-control" id="id" type="text" placeholder="IDを入力ください（自分のメール）" onkeypress="Enter(event);">
+          <?php */ ?> -->
+
+          <!-- 修正後： -->
+          <input class="form-control" id="id" type="text" placeholder="IDを入力ください（メールID）" onkeypress="Enter(event);">
+          <!-- ここまで -->
 
           <span style="margin-top: 24px">パスワード</span>
           <input class="form-control" id="password" type="password" placeholder="パスワードを入力ください" onkeypress="Enter(event);">
@@ -110,7 +146,21 @@
 							id.focus();
 							return false;
 						}
+            /*
+              作成：朴昰成
+              修正：朴昰成
+              修正日：24/06/12
+            */
+
+            /* 修正前：
 						if (result == "success") { self.location.href = "question/list"; }
+            */
+
+            /* 修正後： */
+						if (result == "success") {
+              self.location.href = "situation/list";
+            }
+            /* ここまで */
 						else {
 							console.log(result);
 						}

@@ -103,19 +103,7 @@
 			return false;
 		}
 
-    /*
-      作成：朴昰成
-      修正：朴昰成
-      修正日：24/06/12
-    */
-
-    /* 修正前：
-      if (smtp.disabled == false && smtp.value == "") {
-    */
-
-    /* 修正後： */
       if (form.pic.value == "y" && smtp.value == "") {
-    /* ここまで */
 			alert("SMTPを入力してください");
 			setTimeout("smtp.focus()", 100);
 			return false;

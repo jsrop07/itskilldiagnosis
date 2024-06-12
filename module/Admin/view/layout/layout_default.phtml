@@ -1,9 +1,4 @@
 <?php
-  /* move from 27
-    作成：朴昰成
-    作成日：24/06/03
-  */
-
   $title = array(
     "manager" => "ITスキル診断管理者管理",
     "situation" => "ITスキル診断状況管理",
@@ -11,7 +6,6 @@
     "question" => "ITスキル診断問項管理",
   );
 
-  /* ここまで */
 	if (!isset($_SESSION)) { session_start(); }
 	$userData = $_SESSION["user"];
 
@@ -24,17 +18,6 @@
 	}
 
 	$breadcrumb = json_decode($this->breadcrumb, true);
-  /* move to 2
-    作成：朴昰成
-    削除：朴昰成
-    削除日：24/06/03
-
-  削除前：
-  $title["question"] = "ITスキル診断問題管理";
-  $title["diagnosis"] = "ITスキル診断書管理";
-  $title["situation"] = "ITスキル診断状況管理";
-  $title["manager"] = "ITスキル診断管理者管理";
-  ここまで */
 ?>
 
 <html lang="jp">
@@ -67,19 +50,7 @@
 		<header>
 			<div class="logo">
 				<img src="/img/hd_logo.png" alt="logo" height="43px" width="auto" style="margin-left: 39px;"/>
-        <!--
-          作成：朴昰成
-          修正：朴昰成
-          修正日：24/06/03
-        -->
-
-        <!-- 修正前： <?php /* ?>
-          <a class="logo-title">ITスキル診断システム<small><small> Ver 0.1</small></small></a>
-        <?php */ ?> -->
-
-        <!-- 修正後： -->
         <a class="logo-title">ITスキル診断システム<small><small> Ver 0.11</small></small></a>
-        <!-- ここまで -->
 			</div>
 
 			<div class="title"><p><?= $title[$mainMenu]; ?></p></div>
@@ -99,21 +70,8 @@
 				<button class="btn-sub <?php echo $title[$mainMenu] == "ITスキル診断管理者管理" ? " active" : ""; ?>" onclick="self.location.href='/admin/manager/list'">ITスキル診断管理者管理</button>
 			<?php endif; ?>
 			<button class="btn-sub <?php echo $title[$mainMenu] == "ITスキル診断状況管理" ? " active" : ""; ?>" onclick="self.location.href='/admin/situation/list'">ITスキル診断状況管理</button>
-      <!--
-        作成：朴昰成
-        修正：朴昰成
-        修正日：24/06/03
-      -->
-
-      <!-- 修正前： <?php /* ?>
-        <button class="btn-sub <?php echo $title[$mainMenu] == "ITスキル診断書管理" ? " active" : ""; ?>" onclick="self.location.href='/admin/diagnosis/list'">ITスキル診断書診断管理</button>
-        <button class="btn-sub <?php echo $title[$mainMenu] == "ITスキル診断問題管理" ? " active" : ""; ?>" onclick="self.location.href='/admin/question/list'">ITスキル診断問題管理</button>
-      <?php */ ?> -->
-
-      <!-- 修正後： -->
       <button class="btn-sub <?php echo $title[$mainMenu] == "ITスキル診断問題管理" ? " active" : ""; ?>" onclick="self.location.href='/admin/diagnosis/list'">ITスキル診断問題管理</button>
       <button class="btn-sub <?php echo $title[$mainMenu] == "ITスキル診断問項管理" ? " active" : ""; ?>" onclick="self.location.href='/admin/question/list'">ITスキル診断問項管理</button>
-      <!-- ここまで -->
 		</aside>
 		
 		<main>
@@ -139,15 +97,10 @@
 				let popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl));
 			}
 
-      /*
-        作成：朴昰成
-        作成日：24/06/05
-      */
       if (typeof tooltipTriggerList === "undefined") {
         let tooltipTriggerList = document.querySelectorAll("[data-bs-toggle='tooltip']")
         let tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
       }
-      /* ここまで */
 
 			function logout() { document.getElementById("form_logout").submit(); }
 			function setCookie(name, value, options = {}) {

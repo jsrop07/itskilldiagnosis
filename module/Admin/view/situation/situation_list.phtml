@@ -228,51 +228,15 @@
           <th>診断問題ID</th>
 
           <th>診断依頼</th>
-          <!--
-            作成：朴昰成
-            修正：朴昰成
-            修正日：24/06/12
-          -->
-
-          <!-- 修正前： <?php /* ?>
-            <th>診断日</th>
-          <?php */ ?> -->
-
-          <!-- 修正後： -->
           <th>診断予定日</th>
-          <!-- ここまで -->
           <th>診断時間</th>
           <th>得点</th>
           <th>結果通知</th>
         </tr>
       </thead>
-      <!--
-        作成：朴昰成
-        修正：朴昰成
-        修正日：24/06/12
-      -->
-
-      <!-- 修正前： <?php /* ?>
-        <tbody>
-      <?php */ ?> -->
-
-      <!-- 修正後： -->
       <tbody id="table-body-list">
-      <!-- ここまで -->
         <?php if (empty($recordDatas)): ?>
-          <!--
-            作成：朴昰成
-            修正：朴昰成
-            修正日：24/06/12
-          -->
-
-          <!-- 修正前： <?php /* ?>
-            <td colspan="16">データがありません。</td>
-          <?php */ ?> -->
-
-          <!-- 修正後： -->
           <td colspan="17">診断者情報がありません。</td>
-          <!-- ここまで -->
         <?php else: ?>
           <?php foreach ($recordDatas as $index => $data): ?>
             <tr <?php echo ($data["diagnosis_date"] == null) ? "style='background: lightcyan;'" : ""; ?>>
@@ -291,25 +255,6 @@
               <td><?php echo (isset($data["diagnosis_code"])) ? $data["diagnosis_code"] : "未設定"; ?></td>
 
               <td><?php echo (isset($data["request_date"])) ? "依頼" : "未依頼"; ?></td>
-              <!--
-                作成：朴昰成
-                修正：朴昰成
-                修正日：24/06/12
-              -->
-
-              <!-- 修正前： <?php /* ?>
-                <?php if (isset($data["rank"])): ?>
-                  <td><?php echo (isset($data["execute_date"])) ?  date("y.m.d", strtotime($data["execute_date"])) : "未受験"; ?></td>
-                  <td><?php echo (isset($data["solve_time"])) ? $data["solve_time"] : "0"; ?>分</td>
-                  <td><?php echo ($data["rank"] != "F") ? $data["get_point"] . "/100" : "失格"; ?></td>
-                <?php else: ?>
-                  <td>未受験</td>
-                  <td>未受験</td>
-                  <td>未受験</td>
-                <?php endif; ?>
-              <?php */ ?> -->
-
-              <!-- 修正後： -->
               <?php
                 $isExpire = false;
                 if (isset($data["date_schedule"])) {
@@ -326,7 +271,6 @@
                 <td>未受験</td>
                 <td>未受験</td>
               <?php endif; ?>
-              <!-- ここまで -->
               <td><?php echo (isset($data["date_mail"])) ? "通知" : "未通知"; ?></td>
 
               <?php
@@ -364,12 +308,7 @@
 	const searchDate = document.getElementById("search-date");
 	const check_all = document.getElementById("checkAll");
 	const check_idxs = document.getElementsByName("checkIdx");
-  /*
-    作成：朴昰成
-    作成日：24/06/12
-  */
   const tableBodyList = document.getElementById("table-body-list");
-  /* ここまで */
 
 	function Checking(element) {
 		if (element == check_all) {
@@ -446,31 +385,6 @@
 	}
 
 	function Request(button) {
-    /*
-      作成：朴昰成
-      修正：朴昰成
-      修正日：24/06/12
-    */
-
-    /* 修正前： <?php /* ?>
-      idxs = [];
-      isChecked = false;
-      for (let i = 0; i < check_idxs.length; i++) {
-        if (check_idxs[i].checked == true) {
-          isChecked = true;
-
-          idxs.push(check_idxs[i].value);
-        }
-      }
-
-      if (!isChecked) {
-        alert("依頼する診断者情報を選択してください。");
-        return false;
-      }
-      idxs = idxs.join(",");
-    <?php */ ?> */
-
-    /* 修正後： */
 		idxs = [];
 		isChecked = false;
     isExpired = [];
@@ -502,7 +416,6 @@
 		}
 
 		idxs = idxs.join(",");
-    /* ここまで */
 
 		if (confirm("依頼しますか？") === false) { return false; }
 
@@ -518,12 +431,7 @@
     span.role = "status";
     span.innerText = "送信中...";
     button.appendChild(span);
-    /*
-      作成：朴昰成
-      作成日：24/06/12
-    */
     button.disabled = true;
-    /* ここまで */
 
 		const postForm = new FormData();
 		postForm.append("idxs", idxs);
@@ -548,22 +456,6 @@
             location.reload(true);
           }
 
-          /*
-            作成：朴昰成
-            修正：朴昰成
-            修正日：24/06/12
-          */
-
-          /* 修正前： <?php /* ?>
-          $alert = "依頼ができませんでした。\n";
-          $alert = "できなかった方の名前\n";
-          for (let i = 0; i < applicantDatas.length; i++) {
-            $alert += applicantDatas[i]["name"] + "、";
-          }
-          alert($alert);
-          <?php */ ?>
-
-          /* 修正後： */
           $alertString = "依頼ができませんでした。\n\n";
           $alertString += "依頼ができなかった診断者";
           for (let i = 0; i < applicantDatas.length; i++) {
@@ -576,7 +468,6 @@
             $alertString += "\n" + applicantNo + "．" + applicantDatas[i]["name"];
           }
           alert($alertString);
-          /* ここまで */
 					location.reload(true);
 				}
 			}
@@ -614,12 +505,7 @@
     span.role = "status";
     span.innerText = "送信中...";
     button.appendChild(span);
-    /*
-      作成：朴昰成
-      作成日：24/06/12
-    */
     button.disabled = true;
-    /* ここまで */
 
     const postForm = new FormData();
     postForm.append("idxs", idxs);
@@ -640,22 +526,6 @@
 
             console.log(recordDatas);
 
-            /*
-              作成：朴昰成
-              修正：朴昰成
-              修正日：24/06/12
-            */
-
-            /*　修正前： <?php /* ?>
-              let alertString = "依頼ができませんでした。\n\n";
-              alertString += "できない方の名前\n";
-              for (let i = 0; i < recordDatas.length; i++) {
-                alertString += recordDatas[i]["name"] + "、";
-              }
-              alertString = alertString.slice(0, -1);
-            <?php */ ?> */
-
-            /* 修正後： */
             let alertString = "送信ができませんでした。\n\n";
             alertString += "送信ができなかった診断者";
             for (let i = 0; i < recordDatas.length; i++) {
@@ -667,7 +537,6 @@
               }
               $alertString += "\n" + applicantNo + "．" + recordDatas[i]["name"];
             }
-            /* ここまで */
 
             alert(alertString);
             location.reload(true);

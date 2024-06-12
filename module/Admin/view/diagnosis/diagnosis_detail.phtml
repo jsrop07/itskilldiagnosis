@@ -151,19 +151,7 @@
 </div>
 
 <div class="btn-place" style="margin-top: 32px;">
-  <!--
-    作成：朴昰成
-    修正：朴昰成
-    修正日：24/06/12
-  -->
-
-  <!-- 修正前： <?php /* ?>
-	<button class="emegra cancel" onclick="history.back();">戻る</button>
-  <?php */ ?> -->
-
-  <!-- 修正後： -->
   <button class="emegra cancel" onclick="history.back();">一覧へ</button>
-  <!-- ここまで -->
 	<?php if ($isApprover): ?>
 		<button class="emegra" onclick="self.location.href='../edit/<?php echo $diagnosisData['idx']; ?>';">修正</button>
 		<button class="emegra delete" onclick="Remove();">削除</button>

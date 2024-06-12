@@ -25,7 +25,6 @@ class AccountController extends AbstractActionController
 	
 		if (isset($post["id"])) {
 			$adminTb = $this->getServiceLocator()->get("AdminTable");
-			// die($this->Encryption($post["password"]));
 
 			$result = $adminTb->ReadById($post["id"]);
 			// ログインを失敗した時

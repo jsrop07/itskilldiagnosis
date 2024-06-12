@@ -316,10 +316,6 @@
 
   let searchData = "status";
 
-  /*
-    作成：朴昰成
-    作成日：24/06/12
-  */
 	window.onpageshow = function(event) {
     if(event.persisted || (window.performance && window.performance.navigation.type == 2)) {
       check_all.checked = false;
@@ -329,7 +325,6 @@
     }
   }
 
-  /* ここまで */
   function Checking(element) {
     if (element == check_all) {
       for (let i = 0; i < checkElements.length; i++) {

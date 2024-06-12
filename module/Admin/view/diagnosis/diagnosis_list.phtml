@@ -189,6 +189,20 @@
   const selectSelectValue = document.getElementById("select-select_value");
   const selectSelectClass = document.getElementById("select-select_class");
 
+  /*
+    作成：朴昰成
+    作成日：24/06/12
+  */
+	window.onpageshow = function(event) {
+    if(event.persisted || (window.performance && window.performance.navigation.type == 2)) {
+      check_all.checked = false;
+      for (let i = 0; i < checkElements.length; i++) {
+        checkElements[i].checked = false;
+      }
+    }
+  }
+
+  /* ここまで */
   function ChangeSelectType(element) {
     if (element.value == "") { Select(element); }
 

@@ -140,7 +140,18 @@
                       <div hidden>
                         <dt class="essential"><?= $numTexts[$i - 1]; ?></dt>
                         <dd class="expand">
+													<!--
+														作成：朴昰成
+														修正：朴昰成
+														修正日：24/06/12
+													-->
+
+													<!-- 修正前： <?php /* ?>
                           <textarea rows="3" wrap="off" class="form-control" name="answer<?= $i; ?>" placeholder="選択肢を入力してください"></textarea>
+													<?php */ ?> -->
+													<!-- 修正後： -->
+                          <textarea rows="3" wrap="off" class="form-control" name="answer<?= $i; ?>" placeholder="選択肢を入力してください" disabled></textarea>
+													<!-- ここまで -->
                         </dd>
                       </div>
                     <?php endfor; ?>
@@ -261,7 +272,19 @@
 				<dt>備考</dt>
 				<dd class="expand">
 					<textarea class="form-control" name="note" rows="5"><?php if ($isSet) {
+            /*
+              作成：朴昰成
+              修正：朴昰成
+              修正日：24/06/12
+            */
+
+            /* 修正前：
 						echo $questionData["note"];
+            */
+
+            /* 修正後： */
+            echo str_replace("{{n}}", "\n", htmlspecialchars($questionData["note"], ENT_QUOTES));
+            /* ここまで */
 						if ($isEdit) {
 							$logString = "修正　" . date("Y.m.d") . "　" . $_SESSION["user"]["name"];
 							echo $logString . "\n";
@@ -297,6 +320,17 @@
 
 <script type="text/javascript">
 	const numTexts = ["①", "②", "③", "④", "⑤"];
+  /*
+    作成：朴昰成
+    作成日：24/06/12
+  */
+  // [{"code":code, "lang":lang}]
+  const langDatas = new Array(
+    <?php foreach ($languageCodeDatas as $code => $lang): ?>
+      {"code":"<?php echo $code; ?>", "lang":"<?php echo $lang; ?>"},
+    <?php endforeach; ?>
+  );
+  /*　ここまで */
 
   const noticeDivs = document.getElementsByName("div_notice");
 	const answerDivs = document.getElementsByName("div_answer");
@@ -309,6 +343,7 @@
 	window.onload = function() {
 		answers = [form.answer1, form.answer2, form.answer3, form.answer4, form.answer5];
 		SetValue();
+    console.log(langDatas);
 	}
 
 	function SetValue() {
@@ -499,6 +534,42 @@
 			RequestSelect(form.point, "点数");
 			return false;
 		}
+    /*
+      作成：朴昰成
+      作成日：24/06/12
+    */
+
+    // check foreign's question, answer input is empty
+    let isEmpty = false;
+    let emptyLangDatas = new Array();
+    for (let i = 0; i < langDatas.length; i++) {
+      // check question
+      if (form.elements["question_" + langDatas[i]["code"]].value == "") {
+        isEmpty = true;
+        emptyLangDatas.push(langDatas[i]["lang"]);
+        continue;
+      }
+
+      for (let j = 0; j < 5; j++) {
+        // check answers disabled
+        if (form.elements["answer" + Number(j + 1) + "_" + langDatas[i]["code"]].disabled == true) { break; }
+
+        // check answers
+        if (form.elements["answer" + Number(j + 1) + "_" + langDatas[i]["code"]].value.trim() == "") {
+          isEmpty = true;
+          emptyLangDatas.push(langDatas[i]["lang"]);
+          break;
+        }
+      }	
+    } 
+
+    if (isEmpty) {
+      let emptyLangs = emptyLangDatas.join(",");
+      let confirmString = emptyLangs + "問題に未入力項目がありますが、\n";
+      confirmString += "このまま登録してもよろしいでしょうか？";
+      return confirm(confirmString);
+    }
+    /* ここまで */
 	}
 
 	// For alert

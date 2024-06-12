@@ -54,34 +54,6 @@ class SituationController extends AbstractActionController {
 			if (isset($query["name"])) { $sqlWhere["name"] = $query["name"]; }
 			if (isset($query["date"])) { $sqlWhere["date"] = $query["date"]; }
 
-			/*
-				作成：朴昰成
-				修正：朴昰成
-				修正日：24/06/07
-			*/
-
-			/* 修正前：
-				if (isset($query["pick"])) {
-					switch ($query["pick"]) {
-						case "apply":
-							$sqlWhere["request_date"] = "null";
-							break;
-						case "request":
-							$sqlWhere["request_date"] = "not null";
-							$sqlWhere["execute_date"] = "null";
-							break;
-						case "execute";
-							$sqlWhere["execute_date"] = "not null";
-							break;
-						default:
-							$dict = explode("-", $query["pick"]);
-							$sqlWhere[$dict[0]] = $dict[1];
-							break;
-					}
-				}
-			*/
-
-			/* 修正後： */
 			if (isset($query["select"])) {
 				$data = explode("-", $query["select"]);
 
@@ -131,7 +103,6 @@ class SituationController extends AbstractActionController {
 						break;
 				}
 			}
-			/* ここまで */
 			try { $newRecordDatas = $recordTb->ReadNewListBySearchnOffset($sqlWhere, $offset); }
 			catch (\Exception $e) { print_r($e->getMessage()); exit; }
 
@@ -176,12 +147,7 @@ class SituationController extends AbstractActionController {
 			try {
 				$datas["totalApply"] = $recordTb->CountApplyData();
 				$datas["totalRequest"] = $recordTb->CountRequestData();
-				/*
-					作成：朴昰成
-					作成日：24/06/07
-				*/
 				$datas["countOver"] = $recordTb->CountOverData();
-				/* ここまで */
 				$datas["totalData"] = $recordTb->CountAllData();
 			} catch (\Exception $e) {
 				print_r($e->getMessage());
@@ -203,20 +169,6 @@ class SituationController extends AbstractActionController {
 					$data = array_merge($diagnosisData, $data);
 				}
 
-				/*
-					作成：朴昰成
-					修正：朴昰成
-					修正日：24/06/05
-				*/
-
-				/* 修正前：
-					if ($data["request_date"] == null) { $data["status"] = "新規"; }
-					else if ($data["execute_date"] == null) { $data["status"] = "診断"; }
-					else if ($data["rank"] == "F") { $data["status"] = "失格"; }
-					else { $data["status"] = "終了"; }
-				*/
-
-				/* 修正後： */
 				if (is_null($data["request_date"])) {
 					$data["status"] = "新規";
 				}
@@ -225,7 +177,6 @@ class SituationController extends AbstractActionController {
 					else if ($data["rank"] == "F") { $data["status"] = "失格"; }
 					else { $data["status"] = "終了"; }
 				}
-				/* ここまで */
 
 				$data["num"] = $datas["totalData"] - (($page - 1) * 10) - $index;
 				
@@ -282,36 +233,15 @@ class SituationController extends AbstractActionController {
 		$adminTb = $this->getServiceLocator()->get("AdminTable");
 
 		$recordDatas = array();
-    /*
-      作成：朴昰成
-      作成日：24/06/07
-    */
 		$errorRecordDatas = array();
-    /* ここまで */
 		foreach ($recordIdxs as $idx) {
 			try { $recordData = $recordTb->ReadByIdx($idx); }
 			catch (\Exception $e) { die($e->getMessage()); }
 
-			/*
-				作成：朴昰成
-				修正：朴昰成
-				修正日：24/06/07
-			*/
-
-			/* 修正前：
-				if ($recordData["request_date"] != null) { die("fale"); }
-			*/
-
-			/* 修正後： */
 			if ($recordData["request_date"] != null) { $errorRecordDatas[] = $recordData; }
-			/* ここまで */
 			$recordDatas[] = $recordData;
 		}
 
-    /*
-      作成：朴昰成
-      作成日：24/06/07
-    */
 		if ($errorRecordDatas) {
 			$applicnatDatas = array();
 			foreach ($errorRecordDatas as $recordData) {
@@ -321,7 +251,6 @@ class SituationController extends AbstractActionController {
 			die(json_encode($applicnatDatas));
 		}
 
-    /* ここまで */
 		try { $PICDatas = $adminTb->ReadPIC(); }
 		catch (\Exception $e) { die($e->getMessage()); }
 
@@ -339,21 +268,8 @@ class SituationController extends AbstractActionController {
 				$this->mailByRequest($adminData, $applicantData);
 				$this->mailByAdmin($applicantData, $skillText, $caseText, $adminData, $recordData);
 
-				/*
-					作成：朴昰成
-					修正：朴昰成
-					修正日：24/06/07
-				*/
-
-				/* 修正前：
-					try { $recordTb->RequestByIdx($idx); }
-					catch (\Exception $e) { die($e->getMessage()); }
-				*/
-
-				/* 修正後： */
 				try { $recordTb->RequestByIdx($recordData["idx"]); }
 				catch (\Exception $e) { die($this->SaveLog($e->getMessage())); }
-				/* ここまで */
 			}
 		}
 
@@ -374,41 +290,15 @@ class SituationController extends AbstractActionController {
 			try { $recordData = $recordTb->ReadByIdx($idx); }
 			catch (\Exception $e) { die($e->getMessage()); }
 
-			/*
-				作成：朴昰成
-				修正：朴昰成
-				修正日：24/06/07
-			*/
-
-			/* 修正前：
-				// when test didn't ended	
-				if ($recordData["rank"] == null) { $recordIdxDatas[] = $idx; }
-				// when mail already sent
-				if ($recordData["date_mail"] != null) { $recordIdxDatas[] = $idx; }
-			*/
-
-			/* 修正後： */
 			// when test didn't ended	
 			if ($recordData["rank"] == null) { $recordIdxDatas[] = $recordData; }
 			// when mail already sent
 			if ($recordData["date_mail"] != null) { $recordIdxDatas[] = $recordData; }
-			/* ここまで */
 
 			$recordDatas[] = $recordData;
 		}
 
 		// return record idx that sent mail
-		/*
-			作成：朴昰成
-			修正：朴昰成
-			修正日：24/06/07
-		*/
-
-		/* 修正前：
-			if (!empty($recordIdxDatas)) { die(json_encode($recordIdxDatas)); }
-		*/
-
-		/* 修正後： */
 		if (!empty($recordIdxDatas)) {
 			$applicantTb = $this->getServiceLocator()->get("ApplicantTable-Admin");
 
@@ -419,7 +309,6 @@ class SituationController extends AbstractActionController {
 
 			die(json_encode($applicantDatas));
 		}
-		/* ここまで */
 
 		// read pic_admin data
 		$adminTb = $this->getServiceLocator()->get("AdminTable");
@@ -435,34 +324,11 @@ class SituationController extends AbstractActionController {
 			try { $applicantData = $applicantTb->ReadByIdx($data["applicant_idx"]); }
 			catch (\Exception $e) { die($e->getMessage()); }
 
-			/*
-				作成：朴昰成
-				修正：朴昰成
-				修正日：24/06/07
-			*/
-
-			/* 修正前：
-			$this->SendResultMailToApplicantByPICAdmin($applicantData, $data, $PicDatas[0]);
-			*/
-
-			/* 修正後： */
 			$result = $this->SendResultMailToApplicantByPICAdmin($applicantData, $data, $PicDatas[0]);
 			if ($result == "exception" || $result == "fale") { return "fail"; }
-			/* ここまで */
 
 			// update applicant table
 			$sqlSet["date_mail"] = date("Y-m-d H:i:s");
-			/*
-				作成：朴昰成
-				修正：朴昰成
-				修正日：24/06/07
-			*/
-
-			/* 修正前：
-				$recordTb->UpdateByIdx($idx, $sqlSet);
-			*/
-
-			/* 修正後： */
 			try {
 				$recordTb->UpdateByIdx($data["idx"], $sqlSet);
 			}
@@ -470,7 +336,6 @@ class SituationController extends AbstractActionController {
 				$this->SaveLog($e->getMessage());
 				return json_encode($applicantData);
 			}
-			/* ここまで */
 		}
 
 		die("success");
@@ -1151,52 +1016,7 @@ class SituationController extends AbstractActionController {
 
 		// load basic setting for MailSender
 		$param["config"] = $this->getConfig();
-		
-		/*
-			作成：朴昰成
-			修正：朴昰成
-			修正日：24/06/11
-		*/
 
-		/* 修正前：
-			$param["title"] = "診断試験の結果について。";
-			
-			$caseText = "新卒";
-			if ($recordData["case"] == 1) { $caseText = "中途"; }
-			$param["content"] = "{{applicant_name}}様\n"
-												. "お世話になっております。\n"
-												.	"株式会社ジエンジサービス　ITスキル診断担当です。\n\n"
-												. "ITスキル診断を受験いただき、ありがとうございました。\n"
-												. "結果が出ましたので、ご確認人のほどよろしくお願いいたします。\n\n"
-												. "申請者：{{applicant_name}}\n"
-												. "お名前（カナ）：{{kana}}\n"
-												. "応募区分：{{case}}\n"
-												. "学歴：{{education}}\n"
-												. "専攻：{{major}}\n"
-												. "試験日：{{execute_date}}\n\n"
-												. "得点：{{get_point}}\n"
-												. "評価：{{rank}}\n"
-												. "評価結果：{{diagnosis_comment}}\n\n"
-												. "※ITスキル診断に不明点などありましたら下記の問い合わせ先にご連絡ください。\n\n"
-												. "お問い合わせ先\n"
-												. "担当者：{{admin_name}}\n"
-												. "連絡先：{{admin_id}}\n\n"
-												. "以上、よろしくお願いいたします。\n"
-												. "※このメールに返信しないでください。";
-			$param["content"] = str_replace("{{applicant_name}}", $applicantData["name"], $param["content"]);
-			$param["content"] = str_replace("{{kana}}", $applicantData["kana"], $param["content"]);
-			$param["content"] = str_replace("{{case}}", $caseText, $param["content"]);
-			$param["content"] = str_replace("{{education}}", $recordData["education"], $param["content"]);
-			$param["content"] = str_replace("{{major}}", $recordData["major"], $param["content"]);
-			$param["content"] = str_replace("{{execute_date}}", $recordData["execute_date"], $param["content"]);
-			$param["content"] = str_replace("{{get_point}}", $recordData["get_point"], $param["content"]);
-			$param["content"] = str_replace("{{rank}}", $recordData["rank"], $param["content"]);
-			$param["content"] = str_replace("{{diagnosis_comment}}", $recordData["diagnosis_comment"], $param["content"]);
-			$param["content"] = str_replace("{{admin_name}}", $adminData["name"], $param["content"]);
-			$param["content"] = str_replace("{{admin_id}}", $adminData["id"], $param["content"]);
-		*/
-
-		/* 修正後： */
 		$param["title"] = "ITスキル診断結果のお知らせ（ジエンジサービス）";
 		
 		$caseText = "新卒";
@@ -1240,7 +1060,6 @@ class SituationController extends AbstractActionController {
 		$param["content"] = str_replace("{{diagnosis_comment}}", $recordData["diagnosis_comment"], $param["content"]);
 		$param["content"] = str_replace("{{admin_name}}", $adminData["name"], $param["content"]);
 		$param["content"] = str_replace("{{admin_id}}", $adminData["id"], $param["content"]);
-		/* ここまで */
 
 		$param["managerEmail"] = $adminData["id"];
 		$param["email"] = $applicantData["email"];;
@@ -1250,15 +1069,10 @@ class SituationController extends AbstractActionController {
 
 		$result = $mail->mailsender($param);
 		// $result = $this->getServiceLocator()->get("mailsender");
-		/*
-		作成：朴昰成
-		作成日：24/06/07
-		*/
 		if (isset($result["exception"])) {
 			$this->SaveLog($result["exception"]);
 			return "exception";
 		}
-		/* ここまで */
 
 		$result_row = $result["transport"]->getConnection()->getResponse();
 
@@ -1272,10 +1086,7 @@ class SituationController extends AbstractActionController {
 
 		return $status;
   }
-	/*
-	作成：朴昰成
-	作成日：24/06/07
-	*/
+
 	/** save log in public/log.txt
 	 * @param string $log
 	 * @return string $log
@@ -1290,5 +1101,4 @@ class SituationController extends AbstractActionController {
 
 		return $log;
 	}
-	/* ここまで */
 }

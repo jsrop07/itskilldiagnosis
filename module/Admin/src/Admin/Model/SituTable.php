@@ -239,7 +239,7 @@ public function getRecord(){
 				'kana' => $dataArray['kana'],
 				'gender' => isset($dataArray['gender']) ? $dataArray['gender'] : null,                
 				'birth' => $dataArray['birth'],
-				'career' => $dataArray['career'],
+				'career' => isset($dataArray['career']) && $dataArray['career'] !== '' ? $dataArray['career'] : null,
 				'certificates' => $dataArray['certificates'],
 				'other' => $dataArray['other'],
 				'apply_date' => date("Y-m-d H:i:s")
@@ -261,7 +261,7 @@ public function getRecord(){
 				'kana' => $dataArray['kana'],
 				'gender' => isset($dataArray['gender']) ? $dataArray['gender'] : null,
 				'birth' => $dataArray['birth'],
-				'career' => $dataArray['career'],
+				'career' => isset($dataArray['career']) && $dataArray['career'] !== '' ? $dataArray['career'] : null,
 				'certificates' => $dataArray['certificates'],
 				'other' => $dataArray['other'],
 				'apply_date' => date("Y-m-d H:i:s")

@@ -22,19 +22,7 @@
 
 <?php echo $this->partial("breadcrumb", ["datas" => $breadcrumbData]); ?>
 
-<!--
-  作成：朴昰成
-  修正：朴昰成
-  修正日：24/06/03
--->
-
-<!-- 修正前： <?php /* ?>
-  <h1 class="title">問題詳細</h1>
-<?php */ ?> -->
-
-<!-- 修正後： -->
 <h1 class="title">問項詳細</h1>
-<!-- ここまで -->
 
 <div class="emegra card">
 	<div class="card-header">設定</div>
@@ -50,19 +38,7 @@
 			<dt>レベル</dt>
 			<dd><?php echo $levelTexts[$questionData["level"]]; ?></dd>
 
-      <!--
-        作成：朴昰成
-        修正：朴昰成
-        修正日：24/06/05
-      -->
-
-      <!-- 修正前： <?php /* ?>
-        <dt>問題タイプ</dt>
-      <?php */ ?> -->
-
-      <!-- 修正後： -->
       <dt>問項タイプ</dt>
-      <!-- ここまで -->
 			<dd style="grid-column: 2 / 5;"><?php echo $optionDatas[$questionData["type"]]; ?></dd>
 
 			<dt>タイトル</dt>

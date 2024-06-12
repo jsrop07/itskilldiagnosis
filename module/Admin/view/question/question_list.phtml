@@ -69,27 +69,6 @@
     font-size: 15px;
     font-weight: 400;
   }
-  /*
-    作成：朴昰成
-    削除：朴昰成
-    削除日：24/06/10
-  
-  削除前：
-    table.emegra tr { grid-template-columns: 50px 100px repeat(2, 80px) 60px 1fr 70px 50px repeat(2, 60px) 30px; }
-    table.emegra tr.index {
-      padding-top: 8px;
-      padding-bottom: 4px;
-      grid-template-areas:
-      "no status  class   class  level title type point confirm update select"
-      "no status class_l class_s level title type point confirm update select";
-    }
-      table.emegra tr.index > th {
-      padding: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-  ここまで */
 
   .pagination-place, .button-place {
     margin-top: 10px;
@@ -264,61 +243,6 @@
     </script>
   </div>
 
-  <!--
-    作成：朴昰成
-    修正：朴昰成
-    修正日：24/06/10
-  -->
-
-  <!-- 修正前： <?php /* ?>
-    <?php if (empty(iterator_to_array($questionDatas))): ?>
-      <div class="table-empty" style="min-width: 1200px; margin-top: 16px;">
-        データがありません。
-      </div>
-    <?php else: ?>
-      <div class="emegra-table">
-        <table class="table table-bordered">
-          <thead>
-            <tr>
-              <th rowspan="2">No</th>
-              <th rowspan="2">ステータス</th>
-              <th colspan="2">問項種別</th>
-              <th rowspan="2">レベル</th>
-              <th rowspan="2">タイトル</th>
-              <th rowspan="2">タイプ</th>
-              <th rowspan="2">点数</th>
-              <th rowspan="2">作成日</th>
-              <th rowspan="2">承認日</th>
-              <th rowspan="2"><input id="checkAll" type="checkbox" onclick="Checking(this);" style="cursor: pointer;"></th>
-            </tr>
-            <tr>
-              <th>大分類</th>
-              <th>小分類</th>
-            </tr>
-          </thead>
-          <tbody>
-            <?php foreach($questionDatas as $index => $data): ?>
-              <tr>
-                <td><?php echo $firstNo - $index ; ?></td>
-                <td><?php echo $optionDatas[$data["status"]]; ?></td>
-                <td><?php echo $optionDatas[$data["class1st"]]; ?></td>
-                <td><?php echo $optionDatas[$data["class2nd"]]; ?></td>
-                <td><?php echo $levelTexts[$data["level"]]; ?></td>
-                <td class="start" style="padding: 0 8px;"><a onclick="self.location.href='./detail/<?php echo $data['idx']; ?>';"><?php echo $data["title"]; ?></a></td>
-                <td><?php echo $optionDatas[$data["type"]]; ?></td>
-                <td><?php echo $data["point"]; ?></td>
-                <td><?php echo date("y.m.d", strtotime($data["date_regist"])); ?></td>
-                <td><?php echo (isset($data["date_approve"])) ? date("y.m.d", strtotime($data["date_approve"])) : "未承認"; ?></td>
-                <td><input name="checkIdx" type="checkbox" value="<?php echo $data["idx"]; ?>" onclick="Checking(this);" style="cursor: pointer;"<?php echo ($isApprover || ChkDeleter($data, $optionDatas)) ? "" : " disabled"; ?>></td>
-              </tr>
-            <?php endforeach; ?>
-          </tbody>
-        </table>
-      </div>
-    <?php endif; ?>
-  <?php */ ?> -->
-
-  <!-- 修正後： -->
   <div class="emegra-table">
     <table class="table table-bordered">
       <thead>
@@ -341,19 +265,7 @@
       </thead>
       <tbody>
         <?php if (empty(iterator_to_array($questionDatas))): ?>
-          <!--
-            作成：朴昰成
-            修正：朴昰成
-            修正日：24/06/12
-          -->
-
-          <!-- 修正前： <?php /* ?>
-            colspan="11"> データがありません。</td>
-          <?php */ ?> -->
-
-          <!-- 修正後： -->
           <td colspan="17">問項がありません。</td>
-          <!-- ここまで -->
         <?php else: ?>
           <?php foreach($questionDatas as $index => $data): ?>
             <tr>
@@ -376,7 +288,6 @@
       </tbody>
     </table>
   </div>
-  <!-- ここまで -->
 
   <div class="pagination-place" style="margin-top: 10px;">
     <?php echo $this->paginationControl($questionDatas, "sliding", array("pagination", "Notice"), array("url" => "")); ?>
@@ -528,22 +439,6 @@
           alert("承認しました。");
           location.reload(true);
         }
-        /*
-          作成：朴昰成
-          修正：朴昰成
-          修正日：24/06/12
-        */
-
-        /* 修正前： <?php /* ?>
-        else if (result == "fail") {
-          alert("承認できた問項があります。");
-				}
-        else {
-          alert("Error");
-          console.log($result);
-        <?php */ ?> */
-
-        /* 修正後： */
         else {
           try {
             error = JSON.parse(result);
@@ -575,7 +470,6 @@
             return false;
           }
         }
-        /* ここまで */
       }
     }
   }

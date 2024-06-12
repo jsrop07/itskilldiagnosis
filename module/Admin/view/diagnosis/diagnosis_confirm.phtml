@@ -20,19 +20,7 @@
 				dl.emegra.setting { grid-template-columns: 140px 1fr; }
 			</style>
 			<dl class="emegra setting">
-        <!--
-          作成：朴昰成
-          修正：朴昰成
-          修正日：24/06/03
-        -->
-
-        <!-- 修正前： <?php /* ?>
-          <dt>ID</dt>
-        <?php */ ?> -->
-
-        <!-- 修正後： -->
         <dt>問題ID</dt>
-        <!-- ここまで -->
 				<dd><?php echo $diagnosisData["code"]; ?>
 
 				<dt>大分類</dt>
@@ -59,19 +47,7 @@
 			</style>
 			<dl class="emegra question">
 				<dt>問項数</dt>
-        <!--
-          作成：朴昰成
-          修正：朴昰成
-          修正日：24/06/11
-        -->
-
-        <!-- 修正前： <?php /* ?>
-          <dd><?php echo $diagnosisData["question_num"]; ?>問題</dd>
-        <?php */ ?> -->
-
-        <!-- 修正後： -->
         <dd><?php echo $diagnosisData["question_num"]; ?>題項</dd>
-        <!-- ここまで -->
 
 				<dt>診断時間</dt>
 				<dd><?php echo $diagnosisData["time_limit"]; ?>分</dd>
@@ -103,19 +79,7 @@
 							<?php endforeach; ?>
 							<tr>
 								<td style="grid-column: 1 / 4;"></td>
-                <!--
-                  作成：朴昰成
-                  修正：朴昰成
-                  修正日：24/06/11
-                -->
-
-                <!-- 修正前： <?php /* ?>
-                  <td><?php echo $diagnosisData["totalPoint"]; ?>点</td>
-                <?php */ ?> -->
-
-                <!-- 修正後： -->
                 <td><?php echo $diagnosisData["point_total"]; ?>点</td>
-                <!-- ここまで -->
 							</tr>
 					</table>
 				</div>

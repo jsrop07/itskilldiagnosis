@@ -29,23 +29,11 @@ class DiagnosisController extends AbstractActionController {
 		$this->ChkLogin();
 		$datas["breadcrumbData"] = ["ITスキル診断問題管理"];
 		$datas["optionDatas"] = $this->GetOptionDatas();
-		/*
-			作成：朴昰成
-			修正：朴昰成
-			修正日：24/06/11
-		*/
-
-		/* 修正前：
-			$datas["inputOptionDatas"] = $this->GetOptionDatasForInput();
-		*/
-
-		/* 修正後： */
 		// array_merge occurs error
 		$optionDatas = $this->GetOptionDatasOrganizeByType();
 		foreach ($optionDatas as $type => $data) {
 			$datas["optionDatas"][$type] = $data;
 		}
-		/* ここまで */
 
 		$optionTb = $this->getServiceLocator()->get("OptionTable");
 		$beforeClass2ndDatas = array();
@@ -75,22 +63,6 @@ class DiagnosisController extends AbstractActionController {
 
 		$diagnosisDatas = array();
 		if (!empty($query)) {
-			/*
-				作成：朴昰成
-				修正：朴昰成
-				修正日：24/06/11
-			*/
-	
-			/* 修正前：
-				$datas["searchData"] = $query;
-				if (isset($query["class2nd"]) && $query["class2nd"] == "Cpp") {
-					$query["class2nd"] = "C++";
-				}
-				try { $diagnosisDatas = $diagnosisTb->GetListByOption($query); }
-				catch (\Exception $e) { print_r($e->getMessage()); exit; }
-			*/
-	
-			/* 修正後： */
 			if (isset($query["select"])) {
 				$selectData = explode("-", $query["select"]);
 				if ($selectData[0] == "class") {
@@ -103,7 +75,6 @@ class DiagnosisController extends AbstractActionController {
 
 			try { $diagnosisDatas = $diagnosisTb->GetListBySearch($sqlWhere); }
 			catch (\Exception $e) { print_r($e->getMessage()); exit; }
-			/* ここまで */
 		}
 		else {
 			try {$diagnosisDatas = $diagnosisTb->GetAllList(); }
@@ -233,13 +204,8 @@ class DiagnosisController extends AbstractActionController {
 		$sqlValue["admin_create"] = $session["code"];
 		$sqlValue["date_start"] = date("Y-m-d H:i:s");
 
-		/*
-			作成：朴昰成
-			作成日：24/06/11
-		*/
 		$sqlValue["point_total"] = $post["point_total"];
 
-		/* ここまで */
 		$diagnosisTb = $this->getServiceLocator()->get("DiagnosisTable-Admin");
 		try { $diagnosisTb->createDiagnosis($sqlValue); }
 		catch (\Exception $e) { die($e->getMessage()); }
@@ -274,12 +240,7 @@ class DiagnosisController extends AbstractActionController {
 		$sqlValue["result_texts"] = implode(",", $textDatas);
 		$sqlValue["result_comments"] = implode(",", $commentDatas);
 		$sqlValue["date_start"] = date("Y-m-d H:i:s");
-		/*
-			作成：朴昰成
-			作成日：24/06/11
-		*/
 		$sqlValue["point_total"] = $post["point_total"];
-		/* ここまで */
 		try { $diagnosisTb->CreateDiagnosis($sqlValue); }
 		catch (\Exception $e) { die($e->getMessage()); }
 
@@ -340,20 +301,7 @@ class DiagnosisController extends AbstractActionController {
 				$questionTb = $this->getServiceLocator()->get("QuestionTable");
 				$questionIdxsByScore = $this->ReadQuestionIdxsByScore($sqlWhere);
 
-				/*
-					作成：朴昰成
-					修正：朴昰成
-					修正日：24/06/11
-				*/
-
-				/* 修正前：
-					$questionIdxs = $this->CreateQuestionList($questionIdxsByScore, $post["question_num"]);
-					$questionIdxs = $this->QuestionIdxsByScoreToQuestionIdxs($questionIdxsByScore);
-				*/
-
-				/* 修正後： */
 				$questionIdxs = $this->CreateQuestionList($questionIdxsByScore, $post["question_num"]);
-				/* ここまで */
 				die(json_encode($questionIdxs));
 				break;
 		}
@@ -544,10 +492,6 @@ class DiagnosisController extends AbstractActionController {
 		return $optionDatas;
 	}
 
-	/*
-		作成：朴昰成
-		作成日：24/06/11
-	*/
 	/** Read Option datas Organize by Type
 	 * @return array $optionDatas ["type" => data] (class2nd = ["class2nd" => ["class_upper" => data]])
 	 */
@@ -590,7 +534,6 @@ class DiagnosisController extends AbstractActionController {
 		return $optionDatas;
 	}
 
-	/* ここまで */
 	function GetResultDatas() {
 		$result["point1"] = 95;
 		$result["point2"] = 90;
@@ -727,70 +670,6 @@ class DiagnosisController extends AbstractActionController {
 	}
 
 	function CreateQuestionList($beforeQuestionIdxsByScore, $question_num) {
-		/*
-			作成：朴昰成
-			修正：朴昰成
-			修正日：24/06/11
-		*/
-
-		/* 修正前：
-		$questionIdxsByScore = array();
-		for ($i = 1; $i <= 5; $i++) {
-			$questionIdxsByScore[$i] = array();
-		}
-
-		$totalPoint = 0;
-		for ($i = 0; $i < $question_num; $i++) {
-			$isEmpty = true;
-			for ($j = 1; $j <= 5; $j++) {
-				if (!empty($beforeQuestionIdxsByScore[$j])) { $isEmpty = false; }
-			}
-			if ($isEmpty) { return $questionIdxsByScore; }
-
-			do { $point = rand(1, 5); }
-			while (empty($beforeQuestionIdxsByScore[$point]));
-
-			$rndIdx = array_rand($beforeQuestionIdxsByScore[$point]);
-			$questionIdxsByScore[$point][$rndIdx] = $beforeQuestionIdxsByScore[$point][$rndIdx];
-			unset($beforeQuestionIdxsByScore[$point][$rndIdx]);
-			$totalPoint += $point;
-
-			while ($totalPoint > 100) {
-				$before = array();
-				$after = array();
-
-				for ($j = 5; $j >= 2; $j--) {
-					if (!empty($questionIdxsByScore[$j])) {
-						$before["point"] = $j;
-						$before["index"] = array_rand($questionIdxsByScore[$j]);
-						$before["data"] = $questionIdxsByScore[$j][$before["index"]];
-						unset($questionIdxsByScore[$before["point"]][$before["index"]]);
-						break;
-					}
-					if ($j == 2) { return $questionIdxsByScore; }
-				}
-
-				for ($j = 1; $j <= $before["point"]; $j++) {
-					if (!empty($beforeQuestionIdxsByScore[$j])) {
-						$after["point"] = $j;
-						$after["index"] = array_rand($beforeQuestionIdxsByScore[$j]);
-						$after["data"] = $beforeQuestionIdxsByScore[$j][$after["index"]];
-						unset($beforeQuestionIdxsByScore[$after["point"]][$after["index"]]);
-						break;
-					}
-					if ($j == $before["point"]	) { return $questionIdxsByScore; }
-				}
-
-				$questionIdxsByScore[$after["point"]][$after["index"]] = $after["data"];
-				$beforeQuestionIdxsByScore[$before["point"]][$before["index"]] = $before["data"];
-				$totalPoint = $totalPoint - $before["point"] + $after["point"];
-			}
-		}
-
-		return $questionIdxsByScore;
-		*/
-
-		/* 修正後： */
 		$beforeQuestionIdxDatas = array();
 		foreach ($beforeQuestionIdxsByScore as $datas) {
 			$idxDatas = array();
@@ -810,7 +689,6 @@ class DiagnosisController extends AbstractActionController {
 			$questionIdxDatas[] = $beforeQuestionIdxDatas[$index];
 		}
 		$questionDatas = $questionIdxDatas;
-		/* ここまで */
 
 		return $questionDatas;
 	}

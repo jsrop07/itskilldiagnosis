@@ -2,7 +2,19 @@
   $levelTexts = ["無級", "初級", "中級", "高級"];
   $selectTypeDatas = array(
     "level" => "レベル",
-    "class" => "問項種別",
+    /*
+      作成：朴昰成
+      修正：朴昰成
+      修正日：24/06/12
+    */
+
+    /* 修正前：
+      "class" => "問項種別",
+    */
+
+    /* 修正後： */
+    "class" => "問題種別",
+    /* ここまで */
   );
 
   if (!isset($_SESSION)) { session_start(); }
@@ -117,7 +129,7 @@
 
         <?php if ($queryDatas["select"][0] == "class"): ?>
           <?php foreach ($optionDatas["class2nd"][$queryDatas["select"][1]] as $data): ?>
-            <option value="<?php echo $data["idx"]; ?>"<?php echo ($queryDatas["select"][2] = $data["idx"]) ? " selected" : ""; ?>><?php echo $data["text"]; ?></option>
+            <option value="<?php echo $data["idx"]; ?>"<?php echo ($queryDatas["select"][2] == $data["idx"]) ? " selected" : ""; ?>><?php echo $data["text"]; ?></option>
           <?php endforeach; ?>
         <?php endif; ?>
       </select>
@@ -144,7 +156,19 @@
       </thead>
       <tbody>
         <?php if (empty(iterator_to_array($diagnosisDatas))): ?>
-          <td colspan="9"> データがありません。</td>
+          <!--
+            作成：朴昰成
+            修正：朴昰成
+            修正日：24/06/12
+          -->
+
+          <!-- 修正前： <?php /* ?>
+            <td colspan="9"> データがありません。</td>
+          <?php */ ?> -->
+
+          <!-- 修正後： -->
+          <td colspan="9">問題がありません。</td>
+          <!-- ここまで -->
         <?php else: ?>
           <?php foreach ($diagnosisDatas as $index => $data): ?>
             <tr>

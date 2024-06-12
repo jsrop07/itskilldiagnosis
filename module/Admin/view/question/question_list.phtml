@@ -341,7 +341,19 @@
       </thead>
       <tbody>
         <?php if (empty(iterator_to_array($questionDatas))): ?>
-          <td colspan="11"> データがありません。</td>
+          <!--
+            作成：朴昰成
+            修正：朴昰成
+            修正日：24/06/12
+          -->
+
+          <!-- 修正前： <?php /* ?>
+            colspan="11"> データがありません。</td>
+          <?php */ ?> -->
+
+          <!-- 修正後： -->
+          <td colspan="17">問項がありません。</td>
+          <!-- ここまで -->
         <?php else: ?>
           <?php foreach($questionDatas as $index => $data): ?>
             <tr>
@@ -516,13 +528,54 @@
           alert("承認しました。");
           location.reload(true);
         }
+        /*
+          作成：朴昰成
+          修正：朴昰成
+          修正日：24/06/12
+        */
+
+        /* 修正前： <?php /* ?>
         else if (result == "fail") {
           alert("承認できた問項があります。");
 				}
         else {
           alert("Error");
           console.log($result);
+        <?php */ ?> */
+
+        /* 修正後： */
+        else {
+          try {
+            error = JSON.parse(result);
+
+            switch (error["reason"]) {
+              case "approved":
+                let alertString = "承認できなかった問項があります。\n\n"
+                alertString += "承認できなかった問項";
+
+                let questionIdxDatas = error["data"];
+                for (let i = 0; i < questionIdxDatas.length; i++) {
+                  for (let j = 0; j < checkElements.length; j++) {
+                    if (questionIdxDatas[i] == checkElements[j].value) {
+                      alertString += "\n" + checkElements[j].parentNode.parentNode.children[0].innerText + "．" + checkElements[j].parentNode.parentNode.children[5].innerText;
+                    }
+                  }
+                }
+
+                alert(alertString);
+                return false;
+            }
+            alert("error");
+            console.log(result);
+            return false;
+          }
+          catch (e) {
+            alert("error");
+            console.log(result);
+            return false;
+          }
         }
+        /* ここまで */
       }
     }
   }

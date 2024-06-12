@@ -15,7 +15,7 @@ option {
 	grid-gap: 24px 0;
 }
 .grid.answers > div {
-	height: 38px;
+	/* height: 38px; */
 	display: grid;
 	grid-template-columns: 80px 1fr;
 	grid-gap: 0 16px;

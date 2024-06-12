@@ -81,19 +81,7 @@
 					</select>
 				</dd>
 
-        <!--
-          作成：朴昰成
-          修正：朴昰成
-          修正日：24/06/05
-        -->
-
-        <!-- 修正前： <?php /* ?>
-          <dt class="essential">問題タイプ</dt>
-        <?php */ ?> -->
-
-        <!-- 修正後： -->
         <dt class="essential">問項タイプ</dt>
-        <!-- ここまで -->
 				<dd>
 					<select class="form-select" name="type" id="type" onchange="ChangeType(this)" style="width: 150px;">
 						<option value="" hidden>選択</option>
@@ -133,18 +121,20 @@
             <div class="tab-pane show active" id="nav" role="tabpanel" aria-labelledby="nav-tab">
               <dl class="emegra question">
                 <dt class="essential">問題</dt>
-                <!-- Debug
+                <!--
                   作成：朴昰成
                   修正：朴昰成
-                  修正日：24/06/04
+                  修正日：24/06/11
                 -->
 
                 <!-- 修正前： <?php /* ?>
-                  <dd><textarea row="1" class="form-control" name="question" placeholder="問題を入力してください" value="<?php echo ($isSet) ? htmlspecialchars($questionData["question"], ENT_QUOTES) : ""; ?>"></textarea></dd>
+                  <dd><textarea row="1" wrap="off" class="form-control" name="question" placeholder="問題を入力してください"><?php echo ($isSet) ? htmlspecialchars($questionData["question"], ENT_QUOTES) : ""; ?></textarea></dd>
                 <?php */ ?> -->
 
                 <!-- 修正後： -->
-                <dd><textarea row="1" wrap="off" class="form-control" name="question" placeholder="問題を入力してください"><?php echo ($isSet) ? htmlspecialchars($questionData["question"], ENT_QUOTES) : ""; ?></textarea></dd>
+                <dd class="expand">
+                  <textarea rows="5" wrap="off" class="form-control" name="question" placeholder="問題を入力してください"><?php echo ($isSet) ? str_replace("{{n}}", "\n", htmlspecialchars($questionData["question"], ENT_QUOTES)) : ""; ?></textarea>
+                </dd>
                 <!-- ここまで -->
 
                 <dt class="essential">選択肢</dt>
@@ -153,13 +143,41 @@
                     <?php for ($i = 1; $i <= $answerNum; $i++): ?>
                       <div>
                         <dt class="essential"><?= $numTexts[$i - 1]; ?></dt>
-                        <dd><input class="form-control" name="answer<?= $i; ?>" type="text" placeholder="選択肢を入力してください" value="<?php echo htmlspecialchars($questionData["answer" . $i], ENT_QUOTES); ?>"></dd>
+                        <!--
+                          作成：朴昰成
+                          修正：朴昰成
+                          修正日：24/06/11
+                        -->
+
+                        <!-- 修正前： <?php /* ?>
+                          <dd><input class="form-control" name="answer<?= $i; ?>" type="text" placeholder="選択肢を入力してください" value="<?php echo htmlspecialchars($questionData["answer" . $i], ENT_QUOTES); ?>"></dd>
+                        <?php */ ?> -->
+
+                        <!-- 修正後： -->
+                        <dd class="expand">
+                          <textarea rows="3" wrap="off" class="form-control" name="answer<?= $i; ?>" placeholder="選択肢を入力してください"><?php echo str_replace("{{n}}", "\n", htmlspecialchars($questionData["answer" . $i], ENT_QUOTES)); ?></textarea>
+                        </dd>
+                        <!-- ここまで -->
                       </div>
                     <?php endfor; ?>
                     <?php for ($i = $answerNum + 1; $i <= 5; $i++): ?>
                       <div hidden>
                         <dt class="essential"><?= $numTexts[$i - 1]; ?></dt>
-                        <dd><input class="form-control" name="answer<?= $i; ?>" type="text" placeholder="選択肢を入力してください" disabled/></dd>
+                        <!--
+                          作成：朴昰成
+                          修正：朴昰成
+                          修正日：24/06/11
+                        -->
+
+                        <!-- 修正前： <?php /* ?>
+                          <dd><input class="form-control" name="answer<?= $i; ?>" type="text" placeholder="選択肢を入力してください" disabled/></dd>
+                        <?php */ ?> -->
+
+                        <!-- 修正後： -->
+                        <dd class="expand">
+                          <textarea rows="3" wrap="off" class="form-control" name="answer<?= $i; ?>" placeholder="選択肢を入力してください"></textarea>
+                        </dd>
+                        <!-- ここまで -->
                       </div>
                     <?php endfor; ?>
                   <?php else: ?>
@@ -168,7 +186,21 @@
                     <?php for ($i = 1; $i <= 5; $i++): ?>
                       <div hidden>
                         <dt class="essential"><?= $numTexts[$i - 1]; ?></dt>
-                        <dd><input class="form-control" name="answer<?= $i; ?>" type="text" placeholder="選択肢を入力してください" disabled/></dd>
+                        <!--
+                          作成：朴昰成
+                          修正：朴昰成
+                          修正日：24/06/11
+                        -->
+
+                        <!-- 修正前： <?php /* ?>
+                          <dd><input class="form-control" name="answer<?= $i; ?>" type="text" placeholder="選択肢を入力してください" disabled/></dd>
+                        <?php */ ?> -->
+
+                        <!-- 修正後： -->
+                        <dd class="expand">
+                          <textarea rows="3" wrap="off" class="form-control" name="answer<?= $i; ?>" placeholder="選択肢を入力してください" disabled></textarea>
+                        </dd>
+                        <!-- ここまで -->
                       </div>
                     <?php endfor; ?>
                   <?php endif; ?>
@@ -180,18 +212,20 @@
               <div class="tab-pane" id="nav-<?php echo $code; ?>" role="tabpanel" aria-labelledby="nav-<?php echo $code; ?>-tab">
                 <dl class="emegra question">
                   <dt>問題</dt>
-                  <!-- Debug
+                  <!--
                     作成：朴昰成
                     修正：朴昰成
-                    修正日：24/06/04
+                    修正日：24/06/11
                   -->
 
                   <!-- 修正前： <?php /* ?>
-                    <dd><textarea row="3" class="form-control" name="question_<?php echo $code; ?>" placeholder="問題を入力してください（<?php echo $text; ?>）" value="<?php echo ($isSet) ? htmlspecialchars($questionData["question_" . $code], ENT_QUOTES) : ""; ?>"></textarea></dd>
+                    <dd><textarea row="1" wrap="off" class="form-control" name="question_<?php echo $code; ?>" placeholder="問題を入力してください（<?php echo $text; ?>）" ><?php echo ($isSet) ? htmlspecialchars($questionData["question_" . $code], ENT_QUOTES) : ""; ?></textarea></dd>
                   <?php */ ?> -->
 
                   <!-- 修正後： -->
-                  <dd><textarea row="1" wrap="off" class="form-control" name="question_<?php echo $code; ?>" placeholder="問題を入力してください（<?php echo $text; ?>）" ><?php echo ($isSet) ? htmlspecialchars($questionData["question_" . $code], ENT_QUOTES) : ""; ?></textarea></dd>
+                  <dd class="expand">
+                    <textarea rows="5" wrap="off" class="form-control" name="question_<?php echo $code; ?>" placeholder="問題を入力してください（<?php echo $text; ?>）"><?php echo ($isSet) ? str_replace("{{n}}", "\n", htmlspecialchars($questionData["question_" . $code], ENT_QUOTES)) : ""; ?></textarea>
+                  </dd>
                   <!-- ここまで -->
 
                   <dt>選択肢</dt>
@@ -200,13 +234,41 @@
                       <?php for ($i = 1; $i <= $answerNum; $i++): ?>
                         <div>
                           <dt><?= $numTexts[$i - 1]; ?></dt>
-                          <dd><input class="form-control" name="answer<?= $i; ?>_<?php echo $code; ?>" type="text" placeholder="選択肢を入力してください（<?php echo $text; ?>）" value="<?php echo htmlspecialchars($questionData["answer" . $i . "_" . $code], ENT_QUOTES); ?>"></dd>
+                          <!--
+                            作成：朴昰成
+                            修正：朴昰成
+                            修正日：24/06/11
+                          -->
+
+                          <!-- 修正前： <?php /* ?>
+                            <dd><input class="form-control" name="answer<?= $i; ?>_<?php echo $code; ?>" type="text" placeholder="選択肢を入力してください（<?php echo $text; ?>）" value="<?php echo htmlspecialchars($questionData["answer" . $i . "_" . $code], ENT_QUOTES); ?>"></dd>
+                          <?php */ ?> -->
+
+                          <!-- 修正後： -->
+                          <dd class="expand">
+                            <textarea rows="3" wrap="off" class="form-control" name="answer<?= $i; ?>_<?php echo $code; ?>" placeholder="選択肢を入力してください（<?php echo $text; ?>）"><?php echo str_replace("{{n}}", "\n", htmlspecialchars($questionData["answer" . $i . "_" . $code], ENT_QUOTES)); ?></textarea>
+                          </dd>
+                          <!-- ここまで -->
                         </div>
                       <?php endfor; ?>
                       <?php for ($i = $answerNum + 1; $i <= 5; $i++): ?>
                         <div hidden>
                           <dt><?= $numTexts[$i - 1]; ?></dt>
-                          <dd><input class="form-control" name="answer<?= $i; ?>_<?php echo $code; ?>" type="text" placeholder="選択肢を入力してください（<?php echo $text; ?>）" disabled/></dd>
+                          <!--
+                            作成：朴昰成
+                            修正：朴昰成
+                            修正日：24/06/11
+                          -->
+
+                          <!-- 修正前： <?php /* ?>
+                            <dd><input class="form-control" name="answer<?= $i; ?>_<?php echo $code; ?>" type="text" placeholder="選択肢を入力してください（<?php echo $text; ?>）" value="<?php echo htmlspecialchars($questionData["answer" . $i . "_" . $code], ENT_QUOTES); ?>"></dd>
+                          <?php */ ?> -->
+
+                          <!-- 修正後： -->
+                          <dd class="expand">
+                            <textarea rows="3" wrap="off" class="form-control" name="answer<?= $i; ?>_<?php echo $code; ?>" placeholder="選択肢を入力してください（<?php echo $text; ?>）" disabled></textarea>
+                          </dd>
+                          <!-- ここまで -->
                         </div>
                       <?php endfor; ?>
                     <?php else: ?>
@@ -215,7 +277,21 @@
                       <?php for ($i = 1; $i <= 5; $i++): ?>
                         <div hidden>
                           <dt><?= $numTexts[$i - 1]; ?></dt>
-                          <dd><input class="form-control" name="answer<?= $i; ?>_<?php echo $code; ?>" type="text" placeholder="選択肢を入力してください（<?php echo $text; ?>）" disabled/></dd>
+                          <!--
+                            作成：朴昰成
+                            修正：朴昰成
+                            修正日：24/06/11
+                          -->
+
+                          <!-- 修正前： <?php /* ?>
+                            <dd><input class="form-control" name="answer<?= $i; ?>_<?php echo $code; ?>" type="text" placeholder="選択肢を入力してください（<?php echo $text; ?>）" disabled/></dd>
+                          <?php */ ?> -->
+
+                          <!-- 修正後： -->
+                          <dd class="expand">
+                            <textarea rows="3" wrap="off" class="form-control" name="answer<?= $i; ?>_<?php echo $code; ?>" placeholder="選択肢を入力してください（<?php echo $text; ?>）" disabled></textarea>
+                          </dd>
+                          <!-- ここまで -->
                         </div>
                       <?php endfor; ?>
                     <?php endif; ?>

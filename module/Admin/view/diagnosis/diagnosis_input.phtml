@@ -43,7 +43,18 @@
 		<input name="idx" value="<?php echo $diagnosisData["idx"]; ?>" hidden/>
 	<?php endif; ?>
 	<input name="question_idxs" value="<?php echo ($isSet) ? $diagnosisData["question_idxs"] : ""; ?>" hidden/>
-	<input name="totalPoint" value="<?php echo ($isSet) ? "100" : ""; ?>" hidden/>
+  <!--
+    作成：朴昰成
+    修正：朴昰成
+    修正日：24/06/11
+  -->
+
+  <!-- 修正前： <?php /* ?>
+    <input name="totalPoint" value="<?php echo ($isSet) ? "100" : ""; ?>" hidden/>
+  <?php */ ?> -->
+  <!-- 修正後： -->
+  <input name="point_total" value="<?php echo ($isSet) ? $diagnosisData["point_total"] : ""; ?>" hidden/>
+  <!-- ここまで -->
 
 	<style type="text/css">
 		option { color: black; }
@@ -128,7 +139,19 @@
 			</style>
 			<dl class="emegra question">
 				<dt class="essential">問項数</dt>
-				<dd><input type="number" class="form-control" name="question_num" style="width: 80px;" value="<?php echo ($isSet) ? $diagnosisData["question_num"] : "35"; ?>"/>問題</dd>
+        <!--
+          作成：朴昰成
+          修正：朴昰成
+          修正日：24/06/11
+        -->
+
+        <!-- 修正前： <?php /* ?>
+          <dd><input type="number" class="form-control" name="question_num" style="width: 80px;" value="<?php echo ($isSet) ? $diagnosisData["question_num"] : "35"; ?>"/>問題</dd>
+        <?php */ ?> -->
+
+        <!-- 修正後： -->
+        <dd><input type="number" class="form-control" name="question_num" style="width: 80px;" value="<?php echo ($isSet) ? $diagnosisData["question_num"] : "35"; ?>"/>題項</dd>
+        <!-- ここまで -->
 
 				<dt class="essential">診断時間</dt>
 				<dd><input type="number" class="form-control" name="time_limit" style="width: 80px;" value="<?php echo ($isSet) ? $diagnosisData["time_limit"] : "50"; ?>"/>分</dd>
@@ -155,7 +178,19 @@
 							<?php if ($isSet): ?>
 							<?php else: ?>
 								<tr>
-									<td style="grid-column: 1 / 5;">設定で大分類、小分類、レベルを選択し、左側のボタンを押してください。</td>
+                  <!--
+                    作成：朴昰成
+                    修正：朴昰成
+                    修正日：24/06/11
+                  -->
+
+                  <!-- 修正前： <?php /* ?>
+                    <td style="grid-column: 1 / 5;">設定で大分類、小分類、レベルを選択し、左側のボタンを押してください。</td>
+                  <?php */ ?> -->
+
+                  <!-- 修正後： -->
+                  <td style="grid-column: 1 / 6;">設定で大分類、小分類、レベルを選択し、左側のボタンを押してください。</td>
+                  <!-- ここまで -->
 								</tr>
 							<?php endif; ?>
 						</tbody>
@@ -191,7 +226,19 @@
 					<table class="emegra">
 						<tbody id="tbody-question_select">
 							<tr>
-								<td style="grid-column: 1 / 4;">データを入力してください。</td>
+                <!--
+                  作成：朴昰成
+                  修正：朴昰成
+                  修正日：24/06/11
+                -->
+
+                <!-- 修正前： <?php /* ?>
+                  <td style="grid-column: 1 / 4;">データを入力してください。</td>
+                <?php */ ?> -->
+
+                <!-- 修正後： -->
+                <td style="grid-column: 1 / 6;">設定で大分類、小分類、レベルを選択してください。</td>
+                <!-- ここまで -->
 							</tr>
 						</tbody>
 					</table>
@@ -340,6 +387,20 @@
 				selectCheckboxs[i].checked = true;
 			}
 		}
+    /*
+      作成：朴昰成
+      作成日：24/06/11
+    */
+    console.log(questionSelectBody);
+    console.log(questionSelectBody.children)
+    if (no != 1) {
+      questionSelectBody.children[0].hidden = true;
+    }
+    else {
+      questionSelectBody.children[0].hidden = false;
+    }
+
+    /* ここまで */
 	})
 
 	function SetValue() {
@@ -454,6 +515,13 @@
 				UpdateQuestionDatas(questionDatas);
 				selectCheckboxs = questionSelectBody.getElementsByTagName("input");
 
+        /*
+          作成：朴昰成
+          作成日：24/06/11
+        */
+        if (form.question_num.value == 0) { return 0; }
+
+        /* ここまで */
 				<?php if ($isSet): ?>
 					xhr.open("POST", "../read/list", true);
 				<?php else: ?>
@@ -606,7 +674,19 @@
 
 			form.question_idxs.value = questionIdxs.join(",");
 			form.question_num.value = totalNum;
-			form.totalPoint.value = totalPoint;
+      /*
+        作成：朴昰成
+        修正：朴昰成
+        修正日：24/06/11
+      */
+
+      /* 修正前：
+        form.totalPoint.value = totalPoint;
+      */
+
+      /* 修正後： */
+      form.point_total.value = totalPoint;
+      /* ここまで */
 		}
 		else {
 			alert("削除する問題を選択してください。");
@@ -656,6 +736,18 @@
 	function UpdateQuestionDatas(questionDatas) {
 		questionSelectBody.replaceChildren();
 		
+    /*
+      作成：朴昰成
+      作成日：24/06/11
+    */
+    var tr = document.createElement("tr");
+    var td = document.createElement("td");
+    td.style.gridColumn = "1 / 6";
+    td.innerText = "問項がありません。";
+    tr.appendChild(td);
+    questionSelectBody.appendChild(tr);
+
+    /* ここまで */
 		for (let i = 0; i < questionDatas.length; i++) {
 			let tr = document.createElement("tr");
 
@@ -789,7 +881,19 @@
 
 		form.question_idxs.value = questionIdxs.join(",");
 		form.question_num.value = totalNum;
-		form.totalPoint.value = totalPoint;
+    /*
+      作成：朴昰成
+      修正：朴昰成
+      修正日：24/06/11
+    */
+
+    /* 修正前：
+      form.totalPoint.value = totalPoint;
+    */
+
+    /* 修正後： */
+    form.point_total.value = totalPoint;
+    /* ここまで */
 	}
 
 	function ChkValid() {
@@ -845,12 +949,20 @@
 			return false;
 		}
 
-		if (form.totalPoint.value != 100) {
-			alert("点数を100に合わせてください。");
-			questionListBody.focus();
-			return false;
-		}
+    /*
+      作成：朴昰成
+      削除：朴昰成
+      削除日：24/06/11
+    */
 
+    /* 削除前：
+      if (form.totalPoint.value != 100) {
+        alert("点数を100に合わせてください。");
+        questionListBody.focus();
+        return false;
+      }
+
+    ここまで */
 		<?php for ($i = 1; $i <= 4; $i++): ?>
 			if (form.point<?= $i ?>.value == "") {
 				alert("評価点数を入力してください。");

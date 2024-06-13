@@ -89,7 +89,7 @@
     <!--
       作成：朴昰成
       修正：朴昰成
-      修正前：24/06/13
+      修正日：24/06/13
     -->
 
     <!-- 修正前： <?php /* ?>
@@ -112,6 +112,13 @@
         <?php endforeach; ?>
       </select>
       <select class="form-select form-select-sm" id="select-value" style="width: 120px; margin-left: 8px;" onchange="Select(this);">
+        <!--
+          作成：朴昰成
+          作成日：24/06/13
+        -->
+        <option value="">選択</option>
+
+        <!-- ここまで -->
         <?php if ($isSelect): ?>
           <?php if ($searchDatas["select"][0] == "level"): ?>
             <?php for ($i = 0; $i <= 3; $i++): ?>
@@ -126,17 +133,53 @@
               <option value="<?php echo $data["idx"]; ?>"<?php echo ($searchDatas["select"][1] == $data["idx"]) ? " selected" : ""?>><?php echo $data["text"]; ?></option>
             <?php endforeach; ?>
           <?php endif; ?>
+        <!--
+          作成：朴昰成
+          削除：：朴昰成
+          削除日：24/06/13
+        -->
+
+        <!-- 削除前： <?php /* ?>
         <?php else: ?>
           <option hidden>選択</option>
+        <?php */ ?> -->
         <?php endif; ?>
       </select>
+      <!--
+        作成：朴昰成
+        修正：朴昰成
+        修正日：24/06/13
+      -->
+
+      <!-- 修正前： <?php /* ?>
       <select class="form-select form-select-sm" id="select-class" style="width: 120px; margin-left: 8px;" onchange="Select(this);">
+      <?php */ ?> -->
+
+      <!-- 修正後： -->
+
+      <select class="form-select form-select-sm" id="select-class" style="width: 120px; margin-left: 8px;" onchange="Select(this);"<?php echo ($isSelect && $searchDatas["select"][0] == "class") ? "" : " disabled"; ?>>
+      <!-- ここまで -->
+        <!--
+          作成：朴昰成
+          作成日：24/06/13
+        -->
+        <option value="">選択</option>
+
+        <!-- ここまで -->
         <?php if ($isSelect && $searchDatas["select"][0] == "class"): ?>
           <?php foreach($selectValueDatas["class2nd"][$searchDatas["select"][1]] as $data): ?>
             <option value="<?php echo $data["idx"]; ?>"<?php echo ($searchDatas["select"][2] == $data["idx"]) ? " selected" : ""?>><?php echo $data["text"]; ?></option>
           <?php endforeach; ?>
+        <!--
+          作成：朴昰成
+          削除：：朴昰成
+          削除日：24/06/13
+        -->
+
+        <!-- 削除前： <?php /* ?>
         <?php else: ?>
           <option hidden>選択</option>
+        <?php */ ?> -->
         <?php endif; ?>
       </select>
       <p style="margin-left: 8px;">タイトル</p>

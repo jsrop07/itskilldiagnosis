@@ -75,6 +75,13 @@ class QuestionController extends AbstractActionController
 		if (isset($query["select"])) {
 			$selectData = explode("-", $query["select"]);
 
+			/*
+				作成：
+				修正：
+				修正日：24/06/13
+			*/
+
+			/* 修正前：
 			if ($selectData[0] == "class") {
 				$sqlWhere["class2nd"] = $selectData[2];
 			}
@@ -83,6 +90,17 @@ class QuestionController extends AbstractActionController
 			}
 
 			$datas["searchDatas"]["select"] = $selectData;
+			*/
+
+			/* 修正後： */
+			if (isset($selectData[2])) {
+				$sqlWhere["class2nd"] = $selectData[2];
+			}
+			else if (isset($selectData[1])) {
+				if ($selectData[0] == "class") { $sqlWhere["class1st"] = $selectData[1]; }
+				else { $sqlWhere[$selectData[0]] = $selectData[1]; }
+			}
+			/* ここまで */
 		}
 
 		$questionDatas = "";

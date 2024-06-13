@@ -1,7 +1,15 @@
 <?php
 	$levelTexts = ["無し", "承認", "マスター"];
+  /*
+    作成：朴昰成
+    削除：朴昰成
+    削除日：24/06/13
+  */
+
+  /* 削除前：
 
 	if (!isset($_SESSION)) { session_start(); }
+  ここまで */
 ?>
 
 <?php echo $this->partial("breadcrumb", ["datas" => $breadcrumbData]); ?>
@@ -35,6 +43,13 @@
 		font-size: 15px;
 		font-weight: 400;
 	}
+  /*
+    作成：朴昰成
+    削除：朴昰成
+    削除日：24/06/13
+  */
+
+  /* 削除前：
 
 	table.emegra tr { grid-template-columns: 50px 1fr 100px 70px 50px repeat(2,150px); }
 	table.emegra tr.index {
@@ -49,6 +64,7 @@
 		align-items: center;
 		justify-content: center;
 	}
+  ここまで */
 
 	.pagination-place, .button-place {
 		margin-top: 10px;
@@ -62,6 +78,13 @@
 </content>
 
 <content class="main">
+  <!--
+    作成：朴昰成
+    修正：朴昰成
+    修正前：24/06/12
+  -->
+
+  <!-- 修正前： <?php /* ?>
 	<?php if (empty($adminDatas)): ?>
 		<div class="table-empty" style="margin-top: 16px;">
 			データがありません。
@@ -94,6 +117,42 @@
 			</tbody>
 		</table>
 	<?php endif; ?>
+  <?php */ ?> -->
+
+  <!-- 修正後： -->
+  <div class="emegra-table">
+    <table class="table table-bordered">
+      <thead>
+        <tr class="index">
+          <th>No</th>
+          <th>ログインID</th>
+          <th>名前</th>
+          <th>権限</th>
+          <th>担当者</th>
+          <th>最終ログイン</th>
+          <th>更新日</th>
+        </tr>
+      </thead>
+      <tbody>
+        <?php if (empty($adminDatas)): ?>
+          <td colspan="7">管理者情報がありません。</td>
+        <?php else: ?>
+          <?php foreach($adminDatas as $data): ?>
+            <tr>
+              <td><?php echo $data["num"]; ?></td>
+              <td class="link start"><a onclick="self.location.href='./detail/<?php echo $data['code']; ?>'"><?php echo $data["id"]; ?></a></td>
+              <td class="start"><?php echo $data["name"]; ?></td>
+              <td><?php echo $levelTexts[$data["level"]]; ?></td>
+              <td><?php echo ($data["pic"] == "y") ? "o" : "x"; ?></td>
+              <td class="start"><?php echo (empty($data["date_login"])) ? "無し" : date("Y/m/d h:i:s", strtotime($data["date_login"])); ?></td>
+              <td class="start"><?php echo date("Y/m/d h:i:s", strtotime($data["date_start"])); ?></td>
+            </tr>
+          <?php endforeach; ?>
+        <?php endif; ?>
+      </tbody>
+    </table>
+  </div>
+  <!-- ここまで -->
 
 	<div class="pagination-place">
 		<?php echo $this->paginationControl($this->noticelist, "sliding", array("pagination", "Notice"), array("url" => "")); ?>

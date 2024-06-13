@@ -1,9 +1,24 @@
 <?php
   $title = array(
+    /*
+      作成：朴昰成
+      修正：朴昰成
+      修正日：24/06/12
+    */
+    
+    /* 修正前：
     "manager" => "ITスキル診断管理者管理",
     "situation" => "ITスキル診断状況管理",
     "diagnosis" => "ITスキル診断問題管理",
     "question" => "ITスキル診断問項管理",
+    */
+
+    /* 修正後： */
+    "situation" => "ITスキル診断状況管理",
+    "diagnosis" => "ITスキル診断問題管理",
+    "question" => "ITスキル診断問項管理",
+    "manager" => "ITスキル診断管理者管理",
+    /* ここまで */
   );
 
 	if (!isset($_SESSION)) { session_start(); }
@@ -50,7 +65,19 @@
 		<header>
 			<div class="logo">
 				<img src="/img/hd_logo.png" alt="logo" height="43px" width="auto" style="margin-left: 39px;"/>
+        <!--
+          作成：朴昰成
+          修正：朴昰成
+          修正日：24/06/12
+        -->
+
+        <!-- 修正前： <?php /* ?>
         <a class="logo-title">ITスキル診断システム<small><small> Ver 0.11</small></small></a>
+        <?php */ ?> -->
+
+        <!-- 修正後： -->
+        <a class="logo-title">ITスキル診断システム<small><small> Ver 1.0</small></small></a>
+        <!-- ここまで -->
 			</div>
 
 			<div class="title"><p><?= $title[$mainMenu]; ?></p></div>
@@ -66,12 +93,29 @@
 		</header>
 
 		<aside>
+      <!--
+        作成：朴昰成
+        修正：朴昰成
+        修正日：24/06/12
+      -->
+
+      <!-- 修正前： <?php /* ?>
 			<?php if ($_SESSION["user"]["level"] >= 2): ?>
 				<button class="btn-sub <?php echo $title[$mainMenu] == "ITスキル診断管理者管理" ? " active" : ""; ?>" onclick="self.location.href='/admin/manager/list'">ITスキル診断管理者管理</button>
 			<?php endif; ?>
 			<button class="btn-sub <?php echo $title[$mainMenu] == "ITスキル診断状況管理" ? " active" : ""; ?>" onclick="self.location.href='/admin/situation/list'">ITスキル診断状況管理</button>
       <button class="btn-sub <?php echo $title[$mainMenu] == "ITスキル診断問題管理" ? " active" : ""; ?>" onclick="self.location.href='/admin/diagnosis/list'">ITスキル診断問題管理</button>
       <button class="btn-sub <?php echo $title[$mainMenu] == "ITスキル診断問項管理" ? " active" : ""; ?>" onclick="self.location.href='/admin/question/list'">ITスキル診断問項管理</button>
+      <?php */ ?> -->
+
+      <!-- 修正後： -->
+      <button class="btn-sub <?php echo $title[$mainMenu] == "ITスキル診断状況管理" ? " active" : ""; ?>" onclick="self.location.href='/admin/situation/list'">ITスキル診断状況管理</button>
+      <button class="btn-sub <?php echo $title[$mainMenu] == "ITスキル診断問題管理" ? " active" : ""; ?>" onclick="self.location.href='/admin/diagnosis/list'">ITスキル診断問題管理</button>
+      <button class="btn-sub <?php echo $title[$mainMenu] == "ITスキル診断問項管理" ? " active" : ""; ?>" onclick="self.location.href='/admin/question/list'">ITスキル診断問項管理</button>
+      <?php if ($_SESSION["user"]["level"] >= 2): ?>
+        <button class="btn-sub <?php echo $title[$mainMenu] == "ITスキル診断管理者管理" ? " active" : ""; ?>" onclick="self.location.href='/admin/manager/list'">ITスキル診断管理者管理</button>
+      <?php endif; ?>
+      <!-- ここまで -->
 		</aside>
 		
 		<main>

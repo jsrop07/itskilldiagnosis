@@ -37,7 +37,7 @@ $lineChange = "<br>";
           <p style="color:red;">※ページ下部の一時停止ボタンを押すと10分間停止し、1回のみ使用できます。</p>	
           
         </div>
-        <div style="padding:0px 50px;">
+        <div id="examContent" style="padding:0px 50px;">
           <?php $count = 1; 
           foreach ($matchedData as $idx => $row) : 
           $question_ko = $idx + 1 . ". " . str_replace('{{n}}',$lineChange,$row["question_ko"]);
@@ -71,7 +71,7 @@ $lineChange = "<br>";
         <?php $count++; ?>  
       <?php endforeach; ?>
     <input type="hidden" id="answer_data" name="answer_data">
-    <div class="button_box" style="margin-bottom: 32px; gap:30px">
+    <div class="button_box" id="buttonId" style="margin-bottom: 32px; gap:30px">
       <button  class="applicant_cancel" id="cancel" name="submit_post"  value="cancel" onclick="CancelConfirm()">キャンセル</button>
       <button class="exam_submit" id="stopBtn" style=" display:flex; align-items:center; text-align:center; border:none;"  data-bs-toggle="modal" data-bs-target="#staticBackdrop2">一時停止</button>
       <button type="button" class="exam_submit" id='nextId' name="submit_post"  value="btn_submit" onclick="showNextQuestion()" >次へ</button>
@@ -143,7 +143,9 @@ $lineChange = "<br>";
 					</div>
 				</div>
 			</div>
-
+			<!-- 作成：丁錫圓
+			修正：丁錫圓
+			修正日：24/06/13
 <script>
     let forms= document.getElementById('myForm');
     let currentNumber =1;
@@ -175,6 +177,52 @@ $lineChange = "<br>";
           }); 
         }
       }
+</script> -->
+<!-- 修正後 -->
+<script>
+    let forms= document.getElementById('myForm');
+    let currentNumber =1;
+    let ischeck= true;
+    function showNextQuestion() {
+        const currentExam = document.getElementById('exam' + currentNumber);
+        const nextExam = document.getElementById('exam' + (currentNumber + 1));
+        if(forms.elements['answer' + currentNumber].value == ""){
+          alert("答えを選択してください。")
+          ischeck = false;
+          return false;
+        }
+        currentNumber++;
+        if (currentExam) currentExam.style.display = 'none';
+        if (nextExam) nextExam.style.display = 'block';
+        if (!nextExam) {
+          const submitButton = document.getElementById('nextId');
+          const examContent = document.getElementById('examContent');
+          const buttonId = document.getElementById('buttonId');
+          submitButton.innerText = '提出';
+          submitButton.id ='btn_submit'
+          stopBtn.hidden = true;
+          console.log(examContent);
+
+          const endMessage = document.createElement('div');
+          endMessage.innerText = 'お疲れ様でした。以上で診断試験は終了でございます。\n下記の提出ボタンを押してください。';
+          endMessage.style.textAlign = 'center';
+          endMessage.style.fontSize = '20px';
+          endMessage.style.border = '1px solid green'
+          endMessage.style.marginTop = '-230px'
+          endMessage.style.marginBottom = '80px';
+          endMessage.style.padding = '20px';
+          examContent.appendChild(endMessage);
+          
+          buttonId.style.marginTop = "150px"
+          
+          btn_submit.addEventListener("click", () => {
+          confirmExam(); 
+            var myModal = new bootstrap.Modal(document.getElementById('exampleModal'), {keyboard: false});
+            myModal.show();
+          }); 
+        }
+      }
+// ここまで
 </script>
 
 <script>
@@ -218,99 +266,10 @@ window.onload = function() {
 
 作成：名前
 修正：名前
-修正日：24/06/01
+修正日：24/06/13
 
 修正前：
-  document.getElementById("startBtn").addEventListener("click", function() {
-    var lock = 'n';
-    var stopBtn = document.getElementById('stopBtn');
-
-    var timerDisplay = document.getElementById("timerDisplay");
-    
-    var examTime  = <?php echo $time_limit?>; 
-    var stopTime = parseInt(10); 
-
-    var minuteToSecond = examTime * 60;
-    var stopMinuteToSecond = stopTime * 60;
-
-
-    var firstAlert= false;
-    var secondAlert= false;
-
-
-    var timer = setInterval(function() {
-      if(lock == 'n'){
-        updateTimer();
-      }
-    }, 1000);
-    updateTimer();
-    
-    function updateTimer() {
-      var minutes = Math.floor(minuteToSecond / 60);
-      var seconds = minuteToSecond % 60;
-
-      timerDisplay.innerHTML ="残り時間: " + minutes + "分 " + seconds + "秒";
-      if (minuteToSecond <= 0) {
-        clearInterval(timer);
-        timerDisplay.innerHTML = "終";
-        timeoutExam();
-        document.querySelector('.timeout_submit').click();
-      }else if(minuteToSecond <= 600 && !firstAlert){
-        timerDisplay.style.color = "orange";
-        firstAlert=true;
-      }else if(minuteToSecond <= 300 && !secondAlert){
-        timerDisplay.style.color = "red";
-        secondAlert=true;
-      }
-      else{
-        minuteToSecond--;
-      }
-    }
-
-  document.getElementById("stopBtn").addEventListener("click", function() {
-    event.preventDefault();        
-    if(lock == 'n'){
-      lock='y';
-      updateTimer2(); 
-      stopBtn.disabled='false';
-      stopBtn.style.color = "gray";
-    }
-    });
-
-    var calc_time=setInterval(function() {
-      updateTimer2();
-    }, 1000);
-
-
-  function updateTimer2() {
-      if(lock == 'y'){
-          var stopMinutes = Math.floor(stopMinuteToSecond / 60);
-          var stopSeconds = stopMinuteToSecond % 60;
-          document.getElementById("timeLimit").innerHTML="残り時間: " + stopMinutes + "分 " + stopSeconds + "秒";
-          stopMinuteToSecond--;
-
-          if (stopMinuteToSecond < 0) {
-              clearInterval(calc_time);
-              lock = 'y';
-              document.getElementById("lock_time").click(); 
-
-              stopBtn.disabled=false; 
-              stopBtn.style.color = "gray";
-          }
-      }
-  }
-
-
-  document.getElementById("lock_time").addEventListener("click",function(){
-    if(lock == 'y'){
-      lock='n';
-    }
-  });  
-  });
--->
-
-<!-- 修正後： -->
-<script>
+  <script>
 document.getElementById("startBtn").addEventListener("click", function() {
   var lock = 'n';
   var stopBtn = document.getElementById('stopBtn');
@@ -408,6 +367,136 @@ document.getElementById("startBtn").addEventListener("click", function() {
       }
   });
 });
+</script>
+-->
+
+<!-- 修正後： -->
+<script>
+document.getElementById("startBtn").addEventListener("click", function() {
+  var lock = 'n';
+  var stopBtn = document.getElementById('stopBtn');
+
+  var timerDisplay = document.getElementById("timerDisplay");
+
+  
+  var examTime= <?php echo $time_limit; ?>;
+  var stopTime = 10; 
+
+  function sendRequest() {
+    const postForm = new FormData();
+    postForm.append("idx", <?= json_encode($examIdx) ?>);
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", './timeout', true);
+    xhr.send(postForm);
+
+    xhr.onload = () => {
+        if (xhr.status == 200) {
+            const result = xhr.responseText;
+            const resultDate = JSON.parse(result);
+            console.log(resultDate.status);
+
+            if (result == "timeout") {
+                alert("診断可能な時間が過ぎたので、受験できません。");
+                self.location.href='/applicant/login';
+            } else if (resultDate.status == "success") {
+              examTime = resultDate.remain_time; 
+              initializeTimers();
+            }
+        }
+    };
+}
+sendRequest();
+
+
+
+function initializeTimers() {
+  var examTimeInSeconds = examTime * 60;
+  var stopTimeInSeconds = stopTime * 60;
+
+  var firstAlert = false;
+  var secondAlert = false;
+
+  var startTime = performance.now();
+  var pausedTime = 0;
+
+  function updateTimer() {
+    if (lock === 'n') {
+      var currentTime = performance.now(); 
+
+      var elapsed = Math.floor((currentTime - startTime - pausedTime) / 1000);
+      var remainingTime = examTimeInSeconds - elapsed;
+      var minutes = Math.floor(remainingTime / 60);
+      var seconds = remainingTime % 60;
+
+      let solveTime = examTimeInSeconds - remainingTime;
+      let solveMinutes = Math.floor(solveTime / 60);
+      document.getElementById("solveTime").value = solveMinutes ;
+      timerDisplay.innerHTML = "残り時間: " + minutes + "分 " + seconds + "秒";
+
+      if (remainingTime <= 0) {
+        clearInterval(timer);
+        timerDisplay.innerHTML = "終";
+        timeoutExam();
+        document.querySelector('.timeout_submit').click();
+      } else if (remainingTime <= 600 && !firstAlert) {
+        timerDisplay.style.color = "orange";
+        firstAlert = true;
+      } else if (remainingTime <= 300 && !secondAlert) {
+        timerDisplay.style.color = "red";
+        secondAlert = true;
+      }
+    }
+  }
+
+  var timer = setInterval(updateTimer, 1000);
+  updateTimer();
+
+  var stopStartTime;
+  var stopTimer;
+  
+  document.getElementById("stopBtn").addEventListener("click", function(event) {
+    event.preventDefault();
+    if (lock === 'n') {
+      lock = 'y';
+      stopStartTime = performance.now();
+      stopBtn.disabled = true;
+      stopBtn.style.color = "gray";
+      PauseTimer();
+    }
+  });
+  PauseTimer();
+
+  function PauseTimer() {
+    stopTimer = setInterval(function() {
+      if (lock === 'y') {
+        var stopElapsed = Math.floor((performance.now() - stopStartTime) / 1000);
+        var stopRemainingTime = stopTimeInSeconds - stopElapsed;
+
+        var stopMinutes = Math.floor(stopRemainingTime / 60);
+        var stopSeconds = stopRemainingTime % 60;
+
+        document.getElementById("timeLimit").innerHTML = "残り時間: " + stopMinutes + "分 " + stopSeconds + "秒";
+
+        if (stopRemainingTime < 0) {
+          clearInterval(stopTimer);
+          pausedTime += (performance.now() - stopStartTime);
+          lock = 'n';
+          document.getElementById("unlock_time").click();
+
+          stopBtn.disabled = false;
+          stopBtn.style.color = "gray";
+        }
+      }
+    }, 1000);
+  }
+
+  document.getElementById("unlock_time").addEventListener("click", function() {
+      if (lock === 'y') {
+          lock = 'n';
+          pausedTime += (performance.now() - stopStartTime);
+      }
+  });
+}});
 </script>
 <!-- ここまで -->
 

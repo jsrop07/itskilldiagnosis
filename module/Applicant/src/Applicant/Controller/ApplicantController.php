@@ -393,23 +393,42 @@ class ApplicantController extends AbstractActionController
 			$recordCode    = $examRecordInfo["diagnosis_code"];	
 			$diagnosisInfo = $diagnosisTb->ReadForRecordByCodenDate($recordCode, $examRecordInfo["diagnosis_date"]);	
 			$diagnosisTime = $diagnosisInfo['time_limit'];
+			// 作成：丁錫圓
+			// 修正：丁錫圓
+			// 修正日：24/06/13
+			// 修正前：
+			// $timeout = $applicantExamTbl->timeout($examIdx,$diagnosisTime); 
+			// if ($timeout === 'timeout') {
+			// 	if (isset($session->id)) {
+			// 		// $emailId = $session->id;
+			// 		$applicantInfo = $applicantExamTbl->readById($emailId);
+			// 		$applicantExamTbl->deletePasswordByIdx($applicantInfo['idx']);
+			// 		unset($emailId);
+			// 		session_unset(); 
+			// 		die($timeout);
+			// 	}
+			// }
+			// elseif($timeout === "success"){					
+			// 	die($timeout);
+			// }
+			// 修正後：
+			$timeout = $applicantExamTbl->timeout($examIdx, $diagnosisTime);
 
-			$timeout = $applicantExamTbl->timeout($examIdx,$diagnosisTime); 
 			if ($timeout === 'timeout') {
-				if (isset($session->id)) {
-					// $emailId = $session->id;
-					$applicantInfo = $applicantExamTbl->readById($emailId);
+					// Handle timeout case
 					$applicantExamTbl->deletePasswordByIdx($applicantInfo['idx']);
-					unset($emailId);
-					session_unset(); 
-					die($timeout);
-				}
+					session_unset();
+					echo json_encode(array('status' => 'timeout'));
+			} elseif (is_string($timeout)) {
+				echo $timeout; // Assuming $timeout is already JSON encoded by timeout() method
+			} else {
+					// Handle unexpected cases
+					http_response_code(500); // Internal Server Error
+					echo json_encode(array('error' => 'Unexpected error occurred'));
 			}
-			elseif($timeout === "success"){					
-				die($timeout);
-			}
-
-		
+			
+    // Terminate script execution
+    exit;
 	}
 		// ここまで
 

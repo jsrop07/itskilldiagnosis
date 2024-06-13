@@ -3,20 +3,86 @@
 <h1 class="title">CSV登録</h1>
 
 <form enctype="multipart/form-data" id="form">
+  <!--
+    作成：朴昰成
+    修正：朴昰成
+    修正日：24/06/13
+  -->
+
+  <!-- 修正前： <?php /* ?>
 	<input class="form-control" type="file" name="csv_file" id="csv_file"/>
+  <?php */ ?> -->
+  <!-- 修正後： -->
+  <input class="form-control" type="file" name="file" id="file"/>
+  <!-- ここまで -->
 </form>
 <div class="btn-place" style="margin-top: 32px;">
 	<button class="emegra cancel" onclick="history.back();">戻る</button>
+  <!--
+    作成：朴昰成
+    修正：朴昰成
+    修正日：24/06/13
+  -->
+
+  <!-- 修正前： <?php /* ?>
 	<button class="emegra" onclick="Regist();">登録</button>
+  <?php */ ?> -->
+  <!-- 修正後： -->
+	<button class="emegra" onclick="Regist(this);">登録</button>
+  <!-- ここまで -->
 </div>
 
 <script type="text/javascript">
 	const form = document.getElementById("form");
-	const csvFile = document.getElementById("csv_file");
+  /*
+    作成：朴昰成
+    修正：朴昰成
+    修正日：24/06/13
+  */
 
+  /* 修正前： <?php /* ?>
+	const csvFile = document.getElementById("csv_file");
+  <?php */ ?> */
+
+  /* 修正後： */
+  const file = document.getElementById("file");
+  const buttonElements = document.getElementsByTagName("button");
+  /* ここまで */
+
+  /*
+    作成：朴昰成
+    修正：朴昰成
+    修正日：24/06/13
+  */
+
+  /* 修正前： <?php /* ?>
 	function Regist() {
+  <?php */ ?> */
+
+  /* 修正後： */
+	function Regist(button) {
+  /* ここまで */
+  /*
+    作成：朴昰成
+    作成日：24/06/13
+  */
+  ChangeButton(button);
+
+  /* ここまで */
 		const postForm = new FormData(form);
+    /*
+      作成：朴昰成
+      修正：朴昰成
+      修正日：24/06/13
+    */
+
+    /* 修正前： <?php /* ?>
 		postForm.append("csvFile", csvFile[0]);
+    <?php */ ?> */
+
+    /* 修正後： */
+    postForm.append("file", file[0]);
+    /* ここまで */
 
 		const xhr = new XMLHttpRequest();
 		xhr.open("POST", "./createByCsv", true);
@@ -30,10 +96,70 @@
 					self.location.href = "list";
 				}
 				else {
+          /*
+            作成：朴昰成
+            修正：朴昰成
+            修正日：24/06/13
+          */
+
+          /* 修正前： <?php /* ?>
 					alert("Error");
 					console.log(result);
+          <?php */ ?> */
+
+          /* 修正後： */
+          try {
+            noDatas = JSON.parse(result);
+            let alertString = "登録できんかった問項があります。\n\n";
+            alertString += "登録できなかった問項番号\n";
+            alertString += noDatas.join(",");
+            alert(alertString);
+            console.log(result);
+          } catch (e) {
+            let alertString = "CSV形式ではありません。\n";
+            alertString += "正しいCSVファイルを登録してください。";
+            alert(alertString);
+            console.log(result);
+            console.log(e);
+          }
+          ChangeButton(button);
+          return false;
+          /* ここまで */
 				}
 			}
 		}
 	}
+  /*
+    作成：朴昰成
+    作成日：24/06/13
+  */
+
+  function ChangeButton(button) {
+    button.replaceChildren();
+
+    if (button.disabled == true) {
+      button.innerText = "登録";
+
+      for (let i = 0; i < buttonElements.length; i++) {
+        buttonElements[i].disabled = false;
+      }
+    }
+    else {
+      var span = document.createElement("span");
+      span.classList.add("spinner-border");
+      span.classList.add("spinner-border-sm");
+      span.ariaHidden = "true";
+      button.appendChild(span);
+
+      var span = document.createElement("span");
+      span.role = "status";
+      span.innerText = "登録中...";
+      button.appendChild(span);
+
+      for (let i = 0; i < buttonElements.length; i++) {
+        buttonElements[i].disabled = true;
+      }
+    }
+  }
+  /* ここまで */
 </script>

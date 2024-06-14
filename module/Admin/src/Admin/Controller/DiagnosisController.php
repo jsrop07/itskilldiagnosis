@@ -267,13 +267,27 @@ class DiagnosisController extends AbstractActionController {
 			die (json_encode($this->ReadQuestionDatasByIdxs($post["question_idxs"])));
 		}
 		
-		/* test */
+		/*
+			作成：朴昰成
+			削除：朴昰成
+			削除日：24/06/14
+		*/
+
+		/* 削除前：
+		* test *
 		$sqlWhere["class1st"] = $post["class1st"];
 		$sqlWhere["class2nd"] = $post["class2nd"];
 		$sqlWhere["level"] = $post["level"];
-		/* test */
+		* test *
+		*/
 		switch ($route) {
 			case "question":
+				/*
+					作成：朴昰成
+					作成日：24/06/14
+				*/
+				$sqlWhere = $post;
+				/* ここまで */
 
 				$questionTb = $this->getServiceLocator()->get("QuestionTable");
 				try { $questionDatas = $questionTb->ReadForDiagnosis($sqlWhere); }
@@ -283,8 +297,27 @@ class DiagnosisController extends AbstractActionController {
 				foreach($questionDatas as $index => $data) {
 					$question["idx"] = $data["idx"];
 					$question["title"] = $data["title"];
+					/*
+						作成：朴昰成
+						修正：朴昰成
+						修正日：24/06/14
+					*/
+
+					/* 修正前：
 					try { $question["type"] = $optionTb->ReadByIdx($data["type"])["text"]; }
 					catch (\Exception $e) { die($e->getMessage()); }
+					*/
+					
+					/* 修正後： */
+					$question["level"] = $data["level"];
+
+					try {
+						$question["class1st"] = $optionTb->ReadByIdx($data["class1st"])["text"];
+						$question["class2nd"] = $optionTb->ReadByIdx($data["class2nd"])["text"];
+					} catch (\Exception $e) {
+						die($e->getMessage());
+					}
+					/* ここまで */
 					$question["point"] = $data["point"];
 
 					$question["question"] = $data["question"];

@@ -120,42 +120,186 @@
         <dt class="essential">診断時間</dt>
         <dd><input type="number" class="form-control" name="time_limit" style="width: 80px;" value="<?php echo ($isSet) ? $diagnosisData["time_limit"] : "50"; ?>"/>分</dd>
         
-				<dt class="essential">問項一覧</dt>
-        <div style="width: 100%; display: flex;">
-
+        <dt class="essential">問項一覧</dt>
+        <div style="width: 100%;">
           <style type="text/css">
+            input.checkbox { height: 20px !important; }
             div.emegra-table th, div.emegra-table td { padding: 0; }
             div.emegra-table thead, div.emegra-table tbody tr { display: table; width: 100%; }
-            div.emegra-table tbody { display: block; }
             div.emegra-table tbody {
               height: 100px;
+              display: block;
               overflow-y: scroll;
             }
+            div.emegra-table th:last-child, div.emegra-table td:last-child {
+              padding-top: 3px;
+            }
           </style>
-          <div class="emegra-table">
-            <table class="table table-bordered">
-              <thead>
-                <tr>
-                  <th style="width: 60px;">No</th>
-                  <th>問項タイトル</th>
-                  <th>タイプ</th>
-                  <th>点数</th>
-                  <th><input type="checkbox" id="check-question_list" value="" onclick="CheckingList(this);"/></th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td style="width: 60px;">1</td>
-                  <td>1</td>
-                  <td>1</td>
-                  <td>1</td>
-                  <td>1</td>
-                </tr>
-              </tbody>
-            </table>
+
+          <div style="display: flex;">
+            <div class="emegra-table">
+              <table class="table table-bordered" id="table-diagnosis_list">
+                <thead>
+                  <tr>
+                    <th style="width: 60px;">No</th>
+                    <th>問項タイトル</th>
+                    <th style="width: 200px;">小分類</th>
+                    <th style="width: 200px;">大分類</th>
+                    <th style="width: 100px;">レベル</th>
+                    <th style="width: 50px;">点数</th>
+                    <th style="width: 57px; padding-right: 17px;"><input type="checkbox" class="checkbox" id="check-diagnosis_all" value="" onclick="CheckDiagnosis(this);"/></th>
+                  </tr>
+                </thead>
+                <tbody>
+                </tbody>
+              </table>
+            </div>
+            
+            <button type="button" class="emegra delete" style="margin-top: 8px; margin-left: 8px;" onclick="RemoveQuestion()">削除</button>
+          </div>
+          
+          <div style="display: flex;">
+            <div class="emegra-table">
+              <table class="table table-bordered" id="table-question_list">
+                <thead>
+                  <tr>
+                    <th style="width: 60px;">No</th>
+                    <th>問項タイトル</th>
+                    <th style="width: 200px;">大分類</th>
+                    <th style="width: 200px;">小分類</th>
+                    <th style="width: 100px;">レベル</th>
+                    <th style="width: 50px;">点数</th>
+                    <th style="width: 57px; padding-right: 17px;"><input type="checkbox" class="checkbox" id="check-diagnosis_all" value="" onclick="CheckDiagnosis(this);"/></th>
+                  </tr>
+                </thead>
+                <tbody>
+                </tbody>
+              </table>
+            </div>
+            
+            <button type="button" class="emegra" style="margin-top: 8px; margin-left: 8px;" onclick="AddQuestion()">追加</button>
           </div>
         </div>
       </dl>
     </div>
   </div>
 </form>
+
+<script type="text/javascript">
+  const levelText = ["無級", "初級", "中級", "高級"];
+  const diagnosisList = document.getElementById("table-diagnosis_list");
+  const questionList = document.getElementById("table-question_list");
+
+  window.onload = function() {
+    SetQuestionList();
+  }
+
+  window.onpageshow = function(event) {
+    if(event.persisted || (window.performance && window.performance.navigation.type == 2)) {
+      check_all.checked = false;
+      for (let i = 0; i < checkElements.length; i++) {
+        checkElements[i].checked = false;
+      }
+    }
+  }
+
+  function SetQuestionList() {
+    const xhr = SendXhr("./read/question");
+
+		xhr.onload = () => {
+			if (xhr.status == 200) {
+        const result = xhr.responseText;
+        try {
+          questionDatas = JSON.parse(result);
+          console.log(questionDatas);
+
+          for (let i = 0; i < questionDatas.length; i++) {
+            var tr = document.createElement("tr");
+
+            var td = document.createElement("td");
+            td.style.width = "60px";
+            td.innerText = Number(i) + 1;
+            tr.appendChild(td);
+
+            var td = document.createElement("td");
+            td.classList.add("start");
+            td.innerText = questionDatas[i]["title"];
+            tr.appendChild(td);
+
+            var td = document.createElement("td");
+            td.style.width = "200px";
+            td.innerText = questionDatas[i]["class1st"];
+            tr.appendChild(td);
+
+            var td = document.createElement("td");
+            td.style.width = "200px";
+            td.innerText = questionDatas[i]["class2nd"];
+            tr.appendChild(td);
+
+            var td = document.createElement("td");
+            td.style.width = "100px";
+            td.innerText = levelText[questionDatas[i]["level"]];
+            tr.appendChild(td);
+
+            var td = document.createElement("td");
+            td.style.width = "50px";
+            td.innerText = questionDatas[i]["point"];
+            tr.appendChild(td);
+
+            var input = document.createElement("input");
+            input.type = "checkbox";
+            input.name = "checkbox-question";
+            input.value = questionDatas[i]["idx"];
+            input.classList.add("checkbox");
+            input.setAttribute("onClick", "CheckQuestion(this);");
+
+            var td = document.createElement("td");
+            td.appendChild(input);
+            td.style.width = "40px";
+            tr.appendChild(td);
+
+            questionList.children[1].appendChild(tr);
+          }
+
+          return true;
+        } catch(e) {
+          let alertString = ErrorString();
+          alertString += "json parsing exception error in diagnosis_input\n";
+          alertString += "exception message: " + e + "\n";
+          alertString += "json: " + result;
+          alert(alertString);
+
+          return false;
+        }
+      }
+      else {
+        let alertString = ErrorString();
+        alertString += "xhr error in diagnosis_input\n";
+        alertString += "error code: ";
+        alertString += xhr.status;
+        alert(alertString);
+
+        return false;
+      }
+    }
+  }
+
+  function SendXhr(route, datas = new Array()) {
+		const postForm = new FormData();
+    for (let i = 0; i < datas.length; i++) {
+      postForm.append(datas[i]["key"], datas[i]["value"]);
+    }
+
+		const xhr = new XMLHttpRequest();
+		xhr.open("POST", route, true);
+		xhr.send(postForm);
+    return xhr;
+  }
+
+  function ErrorString() {
+    let alertString = "予期せぬエラーが発生しました。\n";
+    alertString += "管理者にエラー内容をお知らせくださいますようお願いいたします。\n";
+    alertString += "\nエラー内容：\n";
+    return alertString;
+  }
+</script>

@@ -157,7 +157,47 @@ class ApplicantExamTable
 
     return $result;     
   }
-
+			// 作成：丁錫圓
+			// 修正：丁錫圓
+			// 修正日：24/06/14 
+			// 修正前：
+      // public function timeOut($idx,$time_limit)
+      // {
+      //   $qry = new Sql($this->adapter);
+      //   $select = $qry->select('record');
+      //   $select->where(['idx' => $idx]);
+      //   $select->order('apply_date DESC'); 
+      //   $selectSqlString = $qry->getSqlStringForSqlObject($select);
+      //   $result = $this->adapter->query($selectSqlString, Adapter::QUERY_MODE_EXECUTE);
+      //   $row = $result->current();
+    
+      //   $currentDateTime = date("Y-m-d H:i:s"); // current time
+      //   $dateSchedule = $row['execute_date']; // diagnosis schedule time 
+    
+      //   $currentDateTimeObj = date_create($currentDateTime); //turn to datetime object by cureenttDateTime 
+      //   $dateScheduleObj = date_create($dateSchedule); // turn to datetime object by dateScheduleTime
+        
+      //   $dateInterval = $currentDateTimeObj -> diff($dateScheduleObj); // calculate dateScheduletime - cureentDateTime
+      //   $minutesDifference = ($dateInterval->days * 24 * 60) + ($dateInterval->h * 60) + $dateInterval->i; //turn days, hour, minute to minute
+      //   if($minutesDifference <= $time_limit && $currentDateTimeObj > $dateScheduleObj){
+      //     // 作成：丁錫圓
+      //     // 作成日：24/06/13
+      //     $remain_time = $time_limit - $minutesDifference;
+    
+      //     $response = array(
+      //       'status' => 'success',
+      //       'remain_time' => $remain_time
+      //   );
+    
+      //   return json_encode($response);
+    
+      //   } elseif($minutesDifference > $time_limit && $currentDateTimeObj > $dateScheduleObj){
+      //     $updateQry = $this->sql->update('record')->set(array('rank' => 'F'))->where(array('idx' => $row['idx']));
+      //     $updateResult = $this->sql->prepareStatementForSqlObject($updateQry)->execute();
+      //     return "timeout";
+      //   }
+      // }
+      // 修正後：
   public function timeOut($idx,$time_limit)
   {
     $qry = new Sql($this->adapter);
@@ -169,27 +209,49 @@ class ApplicantExamTable
     $row = $result->current();
 
     $currentDateTime = date("Y-m-d H:i:s"); // current time
-    $dateSchedule = $row['execute_date']; // diagnosis schedule time 
+    $execute_dateTime = $row['execute_date']; // diagnosis schedule time 
 
     $currentDateTimeObj = date_create($currentDateTime); //turn to datetime object by cureenttDateTime 
-    $dateScheduleObj = date_create($dateSchedule); // turn to datetime object by dateScheduleTime
+    $execute_dateTimeObj = date_create($execute_dateTime); // turn to datetime object by execute_dateTimeTime
     
-    $dateInterval = $currentDateTimeObj -> diff($dateScheduleObj); // calculate dateScheduletime - cureentDateTime
+    $dateInterval = $currentDateTimeObj -> diff($execute_dateTimeObj); // calculate execute_dateTimetime - cureentDateTime
     $minutesDifference = ($dateInterval->days * 24 * 60) + ($dateInterval->h * 60) + $dateInterval->i; //turn days, hour, minute to minute
-    if($minutesDifference <= $time_limit && $currentDateTimeObj > $dateScheduleObj){
-      // print_r($minutesDifference);
-      // print_r("<br>");
-      // print_r($time_limit);
-      // print_r("<br>");
-      // print_r($currentDateTimeObj);
-      // print_r("<br>");
-      // print_r($dateScheduleObj);
 
-      return "success";
-    } elseif($minutesDifference > $time_limit && $currentDateTimeObj > $dateScheduleObj){
+    $remain_time = $time_limit - $minutesDifference;
+
+    if($minutesDifference <= $time_limit)
+    {
+        // 作成：丁錫圓
+        // 作成日：24/06/13
+
+        $response = array(
+          'status' => 'success',
+          'remain_time' => $remain_time
+      );
+      return json_encode($response);
+
+    } elseif(0 > $remain_time)
+    {
+
       $updateQry = $this->sql->update('record')->set(array('rank' => 'F'))->where(array('idx' => $row['idx']));
       $updateResult = $this->sql->prepareStatementForSqlObject($updateQry)->execute();
-      return "timeout";
+      $response = array(
+        'status' => 'timeout',
+        'remain_time' => $remain_time
+    );
+      return json_encode($response);
     }
   }
+
+  // public function pauseCheck($idx)
+  // {
+  //   $qry = new Sql($this->adapter);
+  //   $select = $qry->select('record');
+  //   $select->where(['idx' => $idx]);
+  //   $select->order('apply_date DESC'); 
+  //   $selectSqlString = $qry->getSqlStringForSqlObject($select);
+  //   $result = $this->adapter->query($selectSqlString, Adapter::QUERY_MODE_EXECUTE);
+  //   $row = $result->current();
+  // } 
 }
+/* ここまで */

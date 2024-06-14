@@ -19,7 +19,7 @@ $lineChange = "<br>";
 	<div class="middle-column" style="font-size:bold">ITスキル診断</div>
 	<div class="right-column"> 
     <div id="date-container" style="display:flex; align-items:center"></div>
-    <div style="text-align:center;display:flex; align-items:center;margin-left: 10px; "><?php echo $name; ?>様</div>
+    <div style="text-align:center;display:flex; align-items:center;"><?php echo $name; ?>様</div>
     <div id="timerDisplay" style=" display:flex; align-items:center"></div>
 </div>
 </header>	     
@@ -34,7 +34,7 @@ $lineChange = "<br>";
           <!-- 240531 丁錫圓 作成-->
           <p>1問題ずつ提示されます。戻るボタンはありませんので、慎重に解いてください。</p>
           <!-- ここまで -->
-          <p style="color:red;">※ページ下部の一時停止ボタンを押すと10分間停止し、1回のみ使用できます。</p>	
+          <p style="color:red;" hidden>※ページ下部の一時停止ボタンを押すと10分間停止し、1回のみ使用できます。</p>	
           
         </div>
         <div id="examContent" style="padding:0px 50px;">
@@ -73,7 +73,7 @@ $lineChange = "<br>";
     <input type="hidden" id="answer_data" name="answer_data">
     <div class="button_box" id="buttonId" style="margin-bottom: 32px; gap:30px">
       <button  class="applicant_cancel" id="cancel" name="submit_post"  value="cancel" onclick="CancelConfirm()">キャンセル</button>
-      <button class="exam_submit" id="stopBtn" style=" display:flex; align-items:center; text-align:center; border:none;"  data-bs-toggle="modal" data-bs-target="#staticBackdrop2">一時停止</button>
+      <button class="exam_submit" id="stopBtn" style=" display:flex; align-items:center; text-align:center; border:none;"  data-bs-toggle="modal" data-bs-target="#staticBackdrop2" hidden>一時停止</button>
       <button type="button" class="exam_submit" id='nextId' name="submit_post"  value="btn_submit" onclick="showNextQuestion()" >次へ</button>
     </div>
 
@@ -260,26 +260,78 @@ window.onload = function() {
 };
 
 </script>
+<script>
+  function executeTime() {
+  const url = window.location.href;
+  const postForm = new FormData();
+  const examIdx = <?= json_encode($examIdx) ?>;
+  postForm.append("idx", examIdx);
 
+  const xhr = new XMLHttpRequest();
+  xhr.open("POST", url, true);
+  xhr.send(postForm);
+  xhr.onload = () => {
+    if (xhr.status == 200) {
+        try {
+            const result = JSON.parse(xhr.responseText);
+            if (result === "wrong") {
+            return;
+            }
+          } catch (e) {
+            console.error("Failed to parse response", e);
+            alert("サーバー応答の解析に失敗しました");
+        }
+    }
+}
+}
+</script>
 <!-- 
 修正の時
 
 作成：名前
 修正：名前
-修正日：24/06/13
+修正日：24/06/14
 
 修正前：
   <script>
 document.getElementById("startBtn").addEventListener("click", function() {
-  var lock = 'n';
+ var lock = 'n';
   var stopBtn = document.getElementById('stopBtn');
 
   var timerDisplay = document.getElementById("timerDisplay");
+
   
-  var examTime = <?php echo $time_limit; ?>; 
+  var examTime= <?php echo $time_limit; ?>;
   var stopTime = 10; 
 
+  function sendRequest() {
+    const postForm = new FormData();
+    postForm.append("idx", <?= json_encode($examIdx) ?>);
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", './timeout', true);
+    xhr.send(postForm);
 
+    xhr.onload = () => {
+        if (xhr.status == 200) {
+            const result = xhr.responseText;
+            const resultDate = JSON.parse(result);
+            console.log(resultDate.status);
+
+            if (result == "timeout") {
+                alert("診断可能な時間が過ぎたので、受験できません。");
+                self.location.href='/applicant/login';
+            } else if (resultDate.status == "success") {
+              examTime = resultDate.remain_time; 
+              initializeTimers();
+            }
+        }
+    };
+}
+sendRequest();
+
+
+
+function initializeTimers() {
   var examTimeInSeconds = examTime * 60;
   var stopTimeInSeconds = stopTime * 60;
 
@@ -379,12 +431,12 @@ document.getElementById("startBtn").addEventListener("click", function() {
   var timerDisplay = document.getElementById("timerDisplay");
 
   
-  var examTime= <?php echo $time_limit; ?>;
   var stopTime = 10; 
 
   function sendRequest() {
     const postForm = new FormData();
     postForm.append("idx", <?= json_encode($examIdx) ?>);
+
     const xhr = new XMLHttpRequest();
     xhr.open("POST", './timeout', true);
     xhr.send(postForm);
@@ -393,11 +445,10 @@ document.getElementById("startBtn").addEventListener("click", function() {
         if (xhr.status == 200) {
             const result = xhr.responseText;
             const resultDate = JSON.parse(result);
-            console.log(resultDate.status);
 
-            if (result == "timeout") {
-                alert("診断可能な時間が過ぎたので、受験できません。");
-                self.location.href='/applicant/login';
+            if (resultDate.status == "timeout") {
+              alert("診断可能な時間が過ぎたので、受験できません。");
+              self.location.href='/applicant/login';
             } else if (resultDate.status == "success") {
               examTime = resultDate.remain_time; 
               initializeTimers();
@@ -626,32 +677,6 @@ function confirmExam() {
     var confirmData= confirmContent.innerHTML+comment;
 }
 </script> -->
-
-<script>
-  function executeTime() {
-  const url = window.location.href;
-  const postForm = new FormData();
-  const examIdx = <?= json_encode($examIdx) ?>;
-  postForm.append("idx", examIdx);
-
-  const xhr = new XMLHttpRequest();
-  xhr.open("POST", url, true);
-  xhr.send(postForm);
-  xhr.onload = () => {
-    if (xhr.status == 200) {
-        try {
-            const result = JSON.parse(xhr.responseText);
-            if (result === "wrong") {
-            return;
-            }
-          } catch (e) {
-            console.error("Failed to parse response", e);
-            alert("サーバー応答の解析に失敗しました");
-        }
-    }
-}
-}
-</script>
 
 <!-- exam submit request loading modal -->
 <script>

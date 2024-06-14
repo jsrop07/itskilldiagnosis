@@ -348,24 +348,39 @@ class ApplicantController extends AbstractActionController
 			if($examRecordInfo['mail_delay'] == '0'){
 			$this->mailByAdminToApplicant($applicantInfo,$examRecordRecent,$caseText,$majorText,$managerArray);
 			}
-			session_unset(); 
+			unset($session->id);			
 			echo "
 			<script>
 			self.location.href='/applicant/examclear';
 			</script>
 			";	
 		  }
-		  
+			// 作成：丁錫圓
+			// 修正：丁錫圓
+			// 修正日：24/06/14 
+			// 修正前：
+			// if($submit_post=='cancel'){
+			// 	if (isset($session->id)) {
+			// 		$emailId = $session->id;
+			// 		unset($emailId);
+			// 		$applicantExamTbl->deletePasswordByIdx($applicantInfo["idx"]);
+			// 		$applicantExamTbl->disqualificationByCancel($examRecordInfo['idx']);
+			// 		session_unset(); 
+			// 		$this->CancelToLogin();	
+			// 	}
+		  // }
+
+			// and all session unset part
+			// 修正後
 		  if($submit_post=='cancel'){
 				if (isset($session->id)) {
-					$emailId = $session->id;
-					unset($emailId);
+					unset($session->id);
 					$applicantExamTbl->deletePasswordByIdx($applicantInfo["idx"]);
 					$applicantExamTbl->disqualificationByCancel($examRecordInfo['idx']);
-					session_unset(); 
 					$this->CancelToLogin();	
 				}
 		  }
+			/* ここまで */
 	  // Set variables to be passed to the layout
 	  $viewModel = new ViewModel($datas);
   
@@ -381,54 +396,66 @@ class ApplicantController extends AbstractActionController
 	*/ 
 	public function timeoutAction()
 	{
-			$post = $this->params()->fromPost();
-			$examIdx = $post['idx']; 
-			$applicantExamTbl = $this->getServiceLocator()->get("ApplicantExamTable");
-			
-			$session = new Container("applicant");
-			$emailId = $session->id;
-			$diagnosisTb = $this->getServiceLocator()->get("DiagnosisTable-Admin");
-			$applicantInfo    = $applicantExamTbl->readById($emailId);
-			$examRecordInfo =  $applicantExamTbl->readByApplicantIdx($applicantInfo);
-			$recordCode    = $examRecordInfo["diagnosis_code"];	
-			$diagnosisInfo = $diagnosisTb->ReadForRecordByCodenDate($recordCode, $examRecordInfo["diagnosis_date"]);	
-			$diagnosisTime = $diagnosisInfo['time_limit'];
-			// 作成：丁錫圓
-			// 修正：丁錫圓
-			// 修正日：24/06/13
-			// 修正前：
-			// $timeout = $applicantExamTbl->timeout($examIdx,$diagnosisTime); 
-			// if ($timeout === 'timeout') {
-			// 	if (isset($session->id)) {
-			// 		// $emailId = $session->id;
-			// 		$applicantInfo = $applicantExamTbl->readById($emailId);
-			// 		$applicantExamTbl->deletePasswordByIdx($applicantInfo['idx']);
-			// 		unset($emailId);
-			// 		session_unset(); 
-			// 		die($timeout);
-			// 	}
-			// }
-			// elseif($timeout === "success"){					
-			// 	die($timeout);
-			// }
-			// 修正後：
-			$timeout = $applicantExamTbl->timeout($examIdx, $diagnosisTime);
+		$post = $this->params()->fromPost();
+		$examIdx = $post['idx']; 
+		$applicantExamTbl = $this->getServiceLocator()->get("ApplicantExamTable");
+		
+		$session = new Container("applicant");
+		// $emailId = $session->id;
+		if (isset($session->id)) {
+		  $emailId = $session->id;
+		} else {
+		$this->RedirectToLogin();		  
+	  }
+		$diagnosisTb = $this->getServiceLocator()->get("DiagnosisTable-Admin");
+		$applicantInfo    = $applicantExamTbl->readById($emailId);
+		$examRecordInfo =  $applicantExamTbl->readByApplicantIdx($applicantInfo);
+		$recordCode    = $examRecordInfo["diagnosis_code"];	
+		$diagnosisInfo = $diagnosisTb->ReadForRecordByCodenDate($recordCode, $examRecordInfo["diagnosis_date"]);	
+		$diagnosisTime = $diagnosisInfo['time_limit'];
+		// 作成：丁錫圓
+		// 修正：丁錫圓
+		// 修正日：24/06/13
+		// 修正前：
+		// $timeout = $applicantExamTbl->timeout($examIdx, $diagnosisTime);
 
-			if ($timeout === 'timeout') {
-					// Handle timeout case
-					$applicantExamTbl->deletePasswordByIdx($applicantInfo['idx']);
-					session_unset();
-					echo json_encode(array('status' => 'timeout'));
-			} elseif (is_string($timeout)) {
-				echo $timeout; // Assuming $timeout is already JSON encoded by timeout() method
-			} else {
-					// Handle unexpected cases
-					http_response_code(500); // Internal Server Error
-					echo json_encode(array('error' => 'Unexpected error occurred'));
-			}
+		// 	if ($timeout === 'timeout') {
+		// 			// Handle timeout case
+		// 			$applicantExamTbl->deletePasswordByIdx($applicantInfo['idx']);
+		// 			session_unset();
+		// 			echo json_encode(array('status' => 'timeout'));
+		// 	} elseif (is_string($timeout)) {
+		// 		echo $timeout; // Assuming $timeout is already JSON encoded by timeout() method
+		// 	} else {
+		// 			// Handle unexpected cases
+		// 			http_response_code(500); // Internal Server Error
+		// 			echo json_encode(array('error' => 'Unexpected error occurred'));
+		// 	}
 			
-    // Terminate script execution
-    exit;
+    // // Terminate script execution
+    // exit;
+		// 修正後：
+		$timeout = $applicantExamTbl->timeout($examIdx, $diagnosisTime);
+		error_log("Timeout response: " . $timeout);
+
+		$timeoutData = json_decode($timeout, true);
+		if (json_last_error() !== JSON_ERROR_NONE) {
+			$jsonError = json_last_error_msg();
+			http_response_code(500); 
+			echo json_encode(array('error' => 'Invalid JSON response', 'message' => $jsonError, 'raw_response' => $timeout));
+			exit;
+		}
+		if (isset($timeoutData['status']) && $timeoutData['status'] === 'timeout') {
+				$applicantExamTbl->deletePasswordByIdx($applicantInfo['idx']);
+				unset($session->id);
+				echo $timeout; 
+		} elseif (isset($timeoutData['status']) && $timeoutData['status'] === 'success') {
+				echo $timeout; 
+		} else {
+				http_response_code(500); 
+				echo json_encode(array('error' => 'Unexpected error occurred'));
+		}
+		exit;
 	}
 		// ここまで
 

@@ -18,7 +18,7 @@ if ($ses_id) {
 </style>
 <form id="form" name="login_form" enctype="multipart/form-data" action="/applicant/login" method="get" onsubmit="return submitForm()">
   <div class="emegra card">
-    <div class="card-header">ITスキル診断試験</div>
+    <div class="card-header">ITスキル診断システム</div>
 
     <div class="card-body">
       <span>ログインID</span>
@@ -58,21 +58,29 @@ if ($ses_id) {
     xhr.send(postForm);
 
     xhr.onload = () => {
-      if (xhr.status == 200) {
-        const result = xhr.responseText;
-        if (result == "wrong info") {
-          alert("有効ではないIDまたはパスワードです。");
-          id.focus();
-        } else if (result == "wrong time") {
-          alert("診断可能な時間に再度お試しください。（メール参照）");
-        } else if (result == "timeout"){
-          alert("診断可能な時間が過ぎたので、受験できません。");
-        } else if (result == "success") {
-          self.location.href = "../applicant/exam";
-        }
+  try {
+    if (xhr.status == 200) {
+      const result = xhr.responseText;
+      if (result == "wrong info") {
+        alert("有効ではないIDまたはパスワードです。");
+        id.focus();
+      } else if (result == "wrong time") {
+        alert("診断可能な時間に再度お試しください。（メール参照）");
+      } else if (result == "timeout") {
+        alert("診断可能な時間が過ぎたので、受験できません。");
+      } else if (result == "success") {
+        self.location.href = "../applicant/exam";
       }
+    } else {
+      console.error("Error: Unexpected status code " + xhr.status);
+      alert("ログインエラーが発生しました。担当者にお問い合わせください。");
     }
-    return false;
+  } catch (error) {
+    console.error("Error occurred during xhr request:", error);
+    alert("ログインエラーが発生しました。担当者にお問い合わせください。");
+  }
+}
+return false;
   }
 </script>
 

@@ -184,7 +184,7 @@ $question_num = isset($diagnosisData['question_num']) ? $diagnosisData['question
                     </select>
 
                 <dt>パスワード</dt>
-				<dd><input class="form-control" name="password" type="text" style="width:220px;" value="B7A2D423" readonly></dd>
+				<dd><input class="form-control" name="password" type="text" style="width:220px;" value=""></dd>
 
 				<dt class="essential">お名前（漢字）</dt>
 				<dd><input class="form-control" id="userInput" name="name" type="text" placeholder="漢字を記入してください。"style="width:220px" maxlength='20' value="<?php echo $applicantArray["name"] ?>"></dd>
@@ -353,7 +353,7 @@ $question_num = isset($diagnosisData['question_num']) ? $diagnosisData['question
         </script>
 				
 			<div class="modal modal-sheet py-5" tabindex="-1" role="dialog" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-				<div class="modal-dialog" style="margin-top:150px;" role="document">
+				<div class="modal-dialog modal-dialog-scrollable" style="margin-top:150px;" role="document">
 					<div class="modal-content rounded-4" style=>
             <div class="modal-header border-bottom-0" style="background:linear-gradient(111deg, #50D7C7 0%, #40ADF0 100%); color:white; height: 40px;border-top-left-radius:13px;border-top-right-radius:13px">
               <h3 class="modal-title fs-6" id="exampleModalLabel">診断問題検索</h3>
@@ -1053,7 +1053,7 @@ function diagnosisData() {
             updateTable(result);
         } catch (e) {
             console.error("Failed to parse response", e);
-            alert("サーバー応答の解析に失敗しました");
+            alert("診断サーバー応答の分析に失敗しました。 担当者にお問い合わせください。");
         }
     }
 }

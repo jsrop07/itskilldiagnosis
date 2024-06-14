@@ -168,7 +168,7 @@ function InitStyle() { return " font-style: italic; color: ;"; }
 				</dd> 
 				
 			<div class="modal modal-sheet py-5" style="backdrop-filter: blur(5px); " tabindex="-1" role="dialog" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-				<div class="modal-dialog" style="margin-top:150px;" role="document">
+				<div class="modal-dialog modal-dialog-scrollable" style="margin-top:150px;" role="document">
 					<div class="modal-content rounded-4">
             <div class="modal-header border-bottom-0" style="background:linear-gradient(111deg, #50D7C7 0%, #40ADF0 100%); color:white; height: 40px;border-top-left-radius:13px;border-top-right-radius:13px">
               <h3 class="modal-title fs-6" id="exampleModalLabel">診断問題検索</h3>
@@ -560,7 +560,7 @@ function checkKana(input) {
             return false;
         }
 
-        if (form.class1stId.value === "") {
+        if (form.class1stId.value === "選択してください。" || form.class1stId.value === "") {
             alert("経験分野を入力してください。");
             setTimeout("form.class1stId.focus()",100);
             event.preventDefault();
@@ -573,7 +573,7 @@ function checkKana(input) {
         //     return false;
         // }
 
-        if (form.class2ndId.value == "") {
+        if (form.class2ndId.value == "選択してください。" || form.class1stId.value === "") {
             alert("問題種別を入力してください。");
             setTimeout("form.class2ndId.focus()",100);
             event.preventDefault();
@@ -665,7 +665,7 @@ function checkKana(input) {
             return false;
         }
 
-        if (form.class1stId.value === "") {
+        if (form.class1stId.value === "選択してください。" || form.class1stId.value === "") {
             alert("経験分野を入力してください。");
             setTimeout("form.class1stId.focus()",100);
             event.preventDefault();
@@ -678,7 +678,7 @@ function checkKana(input) {
         //     return false;
         // }
 
-        if (form.class2ndId.value == "") {
+        if (form.class2ndId.value == "選択してください。" || form.class1stId.value === "") {
             alert("問題種別を入力してください。");
             setTimeout("form.class2ndId.focus()",100);
             event.preventDefault();
@@ -786,7 +786,7 @@ function diagnosisData() {
             updateTable(result);
         } catch (e) {
             console.error("Failed to parse response", e);
-            alert("サーバー応答の解析に失敗しました");
+            alert("診断サーバー応答の分析に失敗しました。 担当者にお問い合わせください。");
         }
     }
 }
@@ -796,14 +796,16 @@ function diagnosisData() {
     const tableBody = document.querySelector(".table tbody");
     tableBody.innerHTML = ""; 
     if (data === "wrong" || data.length === 0) {
-        const row = document.createElement("tr");
+      const row = document.createElement("tr");
 
-        const messageCell = document.createElement("td");
-        messageCell.setAttribute("colspan", "4");
-        messageCell.innerHTML = "該当する診断問題がありません。<br>経験分野、経験分野詳細、レベルを確認ください。";
-        row.appendChild(messageCell);
+      const messageCell = document.createElement("td");
+      messageCell.setAttribute("colspan", "4");
+      messageCell.innerHTML = "該当する診断問題がありません。<br>経験分野、経験分野詳細、レベルを確認ください。";
+      messageCell.style.paddingTop = "15px";
+      messageCell.style.paddingBottom = "15px";
+      row.appendChild(messageCell);
 
-        tableBody.appendChild(row);
+      tableBody.appendChild(row);
     } else {
       data.forEach((item, index) => {
         const row = document.createElement("tr");

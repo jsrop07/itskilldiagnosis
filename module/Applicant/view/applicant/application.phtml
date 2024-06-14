@@ -392,12 +392,12 @@ function checkKana(input) {
           return false;
       }
   
-      if (form.case.value == "") {
+      if (form.case.value == "選択してください。") {
           alert("応募区分を入力してください。");
           setTimeout("form.case.focus()",100);
           return false;
       }
-      if (form.educationSelect.value == "") {
+      if (form.educationSelect.value == "選択してください。") {
           alert("学歴入力してください。");
           setTimeout("form.educationSelect.focus()",100);
           return false;
@@ -448,19 +448,24 @@ function checkKana(input) {
       xhr.send(postForm);
 
       xhr.onload = () => {
-        if (xhr.status == 200) {  
-          const result = xhr.responseText;
-          if (result == "fail") {
-            alert("すでに申込しているメールです。");
-            emailId.focus();
-            return false;
+        try{
+          if (xhr.status == 200) {  
+            const result = xhr.responseText;
+            if (result == "fail") {
+              alert("すでに申込しているメールです。");
+              emailId.focus();
+              return false;
+              }
+            else if (result == "success") {
+              var myModal = new bootstrap.Modal(document.getElementById('exampleModal'), {
+                keyboard: false
+              });
+              myModal.show();
             }
-          else if (result == "success") {
-            var myModal = new bootstrap.Modal(document.getElementById('exampleModal'), {
-              keyboard: false
-            });
-            myModal.show();
           }
+        } catch(e){
+          console.error("Failed to parse response", e);
+          alert("ID重複サーバー分析に失敗しました。担当者にお問い合わせください。");
         }
     }
   }

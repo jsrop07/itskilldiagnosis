@@ -42,10 +42,17 @@ $lineChange = "<br>";
           foreach ($matchedData as $idx => $row) : 
           $question_ko = $idx + 1 . ". " . str_replace('{{n}}',$lineChange,$row["question_ko"]);
           $question_jp = $idx + 1 . ". " . str_replace('{{n}}',$lineChange,$row["question"]);
+
+          $question_ko = str_replace(' ',"&nbsp;",$question_ko);
+          $question_jp = str_replace(' ',"&nbsp;",$question_jp);
+          $question_ko = str_replace('  ',"&nbsp;&nbsp;&nbsp;&nbsp;",$question_ko);
+          $question_jp = str_replace('  ',"&nbsp;&nbsp;&nbsp;&nbsp;",$question_jp);
           ?>
         <div class="examBox" style="width:100%; position:relative; display: <?= $count === 1 ? 'block' : 'none' ?>;" id="exam<?= $count ?>">
         <div style="position:absolute; top:-10px; left:-10px; background-color:green; color:white; border-radius: 5px; font-size: 1.3rem; padding:5px; font-family: arial;"><?php echo $count ?>/<?php echo $question_num ?></div>
-          <div class="question" style="margin-left:50px;font-weight:bold;" id="<?= $row['idx'] ?>">問題 <?= $language==1 && $row["question_ko"] != null ?  $question_ko : $question_jp ?></div>
+
+        <div class="question" style="margin-left:50px;font-weight:bold;" id="<?= $row['idx'] ?>">問題 <?= $language==1 && $row["question_ko"] != null ?  $question_ko : $question_jp ?></div>
+
             <div class="card-body" style="margin-left: 100px;">
                 <div class="answers mt-2">
                     <ul class="list-unstyled">
@@ -143,6 +150,21 @@ $lineChange = "<br>";
 					</div>
 				</div>
 			</div>
+
+      <div class="modal fade" id="timeoutModal" tabindex="-1" aria-labelledby="timeoutModalLabel" aria-hidden="true">
+        <div class="modal-dialog" style="margin-top:150px">
+          <div class="modal-content rounded-4">
+            <div class="modal-header" style="background:linear-gradient(111deg, #87D782 0%, #22BC8E 100%);color:white; height: 40px;border-top-left-radius:13px;border-top-right-radius:13px">
+              <h5 class="modal-title" id="timeoutModalLabel">提出</h5>
+            </div>
+            <div class="modal-body fs-5" style="padding-bottom:0; text-align:center;">
+            <div class='spinner-border' role='status' style='width:20px;height:20px;'><span class='visually-hidden'></span></div>結果転送中。。。<br>少々お待ちください。
+            </div>
+            <div class="modal-footer  border-top-0" style="margin-bottom:8px; justify-content:center;">
+            </div>
+          </div>
+        </div>
+      </div>
 			<!-- 作成：丁錫圓
 			修正：丁錫圓
 			修正日：24/06/13
@@ -279,7 +301,7 @@ window.onload = function() {
             }
           } catch (e) {
             console.error("Failed to parse response", e);
-            alert("サーバー応答の解析に失敗しました");
+            alert("診断開始サーバー分析に失敗しました。担当者にお問い合わせください。");
         }
     }
 }
@@ -461,6 +483,8 @@ sendRequest();
 
 
 function initializeTimers() {
+  var examTotalTime = <?php echo $time_limit; ?>;
+  var examTotalTimeInSeconds = examTotalTime * 60;
   var examTimeInSeconds = examTime * 60;
   var stopTimeInSeconds = stopTime * 60;
 
@@ -479,8 +503,9 @@ function initializeTimers() {
       var minutes = Math.floor(remainingTime / 60);
       var seconds = remainingTime % 60;
 
-      let solveTime = examTimeInSeconds - remainingTime;
+      let solveTime = examTotalTimeInSeconds - remainingTime;
       let solveMinutes = Math.floor(solveTime / 60);
+
       document.getElementById("solveTime").value = solveMinutes ;
       timerDisplay.innerHTML = "残り時間: " + minutes + "分 " + seconds + "秒";
 
@@ -563,24 +588,6 @@ document.addEventListener('keydown', notReload);
 
 </script> -->
 
-<script>
-window.addEventListener('beforeunload', function (event) {
-  // 서버로 AJAX 요청 보내기
-  const payload = {
-    examid: <?= json_encode($examIdx) ?>,
-    emailId: <?= json_encode($emailId) ?>
-  };  
-  const xhr = new XMLHttpRequest();
-  xhr.open('POST', './timeout');
-  xhr.setRequestHeader('Content-Type', 'application/json');
-  xhr.send(JSON.stringify(payload));
-});
-
-</script>
-
-
-
-
 <!-- Do not press EnterKey -->
 <script>
   document.addEventListener("DOMContentLoaded", function() {
@@ -628,6 +635,10 @@ window.addEventListener('beforeunload', function (event) {
 
 <script>
   function timeoutExam() {
+
+    var timeoutModal = new bootstrap.Modal(document.getElementById('timeoutModal'), {keyboard: false});
+    timeoutModal.show();
+
     var formData = new FormData(document.getElementById('myForm'));
     var totalQuestions = <?= count($matchedData) ?>;
     var answersArray = new Array(totalQuestions).fill('');

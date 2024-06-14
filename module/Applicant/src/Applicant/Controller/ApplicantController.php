@@ -154,6 +154,9 @@ class ApplicantController extends AbstractActionController
 				$status = 'FALSE';
 					break;
 	}
+	if ($status === 'FALSE') {
+    echo "<script>alert('メールの送信に失敗しました。');</script>";
+	}
   }
 
 
@@ -500,6 +503,9 @@ function mailByApplicantExam($applicantInfo,$sqlSet,$managerArray,$examRecordIdx
 				$status = 'FALSE';
 					break;
 	}
+	if ($status === 'FALSE') {
+    echo "<script>alert('メールの送信に失敗しました。');</script>";
+}
   }
 
   function mailByAdminToApplicant($applicantInfo,$examRecordRecent,$caseText,$majorText,$managerArray){
@@ -569,6 +575,9 @@ function mailByApplicantExam($applicantInfo,$sqlSet,$managerArray,$examRecordIdx
 			default:
 				$status = 'FALSE';
 					break;
+	}
+	if ($status === 'FALSE') {
+    echo "<script>alert('メールの送信に失敗しました。');</script>";
 	}
   }
 

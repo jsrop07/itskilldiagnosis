@@ -574,7 +574,7 @@ function checkKana(input) {
         // }
 
         if (form.class2ndId.value == "選択してください。" || form.class1stId.value === "") {
-            alert("問題種別を入力してください。");
+            alert("経験分野詳細を入力してください。");
             setTimeout("form.class2ndId.focus()",100);
             event.preventDefault();
             return false;
@@ -679,7 +679,7 @@ function checkKana(input) {
         // }
 
         if (form.class2ndId.value == "選択してください。" || form.class1stId.value === "") {
-            alert("問題種別を入力してください。");
+            alert("経験分野詳細を入力してください。");
             setTimeout("form.class2ndId.focus()",100);
             event.preventDefault();
             return false;
@@ -752,7 +752,7 @@ function diagnosisValidation(){
     return false;
   }
   if (form.class2ndId.value == "選択してください。") {
-    alert("問題種別を入力してください。");
+    alert("経験分野詳細を入力してください。");
     setTimeout("form.class2ndId.focus()",100);
     document.getElementById('diagnosisId').setAttribute('data-bs-toggle', 'false');
     return false;

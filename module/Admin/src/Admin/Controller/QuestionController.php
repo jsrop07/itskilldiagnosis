@@ -4,6 +4,13 @@ namespace Admin\Controller;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Zend\Session\Container;
+/*
+	作成：朴昰成
+	作成日：24/06/13
+*/
+use Admin\Model\LogModule;
+/* ここまで */
+
 class QuestionController extends AbstractActionController
 {
 	function ChkLogin() {
@@ -68,6 +75,13 @@ class QuestionController extends AbstractActionController
 		if (isset($query["select"])) {
 			$selectData = explode("-", $query["select"]);
 
+			/*
+				作成：
+				修正：
+				修正日：24/06/13
+			*/
+
+			/* 修正前：
 			if ($selectData[0] == "class") {
 				$sqlWhere["class2nd"] = $selectData[2];
 			}
@@ -76,6 +90,17 @@ class QuestionController extends AbstractActionController
 			}
 
 			$datas["searchDatas"]["select"] = $selectData;
+			*/
+
+			/* 修正後： */
+			if (isset($selectData[2])) {
+				$sqlWhere["class2nd"] = $selectData[2];
+			}
+			else if (isset($selectData[1])) {
+				if ($selectData[0] == "class") { $sqlWhere["class1st"] = $selectData[1]; }
+				else { $sqlWhere[$selectData[0]] = $selectData[1]; }
+			}
+			/* ここまで */
 		}
 
 		$questionDatas = "";
@@ -406,9 +431,29 @@ class QuestionController extends AbstractActionController
 	}
 
 	public function createByCsvAction() {
-		if ($_FILES["csv_file"]["error"] == "0") {
-			header("Content-Type: text/html; charset=utf-8");
+		/*
+			作成：朴昰成
+			修正：朴昰成
+			修正日：24/06/13
+		*/
 
+		/* 修正前：
+		if ($_FILES["csv_file"]["error"] == "0") {
+		*/
+
+		/* 修正後： */
+		$log = new LogModule();
+
+		if ($_FILES["file"]["error"] == "0") {
+		/* ここまで */
+			header("Content-Type: text/html; charset=utf-8");
+			/*
+				作成：朴昰成
+				修正：朴昰成
+				修正日：24/06/13
+			*/
+
+			/* 修正前：
 			$filePointer = fopen($_FILES["csv_file"]["tmp_name"], "r");
 			if (!$filePointer) { die("ファイル　オープン　失敗"); }
 
@@ -417,7 +462,20 @@ class QuestionController extends AbstractActionController
 				$line = str_replace("{{44}}", ",", $line);
 				$csvStrings[] = $line;
 			}
+			*/
 
+			/* 修正後： */
+			if ($_FILES["file"]["type"] != "text/csv") { die($log->SaveLog(["reason" => "not csv file"])); }
+
+			$csvStrings = array();
+			try {
+			$csvStrings = array_map("str_getcsv", file($_FILES["file"]["tmp_name"]));
+			} catch (\Exception $e) {
+				$logData["reason"] = "not csv file";
+				$logData["message"] = $e->getMessage();
+				die($log->SaveLog($logData));
+			}
+			/* ここまで */
 			$keys = $csvStrings[0];
 			unset($csvStrings[0]);
 			// exception handling
@@ -429,7 +487,20 @@ class QuestionController extends AbstractActionController
 			$optionTb = $this->getServiceLocator()->get("OptionTable");
 
 			$questionData = array();
+			/*
+				作成：朴昰成
+				修正：朴昰成
+				修正日：24/06/13
+			*/
+	
+			/* 修正前：
 			foreach ($csvStrings as $csvDatas) {
+			*/
+	
+			/* 修正後： */
+			$logDatas = array();
+			foreach ($csvStrings as $index => $csvDatas) {
+			/* ここまで */
 				foreach ($csvDatas as $idx => $data) {
 					$questionData[$keys[$idx]] = $data;
 				}
@@ -470,12 +541,53 @@ class QuestionController extends AbstractActionController
 					
 					$questionTb->CreateQuestion($questionData);
 				} catch (\Exception $e) {
+					/*
+						作成：朴昰成
+						修正：朴昰成
+						修正日：24/06/13
+					*/
+			
+					/* 修正前：
 					die($e->getMessage());
+					*/
+			
+					/* 修正後： */
+					$logData["reason"] = "fail insert";
+					$logData["message"] = $e->getMessage();
+					$logDatas[$index + 1] = $logData;
+					/* ここまで */
 				}
 			}
+			/*
+				作成：朴昰成
+				作成日：24/06/13
+			*/
+			if ($logDatas) {
+				$noDatas = array();
+				foreach ($logDatas as $index => $logData) {
+					$log->SaveLog($logData);
+					$noDatas[] = $index;
+				}
+				die(json_encode($noDatas));
+			}
+
+			die("success");
+			/* ここまで */
 		}
 
+		/*
+			作成：朴昰成
+			修正：朴昰成
+			修正日：24/06/13
+		*/
+
+		/* 修正前：
 		die("success");
+		*/
+
+		/* 修正後： */
+		die($log->SaveLog(["reason" => "fail to open file"]));
+		/* ここまで */
 	}
 
 	/** Read Option datas Organize by Type (class2nd's idx is text)

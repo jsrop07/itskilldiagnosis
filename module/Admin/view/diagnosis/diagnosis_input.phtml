@@ -61,7 +61,7 @@
 
         <dt class="essential">大分類</dt>
         <dd>
-          <select class="form-select" name="class1st" onchange="ChangeClass1st(this)" style="width: 150px;">
+          <select class="form-select" name="class1st" onchange="ChangeClass2nd(this)" style="width: 150px;">
             <option value="" hidden>選択</option>
 
             <?php foreach ($optionDatas["class1st"] as $data): ?>
@@ -74,7 +74,7 @@
 
         <dt class="essential">小分類</dt>
         <dd>
-          <select class="form-select" name="class2nd" id="class2nd" onchange="ChangeValue(this)" style="width: 150px;">
+          <select class="form-select" name="class2nd" style="width: 150px;">
             <option value="" hidden>選択</option>
 
             <?php if ($isSet): ?>
@@ -89,7 +89,7 @@
 
         <dt class="essential">レベル</dt>
         <dd>
-          <select class="form-select" name="level" onchange="ChangeLevel(this)" style="width: 100px;">
+          <select class="form-select" name="level" style="width: 100px;">
             <option value="" hidden>選択</option>
 
             <?php for($i = 0; $i <= 3; $i++): ?>
@@ -245,26 +245,26 @@
           <tr>
             <td>A（10%以上）</td>
             <td><span name="result_point">0 ~ 0</span></td>
-            <td><input class="form-control form-control-sm" name="text1" value="<?php echo ($isSet) ? $diagnosisData["text1"] : ""; ?>"/></td>
-            <td><input class="form-control form-control-sm" name="comment1" value="<?php echo ($isSet) ? $diagnosisData["comment1"] : ""; ?>"/></td>
+            <td><input class="form-control form-control-sm" name="text1" value="<?php echo ($isSet) ? $diagnosisData["text1"] : $resultDatas["text1"]; ?>"/></td>
+            <td><input class="form-control form-control-sm" name="comment1" value="<?php echo ($isSet) ? $diagnosisData["comment1"] : $resultDatas["comment1"]; ?>"/></td>
           </tr>
           <tr>
             <td>B（30%以上）</td>
             <td><span name="result_point">0 ~ 0</span></td>
-            <td><input class="form-control form-control-sm" name="text2" value="<?php echo ($isSet) ? $diagnosisData["text2"] : ""; ?>"/></td>
-            <td><input class="form-control form-control-sm" name="comment2" value="<?php echo ($isSet) ? $diagnosisData["comment2"] : ""; ?>"/></td>
+            <td><input class="form-control form-control-sm" name="text2" value="<?php echo ($isSet) ? $diagnosisData["text2"] : $resultDatas["text2"]; ?>"/></td>
+            <td><input class="form-control form-control-sm" name="comment2" value="<?php echo ($isSet) ? $diagnosisData["comment2"] : $resultDatas["comment2"]; ?>"/></td>
           </tr>
           <tr>
             <td>C（50%以上）</td>
             <td><span name="result_point">0 ~ 0</span></td>
-            <td><input class="form-control form-control-sm" name="text3" value="<?php echo ($isSet) ? $diagnosisData["text3"] : ""; ?>"/></td>
-            <td><input class="form-control form-control-sm" name="comment3" value="<?php echo ($isSet) ? $diagnosisData["comment3"] : ""; ?>"/></td>
+            <td><input class="form-control form-control-sm" name="text3" value="<?php echo ($isSet) ? $diagnosisData["text3"] : $resultDatas["text3"]; ?>"/></td>
+            <td><input class="form-control form-control-sm" name="comment3" value="<?php echo ($isSet) ? $diagnosisData["comment3"] : $resultDatas["comment3"]; ?>"/></td>
           </tr>
           <tr>
             <td>D（50%未満）</td>
             <td><span name="result_point">0 ~ 0</span></td>
-            <td><input class="form-control form-control-sm" name="text4" value="<?php echo ($isSet) ? $diagnosisData["text4"] : ""; ?>"/></td>
-            <td><input class="form-control form-control-sm" name="comment4" value="<?php echo ($isSet) ? $diagnosisData["comment4"] : ""; ?>"/></td>
+            <td><input class="form-control form-control-sm" name="text4" value="<?php echo ($isSet) ? $diagnosisData["text4"] : $resultDatas["text4"]; ?>"/></td>
+            <td><input class="form-control form-control-sm" name="comment4" value="<?php echo ($isSet) ? $diagnosisData["comment4"] : $resultDatas["comment4"]; ?>"/></td>
           </tr>
         </tbody>
       </table>
@@ -287,6 +287,7 @@
   const questionList = document.getElementById("table-question_list");
   const diagnosisCheckbox = document.getElementById("check-diagnosis");
   const questionCheckbox = document.getElementById("check-question");
+  const form = document.getElementById("form");
 
   const resultPointDatas = document.getElementsByName("result_point");
 
@@ -310,6 +311,8 @@
       questionCheckbox.checked = false;
     }
   }
+
+
 
   function SetQuestionList(element = "") {
     if (element == form.question1st) {
@@ -437,6 +440,33 @@
     }
   }
 
+  function ChangeClass2nd(element) {
+    let selectbox = form.class2nd;
+    selectbox.replaceChildren();
+
+    var option = document.createElement("option");
+    option.innerText = "選択";
+    option.hidden = true;
+
+    if (element.value != "") {
+      option.value = "";
+      selectbox.appendChild(option);
+
+      console.log(class2ndDatas);
+      let datas = class2ndDatas[element.value];
+      console.log(datas);
+      for (let i = 0; i < datas.length; i++) {
+        var option = document.createElement("option");
+        option.value = datas[i]["value"];
+        option.innerText = datas[i]["text"];
+        selectbox.appendChild(option);
+        console.log(option);
+      }
+
+      selectbox.disabled = false;
+    }
+  }
+
   function Check(element) {
     console.log(typeof element.dataset.target);
 
@@ -485,6 +515,7 @@
       diagnosisList.lastElementChild.appendChild(tr);
     }
 
+    console.log(questionIdxDatas);
     form.question_num.value = questionNum;
     form.point_total.value = totalPoint;
     form.question_idxs.value = questionIdxDatas.join(",");
@@ -512,13 +543,14 @@
 
         questionNum--;
         totalPoint -= Number(questionCheckbox.parentNode.parentNode.children[5].innerText);
-        questionIdxDatas.splice(i);
+        questionIdxDatas.splice(i, 1);
 
         diagnosisCheckboxDatas[i].parentNode.parentNode.remove();
         questionCheckbox.parentNode.parentNode.hidden = false;
       }
     }
 
+    console.log(questionIdxDatas);
     form.question_num.value = questionNum;
     form.point_total.value = totalPoint;
     form.question_idxs.value = questionIdxDatas.join(",");
@@ -531,6 +563,22 @@
   }
 
   function Confirm() {
+    let totalPoint = Number(form.point_total.value);
+
+    if (CheckValidation() == false) { return false; }
+    for (let i = 0; i < resultPointCriteriaDatas.length; i++) {
+      var resultPointStart = totalPoint;
+      if (i != 0) {
+        resultPointStart = Math.floor(totalPoint / 100 * (100 - Number(resultPointCriteriaDatas[i - 1]))) - 1;
+        if (resultPointStart < 0) { resultPointStart = 0; }
+      }
+      
+      var input = document.createElement("input");
+      input.name = "point" + (Number(i) + 1);
+      input.value = resultPointStart;
+      form.appendChild(input);
+    }
+
     form.submit();
   }
 
@@ -576,10 +624,71 @@
       var resultPointStart = totalPoint;
       if (i != 0) {
         resultPointStart = Math.floor(totalPoint / 100 * (100 - Number(resultPointCriteriaDatas[i - 1]))) - 1;
+        if (resultPointStart < 0) { resultPointStart = 0; }
       }
       var resultPointEnd = Math.floor(totalPoint / 100 * (100 - Number(resultPointCriteriaDatas[i])));
 
       resultPointDatas[i].innerText = resultPointStart + " ~ " + resultPointEnd;
     }
+  }
+
+  function CheckValidation() {
+    if (form.class1st.value == "") {
+      RequestSelect(form.class1st, "大分類");
+      return false;
+    }
+
+    if (form.class2nd.value == "") {
+      RequestSelect(form.class2nd, "小分類");
+      return false;
+    }
+
+    if (form.level.value == "") {
+      RequestSelect(form.level, "レベル");
+      return false;
+    }
+
+    if (form.title.value.trim() == "") {
+      alert("タイトルを入力してください。");
+      setTimeout("form.title.focus()", 100);
+      return false;
+    }
+
+    if (form.question_idxs.value == "") {
+      alert("問題を作成してください。");
+      questionListBody.focus();
+      return false;
+    }
+
+    <?php for ($i = 1; $i <= 4; $i++): ?>
+      if (form.text<?= $i ?>.value == "") {
+        alert("評価を入力してください。");
+        setTimeout("form.text<?= $i ?>.focus()", 100);
+        return false;
+      }
+
+      if (form.text<?= $i ?>.value.includes(",")) {
+        alert("評価に「，」わ入力できません。");
+        setTimeout("form.text<?= $i ?>.focus()", 100);
+        return false;
+      }
+
+      if (form.comment<?= $i ?>.value == "") {
+        alert("評価コメントを入力してください。");
+        setTimeout("form.comment<?= $i ?>.focus()", 100);
+        return false;
+      }
+
+      if (form.comment<?= $i ?>.value.includes(",")) {
+        alert("評価コメントに「，」わ入力できません。");
+        setTimeout("form.comment<?= $i ?>.focus()", 100);
+        return false;
+      }
+    <?php endfor; ?>
+  }
+
+  function RequestSelect(element, text) {
+    alert(text + "を選択してください");
+    element.focus();
   }
 </script>

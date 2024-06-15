@@ -124,8 +124,6 @@ class DiagnosisController extends AbstractActionController {
 		$datas["optionDatas"] = $this->GetOptionDatas();
 
 		$post = $this->params()->fromPost();
-		print_r($post);
-		exit;
 
 		$diagnosisDatas = $this->getServiceLocator()->get("DiagnosisTable-Admin");
 		$code = "";
@@ -582,6 +580,13 @@ class DiagnosisController extends AbstractActionController {
 	}
 
 	function GetResultDatas() {
+		/*
+			作成：朴昰成
+			修正：朴昰成
+			修正日：24/06/15
+		*/
+
+		/* 修正前：
 		$result["point1"] = 95;
 		$result["point2"] = 90;
 		$result["point3"] = 80;
@@ -637,6 +642,19 @@ class DiagnosisController extends AbstractActionController {
 		$result["comment3"] = "成長の可能性が見える";
 		$result["comment4"] = "適性が合わないようである";
 		$resultDatas[3] = $result;
+		*/
+
+		/* 修正後： */
+		$result["text1"] = "優秀";
+		$result["text2"] = "やや優秀";
+		$result["text3"] = "努力が必要";
+		$result["text4"] = "IT職業に向いてない";
+		$result["comment1"] = "素晴らしい結果です。IT の概念に対するあなたの知識と理解は並外れたものです。上位 10% に入るスコアは、あなたが内容をしっかりと理解していることを示す重要な成果です。より高い能力（スキル）を持つように挑戦し続けてください。";
+		$result["comment2"] = "よくやりました！ IT の概念をしっかりと理解しており、内容を習得する段階に順調に進んでいることを示しています。引き続き今まで通り頑張って頂き、将来的にはさらに高い成果を目指してください。";
+		$result["comment3"] = "よく頑張りましたね。あなたは主要な IT 概念をある程度理解していると思いますが、改善の余地があるので、知識とスキルをさらに高めるために学習を続けてください。";
+		$result["comment4"] = "ご尽力いただき、ありがとうございます。現在の状況だと、さらなる見直しと改善が必要だと考えられます。時間をかけて自分の学習方法を再検討し、必要に応じて遠慮せずに助けを求めてください。";
+		$resultDatas = $result;
+		/* ここまで */
 
 		return $resultDatas;
 	}

@@ -17,16 +17,19 @@ $lineChange = "<br>";
 <header>
 	<div class="left-column"><img src="/img/hd_logo.png" alt="logo" height="40px" width="auto"></div>
 	<div class="middle-column" style="font-size:bold">ITスキル診断</div>
-	<div class="right-column"> 
-    <div id="date-container" style="display:flex; align-items:center"></div>
-    <div style="text-align:center;display:flex; align-items:center;"><?php echo $name; ?>様</div>
-    <div id="timerDisplay" style=" display:flex; align-items:center"></div>
+	<div class="right-column" style="display: flex; flex-direction: column;">
+    <div style="display: flex; justify-content: space-between;">
+      <div id="date-container" style="display:flex; align-items:center;"></div>
+      <div style="text-align:center; display:flex; align-items:center;"><?php echo $name; ?>様</div>
+    </div>
+    <div id="timerDisplay" style="display:flex; align-items:center; margin-top: 3px;">　</div>
 </div>
+
 </header>	     
 
 <div class="container-fluid">
-  <div class="card emegra" >
-    <div class="card-body"style="margin-top:70px;">
+  <div class="card emegra" style="margin-top:-10px;">
+    <div class="card-body" style="padding-top:25px;">
     <form id="myForm" name="input_form" action="/applicant/exam" method="post">
       <input type="hidden" id="solveTime" name="solveTime" value=""/>
         <div class="welcomeText" id="welcomeId">

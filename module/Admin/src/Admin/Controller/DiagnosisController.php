@@ -124,6 +124,8 @@ class DiagnosisController extends AbstractActionController {
 		$datas["optionDatas"] = $this->GetOptionDatas();
 
 		$post = $this->params()->fromPost();
+		print_r($post);
+		exit;
 
 		$diagnosisDatas = $this->getServiceLocator()->get("DiagnosisTable-Admin");
 		$code = "";

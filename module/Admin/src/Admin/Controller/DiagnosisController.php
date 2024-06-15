@@ -92,7 +92,19 @@ class DiagnosisController extends AbstractActionController {
 		$this->ChkLogin();
 		$datas["breadcrumbData"] = ["ITスキル診断問題管理", "診断問題登録"];
 		$datas["title"] = "診断問題登録";
+		/*
+			作成：朴昰成
+			修正：朴昰成
+			修正日：24/06/15
+		*/
+
+		/* 修正前：
 		$datas["optionDatas"] = $this->GetOptionDatasForInput();
+		*/
+
+		/* 修正後： */
+		$datas["optionDatas"] = $this->GetAllOption();
+		/* ここまで */
 		$datas["resultDatas"] = $this->GetResultDatas();
 
 		// Check return from 登録確認　page
@@ -737,4 +749,23 @@ class DiagnosisController extends AbstractActionController {
 
 		return $questionIdxs;
 	}
+	/*
+		作成：朴昰成
+		作成日：24/06/15
+	*/
+
+	/** make optiondatas organize by idx, type
+	 * @return array $optionDatas ["idx" => $data], ["type" => $data]
+	 */
+	function GetAllOption() {
+		$optionDatas = $this->GetOptionDatas();
+		// array_merge occurs error
+		$optionDatasoOrgType = $this->GetOptionDatasOrganizeByType();
+		foreach ($optionDatasoOrgType as $type => $data) {
+			$optionDatas[$type] = $data;
+		}
+
+		return $optionDatas;
+	}
+	/* ここまで */
 }

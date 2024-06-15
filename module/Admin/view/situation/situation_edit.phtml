@@ -875,11 +875,11 @@ function checkKana(input) {
             return false;
         }
 
-        if (form.class1stId.value === "") {
-            alert("経験分野を入力してください。");
-            setTimeout("form.class1stId.focus()",100);
-            event.preventDefault();
-            return false;
+        if (form.class1stId.value === "" || form.class1stId.value === "選択してください。") {
+          alert("経験分野を入力してください。");
+          setTimeout("form.class1stId.focus()",100);
+          event.preventDefault();
+          return false;
         }
 
         // if (form.class1stId.value == "その他" && form.otherclass1st.value=="") {
@@ -888,8 +888,8 @@ function checkKana(input) {
         //     return false;
         // }
 
-        if (form.class2ndId.value == "") {
-            alert("問題種別を入力してください。");
+        if (form.class2ndId.value == "" ||  form.class2ndId.value === "選択してください。") {
+            alert("経験分野詳細を入力してください。");
             setTimeout("form.class2ndId.focus()",100);
             event.preventDefault();
             return false;
@@ -929,30 +929,30 @@ function checkKana(input) {
 	}
   function saveConfirm(){
     if (form.name.value == "" || isZenkaku(form.name.value)) {
-          alert("漢字を入力してください。");
-          setTimeout("form.name.focus()",100);
-          event.preventDefault();
-          return false;
+        alert("漢字を入力してください。");
+        setTimeout("form.name.focus()",100);
+        event.preventDefault();
+        return false;
       }
 
       if (form.kana.value == "" || !checkKana(form.kana.value)) {
-          alert("カナを入力してください。");
-          setTimeout("form.kana.focus()",100);
-          event.preventDefault();
-          return false;
+        alert("カナを入力してください。");
+        setTimeout("form.kana.focus()",100);
+        event.preventDefault();
+        return false;
       }
-    if (form.skill.value == "") {
-            alert("ITスキル有無を入力してください。");
-            setTimeout("form.skill.focus()",100);
-            event.preventDefault();
-            return false;
-        }
+      if (form.skill.value == "") {
+        alert("ITスキル有無を入力してください。");
+        setTimeout("form.skill.focus()",100);
+        event.preventDefault();
+        return false;
+      }
 
         if (form.class1stId.value === "" || form.class1stId.value === "選択してください。") {
-            alert("経験分野を入力してください。");
-            setTimeout("form.class1stId.focus()",100);
-            event.preventDefault();
-            return false;
+          alert("経験分野を入力してください。");
+          setTimeout("form.class1stId.focus()",100);
+          event.preventDefault();
+          return false;
         }
 
         // if (form.class1stId.value == "その他" && form.otherclass1st.value=="") {
@@ -962,16 +962,16 @@ function checkKana(input) {
         // }
 
         if (form.class2ndId.value == "" ||  form.class2ndId.value === "選択してください。") {
-            alert("問題種別を入力してください。");
-            setTimeout("form.class2ndId.focus()",100);
-            event.preventDefault();
-            return false;
+          alert("経験分野詳細を入力してください。");
+          setTimeout("form.class2ndId.focus()",100);
+          event.preventDefault();
+          return false;
         }
         if ((isNaN(form.careerId.value))) {
-            alert("IT経験年数を入力してください。");
-            setTimeout("form.careerId.focus()",100);
-            event.preventDefault();
-            return false;
+          alert("IT経験年数を入力してください。");
+          setTimeout("form.careerId.focus()",100);
+          event.preventDefault();
+          return false;
         }
         // if (form.code.value == "") {
         //     alert("問題IDを入力してください。");
@@ -980,10 +980,10 @@ function checkKana(input) {
         //     return false;
         // }
         var submitConfirm=confirm("保存しますか？");
-            if (!submitConfirm){
-                    event.preventDefault();
-                    return false;
-                }
+          if (!submitConfirm){
+            event.preventDefault();
+            return false;
+          }
         form.submit();
   }
 	function randomPW(){
@@ -1017,7 +1017,7 @@ function diagnosisValidation(){
     return false;
   }
   if (form.class2ndId.value == "選択してください。") {
-    alert("問題種別を入力してください。");
+    alert("経験分野詳細を入力してください。");
     setTimeout("form.class2ndId.focus()",100);
     document.getElementById('diagnosisId').setAttribute('data-bs-toggle', 'false');
     return false;

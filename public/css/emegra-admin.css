@@ -410,6 +410,11 @@ div.emegra-table {
   overflow: hidden;
 }
 div.emegra-table table {
+	position: relative;
+	left: -1px;
+	top: -1px;
+	width: calc(100% + 2px);
+	height: calc(100% + 2px);
   margin: 0;
 
   border-collapse: collapse;

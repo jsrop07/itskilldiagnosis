@@ -141,7 +141,7 @@ class ApplicationTable
       return $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
     }
 
-     /* log
+  /* log
     作成：丁錫圓
     修正日：24/06/04
   */ 

@@ -92,7 +92,7 @@
         <?php endforeach; ?>
       </select>
 
-      <select class="form-select form-select-sm" id="select-select_value" style="width: 120px; margin-right: 8px;" onchange="ChangeSelectValue(this)">
+      <select class="form-select form-select-sm" id="select-select_value" style="width: 120px; margin-right: 8px;" onchange="Select(this)">
         <!--
           作成：朴昰成
           修正：朴昰成
@@ -246,7 +246,7 @@
     <?php */ ?> */
 
     /* 修正後： */
-    if (element.value == "") { Select(); }
+    if (element.value == "") { Select(element); }
     /* ここまで */
 
     /*
@@ -310,7 +310,7 @@
     <?php */ ?> */
 
     /* 修正後： */
-    Select();
+    Select(element);
     /* ここまで */
 
     selectSelectClass.replaceChildren();
@@ -326,7 +326,6 @@
 
     /* 削除前： <?php /* ?>
     option.innerText = "選択";
-    <?php */ ?> */
     selectSelectClass.appendChild(option);
 
     switch (element.value) {
@@ -341,6 +340,7 @@
           break;
       <?php endforeach; ?>
     }
+    <?php */ ?> */
   }
 
   /*
@@ -377,7 +377,7 @@
   <?php */ ?> */
 
   /* 修正後： */
-  function Select() {
+  function Select(element) {
     <?php
       $newQuery = "?";
 
@@ -410,7 +410,7 @@
     }
     url += selectSelectValue.value + "-";
 
-    if (selectSelectClass.value == "") {
+    if (selectSelectClass.value == "" || element == selectSelectValue) {
       url = url.slice(0, -1);
       self.window.location = url;
       return true;

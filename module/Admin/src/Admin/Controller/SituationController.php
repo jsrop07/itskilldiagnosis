@@ -805,7 +805,7 @@ class SituationController extends AbstractActionController {
 
 				echo "
 				<script>
-				alert('保存しました。')
+				alert('保存が完了しました。')
 				self.location.href='/admin/situation/list';
 				</script>
 				";	
@@ -945,7 +945,7 @@ class SituationController extends AbstractActionController {
 
 			echo "
 			<script>
-			alert('保存しました。')
+			alert('保存が完了しました。')
 			self.location.href='/admin/situation/list';
 			</script>
 			";	

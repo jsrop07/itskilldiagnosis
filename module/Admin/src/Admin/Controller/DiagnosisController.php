@@ -4,6 +4,12 @@ namespace Admin\Controller;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Zend\Session\Container;
+/*
+	作成：朴昰成
+	作成日：24/06/17
+*/
+use Admin\Model\LogModule;
+/* ここまで */
 
 class DiagnosisController extends AbstractActionController {
 	function ChkLogin() {
@@ -90,19 +96,21 @@ class DiagnosisController extends AbstractActionController {
 	/** When you click 新規登録 button on 一覧 page */
 	public function inputAction() {
 		$this->ChkLogin();
-		$datas["breadcrumbData"] = ["ITスキル診断問題管理", "診断問題登録"];
-		$datas["title"] = "診断問題登録";
 		/*
 			作成：朴昰成
 			修正：朴昰成
-			修正日：24/06/15
+			修正日：24/06/16
 		*/
 
 		/* 修正前：
+		$datas["breadcrumbData"] = ["ITスキル診断問題管理", "診断問題登録"];
+		$datas["title"] = "診断問題登録";
 		$datas["optionDatas"] = $this->GetOptionDatasForInput();
 		*/
 
 		/* 修正後： */
+		$datas["breadcrumbData"] = ["ITスキル診断問題管理", "問題登録"];
+		$datas["title"] = "問題登録";
 		$datas["optionDatas"] = $this->GetAllOption();
 		/* ここまで */
 		$datas["resultDatas"] = $this->GetResultDatas();
@@ -119,12 +127,32 @@ class DiagnosisController extends AbstractActionController {
 	/** When you click 登録 button on 診断問題登録 page */
 	public function confirmAction() {
 		$this->ChkLogin();
+		/*
+			作成：朴昰成
+			修正：朴昰成
+			修正日：24/06/16
+		*/
+
+		/* 修正前：
 		$datas["breadcrumbData"] = ["ITスキル診断問題管理", "診断問題登録" ,"登録確認"];
 		$datas["title"] = "診断問題確認";
+		*/
+
+		/* 修正後： */
+		$datas["breadcrumbData"] = ["ITスキル診断問題管理", "問題登録" ,"登録確認"];
+		$datas["title"] = "登録確認";
+		/* ここまで */
 		$datas["optionDatas"] = $this->GetOptionDatas();
 
 		$post = $this->params()->fromPost();
 
+		/*
+			作成：朴昰成
+			修正：朴昰成
+			修正日：24/06/17
+		*/
+
+		/* 修正前：
 		$diagnosisDatas = $this->getServiceLocator()->get("DiagnosisTable-Admin");
 		$code = "";
 		do {
@@ -138,6 +166,32 @@ class DiagnosisController extends AbstractActionController {
 
 		$datas["diagnosisData"] = $post;
 		$datas["diagnosisData"]["code"] = $code;
+		*/
+
+		/* 修正後： */
+		$LogModule = new LogModule();
+		$diagnosisTb = $this->getServiceLocator()->get("DiagnosisTable-Admin");
+		$diagnosisData = $this->LeaveDiagnosisTableData($post);
+
+		$code = "";
+		do {
+			$code = str_pad($post["class1st"], 2, "0", STR_PAD_LEFT);
+			$code .=  "-" . str_pad($post["class2nd"], 2, "0", STR_PAD_LEFT);
+			$code .= "-" . $post["level"] . chr(rand(65, 90));
+
+			try {
+				$result = $diagnosisTb->ReadByCode($code);
+			} catch (\Exception $e) {
+				$logData["reason"] = "exception at DiagnosisController confirmAction DiagnosisTable ReadByCode";
+				$logData["message"] = $e->getMessage();
+				print_r($LogModule->SaveLog($logData));
+				exit;
+			}
+		} while (!empty($result));
+		$diagnosisData["code"] = $code;
+
+		$datas["diagnosisData"] = $diagnosisData;
+		/* ここまで */
 
 		$datas["questionDatas"] = $this->ReadQuestionDatasByIdxs($post["question_idxs"]);
 
@@ -191,6 +245,13 @@ class DiagnosisController extends AbstractActionController {
 	function registAction() {
 		$post = $this->params()->fromPost();
 
+		/*
+			作成：朴昰成
+			修正：朴昰成
+			修正日：24/06/17
+		*/
+
+		/* 修正前：
 		$sqlValue["code"] = $post["code"];
 		$sqlValue["class1st"] = $post["class1st"];
 		$sqlValue["class2nd"] = $post["class2nd"];
@@ -211,16 +272,51 @@ class DiagnosisController extends AbstractActionController {
 		$sqlValue["result_points"] = implode(",", $sqlValue["result_points"]);
 		$sqlValue["result_texts"] = implode(",", $sqlValue["result_texts"]);
 		$sqlValue["result_comments"] = implode(",", $sqlValue["result_comments"]);
+		*/
+
+		/* 修正後： */
+		$sqlValue = $this->LeaveDiagnosisTableData($post);
+		/* ここまで */
 		
 		$session = new Container("user");
 		$sqlValue["admin_create"] = $session["code"];
 		$sqlValue["date_start"] = date("Y-m-d H:i:s");
 
-		$sqlValue["point_total"] = $post["point_total"];
+		/*
+			作成：朴昰成
+			削除：朴昰成
+			削除日：24/06/17
+		*/
 
+		/* 削除前：
+		$sqlValue["point_total"] = $post["point_total"];
+		*/
+
+		/*
+			作成：朴昰成
+			修正：朴昰成
+			修正日：24/06/17
+		*/
+
+		/* 修正前：
 		$diagnosisTb = $this->getServiceLocator()->get("DiagnosisTable-Admin");
 		try { $diagnosisTb->createDiagnosis($sqlValue); }
 		catch (\Exception $e) { die($e->getMessage()); }
+		*/
+
+		/* 修正後： */
+		$LogModule = new LogModule();
+		$diagnosisTb = $this->getServiceLocator()->get("DiagnosisTable-Admin");
+
+			try {
+				$diagnosisTb->CreateDiagnosis($sqlValue);
+			} catch (\Exception $e) {
+				$logData["reason"] = "exception at DiagnosisController registAction DiagnosisTable CreateDiagnosis";
+				$logData["message"] = $e->getMessage();
+				$logMessage = $LogModule->SaveLog($logData);
+				die($logMessage);
+			}
+		/* ここまで */
 
 		die ("success");
 	}
@@ -275,10 +371,18 @@ class DiagnosisController extends AbstractActionController {
 		$route =$this->params()->fromRoute("index");
 		$post = $this->params()->fromPost();
 
+		/*
+			作成：朴昰成
+			削除：朴昰成
+			削除日：24/06/17
+		*/
+
+		/* 削除前：
 		if (isset($post["question_idxs"])) {
 			die (json_encode($this->ReadQuestionDatasByIdxs($post["question_idxs"])));
 		}
-		
+		*/
+
 		/*
 			作成：朴昰成
 			削除：朴昰成
@@ -322,6 +426,11 @@ class DiagnosisController extends AbstractActionController {
 					
 					/* 修正後： */
 					$question["level"] = $data["level"];
+					$question["question"] = $data["question"];
+
+					for ($i = 1; $i <= 5; $i++) {
+						$question["answer" . $i] = $data["answer" . $i];
+					}
 
 					try {
 						$question["class1st"] = $optionTb->ReadByIdx($data["class1st"])["text"];
@@ -343,14 +452,36 @@ class DiagnosisController extends AbstractActionController {
 				die(json_encode($questionDatas));
 				break;
 			case "list":
+				/*
+					作成：朴昰成
+					削除：朴昰成
+					削除日：24/06/17
+				*/
+	
+				/* 修正前：
 				$questionTb = $this->getServiceLocator()->get("QuestionTable");
 				$questionIdxsByScore = $this->ReadQuestionIdxsByScore($sqlWhere);
 
 				$questionIdxs = $this->CreateQuestionList($questionIdxsByScore, $post["question_num"]);
 				die(json_encode($questionIdxs));
+				*/
+				
+				/* 修正後： */
+				$questionDatas = $this->ReadQuestionDatasByIdxs($post["question_idxs"]);
+				$questionDatas = $this->ChangeQuestionDatasForDiagnosisList($questionDatas);
+				if (gettype($questionDatas) == "string") { die($questionDatas); }
+				die (json_encode($questionDatas));
+				/* ここまで */
 				break;
 		}
 
+		/*
+			作成：朴昰成
+			削除：朴昰成
+			削除日：24/06/17
+		*/
+
+		/* 削除前：
 		$sqlWhere = $post;
 
 		unset($sqlWhere["question_num"]);
@@ -463,6 +594,7 @@ class DiagnosisController extends AbstractActionController {
 			}
 		}
 		die($this->PointQuestionsToJson($questionDatas));
+		*/
 	}
 
 	/** Set Layout & Make ViewModel with datas and template 
@@ -477,6 +609,76 @@ class DiagnosisController extends AbstractActionController {
 		return $vm;
 	}
 
+	/*
+		作成：朴昰成
+		作成日：24/06/17
+	*/
+	/** leave data of diagnosis table field
+	 * @param array $datas
+	 * @return array $diagnosisData
+	*/
+	function LeaveDiagnosisTableData($datas) {
+		$diagnosisData = $datas;
+
+		foreach ($datas as $field => $value) {
+			if ($field == "idx") { continue; }
+			if ($field == "code") { continue; }
+			if ($field == "title") { continue; }
+			if ($field == "class1st") { continue; }
+			if ($field == "class2nd") { continue; }
+			if ($field == "level") { continue; }
+			if ($field == "question_num") { continue; }
+			if ($field == "question_idxs") { continue; }
+			if ($field == "time_limit") { continue; }
+			if ($field == "result_points") { continue; }
+			if ($field == "result_texts") { continue; }
+			if ($field == "result_comments") { continue; }
+			if ($field == "admin_create") { continue; }
+			if ($field == "date_start") { continue; }
+			if ($field == "date_end") { continue; }
+			if ($field == "point_total") { continue; }
+			unset($diagnosisData[$field]);
+		}
+
+		return $diagnosisData;
+	}
+
+	/** change data for diagnosis list
+	 * @param array $beforeQuestionDatas
+	 * @return array $questionDatas ["idx", "title", "class1st", "class2nd", "level", "point"]
+	 */
+	function ChangeQuestionDatasForDiagnosisList($beforeQuestionDatas) {
+		$LogModule = new LogModule();
+		$optionTb = $this->getServiceLocator()->get("OptionTable");
+
+		$questionDatas = array();
+		foreach($beforeQuestionDatas as $data) {
+			$questionData["idx"] = $data["idx"];
+			$questionData["title"] = $data["title"];
+			$questionData["level"] = $data["level"];
+			$questionData["question"] = $data["question"];
+			$questionData["point"] = $data["point"];
+
+			for ($i = 1; $i <= 5; $i++) {
+				$questionData["answer" . $i] = $data["answer" . $i];
+			}
+
+			try {
+				$questionData["class1st"] = $optionTb->ReadByIdx($data["class1st"])["text"];
+				$questionData["class2nd"] = $optionTb->ReadByIdx($data["class2nd"])["text"];
+			} catch (\Exception $e) {
+				$logData["reason"] = "exception at DiagnosisController ChangeQuestionDatasForDiagnosisList Optiontable ReadByIdx";
+				$logData["message"] = $e->getMessage();
+				return $LogModule->SaveLog($logData);
+			}
+
+			$questionDatas[] = $questionData;
+		}
+
+		return $questionDatas;
+	}
+
+	/* ここまで */
 	/** Get optionDatas
 	 * @return array $optionDatas ["idx" => "text"]
 	*/
@@ -645,20 +847,17 @@ class DiagnosisController extends AbstractActionController {
 		*/
 
 		/* 修正後： */
-		$result["text1"] = "優秀";
-		$result["text2"] = "やや優秀";
-		$result["text3"] = "努力が必要";
-		$result["text4"] = "IT職業に向いてない";
-		// $result["comment1"] = "素晴らしい結果です。IT の概念に対するあなたの知識と理解は並外れたものです。上位 10% に入るスコアは、あなたが内容をしっかりと理解していることを示す重要な成果です。より高い能力（スキル）を持つように挑戦し続けてください。";
-		// $result["comment2"] = "よくやりました！ IT の概念をしっかりと理解しており、内容を習得する段階に順調に進んでいることを示しています。引き続き今まで通り頑張って頂き、将来的にはさらに高い成果を目指してください。";
-		// $result["comment3"] = "よく頑張りましたね。あなたは主要な IT 概念をある程度理解していると思いますが、改善の余地があるので、知識とスキルをさらに高めるために学習を続けてください。";
-		// $result["comment4"] = "ご尽力いただき、ありがとうございます。現在の状況だと、さらなる見直しと改善が必要だと考えられます。時間をかけて自分の学習方法を再検討し、必要に応じて遠慮せずに助けを求めてください。";
+		$resultDatas["text"] = array();
+		$resultDatas["text"][] = "優秀";
+		$resultDatas["text"][] = "やや優秀";
+		$resultDatas["text"][] = "努力が必要";
+		$resultDatas["text"][] = "IT職業に向いてない";
 		
-		$result["comment1"] = "優れている";
-		$result["comment2"] = "適性に合うようである";
-		$result["comment3"] = "成長の可能性が見える";
-		$result["comment4"] = "適性が合わないようである";
-				$resultDatas = $result;
+		$resultDatas["comment"] = array();
+		$resultDatas["comment"][] = "素晴らしい結果です。IT の概念に対するあなたの知識と理解は並外れたものです。上位 10% に入るスコアは、あなたが内容をしっかりと理解していることを示す重要な成果です。より高い能力（スキル）を持つように挑戦し続けてください。";
+		$resultDatas["comment"][] = "よくやりました！ IT の概念をしっかりと理解しており、内容を習得する段階に順調に進んでいることを示しています。引き続き今まで通り頑張って頂き、将来的にはさらに高い成果を目指してください。";
+		$resultDatas["comment"][] = "よく頑張りましたね。あなたは主要な IT 概念をある程度理解していると思いますが、改善の余地があるので、知識とスキルをさらに高めるために学習を続けてください。";
+		$resultDatas["comment"][] = "ご尽力いただき、ありがとうございます。現在の状況だと、さらなる見直しと改善が必要だと考えられます。時間をかけて自分の学習方法を再検討し、必要に応じて遠慮せずに助けを求めてください。";
 		/* ここまで */
 
 		return $resultDatas;

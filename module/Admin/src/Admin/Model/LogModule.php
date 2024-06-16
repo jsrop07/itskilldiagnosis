@@ -7,7 +7,7 @@ class LogModule {
 	 * @return string $log
 	 */
 	public function SaveLog($logData) {
-		$logString = "";
+		$logString = "\n";
 		$logString .= date("Y-m-d H:i:s") . " >> ";
 		$logString .=  $logData["reason"] . "\n";
 		if (isset($logData["message"])) {

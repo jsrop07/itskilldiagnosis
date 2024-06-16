@@ -201,8 +201,20 @@ class DiagnosisController extends AbstractActionController {
 	/** When you choose list data on 問題一覧 page */
 	public function detailAction() {
 		$this->ChkLogin();
+		/*
+			作成：朴昰成
+			修正：朴昰成
+			修正日：24/06/17
+		*/
+
+		/* 修正前：
 		$datas["breadcrumbData"] = ["ITスキル診断問題管理", "診断問題詳細"];
 		$datas["title"] = "診断問題詳細";
+		*/
+
+		/* 修正後： */
+		$datas["breadcrumbData"] = ["ITスキル診断問題管理", "問題詳細"];
+		/* ここまで */
 		$datas["optionDatas"] = $this->GetOptionDatas();
 
 		// Get Code
@@ -323,6 +335,13 @@ class DiagnosisController extends AbstractActionController {
 
 	public function updateAction() {
 		$post = $this->params()->fromPost();
+		/*
+			作成：朴昰成
+			修正：朴昰成
+			修正日：24/06/17
+		*/
+
+		/* 修正前：
 		$diagnosisTb = $this->getServiceLocator()->get("DiagnosisTable-Admin");
 
 		try { $diagnosisTb->RemoveDiagnosis($post["idx"]); }
@@ -351,12 +370,45 @@ class DiagnosisController extends AbstractActionController {
 		$sqlValue["point_total"] = $post["point_total"];
 		try { $diagnosisTb->CreateDiagnosis($sqlValue); }
 		catch (\Exception $e) { die($e->getMessage()); }
+		*/
+
+		/* 修正後： */
+		$LogModule = new LogModule();
+		$diagnosisTb = $this->getServiceLocator()->get("DiagnosisTable-Admin");
+
+		try {
+			$diagnosisTb->RemoveDiagnosis($post["idx"]);
+		} catch (\Exception $e) {
+			$logData["reason"] = "exception at DiagnosisController updateAction DiagnosisTable RemoveDiagnosis";
+			$logData["message"] = $e->getMessage();
+			$log = $LogModule->SaveLog($logData);
+			die($log);
+		}
+
+		$sqlValue = $this->LeaveDiagnosisTableData($post);
+		unset($sqlValue["idx"]);
+		$sqlValue["date_start"] = date("Y-m-d H:i:s");
+		try {
+			$diagnosisTb->CreateDiagnosis($sqlValue);
+		} catch (\Exception $e) {
+			$logData["reason"] = "exception at DiagnosisController updateAction DiagnosisTable CreateDiagnosis";
+			$logData["message"] = $e->getMessage();
+			$log = $LogModule->SaveLog($logData);
+			die($log);
+		}
 
 		die ("success");
 	}
 
 	public function removeAction() {
 		$idxs = $this->params()->fromPost("idxs");
+		/*
+			作成：朴昰成
+			修正：朴昰成
+			修正日：24/06/14
+		*/
+
+		/* 修正前：
 		$idxArr = explode(",", $idxs);
 
 		$diagnosisTb = $this->getServiceLocator()->get("DiagnosisTable-Admin");
@@ -364,6 +416,24 @@ class DiagnosisController extends AbstractActionController {
 			try { $diagnosisTb->RemoveDiagnosis($idx); }
 			catch (\Exception $e) { die($e->getMessage()); }
 		}
+		*/
+
+		/* 修正後： */
+		$idxDatas = explode(",", $idxs);
+
+		$LogModule = new LogModule();
+		$diagnosisTb = $this->getServiceLocator()->get("DiagnosisTable-Admin");
+		foreach ($idxDatas as $idx) {
+			try {
+				$diagnosisTb->RemoveDiagnosis($idx);
+			} catch (\Exception $e) {
+				$logData["reason"] = "exception at DiagnosisController removeAction DiagnosisTable RemoveDiagnosis";
+				$logData["message"] = $e->getMessage();
+				$log = $LogModule->SaveLog($logData);
+				die($log);
+			}
+		}
+		/* ここまで */
 		die("success");
 	}
 

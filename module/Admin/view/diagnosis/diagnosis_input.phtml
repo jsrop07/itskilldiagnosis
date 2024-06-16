@@ -280,8 +280,13 @@
 </form>
 
 <div class="btn-place" style="margin-top: 32px;">
-  <button class="emegra cancel" onclick="history.back();">一覧へ</button>
-  <button class="emegra" onclick="Confirm();">確認画面へ</button>
+  <?php if ($isEdit): ?>
+    <button class="emegra cancel" onclick="history.back();">戻る</button>
+    <button class="emegra" onclick="Update();">修正</button>
+  <?php else: ?>
+    <button class="emegra cancel" onclick="history.back();">一覧へ</button>
+    <button class="emegra" onclick="Confirm();">確認画面へ</button>
+  <?php endif; ?>
 </div>
 
 
@@ -325,13 +330,13 @@
       form.question2nd.disabled = true;
       form.question_level.value = "";
       SetDiagnosisList();
-      SetQuestionList();
     }
     else {
       <?php if ($isEdit): ?>
         SetDiagnosisList();
+      <?php else: ?>
+        SetQuestionList();
       <?php endif; ?>
-      SetQuestionList();
     }
   }
 
@@ -369,7 +374,11 @@
     if (form.question2nd.value != "") { postData.push({"key":"class2nd", "value":form.question2nd.value}) }
     if (form.question_level.value != "") { postData.push({"key":"level", "value":form.question_level.value}) }
 
-    const xhr = SendXhr("./read/question", postData);
+    <?php if ($isEdit): ?>
+      const xhr = SendXhr("../read/question", postData);
+    <?php else: ?>
+      const xhr = SendXhr("./read/question", postData);
+    <?php endif; ?>
     xhr.onload = () => {
       if (xhr.status == 200) {
         const result = xhr.responseText;
@@ -436,6 +445,7 @@
 
             for (let i = 0; i < questionIdxDatas.length; i++) {
               if (input.value == questionIdxDatas[i]) {
+                input.disabled = true;
                 tr.hidden = true;
                 break;
               }
@@ -478,7 +488,11 @@
 
   function SetDiagnosisList() {
     let postData = [{"key":"question_idxs", "value":form.question_idxs.value}];
-    const xhr = SendXhr("./read/list", postData);
+    <?php if ($isEdit): ?>
+      const xhr = SendXhr("../read/list", postData);
+    <?php else: ?>
+      const xhr = SendXhr("./read/list", postData);
+    <?php endif; ?>
     xhr.onload = () => {
       if (xhr.status == 200) {
         const result = xhr.responseText;
@@ -546,6 +560,7 @@
           }
           SetPopover();
 
+          SetQuestionList();
           return true;
         } catch(e) {
           let alertString = ErrorString();
@@ -603,7 +618,9 @@
       let checkboxs = document.getElementsByName(element.dataset.target);
       
       for (let i = 0; i < checkboxs.length; i++) {
-        checkboxs[i].checked = element.checked;
+        if (checkboxs[i].disabled == false) {
+          checkboxs[i].checked = element.checked;
+        }
       }
     }
     else {
@@ -613,7 +630,9 @@
 
       let isAllChecked = true;
       for (let i = 0; i < checkboxs.length; i++) {
-        if (checkboxs[i].checked == false) { isAllChecked = false; break; }
+        if (checkboxs[i].disabled == false) {
+          if (checkboxs[i].checked == false) { isAllChecked = false; break; }
+        }
       }
 
       allCheckbox.checked = isAllChecked;
@@ -645,6 +664,7 @@
       totalPoint += Number(tr.children[5].innerText);
       questionIdxDatas.push(checkboxs[i].value);
 
+      checkboxs[i].disabled = true;
       checkboxs[i].parentNode.parentNode.hidden = true;
       diagnosisList.lastElementChild.appendChild(tr);
     }
@@ -689,6 +709,7 @@
 
         diagnosisCheckboxDatas[i].parentNode.parentNode.remove();
         if (typeof questionCheckbox !== "undefined") {
+          questionCheckbox.disabled = false;
           questionCheckbox.parentNode.parentNode.hidden = false;
         }
       }
@@ -710,6 +731,45 @@
     if (CheckValidation() == false) { return false; }
     form.submit();
   }
+
+  <?php if ($isEdit): ?>
+    function Update() {
+      if (CheckValidation() == false) { return false; }
+
+      if (confirm("修正しますか?") === true) {
+        const postForm = new FormData(form);
+        const xhr = new XMLHttpRequest();
+        xhr.open("POST", "../update", true);
+        xhr.send(postForm);
+        xhr.onload = () => {
+          if (xhr.status == 200) {
+            const result = xhr.responseText;
+            if (result == "success") {
+              alert("修正しました。");
+              self.location.href = "../list";
+            }
+            else {
+              let alertString = ErrorString();
+              alertString += "\nresponse text is not success in diagnosis_input Update";
+              alertString += "\nresponseText: " + result;
+              alert(alertString);
+              console.log(result);
+
+              return false;
+            }
+          }
+          else {
+            let alertString = ErrorString();
+            alertString += "\nxhr error in diagnosis_input Update";
+            alertString += "\nerror code: " + xhr.status;
+            alert(alertString);
+
+            return false;
+          }
+        }
+      }
+    }
+  <?php endif; ?>
 
 
 
@@ -747,8 +807,8 @@
   }
 
   function ChangeToPopoverForm(string) {
-    string = string.replace("<", "＜");
-    string = string.replace(">", "＞");
+    string = string.replaceAll("<", "＜");
+    string = string.replaceAll(">", "＞");
     string = string.replaceAll("{{n}}", "<br/>");
     string = string.replaceAll('"', "”");
     string = "<pre>" + string + "</pre>";

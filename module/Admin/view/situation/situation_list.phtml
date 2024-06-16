@@ -247,11 +247,6 @@
               <td><?php echo $caseTexts[$data["case"]]; ?></td>
               <td><a onclick="self.location.href='./<?php echo ($data['diagnosis_date'] == null) ? 'edit' : 'detail'; ?>/<?php echo $data['idx']; ?>';"><?php echo $data["name"]; ?></a></td>
               <td><?php echo $data["education"]; ?></td>
-              <!--
-                作成：朴昰成
-                修正：朴昰成
-                修正日：24/06/16
-              -->
               <td><?php echo ($data["skill"] == 1) ? "無" : "有"; ?></td>
 
               <td><?php echo (isset($data["class1st"])) ? $data["class1st"] : "未設定"; ?></td>
@@ -263,19 +258,7 @@
               <?php
                 $isExpire = false;
                 if (isset($data["date_schedule"])) {
-                  /*
-                    作成：朴昰成
-                    修正：朴昰成
-                    修正日：24/06/16
-                  */
-
-                  /* 修正前：
-                  if (($data["date_schedule"] < date("y.m.d H:i:m")) && is_null($data["rank"])) {
-                  */
-
-                  /* 修正後： */
                   if ((strtotime($data["date_schedule"]) < strtotime(date("Y-m-d H:i:s"))) && is_null($data["rank"])) {
-                  /* ここまで */
                     $isExpire = true;
                   }
                 }
@@ -292,19 +275,7 @@
 
               <?php
                 $isAbleCheck = false;
-                /*
-                  作成：朴昰成
-                  修正：朴昰成
-                  修正日：24/06/16
-                */
-
-                /* 修正前：
-                if ($data["diagnosis_date"] != null && $data["request_date"] == null) { $isAbleCheck = true; }
-                */
-
-                /* 修正後： */
                 if ($data["diagnosis_code"] != "" && $data["request_date"] == null) { $isAbleCheck = true; }
-                /* ここまで */
                 if ($data["rank"] != null && $data["date_mail"] == null) { $isAbleCheck = true; }
               ?>
               <td><input name="checkIdx" type="checkbox" value="<?php echo $data["idx"]; ?>" onclick="Checking(this);" style="cursor: pointer;"<?php echo ($isAbleCheck) ? "" : " disabled"; ?>></td>
@@ -433,19 +404,7 @@
       let alertString = "依頼予定日を確認してください。\n";
 
       for (let i = isExpired.length - 1; i >= 0 ; i--) {
-        /*
-          作成：朴昰成
-          修正：朴昰成
-          修正日：24/06/16
-        */
-
-        /* 修正前：
-        alertString += "\n" + check_idxs[i].parentNode.parentNode.children[0].innerText + "．" + check_idxs[i].parentNode.parentNode.children[4].innerText;
-        */
-
-        /* 修正後： */
         alertString += "\n" + check_idxs[isExpired[i]].parentNode.parentNode.children[0].innerText + "．" + check_idxs[isExpired[i]].parentNode.parentNode.children[4].innerText;
-        /* ここまで */
       }
       alert(alertString);
       return false;
@@ -488,37 +447,6 @@
 					location.reload(true);
 				}
 				else {
-          /*
-            作成：朴昰成
-            修正：朴昰成
-            修正日：24/06/16
-          */
-
-          /* 修正前： <?php /* ?>
-          try {
-            applicantDatas = JSON.parse(result);
-          }
-          catch (e) {
-            alert("error");
-            console.log(result);
-            location.reload(true);
-          }
-
-          $alertString = "依頼ができませんでした。\n\n";
-          $alertString += "依頼ができなかった診断者";
-          for (let i = 0; i < applicantDatas.length; i++) {
-            let applicantNo = "";
-            for (let j = 0; j < tableBodyList.children.length; j++) {
-              if (applicantDatas[i]["idx"] = tableBodyList.children[j].children[16].children[0].value) {
-                applicantNo = tableBodyList.children[j].children[0].innerText;
-              }
-            }
-            $alertString += "\n" + applicantNo + "．" + applicantDatas[i]["name"];
-          }
-          alert($alertString);
-          <?php */ ?> */
-
-          /* 修正前： */
           try {
             recordDatas = JSON.parse(result);
           }
@@ -541,7 +469,6 @@
             }
           }
           alert($alertString);
-          /* ここまで */
 					location.reload(true);
 				}
 			}

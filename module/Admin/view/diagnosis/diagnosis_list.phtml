@@ -93,19 +93,7 @@
       </select>
 
       <select class="form-select form-select-sm" id="select-select_value" style="width: 120px; margin-right: 8px;" onchange="Select(this)">
-        <!--
-          作成：朴昰成
-          修正：朴昰成
-          修正日：24/06/17
-        -->
-
-        <!-- 修正前： <?php /* ?>
-        <option value="" hidden>選択</option>
-        <?php */ ?> -->
-
-        <!-- 修正後： -->
         <option value=""></option>
-        <!-- ここまで -->
 
         <?php if ($isSearch["select"]): ?>
           <?php if ($queryDatas["select"][0] == "level"): ?>
@@ -124,32 +112,8 @@
         <?php endif; ?>
       </select>
 
-      <!--
-        作成：朴昰成
-        修正：朴昰成
-        修正日：24/06/17
-      -->
-
-      <!-- 修正前： <?php /* ?>
-      <select class="form-select form-select-sm" id="select-select_class" style="width: 120px;" onchange="Select(this)">
-      <?php */ ?> -->
-
-      <!-- 修正後： -->
       <select class="form-select form-select-sm" id="select-select_class" style="width: 120px;" onchange="Select(this)"<?php echo ($isSearch["select"] && $queryDatas["select"][0] == "class") ? "" : " disabled"; ?>>
-      <!-- ここまで -->
-        <!--
-          作成：朴昰成
-          修正：朴昰成
-          修正日：24/06/17
-        -->
-
-        <!-- 修正前： <?php /* ?>
-        <option value="" hidden>選択</option>
-        <?php */ ?> -->
-
-        <!-- 修正後： -->
         <option value=""></option>
-        <!-- ここまで -->
 
         <?php if ($queryDatas["select"][0] == "class"): ?>
           <?php foreach ($optionDatas["class2nd"][$queryDatas["select"][1]] as $data): ?>
@@ -235,40 +199,12 @@
   }
 
   function ChangeSelectType(element) {
-    /*
-      作成：朴昰成
-      修正：朴昰成
-      修正日：24/06/17
-    */
-
-    /* 修正前： <?php /* ?>
     if (element.value == "") { Select(element); }
-    <?php */ ?> */
-
-    /* 修正後： */
-    if (element.value == "") { Select(element); }
-    /* ここまで */
-
-    /*
-      作成：朴昰成
-      作成日：24/06/17
-    */
     selectSelectClass.disabled = true;
-    /* ここまで */
     selectSelectValue.replaceChildren();
 
     var option = document.createElement("option");
     option.value = "";
-    /*
-      作成：朴昰成
-      削除：朴昰成
-      削除日：24/06/17
-    */
-
-    /* 削除前： <?php /* ?>
-    option.hidden = true;
-    option.innerText = "選択";
-    <?php */ ?> */
     selectSelectValue.appendChild(option);
 
     switch (element.value) {
@@ -287,96 +223,22 @@
           option.innerText = "<?php echo $data["text"]; ?>";
           selectSelectValue.appendChild(option);
         <?php endforeach; ?>
-        /*
-          作成：朴昰成
-          作成日：24/06/17
-        */
         selectSelectClass.disabled = false;
-        /* ここまで */
         break;
     }
   }
 
   function ChangeSelectValue(element) {
     console.log(element.value);
-    /*
-      作成：朴昰成
-      修正：朴昰成
-      修正日：24/06/17
-    */
-
-    /* 修正前： <?php /* ?>
-    if (selectSelectType.value != "class") { Select(element); }
-    <?php */ ?> */
-
-    /* 修正後： */
     Select(element);
-    /* ここまで */
 
     selectSelectClass.replaceChildren();
 
     var option = document.createElement("option");
     option.value = "";
     option.hidden = true;
-    /*
-      作成：朴昰成
-      削除：朴昰成
-      削除日：24/06/17
-    */
-
-    /* 削除前： <?php /* ?>
-    option.innerText = "選択";
-    selectSelectClass.appendChild(option);
-
-    switch (element.value) {
-      <?php foreach ($optionDatas["class1st"] as $class1stData): ?>
-        case "<?php echo $class1stData["idx"]; ?>":
-          <?php foreach ($optionDatas["class2nd"][$class1stData["idx"]] as $class2ndData): ?>
-            var option = document.createElement("option");
-            option.value = "<?php echo $class2ndData["idx"]; ?>";
-            option.innerText = "<?php echo $class2ndData["text"]; ?>";
-            selectSelectClass.appendChild(option);
-          <?php endforeach; ?>
-          break;
-      <?php endforeach; ?>
-    }
-    <?php */ ?> */
   }
 
-  /*
-    作成：朴昰成
-    修正：朴昰成
-    修正日：24/06/17
-  */
-
-  /* 修正前： <?php /* ?>
-  function Select(element) {
-    <?php
-      $newQuery = "?";
-
-      if (!empty($queryDatas)) {
-        foreach ($queryDatas as $key => $data) {
-          if ($key == "page") { continue; }
-          if ($key == "select") { continue; }
-
-          $newQuery .= $key . "=" . implode("-", $data) . "&";
-        }
-      }
-
-      $url = $route . $newQuery;
-    ?>
-
-    let url = "<?= $url; ?>";
-
-    if (element.value != "") { url += "select=" + selectSelectType.value + "-" + selectSelectValue.value + "-"; }
-    if (element == selectSelectClass) { url += selectSelectClass.value + "-"; }
-    url = url.slice(0, -1);
-
-    self.window.location = url;
-  }
-  <?php */ ?> */
-
-  /* 修正後： */
   function Select(element) {
     <?php
       $newQuery = "?";
@@ -421,5 +283,4 @@
     self.window.location = url;
     return true;
   }
-  /* ここまで */
 </script>

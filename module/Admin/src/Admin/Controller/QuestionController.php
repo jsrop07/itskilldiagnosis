@@ -4,12 +4,7 @@ namespace Admin\Controller;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Zend\Session\Container;
-/*
-	作成：朴昰成
-	作成日：24/06/13
-*/
 use Admin\Model\LogModule;
-/* ここまで */
 
 class QuestionController extends AbstractActionController
 {
@@ -75,24 +70,6 @@ class QuestionController extends AbstractActionController
 		if (isset($query["select"])) {
 			$selectData = explode("-", $query["select"]);
 
-			/*
-				作成：
-				修正：
-				修正日：24/06/13
-			*/
-
-			/* 修正前：
-			if ($selectData[0] == "class") {
-				$sqlWhere["class2nd"] = $selectData[2];
-			}
-			else {
-				$sqlWhere[$selectData[0]] = $selectData[1];
-			}
-
-			$datas["searchDatas"]["select"] = $selectData;
-			*/
-
-			/* 修正後： */
 			if (isset($selectData[2])) {
 				$sqlWhere["class2nd"] = $selectData[2];
 			}
@@ -100,7 +77,6 @@ class QuestionController extends AbstractActionController
 				if ($selectData[0] == "class") { $sqlWhere["class1st"] = $selectData[1]; }
 				else { $sqlWhere[$selectData[0]] = $selectData[1]; }
 			}
-			/* ここまで */
 		}
 
 		$questionDatas = "";
@@ -431,40 +407,10 @@ class QuestionController extends AbstractActionController
 	}
 
 	public function createByCsvAction() {
-		/*
-			作成：朴昰成
-			修正：朴昰成
-			修正日：24/06/13
-		*/
-
-		/* 修正前：
-		if ($_FILES["csv_file"]["error"] == "0") {
-		*/
-
-		/* 修正後： */
 		$log = new LogModule();
 
 		if ($_FILES["file"]["error"] == "0") {
-		/* ここまで */
 			header("Content-Type: text/html; charset=utf-8");
-			/*
-				作成：朴昰成
-				修正：朴昰成
-				修正日：24/06/13
-			*/
-
-			/* 修正前：
-			$filePointer = fopen($_FILES["csv_file"]["tmp_name"], "r");
-			if (!$filePointer) { die("ファイル　オープン　失敗"); }
-
-			$csvStrings = array();
-			while ($line = fgetcsv($filePointer, 2048, ",")) {
-				$line = str_replace("{{44}}", ",", $line);
-				$csvStrings[] = $line;
-			}
-			*/
-
-			/* 修正後： */
 			if ($_FILES["file"]["type"] != "text/csv") { die($log->SaveLog(["reason" => "not csv file"])); }
 
 			$csvStrings = array();
@@ -475,7 +421,6 @@ class QuestionController extends AbstractActionController
 				$logData["message"] = $e->getMessage();
 				die($log->SaveLog($logData));
 			}
-			/* ここまで */
 			$keys = $csvStrings[0];
 			unset($csvStrings[0]);
 			// exception handling
@@ -487,20 +432,8 @@ class QuestionController extends AbstractActionController
 			$optionTb = $this->getServiceLocator()->get("OptionTable");
 
 			$questionData = array();
-			/*
-				作成：朴昰成
-				修正：朴昰成
-				修正日：24/06/13
-			*/
-	
-			/* 修正前：
-			foreach ($csvStrings as $csvDatas) {
-			*/
-	
-			/* 修正後： */
 			$logDatas = array();
 			foreach ($csvStrings as $index => $csvDatas) {
-			/* ここまで */
 				foreach ($csvDatas as $idx => $data) {
 					$questionData[$keys[$idx]] = $data;
 				}
@@ -541,27 +474,11 @@ class QuestionController extends AbstractActionController
 					
 					$questionTb->CreateQuestion($questionData);
 				} catch (\Exception $e) {
-					/*
-						作成：朴昰成
-						修正：朴昰成
-						修正日：24/06/13
-					*/
-			
-					/* 修正前：
-					die($e->getMessage());
-					*/
-			
-					/* 修正後： */
 					$logData["reason"] = "fail insert";
 					$logData["message"] = $e->getMessage();
 					$logDatas[$index + 1] = $logData;
-					/* ここまで */
 				}
 			}
-			/*
-				作成：朴昰成
-				作成日：24/06/13
-			*/
 			if ($logDatas) {
 				$noDatas = array();
 				foreach ($logDatas as $index => $logData) {
@@ -572,22 +489,9 @@ class QuestionController extends AbstractActionController
 			}
 
 			die("success");
-			/* ここまで */
 		}
 
-		/*
-			作成：朴昰成
-			修正：朴昰成
-			修正日：24/06/13
-		*/
-
-		/* 修正前：
-		die("success");
-		*/
-
-		/* 修正後： */
 		die($log->SaveLog(["reason" => "fail to open file"]));
-		/* ここまで */
 	}
 
 	/** Read Option datas Organize by Type (class2nd's idx is text)
@@ -630,37 +534,4 @@ class QuestionController extends AbstractActionController
 
 		return $optionDatas;
 	}
-
-	// public function sortArrByKey($arr, $alignData) {
-	// 	$optionTb = $this->getServiceLocator()->get("OptionTable");
-
-	// 	$key = explode("_", $alignData)[0];
-	// 	$align = explode("_", $alignData)[1];
-
-	// 	$tempArr = array();
-	// 	if ($key == "regist") {
-	// 		$key = "date_regist";
-	// 		foreach ($arr as $idx => $data) {
-	// 			$tempArr[$idx] = $data[$key];
-	// 		}
-	// 	} else {
-	// 		foreach ($arr as $idx => $data) {
-	// 			$data[$key] = $optionTb->ReadOption(["idx" => $data[$key]])["text"];
-	// 			$arr[$idx][$key] = $data[$key];
-	// 			$tempArr[$idx] = $data[$key];
-	// 		}
-	// 	}
-
-	// 	if ($align == "ASC") { array_multisort($tempArr, SORT_ASC, $arr); }
-	// 	else { array_multisort($tempArr, SORT_DESC, $arr); }
-	// 	unset($tempArr);
-
-	// 	if ($key == "date_regist") { return $arr; }
-
-	// 	foreach ($arr as $idx => $data) {
-	// 		$arr[$idx][$key] = $optionTb->ReadOption(["text" => $data[$key]])["idx"];
-	// 	}
-
-	// 	return $arr;
-	// }
 }

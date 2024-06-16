@@ -258,7 +258,9 @@
               <?php
                 $isExpire = false;
                 if (isset($data["date_schedule"])) {
-                  if (($data["date_schedule"] < date("y.m.d H:i:m")) && is_null($data["rank"])) {
+                  // BUGFIX - LIM
+                  // if (($data["date_schedule"] < date("y.m.d H:i:m")) && is_null($data["rank"])) {
+                  if ((strtotime($data["date_schedule"]) < strtotime(date("y.m.d H:i:m"))) && is_null($data["rank"])) {
                     $isExpire = true;
                   }
                 }

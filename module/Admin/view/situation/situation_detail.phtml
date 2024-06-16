@@ -136,7 +136,9 @@
     <?php
       $isExpire = false;
       if (isset($recordData["date_schedule"])) {
-        if (($recordData["date_schedule"] < date("y.m.d H:i:m")) && is_null($recordData["rank"])) {
+        // BUGFIX - LIM
+        // if (($recordData["date_schedule"] < date("y.m.d H:i:m")) && is_null($recordData["rank"])) {
+        if ((strtotime($recordData["date_schedule"]) < strtotime(date("y.m.d H:i:m"))) && is_null($recordData["rank"])) {
           $isExpire = true;
         }
       }

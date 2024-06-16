@@ -187,7 +187,10 @@
   function Request(button) {
 		if (confirm("依頼しますか？") === false) { return false; }
 
-    if (<?php echo $isExpire; ?>) {
+    <?php // BUGFIX
+      // if (<?php echo $isExpire; ?>) {
+    ?>
+    if ('<?php echo $isExpire; ?>' == '') {
       alert("診断予定日時を確認してください。");
       return false;
     }

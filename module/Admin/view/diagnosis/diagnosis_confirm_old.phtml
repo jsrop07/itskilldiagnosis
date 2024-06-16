@@ -1,0 +1,200 @@
+<?php
+  $levelTextDatas = ["無級", "初級", "中級", "高級"];
+  $numTextDatas = array("①", "②", "③", "④", "⑤");
+
+  function ReplaceSymbol($string) {
+    $string = str_replace("<", "＜", $string);
+    $string = str_replace(">", "＞", $string);
+    return $string;
+  }
+
+	if (!isset($_SESSION)) { session_start(); }
+
+	$pointDatas = explode(",", $diagnosisData["result_points"]);
+?>
+
+<?php echo $this->partial("breadcrumb", ["datas" => $breadcrumbData]); ?>
+
+<h1 class="title"><?php echo $title; ?></h1>
+	<style type="text/css">
+		option { color: black; }
+		input::placeholder { font-style: italic; }
+	</style>
+
+	<div class="emegra card">
+		<div class="card-header">設定</div>
+
+		<div class="card-body">
+			<style type="text/css">
+				dl.emegra.setting { grid-template-columns: 140px 1fr; }
+			</style>
+			<dl class="emegra setting">
+        <dt>問題ID</dt>
+				<dd><?php echo $diagnosisData["code"]; ?>
+
+				<dt>大分類</dt>
+				<dd><?php echo $optionDatas[$diagnosisData["class1st"]]; ?></dd>
+
+				<dt>小分類</dt>
+				<dd><?php echo $optionDatas[$diagnosisData["class2nd"]]; ?></dd>
+		
+				<dt>レベル</dt>
+				<dd><?php echo $levelTexts[$diagnosisData["level"]]; ?></dd>
+		
+				<dt>タイトル</dt>
+				<dd><?php echo $diagnosisData["title"]; ?></dd>
+			</dl>
+		</div>
+	</div>
+
+	<div class="emegra card" style="margin-top: 32px;">
+		<div class="card-header">問題</div>
+
+		<div class="card-body">
+			<style type="text/css">
+				dl.emegra.question { grid-template-columns: 140px 1fr; }
+			</style>
+			<dl class="emegra question">
+				<dt>問項数</dt>
+        <dd><?php echo $diagnosisData["question_num"]; ?>題項</dd>
+
+				<dt>診断時間</dt>
+				<dd><?php echo $diagnosisData["time_limit"]; ?>分</dd>
+
+				<dt id="correct-title">問項一覧</dt>
+				<div style="width: 100%; display: flex;">
+					<style type="text/css">
+						table.emegra tr { grid-template-columns: 50px 1fr 60px 50px; }
+						table.emegra th, table.emegra td { padding: 5px 0 !important; }
+					</style>
+					<table class="emegra">
+						<thead>
+							<tr>
+								<th>No</th>
+								<th>問項タイトル</th>
+								<th>タイプ</th>
+								<th>点数</th>
+							</tr>
+						</thead>
+						<tbody id="tbody-list">
+						</tbody>
+							<?php foreach ($questionDatas as $index => $data): ?>
+								<tr>
+									<td><?php echo $index + 1; ?></td>
+									<td style="text-align: start;"><?php echo $data["title"]; ?></td>
+									<td><?php echo $data["type"]; ?></td>
+									<td><?php echo $data["point"]; ?></td>
+								</tr>
+							<?php endforeach; ?>
+							<tr>
+								<td style="grid-column: 1 / 4;"></td>
+                <td><?php echo $diagnosisData["point_total"]; ?>点</td>
+							</tr>
+					</table>
+				</div>
+			</dl>
+		</div>
+	</div>
+
+	<div class="emegra card" style="margin-top: 32px;">
+		<div class="card-header">情報</div>
+
+		<div class="card-body">
+			<style type="text/css">
+				table.evaluation {
+					width: 100%;
+					text-align: center;
+				}
+				table.evaluation tr {
+					display: grid;
+					grid-template-columns: 100px 150px 150px 1fr;
+					gap: 10px 8px;
+				}
+				table.evaluation td {
+					padding: 4px 0;
+					display: flex;
+					align-items: center;
+					justify-content: center;
+				}
+				table.evaluation td.left {
+					justify-content: start;
+				}
+			</style>
+			<table class="evaluation">
+				<thead>
+					<tr>
+						<th>評価等級</th>
+						<th>評価点数</th>
+						<th>評価</th>
+						<th>評価コメント</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>A</td>
+						<td><?php echo $diagnosisData["point1"]; ?> ~ 100</td>
+						<td class="left"><?php echo $diagnosisData["text1"]; ?></td>
+						<td class="left"><?php echo $diagnosisData["comment1"]; ?></td>
+					</tr>
+					<tr>
+						<td>B</td>
+						<td><?php echo $diagnosisData["point2"]; ?> ~ <?php echo $diagnosisData["point1"] - 1; ?></td>
+						<td class="left"><?php echo $diagnosisData["text2"]; ?></td>
+						<td class="left"><?php echo $diagnosisData["comment2"]; ?></td>
+					</tr>
+					<tr>
+						<td>C</td>
+						<td><?php echo $diagnosisData["point3"]; ?> ~ <?php echo $diagnosisData["point2"] - 1; ?></td>
+						<td class="left"><?php echo $diagnosisData["text3"]; ?></td>
+						<td class="left"><?php echo $diagnosisData["comment3"]; ?></td>
+					</tr>
+					<tr>
+						<td>D</td>
+						<td><?php echo $diagnosisData["point4"]; ?> ~ <?php echo $diagnosisData["point3"] - 1; ?></td>
+						<td class="left"><?php echo $diagnosisData["text4"]; ?></td>
+						<td class="left"><?php echo $diagnosisData["comment4"]; ?></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+<form id="form" method="post" action="./input">
+	<?php foreach ($diagnosisData as $key => $data): ?>
+		<input name="<?php echo $key; ?>" value='<?php echo $data; ?>' hidden/>
+	<?php endforeach; ?>
+</form>
+
+<div class="btn-place" style="margin-top: 32px;">
+	<button class="emegra cancel" onclick="Return();">戻る</button>
+	<button class="emegra" onclick="Regist();">登録</button>
+</div>
+
+<script type="text/javascript">
+	const form = document.getElementById("form");
+
+	function Return() {
+		setCookie("diagnosisData", '<?php echo json_encode($diagnosisData); ?>', {secure: true, "max-age": 30});
+		history.back();
+	}
+
+	function Regist() {
+		const postForm = new FormData(form);
+			const xhr = new XMLHttpRequest();
+			xhr.open("POST", "./regist", true);
+			xhr.send(postForm);
+			xhr.onload = () => {
+			if (xhr.status == 200) {
+				const result = xhr.responseText;
+				if (result == "success") {
+					alert("登録しました。");
+					self.location.href = "./list";
+				}
+				else {
+					alert("Error");
+					console.log(result);
+				}
+			}
+		}
+	}
+</script>

@@ -58,17 +58,18 @@ if ($ses_id) {
     xhr.send(postForm);
 
     xhr.onload = () => {
-  try {
+    try {
     if (xhr.status == 200) {
       const result = xhr.responseText;
-      if (result == "wrong info") {
+      const resultDate = JSON.parse(result);
+      if (resultDate.status == "wronginfo") {
         alert("有効ではないIDまたはパスワードです。");
         id.focus();
-      } else if (result == "wrong time") {
-        alert("診断可能な時間に再度お試しください。（メール参照）");
-      } else if (result == "timeout") {
-        alert("診断可能な時間が過ぎたので、受験できません。");
-      } else if (result == "success") {
+      } else if (resultDate.status == "wrongtime") {
+        alert(`診断開始(${resultDate.timein}~${resultDate.timeout})時間に再度お試しください。`);
+      } else if (resultDate.status == "timeout") {
+        alert(`診断開始(${resultDate.timein}~${resultDate.timeout})時間が過ぎていただめ、受験できません。\n管理者にお問い合わせください。`);
+      } else if (resultDate.status == "success") {
         self.location.href = "../applicant/exam";
       }
     } else {

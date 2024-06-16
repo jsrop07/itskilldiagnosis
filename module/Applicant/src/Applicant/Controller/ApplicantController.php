@@ -167,8 +167,9 @@ class ApplicantController extends AbstractActionController
     if (isset($p["id"])) {
 			$loginTbl = $this->getServiceLocator()->get("ApplicantLoginTable");
 			$result = $loginTbl->login($p["id"], $p["password"]);
+			$resultJson = json_decode($loginTbl->login($p["id"], $p["password"]));
 
-			if ($result == "success") {
+			if ($resultJson->status == "success") {
 				$session = new Container("applicant");
 				$session["id"] = $p["id"];
 			}

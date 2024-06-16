@@ -46,7 +46,10 @@ class ApplicantLoginTable
     $result = $this->sql->prepareStatementForSqlObject($qry)->execute()->current();
 
     if (empty($result)) {
-      return "wrong info";
+      $response = array(
+        'status' => 'wronginfo',
+    );
+    return json_encode($response);
     }
 
     if ($result["password"] == $password) {
@@ -60,24 +63,38 @@ class ApplicantLoginTable
 
     $currentDateTime = date("Y-m-d H:i:s"); // current time
     $dateSchedule = $resultqry['date_schedule']; // diagnosis schedule time 
-
     $currentDateTimeObj = date_create($currentDateTime); //turn to datetime object by cureenttDateTime 
     $dateScheduleObj = date_create($dateSchedule); // turn to datetime object by dateScheduleTime
     
     $dateInterval = $currentDateTimeObj -> diff($dateScheduleObj); // calculate dateScheduletime - cureentDateTime
     $minutesDifference = ($dateInterval->days * 24 * 60) + ($dateInterval->h * 60) + $dateInterval->i; //turn days, hour, minute to minute
 
+    $dateSchedulePlus = date("Y-m-d H:i:s", strtotime($dateSchedule . ' +30 minutes'));
 
     if($minutesDifference <= 30 && $currentDateTimeObj > $dateScheduleObj){
-      return "success";
+      
+      $response = array(
+        'status' => 'success',
+    );
+    return json_encode($response);
     } elseif($minutesDifference > 30 && $currentDateTimeObj > $dateScheduleObj){
       $updateQry = $this->sql->update('record')->set(array('rank' => 'F'))->where(array('idx' => $resultqry['idx']));
       $updateResult = $this->sql->prepareStatementForSqlObject($updateQry)->execute();
 
-      return "timeout";
+      $response = array(
+        'status' => 'timeout',
+        'timein' => $dateSchedule,
+        'timeout' => $dateSchedulePlus
+      );
+    return json_encode($response);
     }
-    return "wrong time";
+    $response = array(
+      'status' => 'wrongtime',
+      'timein' => $dateSchedule,
+      'timeout' => $dateSchedulePlus
+    );
+    return json_encode($response);
     exit;
-  }
+    }
 
 }

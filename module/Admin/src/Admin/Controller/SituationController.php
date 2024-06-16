@@ -243,12 +243,24 @@ class SituationController extends AbstractActionController {
 		}
 
 		if ($errorRecordDatas) {
+			/*
+				作成：朴昰成
+				修正：朴昰成
+				修正日：24/06/16
+			*/
+
+			/* 修正前：
 			$applicnatDatas = array();
 			foreach ($errorRecordDatas as $recordData) {
 				try { $applicnatDatas[] = $applicantTb->ReadByIdx($recordData["applicant_idx"]); }
 				catch (\Exception $e) { die($e->getMessage()); }
 			}
 			die(json_encode($applicnatDatas));
+			*/
+
+			/* 修正後： */
+			die(json_encode($errorRecordDatas));
+			/* ここまで */
 		}
 
 		try { $PICDatas = $adminTb->ReadPIC(); }

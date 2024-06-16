@@ -136,7 +136,19 @@
     <?php
       $isExpire = false;
       if (isset($recordData["date_schedule"])) {
+        /*
+          作成：朴昰成
+          修正：朴昰成
+          修正日：24/06/16
+        */
+
+        /* 修正前：
         if (($recordData["date_schedule"] < date("y.m.d H:i:m")) && is_null($recordData["rank"])) {
+        */
+
+        /* 修正後： */
+        if ((strtotime($recordData["date_schedule"]) < strtotime(date("Y-m-d H:i:s"))) && is_null($recordData["rank"])) {
+        /* ここまで */
           $isExpire = true;
         }
       }
@@ -185,10 +197,49 @@
   function Request(button) {
 		if (confirm("依頼しますか？") === false) { return false; }
 
+    /*
+      作成：朴昰成
+      修正：朴昰成
+      修正日：24/06/16
+    */
+
+    /* 修正前： <?php /* ?>
     if (<?php echo $isExpire; ?>) {
+    <?php */ ?> */
+
+    /* 修正後： */
+    <?php
+      $isExpire = false;
+      if (isset($recordData["date_schedule"])) {
+        /*
+          作成：朴昰成
+          修正：朴昰成
+          修正日：24/06/16
+        */
+
+        /* 修正前：
+        if (($recordData["date_schedule"] < date("y.m.d H:i:m")) && is_null($recordData["rank"])) {
+        */
+
+        /* 修正後： */
+        if ((strtotime($recordData["date_schedule"]) < strtotime(date("Y-m-d H:i:s"))) && is_null($recordData["rank"])) {
+        /* ここまで */
+          $isExpire = true;
+        }
+      }
+    ?>
+    if (<?php echo ($isExpire) ? "true" : "false"; ?>) {
+    /* ここまで */
       alert("診断予定日時を確認してください。");
       return false;
     }
+
+    /* move from 276
+      作成：朴昰成
+      作成日：24/06/16
+    */
+    location.reload(true);
+    /* ここまで */
 
     button.replaceChildren();
 
@@ -222,8 +273,22 @@
 					console.log(result);
 				}
 			}
+      /* move from 276
+        作成：朴昰成
+        作成日：24/06/16
+      */
+      location.reload(true);
+      /* ここまで */
 		}
+    /* move to 269
+      作成：朴昰成
+      削除：朴昰成
+      削除日：24/06/16
+    */
+    
+    /* 削除前： <?php /* ?>
     location.reload(true);
+    <?php */ ?> */
 	}
 
   function SendMail(button) {

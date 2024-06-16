@@ -336,28 +336,37 @@ class ApplicantController extends AbstractActionController
 			$majorText=$examRecordInfo['major'];
 		}
 		//submit
-		if($submit_post=='btn_submit'){
+		if ($submit_post == 'btn_submit') {
 			$sqlWhere["idx"] = $examRecordInfo['idx'];
 			$sqlSet["answer_data"] = $answer_data;
 			$sqlSet["get_point"] = $percentPoint;
-			$sqlSet['rank']=$recordRank;
-			$sqlSet['diagnosis_comment']=$recordExamResult;
-			$sqlSet['solve_time']=$post['solveTime'];
-
-			$applicantExamTbl->updateExam($sqlWhere, $sqlSet);			
-			$examRecordRecent =  $applicantExamTbl->readByApplicantIdx($applicantInfo);
-			$applicantExamTbl->deletePasswordByIdx($applicantInfo["idx"]);
-			$this->mailByApplicantExam($applicantInfo,$sqlSet,$managerArray,$examRecordIdx);
-			if($examRecordInfo['mail_delay'] == '0'){
-			$this->mailByAdminToApplicant($applicantInfo,$examRecordRecent,$caseText,$majorText,$managerArray);
+			$sqlSet['rank'] = $recordRank;
+			$sqlSet['diagnosis_comment'] = $recordExamResult;
+			$sqlSet['solve_time'] = $post['solveTime'];
+		
+			if ($examRecordInfo['mail_delay'] == '0') {
+				$sqlSet["date_mail"] = date("Y-m-d H:i:s");
+				$applicantExamTbl->updateExam($sqlWhere, $sqlSet);			
+				$examRecordRecent =  $applicantExamTbl->readByApplicantIdx($applicantInfo);
+				$applicantExamTbl->deletePasswordByIdx($applicantInfo["idx"]);
+				$this->mailByAdminToApplicant($applicantInfo, $examRecordRecent, $caseText, $majorText, $managerArray);
+				$this->mailByApplicantExam($applicantInfo,$sqlSet,$managerArray,$examRecordIdx);
+			} else {
+				$applicantExamTbl->updateExam($sqlWhere, $sqlSet);			
+				$examRecordRecent =  $applicantExamTbl->readByApplicantIdx($applicantInfo);
+				$applicantExamTbl->deletePasswordByIdx($applicantInfo["idx"]);
+				$this->mailByApplicantExam($applicantInfo,$sqlSet,$managerArray,$examRecordIdx);
 			}
-			unset($session->id);			
+		
+			unset($session->id);
+		
 			echo "
 			<script>
 			self.location.href='/applicant/examclear';
 			</script>
-			";	
-		  }
+			";
+		}
+		
 			// 作成：丁錫圓
 			// 修正：丁錫圓
 			// 修正日：24/06/14 

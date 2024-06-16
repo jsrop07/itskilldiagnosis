@@ -54,7 +54,7 @@
               <option value="IT・ソフトウェア以外">IT・ソフトウェア以外</option>
             </select>
             <div id="otherMajorInput" style=" margin-top:-15px; display:none;">
-              <input class="form-control" type="text" placeholder="その他の場合の、記入" id="otherMajor" name="major" maxlength='20'>
+              <input class="form-control" type="text" placeholder="学歴を記入してください。" id="otherMajor" name="major" maxlength='20'>
             </div>
 
             <span>ITスキル有無</span>
@@ -393,12 +393,12 @@ function checkKana(input) {
       }
   
       if (form.case.value == "選択してください。") {
-          alert("応募区分を入力してください。");
+          alert("応募区分を選択してください。");
           setTimeout("form.case.focus()",100);
           return false;
       }
       if (form.educationSelect.value == "選択してください。") {
-          alert("学歴入力してください。");
+          alert("学歴を選択してください。");
           setTimeout("form.educationSelect.focus()",100);
           return false;
       }
@@ -410,24 +410,24 @@ function checkKana(input) {
       }
 
       if (form.majorSelect.value == "IT・ソフトウェア以外" && form.otherMajor.value=="") {
-          alert("その他の場合の、記入してください。");
+          alert("学歴を記入してください。");
           setTimeout("form.otherMajor.focus()",100);
           return false;
       }
 
       if (form.skill.value == "選択") {
-          alert("ITスキル有無を入力してください。");
+          alert("ITスキル有無を選択してください。");
           setTimeout("form.skill.focus()",100);
           return false;
       }
 
       if (!class1stSelect.disabled && form.class1stSelect.value === "") {
-          alert("経験分野を入力してください。");
+          alert("経験分野を選択してください。");
           setTimeout("form.class1stSelect.focus()",100);
           return false;
       }
       if (!typeSelect.disabled && form.typeSelect.value === "選択してください。") {
-          alert("問題種別を入力してください。");
+          alert("問題種別を選択してください。");
           setTimeout("form.typeSelect.focus()",100);
           return false;
       }

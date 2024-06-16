@@ -189,11 +189,13 @@
 
     <?php // BUGFIX
       // if (<?php echo $isExpire; ) {
-    ?>
-    if ('<?php echo $isExpire; ?>' == '') {
+    if($isExpire==true){
+      ?>
       alert("診断予定日時を確認してください。");
       return false;
+      <?php
     }
+    ?>
 
     button.replaceChildren();
 

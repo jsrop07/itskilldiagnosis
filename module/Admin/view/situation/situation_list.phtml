@@ -532,7 +532,7 @@
           $alertString += "\n\n依頼ができなかった診断者";
           for (let i = 0; i < recordDatas.length; i++) {
             for (let j = 0; j < tableBodyList.children.length; j++) {
-              if (recordDatas[i]["idx"] = tableBodyList.children[j].lastElementChild.children[0].value) {
+              if (recordDatas[i]["idx"] == tableBodyList.children[j].lastElementChild.children[0].value) {
                 applicantNo = tableBodyList.children[j].firstElementChild.innerText;
                 applicantName = tableBodyList.children[j].children[4].innerText;
                 $alertString += "\n" + applicantNo + "．" + applicantName;

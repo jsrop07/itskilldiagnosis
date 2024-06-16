@@ -1,7 +1,7 @@
 <?php 
 echo $this->partial("breadcrumb", ["datas" => $breadcrumbData]); 
 $currentDate = date("Y-m-d H:i");
-$dateSchedule = date("Y-m-d H:i", strtotime($currentDate . ' +30 minutes'));
+$dateSchedule = date("Y-m-d H:i:s", strtotime($currentDate . ' +30 minutes'));
 
 function InitStyle() { return " font-style: italic; color: ;"; }
 ?>

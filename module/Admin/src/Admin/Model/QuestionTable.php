@@ -46,22 +46,7 @@ class QuestionTable {
 		$where->isNull("date_delete");
 		foreach ($whereDatas as $field => $data) {
 			if ($field == "title") {
-				/*
-					作成：朴昰成
-					修正：朴昰成
-					修正日：24/06/13
-				*/
-
-				/* 修正前：
-				$where->and->nest()
-					->like("title", "%" . $data . "%")
-					->or->like("question", "%" . $data . "%")
-				->unnest();
-				*/
-
-				/* 修正後： */
 				$where->and->like("title", "%" . $data . "%");
-				/* ここまで */
 				continue;
 			}
 			$where->and->equalTo($field, $data);
@@ -105,22 +90,7 @@ class QuestionTable {
 		$where->isNull("date_delete");
 		foreach ($whereDatas as $field => $data) {
 			if ($field == "title") {
-				/*
-					作成：朴昰成
-					修正：朴昰成
-					修正日：24/06/13
-				*/
-
-				/* 修正前：
-				$where->and->nest()
-					->like("title", "%" . $data . "%")
-					->or->like("question", "%" . $data . "%")
-				->unnest();
-				*/
-
-				/* 修正後： */
 				$where->and->like("title", "%" . $data . "%");
-				/* ここまで */
 				continue;
 			}
 			$where->and->equalTo($field, $data);

@@ -68,6 +68,13 @@ class DiagnosisController extends AbstractActionController {
 		$datas["totalNum"] = $diagnosisTb->CountAllList();
 
 		$diagnosisDatas = array();
+		/*
+			作成：朴昰成
+			修正：朴昰成
+			修正日：24/06/17
+		*/
+
+		/* 修正前：
 		if (!empty($query)) {
 			if (isset($query["select"])) {
 				$selectData = explode("-", $query["select"]);
@@ -82,6 +89,28 @@ class DiagnosisController extends AbstractActionController {
 			try { $diagnosisDatas = $diagnosisTb->GetListBySearch($sqlWhere); }
 			catch (\Exception $e) { print_r($e->getMessage()); exit; }
 		}
+		*/
+
+		/* 修正後： */
+		$sqlWhere = array();
+			
+		if (isset($query["select"])) {
+			$selectData = explode("-", $query["select"]);
+
+			if (isset($selectData[1])) {
+				if ($selectData[0] == "class") {
+					if (isset($selectData[2])) { $sqlWhere["class2nd"] = $selectData[2]; }
+					else { $sqlWhere["class1st"] = $selectData[1]; }
+				}
+				else { $sqlWhere[$selectData[0]] = $selectData[1]; }
+			}
+		}
+
+		if ($sqlWhere) {
+			try { $diagnosisDatas = $diagnosisTb->GetListBySearch($sqlWhere); }
+			catch (\Exception $e) { print_r($e->getMessage()); exit; }
+		}
+		/* ここまで */
 		else {
 			try {$diagnosisDatas = $diagnosisTb->GetAllList(); }
 			catch (\Exception $e) { print_r($e->getMessage()); exit; }
@@ -240,8 +269,21 @@ class DiagnosisController extends AbstractActionController {
 	/** When you click 修正 button on 診断問題詳細 page */
 	public function editAction() {
 		$this->ChkLogin();
+		/*
+			作成：朴昰成
+			修正：朴昰成
+			修正日：24/06/17
+		*/
+
+		/* 修正前：
 		$datas["breadcrumbData"] = ["ITスキル診断問題管理", "診断問題詳細", "診断問題修正"];
 		$datas["title"] = "診断問題修正";
+		*/
+
+		/* 修正後： */
+		$datas["breadcrumbData"] = ["ITスキル診断問題管理", "問題詳細", "問題修正"];
+		$datas["title"] = "問題修正";
+		/* ここまで */
 		$datas["optionDatas"] = $this->GetOptionDatasForInput();
 		$datas["resultDatas"] = $this->GetResultDatas();
 

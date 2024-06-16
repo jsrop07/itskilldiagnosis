@@ -330,7 +330,7 @@ $question_num = isset($diagnosisData['question_num']) ? $diagnosisData['question
 
 				<dt class="essential">問題ID</dt>
 				<dd>
-					<input name="code" type="hidden" style="width:220px;" value="<?php echo $diagnosisData['code'] !=NULL ?  $diagnosisData['code'] : "" ?>">
+        <input name="code" type="hidden" style="width:220px;" value="<?php echo isset($diagnosisData['code']) ? htmlspecialchars($diagnosisData['code']) : ''; ?>">
             <div id="codeDisplay" name="codeName" style="padding-right:5px;cursor:pointer;" 
               <?php echo isset($diagnosisData['idx']) ? "onclick='Link(" . $diagnosisData['idx'] . ");'" : '' ?>>
               <?php echo isset($diagnosisData['code']) && $diagnosisData['code'] !== false ? $diagnosisData['code'] : "未登録" ?>

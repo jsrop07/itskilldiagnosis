@@ -6,8 +6,31 @@
 	
 	if (!isset($_SESSION)) { session_start(); }
 
+  /*
+    作成：朴昰成
+    修正：朴昰成
+    修正日：24/06/12
+  */
+
+  /* 修正前：
 	$isReturn = false;
 	if (isset($adminData)) { $isReturn = true; }
+  */
+
+  /* 修正後： */
+	$isSet = false;
+	if (isset($_COOKIE["adminData"])) {
+		$isSet = true;
+    $adminData = json_decode($_COOKIE["adminData"], true);
+		setcookie("adminData", "", time() - 3600, "/");
+	}
+
+	$isEdit = false;
+	if (isset($adminData["idx"])) {
+		$isSet = true;
+		$isEdit = true;
+	}
+  /* ここまで */
 ?>
 
 <?php echo $this->partial("breadcrumb", ["datas" => $breadcrumbData]); ?>
@@ -28,6 +51,13 @@
 				dl.emegra.setting { grid-template-columns: 140px 1fr; }
 			</style>
 			<dl class="emegra setting">
+        <!--
+          作成：朴昰成
+          修正：朴昰成
+          修正日：24/06/12
+        -->
+
+        <!-- 修正前： <?php /* ?>
 				<dt>ログインID</dt>
 				<dd><input type="email" class="form-control" name="id" placeholder="IDを入力してください" value="<?php echo ($isReturn) ? $adminData["id"] : ""; ?>"/></dd>
 		
@@ -57,14 +87,65 @@
 				
 				<dt>SMTP パスワード</dt>
 				<dd><input class="form-control" name="smtp_password" id="smtp" placeholder="SMTPを入力してください" <?php echo ($isReturn && isset($adminData["smtp_password"])) ? "" : "disabled"; ?> value="<?php echo ($isReturn && isset($adminData["smtp_password"])) ? $adminData["smtp_password"] : ""; ?>"/></dd>
+        <?php */ ?> -->
+
+        <!-- 修正後： -->
+        <dt>ログインID</dt>
+        <dd><input type="email" class="form-control" name="id" placeholder="IDを入力してください" value="<?php echo ($isSet) ? $adminData["id"] : ""; ?>"/></dd>
+    
+        <dt>パスワード</dt>
+        <dd><input class="form-control" name="password" placeholder="パスワードを入力してください" value="<?php echo ($isSet && !$isEdit) ? $adminData["password"] : ""; ?>"/></dd>
+        
+        <dt>名前</dt>
+        <dd><input class="form-control" name="name" placeholder="名前を入力してください" value="<?php echo ($isSet) ? $adminData["name"] : ""; ?>"/></dd>
+        
+        <dt>権限</dt>
+        <dd>
+          <select class="form-select" name="level" style="width: 150px;">
+            <?php foreach ($levelTexts as $idx => $text): ?>
+              <option value="<?= $idx; ?>"<?php echo ($isSet && $adminData["level"] == $idx) ? " selected" : ""; ?>><?= $text; ?></option>
+            <?php endforeach; ?>
+          </select>
+        </dd>
+        
+        <dt>担当者</dt>
+        <dd>
+          <select class="form-select" name="pic" style="width: 150px;" onchange="ActiveSmtp(this.value);">
+            <?php foreach ($picTexts as $key => $text): ?>
+              <option value="<?= $key; ?>"<?php echo ($isSet && $adminData["pic"] == $key) ? " selected" : ""; ?>><?= $text; ?></option>
+            <?php endforeach; ?>
+          </select>
+        </dd>
+        
+        <dt>SMTP パスワード</dt>
+        <dd><input class="form-control" name="smtp_password" id="smtp" placeholder="SMTPを入力してください" <?php echo ($isSet && isset($adminData["smtp_password"])) ? "" : "disabled"; ?> value="<?php echo ($isSet && isset($adminData["smtp_password"])) ? $adminData["smtp_password"] : ""; ?>"/></dd>
+        <!-- ここまで -->
 			</dl>
 		</div>
 	</div>
 </form>
 
 <div class="btn-place" style="margin-top: 32px;">
+  <!--
+    作成：朴昰成
+    修正：朴昰成
+    修正日：24/06/12
+  -->
+
+  <!-- 修正前： <?php /* ?>
 	<button class="emegra cancel" onclick="self.location.href='./list';">戻る</button>
 	<button class="emegra" onclick="Regist();">登録</button>
+  <?php */ ?> -->
+
+  <!-- 修正後： -->
+  <?php if ($isEdit): ?>
+    <button class="emegra cancel" onclick="history.back();">戻る</button>
+    <button class="emegra" onclick="Edit();">修正</button>
+  <?php else: ?>
+    <button class="emegra cancel" onclick="history.back();">一覧へ</button>
+    <button class="emegra" onclick="Confirm();">確認画面へ</button>
+  <?php endif; ?>
+  <!-- ここまで -->
 </div>
 
 <script type="text/javascript">
@@ -77,6 +158,13 @@
 		else { smtp.disabled = true; }
 	}
 
+  /*
+    作成：朴昰成
+    修正：朴昰成
+    修正日：24/06/12
+  */
+
+  /* 修正前：
 	function Regist() {
 		if (form.id.value == "") {
 			alert("IDを入力してください");
@@ -110,4 +198,76 @@
 
 		form.submit();
 	}
+  */
+
+  /* 終生後： */
+  <?php if ($isEdit): ?>
+    function Edit() {
+      if (ChkValid() == false) { return false; }
+
+      const postForm = new FormData(form);
+      const xhr = new XMLHttpRequest();
+      xhr.open("POST", "../update", true);
+      xhr.send(postForm);
+      xhr.onload = () => {
+        if (xhr.status == 200) {
+          const result = xhr.responseText;
+          if (result == "success") {
+            alert("修正しました。");
+            self.location.href = "../list";
+          }
+          else {
+            alert("Error");
+            console.log(result);
+          }
+        }
+      }
+    }
+  <?php else: ?>
+    function Confirm() {
+      if (ChkValid() == false) { return false; }
+
+      form.submit();
+    }
+  <?php endif; ?>
+  /* ここまで */
+  /*
+    作成：朴昰成
+    作成日：24/06/12
+  */
+
+  function ChkValid() {
+    if (form.id.value == "") {
+      alert("IDを入力してください");
+      setTimeout("form.id.focus()", 100);
+      return false;
+    }
+    
+    if (pattern.test(form.id.value) === false) {
+      alert("IDを確認してください");
+      setTimeout("form.id.focus()", 100);
+      return false;
+    }
+    
+    if (form.password.value == "") {
+      alert("パスワードを入力してください");
+      setTimeout("form.password.focus()", 100);
+      return false;
+    }
+    
+    if (form.name.value == "") {
+      alert("名前を入力してください");
+      setTimeout("form.name.focus()", 100);
+      return false;
+    }
+    
+    if (smtp.disabled == false && smtp.value == "") {
+      alert("SMTPを入力してください");
+      setTimeout("smtp.focus()", 100);
+      return false;
+    }
+
+    return true;
+  }
+  /* ここまで */
 </script>

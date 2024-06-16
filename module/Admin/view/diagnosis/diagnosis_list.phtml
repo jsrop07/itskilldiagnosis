@@ -2,7 +2,7 @@
   $levelTexts = ["無級", "初級", "中級", "高級"];
   $selectTypeDatas = array(
     "level" => "レベル",
-    "class" => "問項種別",
+    "class" => "問題種別",
   );
 
   if (!isset($_SESSION)) { session_start(); }
@@ -117,7 +117,7 @@
 
         <?php if ($queryDatas["select"][0] == "class"): ?>
           <?php foreach ($optionDatas["class2nd"][$queryDatas["select"][1]] as $data): ?>
-            <option value="<?php echo $data["idx"]; ?>"<?php echo ($queryDatas["select"][2] = $data["idx"]) ? " selected" : ""; ?>><?php echo $data["text"]; ?></option>
+            <option value="<?php echo $data["idx"]; ?>"<?php echo ($queryDatas["select"][2] == $data["idx"]) ? " selected" : ""; ?>><?php echo $data["text"]; ?></option>
           <?php endforeach; ?>
         <?php endif; ?>
       </select>
@@ -144,7 +144,7 @@
       </thead>
       <tbody>
         <?php if (empty(iterator_to_array($diagnosisDatas))): ?>
-          <td colspan="9"> データがありません。</td>
+          <td colspan="9">問題がありません。</td>
         <?php else: ?>
           <?php foreach ($diagnosisDatas as $index => $data): ?>
             <tr>
@@ -188,6 +188,15 @@
   const selectSelectType = document.getElementById("select-select_type");
   const selectSelectValue = document.getElementById("select-select_value");
   const selectSelectClass = document.getElementById("select-select_class");
+
+	window.onpageshow = function(event) {
+    if(event.persisted || (window.performance && window.performance.navigation.type == 2)) {
+      check_all.checked = false;
+      for (let i = 0; i < checkElements.length; i++) {
+        checkElements[i].checked = false;
+      }
+    }
+  }
 
   function ChangeSelectType(element) {
     if (element.value == "") { Select(element); }

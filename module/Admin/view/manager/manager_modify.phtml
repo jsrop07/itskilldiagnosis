@@ -70,7 +70,19 @@
 </form>
 
 <div class="btn-place" style="margin-top: 32px;">
+  <!--
+    作成：朴昰成
+    修正：朴昰成
+    修正日：24/06/12
+  -->
+
+  <!-- 修正前： <?php /* ?>
 	<button class="emegra cancel" onclick="self.location.href='./detail/<?php echo $adminData['code']; ?>';">戻る</button>
+  <?php */ ?> -->
+
+  <!-- 修正後： -->
+	<button class="emegra cancel" onclick="history.back();">戻る</button>
+  <!-- ここまで -->
 	<button class="emegra" onclick="Update();">修正</button>
 </div>
 
@@ -103,7 +115,7 @@
 			return false;
 		}
 
-		if (smtp.disabled == false && smtp.value == "") {
+      if (form.pic.value == "y" && smtp.value == "") {
 			alert("SMTPを入力してください");
 			setTimeout("smtp.focus()", 100);
 			return false;

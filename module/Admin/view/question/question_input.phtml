@@ -81,19 +81,7 @@
 					</select>
 				</dd>
 
-        <!--
-          作成：朴昰成
-          修正：朴昰成
-          修正日：24/06/05
-        -->
-
-        <!-- 修正前： <?php /* ?>
-          <dt class="essential">問題タイプ</dt>
-        <?php */ ?> -->
-
-        <!-- 修正後： -->
         <dt class="essential">問項タイプ</dt>
-        <!-- ここまで -->
 				<dd>
 					<select class="form-select" name="type" id="type" onchange="ChangeType(this)" style="width: 150px;">
 						<option value="" hidden>選択</option>
@@ -133,19 +121,9 @@
             <div class="tab-pane show active" id="nav" role="tabpanel" aria-labelledby="nav-tab">
               <dl class="emegra question">
                 <dt class="essential">問題</dt>
-                <!-- Debug
-                  作成：朴昰成
-                  修正：朴昰成
-                  修正日：24/06/04
-                -->
-
-                <!-- 修正前： <?php /* ?>
-                  <dd><textarea row="1" class="form-control" name="question" placeholder="問題を入力してください" value="<?php echo ($isSet) ? htmlspecialchars($questionData["question"], ENT_QUOTES) : ""; ?>"></textarea></dd>
-                <?php */ ?> -->
-
-                <!-- 修正後： -->
-                <dd><textarea row="1" wrap="off" class="form-control" name="question" placeholder="問題を入力してください"><?php echo ($isSet) ? htmlspecialchars($questionData["question"], ENT_QUOTES) : ""; ?></textarea></dd>
-                <!-- ここまで -->
+                <dd class="expand">
+                  <textarea rows="5" wrap="off" class="form-control" name="question" placeholder="問題を入力してください"><?php echo ($isSet) ? str_replace("{{n}}", "\n", htmlspecialchars($questionData["question"], ENT_QUOTES)) : ""; ?></textarea>
+                </dd>
 
                 <dt class="essential">選択肢</dt>
                 <div class="grid answers" name="answers" id="answers">
@@ -153,13 +131,17 @@
                     <?php for ($i = 1; $i <= $answerNum; $i++): ?>
                       <div>
                         <dt class="essential"><?= $numTexts[$i - 1]; ?></dt>
-                        <dd><input class="form-control" name="answer<?= $i; ?>" type="text" placeholder="選択肢を入力してください" value="<?php echo htmlspecialchars($questionData["answer" . $i], ENT_QUOTES); ?>"></dd>
+                        <dd class="expand">
+                          <textarea rows="3" wrap="off" class="form-control" name="answer<?= $i; ?>" placeholder="選択肢を入力してください"><?php echo str_replace("{{n}}", "\n", htmlspecialchars($questionData["answer" . $i], ENT_QUOTES)); ?></textarea>
+                        </dd>
                       </div>
                     <?php endfor; ?>
                     <?php for ($i = $answerNum + 1; $i <= 5; $i++): ?>
                       <div hidden>
                         <dt class="essential"><?= $numTexts[$i - 1]; ?></dt>
-                        <dd><input class="form-control" name="answer<?= $i; ?>" type="text" placeholder="選択肢を入力してください" disabled/></dd>
+                        <dd class="expand">
+                          <textarea rows="3" wrap="off" class="form-control" name="answer<?= $i; ?>" placeholder="選択肢を入力してください" disabled></textarea>
+                        </dd>
                       </div>
                     <?php endfor; ?>
                   <?php else: ?>
@@ -168,7 +150,9 @@
                     <?php for ($i = 1; $i <= 5; $i++): ?>
                       <div hidden>
                         <dt class="essential"><?= $numTexts[$i - 1]; ?></dt>
-                        <dd><input class="form-control" name="answer<?= $i; ?>" type="text" placeholder="選択肢を入力してください" disabled/></dd>
+                        <dd class="expand">
+                          <textarea rows="3" wrap="off" class="form-control" name="answer<?= $i; ?>" placeholder="選択肢を入力してください" disabled></textarea>
+                        </dd>
                       </div>
                     <?php endfor; ?>
                   <?php endif; ?>
@@ -180,19 +164,9 @@
               <div class="tab-pane" id="nav-<?php echo $code; ?>" role="tabpanel" aria-labelledby="nav-<?php echo $code; ?>-tab">
                 <dl class="emegra question">
                   <dt>問題</dt>
-                  <!-- Debug
-                    作成：朴昰成
-                    修正：朴昰成
-                    修正日：24/06/04
-                  -->
-
-                  <!-- 修正前： <?php /* ?>
-                    <dd><textarea row="3" class="form-control" name="question_<?php echo $code; ?>" placeholder="問題を入力してください（<?php echo $text; ?>）" value="<?php echo ($isSet) ? htmlspecialchars($questionData["question_" . $code], ENT_QUOTES) : ""; ?>"></textarea></dd>
-                  <?php */ ?> -->
-
-                  <!-- 修正後： -->
-                  <dd><textarea row="1" wrap="off" class="form-control" name="question_<?php echo $code; ?>" placeholder="問題を入力してください（<?php echo $text; ?>）" ><?php echo ($isSet) ? htmlspecialchars($questionData["question_" . $code], ENT_QUOTES) : ""; ?></textarea></dd>
-                  <!-- ここまで -->
+                  <dd class="expand">
+                    <textarea rows="5" wrap="off" class="form-control" name="question_<?php echo $code; ?>" placeholder="問題を入力してください（<?php echo $text; ?>）"><?php echo ($isSet) ? str_replace("{{n}}", "\n", htmlspecialchars($questionData["question_" . $code], ENT_QUOTES)) : ""; ?></textarea>
+                  </dd>
 
                   <dt>選択肢</dt>
                   <div class="grid answers" name="answers" id="answers">
@@ -200,13 +174,17 @@
                       <?php for ($i = 1; $i <= $answerNum; $i++): ?>
                         <div>
                           <dt><?= $numTexts[$i - 1]; ?></dt>
-                          <dd><input class="form-control" name="answer<?= $i; ?>_<?php echo $code; ?>" type="text" placeholder="選択肢を入力してください（<?php echo $text; ?>）" value="<?php echo htmlspecialchars($questionData["answer" . $i . "_" . $code], ENT_QUOTES); ?>"></dd>
+                          <dd class="expand">
+                            <textarea rows="3" wrap="off" class="form-control" name="answer<?= $i; ?>_<?php echo $code; ?>" placeholder="選択肢を入力してください（<?php echo $text; ?>）"><?php echo str_replace("{{n}}", "\n", htmlspecialchars($questionData["answer" . $i . "_" . $code], ENT_QUOTES)); ?></textarea>
+                          </dd>
                         </div>
                       <?php endfor; ?>
                       <?php for ($i = $answerNum + 1; $i <= 5; $i++): ?>
                         <div hidden>
                           <dt><?= $numTexts[$i - 1]; ?></dt>
-                          <dd><input class="form-control" name="answer<?= $i; ?>_<?php echo $code; ?>" type="text" placeholder="選択肢を入力してください（<?php echo $text; ?>）" disabled/></dd>
+                          <dd class="expand">
+                            <textarea rows="3" wrap="off" class="form-control" name="answer<?= $i; ?>_<?php echo $code; ?>" placeholder="選択肢を入力してください（<?php echo $text; ?>）" disabled></textarea>
+                          </dd>
                         </div>
                       <?php endfor; ?>
                     <?php else: ?>
@@ -215,7 +193,9 @@
                       <?php for ($i = 1; $i <= 5; $i++): ?>
                         <div hidden>
                           <dt><?= $numTexts[$i - 1]; ?></dt>
-                          <dd><input class="form-control" name="answer<?= $i; ?>_<?php echo $code; ?>" type="text" placeholder="選択肢を入力してください（<?php echo $text; ?>）" disabled/></dd>
+                          <dd class="expand">
+                            <textarea rows="3" wrap="off" class="form-control" name="answer<?= $i; ?>_<?php echo $code; ?>" placeholder="選択肢を入力してください（<?php echo $text; ?>）" disabled></textarea>
+                          </dd>
                         </div>
                       <?php endfor; ?>
                     <?php endif; ?>
@@ -281,7 +261,7 @@
 				<dt>備考</dt>
 				<dd class="expand">
 					<textarea class="form-control" name="note" rows="5"><?php if ($isSet) {
-						echo $questionData["note"];
+            echo str_replace("{{n}}", "\n", htmlspecialchars($questionData["note"], ENT_QUOTES));
 						if ($isEdit) {
 							$logString = "修正　" . date("Y.m.d") . "　" . $_SESSION["user"]["name"];
 							echo $logString . "\n";
@@ -294,7 +274,7 @@
 </form>
 
 <div class="btn-place" style="margin-top: 32px;">
-	<button class="emegra cancel" onclick="history.back()">戻る</button>
+  <button class="emegra cancel" onclick="history.back();">一覧へ</button>
 
 	<?php if ($isEdit): ?>
 		<button class="emegra" onclick="Edit();">修正</button>
@@ -305,6 +285,12 @@
 
 <script type="text/javascript">
 	const numTexts = ["①", "②", "③", "④", "⑤"];
+  // [{"code":code, "lang":lang}]
+  const langDatas = new Array(
+    <?php foreach ($languageCodeDatas as $code => $lang): ?>
+      {"code":"<?php echo $code; ?>", "lang":"<?php echo $lang; ?>"},
+    <?php endforeach; ?>
+  );
 
   const noticeDivs = document.getElementsByName("div_notice");
 	const answerDivs = document.getElementsByName("div_answer");
@@ -317,6 +303,7 @@
 	window.onload = function() {
 		answers = [form.answer1, form.answer2, form.answer3, form.answer4, form.answer5];
 		SetValue();
+    console.log(langDatas);
 	}
 
 	function SetValue() {
@@ -507,6 +494,37 @@
 			RequestSelect(form.point, "点数");
 			return false;
 		}
+
+    // check foreign's question, answer input is empty
+    let isEmpty = false;
+    let emptyLangDatas = new Array();
+    for (let i = 0; i < langDatas.length; i++) {
+      // check question
+      if (form.elements["question_" + langDatas[i]["code"]].value == "") {
+        isEmpty = true;
+        emptyLangDatas.push(langDatas[i]["lang"]);
+        continue;
+      }
+
+      for (let j = 0; j < 5; j++) {
+        // check answers disabled
+        if (form.elements["answer" + Number(j + 1) + "_" + langDatas[i]["code"]].disabled == true) { break; }
+
+        // check answers
+        if (form.elements["answer" + Number(j + 1) + "_" + langDatas[i]["code"]].value.trim() == "") {
+          isEmpty = true;
+          emptyLangDatas.push(langDatas[i]["lang"]);
+          break;
+        }
+      }	
+    } 
+
+    if (isEmpty) {
+      let emptyLangs = emptyLangDatas.join(",");
+      let confirmString = emptyLangs + "問題に未入力項目がありますが、\n";
+      confirmString += "このまま登録してもよろしいでしょうか？";
+      return confirm(confirmString);
+    }
 	}
 
 	// For alert

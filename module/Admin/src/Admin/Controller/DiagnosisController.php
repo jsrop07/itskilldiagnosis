@@ -29,23 +29,11 @@ class DiagnosisController extends AbstractActionController {
 		$this->ChkLogin();
 		$datas["breadcrumbData"] = ["ITスキル診断問題管理"];
 		$datas["optionDatas"] = $this->GetOptionDatas();
-		/*
-			作成：朴昰成
-			修正：朴昰成
-			修正日：24/06/11
-		*/
-
-		/* 修正前：
-			$datas["inputOptionDatas"] = $this->GetOptionDatasForInput();
-		*/
-
-		/* 修正後： */
 		// array_merge occurs error
 		$optionDatas = $this->GetOptionDatasOrganizeByType();
 		foreach ($optionDatas as $type => $data) {
 			$datas["optionDatas"][$type] = $data;
 		}
-		/* ここまで */
 
 		$optionTb = $this->getServiceLocator()->get("OptionTable");
 		$beforeClass2ndDatas = array();
@@ -75,22 +63,6 @@ class DiagnosisController extends AbstractActionController {
 
 		$diagnosisDatas = array();
 		if (!empty($query)) {
-			/*
-				作成：朴昰成
-				修正：朴昰成
-				修正日：24/06/11
-			*/
-	
-			/* 修正前：
-				$datas["searchData"] = $query;
-				if (isset($query["class2nd"]) && $query["class2nd"] == "Cpp") {
-					$query["class2nd"] = "C++";
-				}
-				try { $diagnosisDatas = $diagnosisTb->GetListByOption($query); }
-				catch (\Exception $e) { print_r($e->getMessage()); exit; }
-			*/
-	
-			/* 修正後： */
 			if (isset($query["select"])) {
 				$selectData = explode("-", $query["select"]);
 				if ($selectData[0] == "class") {
@@ -103,7 +75,6 @@ class DiagnosisController extends AbstractActionController {
 
 			try { $diagnosisDatas = $diagnosisTb->GetListBySearch($sqlWhere); }
 			catch (\Exception $e) { print_r($e->getMessage()); exit; }
-			/* ここまで */
 		}
 		else {
 			try {$diagnosisDatas = $diagnosisTb->GetAllList(); }
@@ -121,7 +92,19 @@ class DiagnosisController extends AbstractActionController {
 		$this->ChkLogin();
 		$datas["breadcrumbData"] = ["ITスキル診断問題管理", "診断問題登録"];
 		$datas["title"] = "診断問題登録";
+		/*
+			作成：朴昰成
+			修正：朴昰成
+			修正日：24/06/15
+		*/
+
+		/* 修正前：
 		$datas["optionDatas"] = $this->GetOptionDatasForInput();
+		*/
+
+		/* 修正後： */
+		$datas["optionDatas"] = $this->GetAllOption();
+		/* ここまで */
 		$datas["resultDatas"] = $this->GetResultDatas();
 
 		// Check return from 登録確認　page
@@ -233,6 +216,8 @@ class DiagnosisController extends AbstractActionController {
 		$sqlValue["admin_create"] = $session["code"];
 		$sqlValue["date_start"] = date("Y-m-d H:i:s");
 
+		$sqlValue["point_total"] = $post["point_total"];
+
 		$diagnosisTb = $this->getServiceLocator()->get("DiagnosisTable-Admin");
 		try { $diagnosisTb->createDiagnosis($sqlValue); }
 		catch (\Exception $e) { die($e->getMessage()); }
@@ -267,6 +252,7 @@ class DiagnosisController extends AbstractActionController {
 		$sqlValue["result_texts"] = implode(",", $textDatas);
 		$sqlValue["result_comments"] = implode(",", $commentDatas);
 		$sqlValue["date_start"] = date("Y-m-d H:i:s");
+		$sqlValue["point_total"] = $post["point_total"];
 		try { $diagnosisTb->CreateDiagnosis($sqlValue); }
 		catch (\Exception $e) { die($e->getMessage()); }
 
@@ -293,13 +279,27 @@ class DiagnosisController extends AbstractActionController {
 			die (json_encode($this->ReadQuestionDatasByIdxs($post["question_idxs"])));
 		}
 		
-		/* test */
+		/*
+			作成：朴昰成
+			削除：朴昰成
+			削除日：24/06/14
+		*/
+
+		/* 削除前：
+		* test *
 		$sqlWhere["class1st"] = $post["class1st"];
 		$sqlWhere["class2nd"] = $post["class2nd"];
 		$sqlWhere["level"] = $post["level"];
-		/* test */
+		* test *
+		*/
 		switch ($route) {
 			case "question":
+				/*
+					作成：朴昰成
+					作成日：24/06/14
+				*/
+				$sqlWhere = $post;
+				/* ここまで */
 
 				$questionTb = $this->getServiceLocator()->get("QuestionTable");
 				try { $questionDatas = $questionTb->ReadForDiagnosis($sqlWhere); }
@@ -309,8 +309,27 @@ class DiagnosisController extends AbstractActionController {
 				foreach($questionDatas as $index => $data) {
 					$question["idx"] = $data["idx"];
 					$question["title"] = $data["title"];
+					/*
+						作成：朴昰成
+						修正：朴昰成
+						修正日：24/06/14
+					*/
+
+					/* 修正前：
 					try { $question["type"] = $optionTb->ReadByIdx($data["type"])["text"]; }
 					catch (\Exception $e) { die($e->getMessage()); }
+					*/
+					
+					/* 修正後： */
+					$question["level"] = $data["level"];
+
+					try {
+						$question["class1st"] = $optionTb->ReadByIdx($data["class1st"])["text"];
+						$question["class2nd"] = $optionTb->ReadByIdx($data["class2nd"])["text"];
+					} catch (\Exception $e) {
+						die($e->getMessage());
+					}
+					/* ここまで */
 					$question["point"] = $data["point"];
 
 					$question["question"] = $data["question"];
@@ -327,8 +346,7 @@ class DiagnosisController extends AbstractActionController {
 				$questionTb = $this->getServiceLocator()->get("QuestionTable");
 				$questionIdxsByScore = $this->ReadQuestionIdxsByScore($sqlWhere);
 
-				$questionIdxsByScore = $this->CreateQuestionList($questionIdxsByScore, $post["question_num"]);
-				$questionIdxs = $this->QuestionIdxsByScoreToQuestionIdxs($questionIdxsByScore);
+				$questionIdxs = $this->CreateQuestionList($questionIdxsByScore, $post["question_num"]);
 				die(json_encode($questionIdxs));
 				break;
 		}
@@ -519,10 +537,6 @@ class DiagnosisController extends AbstractActionController {
 		return $optionDatas;
 	}
 
-	/*
-		作成：朴昰成
-		作成日：24/06/11
-	*/
 	/** Read Option datas Organize by Type
 	 * @return array $optionDatas ["type" => data] (class2nd = ["class2nd" => ["class_upper" => data]])
 	 */
@@ -565,8 +579,14 @@ class DiagnosisController extends AbstractActionController {
 		return $optionDatas;
 	}
 
-	/* ここまで */
 	function GetResultDatas() {
+		/*
+			作成：朴昰成
+			修正：朴昰成
+			修正日：24/06/15
+		*/
+
+		/* 修正前：
 		$result["point1"] = 95;
 		$result["point2"] = 90;
 		$result["point3"] = 80;
@@ -622,6 +642,24 @@ class DiagnosisController extends AbstractActionController {
 		$result["comment3"] = "成長の可能性が見える";
 		$result["comment4"] = "適性が合わないようである";
 		$resultDatas[3] = $result;
+		*/
+
+		/* 修正後： */
+		$result["text1"] = "優秀";
+		$result["text2"] = "やや優秀";
+		$result["text3"] = "努力が必要";
+		$result["text4"] = "IT職業に向いてない";
+		// $result["comment1"] = "素晴らしい結果です。IT の概念に対するあなたの知識と理解は並外れたものです。上位 10% に入るスコアは、あなたが内容をしっかりと理解していることを示す重要な成果です。より高い能力（スキル）を持つように挑戦し続けてください。";
+		// $result["comment2"] = "よくやりました！ IT の概念をしっかりと理解しており、内容を習得する段階に順調に進んでいることを示しています。引き続き今まで通り頑張って頂き、将来的にはさらに高い成果を目指してください。";
+		// $result["comment3"] = "よく頑張りましたね。あなたは主要な IT 概念をある程度理解していると思いますが、改善の余地があるので、知識とスキルをさらに高めるために学習を続けてください。";
+		// $result["comment4"] = "ご尽力いただき、ありがとうございます。現在の状況だと、さらなる見直しと改善が必要だと考えられます。時間をかけて自分の学習方法を再検討し、必要に応じて遠慮せずに助けを求めてください。";
+		
+		$result["comment1"] = "優れている";
+		$result["comment2"] = "適性に合うようである";
+		$result["comment3"] = "成長の可能性が見える";
+		$result["comment4"] = "適性が合わないようである";
+				$resultDatas = $result;
+		/* ここまで */
 
 		return $resultDatas;
 	}
@@ -702,60 +740,27 @@ class DiagnosisController extends AbstractActionController {
 	}
 
 	function CreateQuestionList($beforeQuestionIdxsByScore, $question_num) {
-		$questionIdxsByScore = array();
-		for ($i = 1; $i <= 5; $i++) {
-			$questionIdxsByScore[$i] = array();
+		$beforeQuestionIdxDatas = array();
+		foreach ($beforeQuestionIdxsByScore as $datas) {
+			$idxDatas = array();
+			foreach ($datas as $data) {
+				$idxDatas[] = $data["idx"];
+			}
+			$beforeQuestionIdxDatas = array_merge($beforeQuestionIdxDatas, $idxDatas);
 		}
 
-		$totalPoint = 0;
-		for ($i = 0; $i < $question_num; $i++) {
-			$isEmpty = true;
-			for ($j = 1; $j <= 5; $j++) {
-				if (!empty($beforeQuestionIdxsByScore[$j])) { $isEmpty = false; }
-			}
-			if ($isEmpty) { return $questionIdxsByScore; }
-
-			do { $point = rand(1, 5); }
-			while (empty($beforeQuestionIdxsByScore[$point]));
-
-			$rndIdx = array_rand($beforeQuestionIdxsByScore[$point]);
-			$questionIdxsByScore[$point][$rndIdx] = $beforeQuestionIdxsByScore[$point][$rndIdx];
-			unset($beforeQuestionIdxsByScore[$point][$rndIdx]);
-			$totalPoint += $point;
-
-			while ($totalPoint > 100) {
-				$before = array();
-				$after = array();
-
-				for ($j = 5; $j >= 2; $j--) {
-					if (!empty($questionIdxsByScore[$j])) {
-						$before["point"] = $j;
-						$before["index"] = array_rand($questionIdxsByScore[$j]);
-						$before["data"] = $questionIdxsByScore[$j][$before["index"]];
-						unset($questionIdxsByScore[$before["point"]][$before["index"]]);
-						break;
-					}
-					if ($j == 2) { return $questionIdxsByScore; }
-				}
-
-				for ($j = 1; $j <= $before["point"]; $j++) {
-					if (!empty($beforeQuestionIdxsByScore[$j])) {
-						$after["point"] = $j;
-						$after["index"] = array_rand($beforeQuestionIdxsByScore[$j]);
-						$after["data"] = $beforeQuestionIdxsByScore[$j][$after["index"]];
-						unset($beforeQuestionIdxsByScore[$after["point"]][$after["index"]]);
-						break;
-					}
-					if ($j == $before["point"]	) { return $questionIdxsByScore; }
-				}
-
-				$questionIdxsByScore[$after["point"]][$after["index"]] = $after["data"];
-				$beforeQuestionIdxsByScore[$before["point"]][$before["index"]] = $before["data"];
-				$totalPoint = $totalPoint - $before["point"] + $after["point"];
-			}
+		if ($question_num > count($beforeQuestionIdxDatas)) {
+			return $beforeQuestionIdxDatas;
 		}
 
-		return $questionIdxsByScore;
+		$indexDatas = array_rand($beforeQuestionIdxDatas, $question_num);
+		$questionIdxDatas = array();
+		foreach ($indexDatas as $index) {
+			$questionIdxDatas[] = $beforeQuestionIdxDatas[$index];
+		}
+		$questionDatas = $questionIdxDatas;
+
+		return $questionDatas;
 	}
 
 	function QuestionIdxsByScoreToQuestionIdxs($questionIdxsByScore) {
@@ -769,4 +774,23 @@ class DiagnosisController extends AbstractActionController {
 
 		return $questionIdxs;
 	}
+	/*
+		作成：朴昰成
+		作成日：24/06/15
+	*/
+
+	/** make optiondatas organize by idx, type
+	 * @return array $optionDatas ["idx" => $data], ["type" => $data]
+	 */
+	function GetAllOption() {
+		$optionDatas = $this->GetOptionDatas();
+		// array_merge occurs error
+		$optionDatasoOrgType = $this->GetOptionDatasOrganizeByType();
+		foreach ($optionDatasoOrgType as $type => $data) {
+			$optionDatas[$type] = $data;
+		}
+
+		return $optionDatas;
+	}
+	/* ここまで */
 }

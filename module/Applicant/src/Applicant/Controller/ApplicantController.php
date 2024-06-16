@@ -117,29 +117,28 @@ class ApplicantController extends AbstractActionController
 
   function mailByApplicantation($arr,$skillText,$caseText,$managerArray,$applicantInfo){
 	$mail = new MailSender();
-	// 기본 메일 전송 관련 설정 로드
 	$param['config']=$this->getConfig();
 	
-	// 메일 제목 지정 (일반적으로 DB에 메일폼 테이블을 만들어서 그것을 가져와서 아래의 title contents에 넣지만, 이건 샘플이므로 간단히.)
-	// 사람마다 변환해야 할 부분은 {{이렇게}} 메일폼에 넣어놓는다.
-	$param['title']="{{user_name}}様、新しい試験診断の申し込みがあります。";
-	$param["content"] = "以下の申込者の情報をご参照ください。\n\nお名前（漢字）：{$arr["name"]}\nお名前（カナ）：{$arr["kana"]}\n応募区分：{$caseText}\nITスキル：{$skillText}\n\n診断者ページ：{$param['config']['user-url']['admin']}/situation/edit/{$applicantInfo["idx"]}";
-
-	// 사람이름이나, URL등 고유하게 변경해야 하는 것은 이렇게 처리한다.
-	// 메일 제목과 내용 부분 모두 변환처리.
-	$param['title']=str_replace("{{user_name}}","申し込み担当者",$param['title']);
-	// print_r($param['config']);
-	// $param['content']=str_replace("{{user_name}}","変換する試験受け者名",$param['content']);
-	$param['content']=str_replace("{{URL}}","テスト",$param['content']);
-
-	// 수신자 이메일과 이름 설정
+	$param['title']="ITスキル診断担当者様、新しい診断の申し込みがあります。";
+	$param["content"] = "以下の申込者の情報をご参照ください。\n\n"
+										. "お名前（漢字）：{{name}}\n"
+										. "お名前（カナ）：{{kana}}\n"
+										. "応募区分：{{case}}\n"
+										. "ITスキル：{{skill}}\n\n"
+										. "診断者ページ：{{url}}/situation/edit/{{idx}}";
+										$param['content']=str_replace("{{name}}",$arr["name"],$param['content']);
+										$param['content']=str_replace("{{kana}}",$arr["kana"],$param['content']);
+										$param['content']=str_replace("{{case}}",$caseText,$param['content']);
+										$param['content']=str_replace("{{skill}}",$skillText,$param['content']);
+										$param['content']=str_replace("{{url}}",$param['config']['user-url']['admin'],$param['content']);
+										$param['content']=str_replace("{{idx}}",$applicantInfo["idx"],$param['content']);
+	
 	$param['email']=$managerArray[0];
 	$param['password']="$managerArray[1]";
 	$param['name']="$managerArray[2]";
 	$param['smtp_password']="$managerArray[3]";
-	// 전송
+
 	$result = $mail->mailsender($param);
-	// $result = $this->getServiceLocator()->get("mailsender");
 
 	$result_row = $result['transport']->getConnection()->getResponse();
 
@@ -153,6 +152,9 @@ class ApplicantController extends AbstractActionController
 			default:
 				$status = 'FALSE';
 					break;
+	}
+	if ($status === 'FALSE') {
+    echo "<script>alert('メールの送信に失敗しました。');</script>";
 	}
   }
 
@@ -348,24 +350,39 @@ class ApplicantController extends AbstractActionController
 			if($examRecordInfo['mail_delay'] == '0'){
 			$this->mailByAdminToApplicant($applicantInfo,$examRecordRecent,$caseText,$majorText,$managerArray);
 			}
-			session_unset(); 
+			unset($session->id);			
 			echo "
 			<script>
 			self.location.href='/applicant/examclear';
 			</script>
 			";	
 		  }
-		  
+			// 作成：丁錫圓
+			// 修正：丁錫圓
+			// 修正日：24/06/14 
+			// 修正前：
+			// if($submit_post=='cancel'){
+			// 	if (isset($session->id)) {
+			// 		$emailId = $session->id;
+			// 		unset($emailId);
+			// 		$applicantExamTbl->deletePasswordByIdx($applicantInfo["idx"]);
+			// 		$applicantExamTbl->disqualificationByCancel($examRecordInfo['idx']);
+			// 		session_unset(); 
+			// 		$this->CancelToLogin();	
+			// 	}
+		  // }
+
+			// and all session unset part
+			// 修正後
 		  if($submit_post=='cancel'){
 				if (isset($session->id)) {
-					$emailId = $session->id;
-					unset($emailId);
+					unset($session->id);
 					$applicantExamTbl->deletePasswordByIdx($applicantInfo["idx"]);
 					$applicantExamTbl->disqualificationByCancel($examRecordInfo['idx']);
-					session_unset(); 
 					$this->CancelToLogin();	
 				}
 		  }
+			/* ここまで */
 	  // Set variables to be passed to the layout
 	  $viewModel = new ViewModel($datas);
   
@@ -381,35 +398,66 @@ class ApplicantController extends AbstractActionController
 	*/ 
 	public function timeoutAction()
 	{
-			$post = $this->params()->fromPost();
-			$examIdx = $post['idx']; 
-			$applicantExamTbl = $this->getServiceLocator()->get("ApplicantExamTable");
-			
-			$session = new Container("applicant");
-			$emailId = $session->id;
-			$diagnosisTb = $this->getServiceLocator()->get("DiagnosisTable-Admin");
-			$applicantInfo    = $applicantExamTbl->readById($emailId);
-			$examRecordInfo =  $applicantExamTbl->readByApplicantIdx($applicantInfo);
-			$recordCode    = $examRecordInfo["diagnosis_code"];	
-			$diagnosisInfo = $diagnosisTb->ReadForRecordByCodenDate($recordCode, $examRecordInfo["diagnosis_date"]);	
-			$diagnosisTime = $diagnosisInfo['time_limit'];
-
-			$timeout = $applicantExamTbl->timeout($examIdx,$diagnosisTime); 
-			if ($timeout === 'timeout') {
-				if (isset($session->id)) {
-					// $emailId = $session->id;
-					$applicantInfo = $applicantExamTbl->readById($emailId);
-					$applicantExamTbl->deletePasswordByIdx($applicantInfo['idx']);
-					unset($emailId);
-					session_unset(); 
-					die($timeout);
-				}
-			}
-			elseif($timeout === "success"){					
-				die($timeout);
-			}
-
+		$post = $this->params()->fromPost();
+		$examIdx = $post['idx']; 
+		$applicantExamTbl = $this->getServiceLocator()->get("ApplicantExamTable");
 		
+		$session = new Container("applicant");
+		// $emailId = $session->id;
+		if (isset($session->id)) {
+		  $emailId = $session->id;
+		} else {
+		$this->RedirectToLogin();		  
+	  }
+		$diagnosisTb = $this->getServiceLocator()->get("DiagnosisTable-Admin");
+		$applicantInfo    = $applicantExamTbl->readById($emailId);
+		$examRecordInfo =  $applicantExamTbl->readByApplicantIdx($applicantInfo);
+		$recordCode    = $examRecordInfo["diagnosis_code"];	
+		$diagnosisInfo = $diagnosisTb->ReadForRecordByCodenDate($recordCode, $examRecordInfo["diagnosis_date"]);	
+		$diagnosisTime = $diagnosisInfo['time_limit'];
+		// 作成：丁錫圓
+		// 修正：丁錫圓
+		// 修正日：24/06/13
+		// 修正前：
+		// $timeout = $applicantExamTbl->timeout($examIdx, $diagnosisTime);
+
+		// 	if ($timeout === 'timeout') {
+		// 			// Handle timeout case
+		// 			$applicantExamTbl->deletePasswordByIdx($applicantInfo['idx']);
+		// 			session_unset();
+		// 			echo json_encode(array('status' => 'timeout'));
+		// 	} elseif (is_string($timeout)) {
+		// 		echo $timeout; // Assuming $timeout is already JSON encoded by timeout() method
+		// 	} else {
+		// 			// Handle unexpected cases
+		// 			http_response_code(500); // Internal Server Error
+		// 			echo json_encode(array('error' => 'Unexpected error occurred'));
+		// 	}
+			
+    // // Terminate script execution
+    // exit;
+		// 修正後：
+		$timeout = $applicantExamTbl->timeout($examIdx, $diagnosisTime);
+		error_log("Timeout response: " . $timeout);
+
+		$timeoutData = json_decode($timeout, true);
+		if (json_last_error() !== JSON_ERROR_NONE) {
+			$jsonError = json_last_error_msg();
+			http_response_code(500); 
+			echo json_encode(array('error' => 'Invalid JSON response', 'message' => $jsonError, 'raw_response' => $timeout));
+			exit;
+		}
+		if (isset($timeoutData['status']) && $timeoutData['status'] === 'timeout') {
+				$applicantExamTbl->deletePasswordByIdx($applicantInfo['idx']);
+				unset($session->id);
+				echo $timeout; 
+		} elseif (isset($timeoutData['status']) && $timeoutData['status'] === 'success') {
+				echo $timeout; 
+		} else {
+				http_response_code(500); 
+				echo json_encode(array('error' => 'Unexpected error occurred'));
+		}
+		exit;
 	}
 		// ここまで
 
@@ -420,18 +468,28 @@ function mailByApplicantExam($applicantInfo,$sqlSet,$managerArray,$examRecordIdx
 	$param['config']=$this->getConfig();
 	// 메일 제목 지정 (일반적으로 DB에 메일폼 테이블을 만들어서 그것을 가져와서 아래의 title contents에 넣지만, 이건 샘플이므로 간단히.)
 	// 사람마다 변환해야 할 부분은 {{이렇게}} 메일폼에 넣어놓는다.
-	$param['title']="{{user_name}}様、{$applicantInfo["name"]}診断者の試験結果が出ました。";
-	$param["content"] = "以下の診断者の試験結果をご参照ください。\n\nお名前（漢字）：{$applicantInfo["name"]}\nお名前（カナ）：{$applicantInfo["kana"]}\nメールアドレス：{$applicantInfo["email"]}\n得点：{$sqlSet["get_point"]}\n評価：{$sqlSet["rank"]}\n評価結果：{$sqlSet["diagnosis_comment"]}\n\n診断者ページ：{$param['config']['user-url']['admin']}/situation/detail/{$examRecordIdx}";
+	$param['title']="ITスキル診断担当者様、{{name}}診断者の試験結果が出ました。";
+	$param["content"] = "以下の診断者の試験結果をご参照ください。\n\n"
+										. "お名前（漢字）：{{name}}\n"
+										. "お名前（カナ）：{{kana}}\n"
+										. "メールアドレス：{{email}}\n"
+										. "得点：{{point}}\n"
+										. "評価：{{rank}}\n"
+										. "評価結果：{{comment}}\n\n"
+										. "診断者ページ：{{url}}/situation/detail/{{idx}}";
 
-	// 사람이름이나, URL등 고유하게 변경해야 하는 것은 이렇게 처리한다.
-	// 메일 제목과 내용 부분 모두 변환처리.
-	$param['title']=str_replace("{{user_name}}","担当者",$param['title']);
-	// print_r($param['title']);
-	// $param['content']=str_replace("{{user_name}}","変換する試験受け者名",$param['content']);
-	$param['content']=str_replace("{{URL}}","テスト",$param['content']);
+	$param['title']=str_replace("{{name}}",$applicantInfo["name"],$param['title']);
 
-	// 수신자 이메일과 이름 설정
-	// $param['managerEmail']=$managerArray[0];
+	$param['content']=str_replace("{{name}}",$applicantInfo["name"],$param['content']);
+	$param['content']=str_replace("{{kana}}",$applicantInfo["kana"],$param['content']);
+	$param['content']=str_replace("{{email}}",$applicantInfo["email"],$param['content']);
+	$param['content']=str_replace("{{point}}",$sqlSet["get_point"],$param['content']);
+	$param['content']=str_replace("{{rank}}",$sqlSet["rank"],$param['content']);
+	$param['content']=str_replace("{{comment}}",$sqlSet["diagnosis_comment"],$param['content']);
+	$param['content']=str_replace("{{url}}",$param['config']['user-url']['admin'],$param['content']);
+	$param['content']=str_replace("{{idx}}",$examRecordIdx,$param['content']);
+
+
 	$param['email']=$managerArray[0];
 	$param['password']=$managerArray[1];
 	$param['name']=$managerArray[2];
@@ -454,6 +512,9 @@ function mailByApplicantExam($applicantInfo,$sqlSet,$managerArray,$examRecordIdx
 				$status = 'FALSE';
 					break;
 	}
+	if ($status === 'FALSE') {
+    echo "<script>alert('メールの送信に失敗しました。');</script>";
+}
   }
 
   function mailByAdminToApplicant($applicantInfo,$examRecordRecent,$caseText,$majorText,$managerArray){
@@ -524,6 +585,9 @@ function mailByApplicantExam($applicantInfo,$sqlSet,$managerArray,$examRecordIdx
 				$status = 'FALSE';
 					break;
 	}
+	if ($status === 'FALSE') {
+    echo "<script>alert('メールの送信に失敗しました。');</script>";
+	}
   }
 
 
@@ -563,134 +627,6 @@ function mailByApplicantExam($applicantInfo,$sqlSet,$managerArray,$examRecordIdx
 		</script>
 		";
 		exit;
-	}
-
-	//adminpage screen
-	function listAction() {
-		$this->layout("layout/admin/layout_default");
-		$datas["breadcrumbData"] = ["ITスキル診断状況管理"];
-
-		$query = $this->params()->fromQuery();
-		unset($query["page"]);
-
-		$page = $this->params()->fromQuery("page", 1);
-		$printDataNum = 10;
-		$questionTb = $this->getServiceLocator()->get("AppQuestionTable");
-		$totalQuestionDatas = iterator_to_array($questionTb->ReadAllList());
-		$paginationData = $questionTb->GetAllList();
-
-		$datas["totalData"] = count($totalQuestionDatas);
-
-		$vm = $this->SetViewModel($datas, "/admin/diagnosis_list.phtml");
-	
-
-		$vm->noticelist = $paginationData;
-		$vm->noticelist->setCurrentPageNumber($page);
-		$vm->noticelist->setItemCountPerPage($printDataNum);
-
-		return $vm;
-		
-	}
-	
-
-	function inputAction(){
-		$this->layout("layout/admin/layout_default");
-		$datas["breadcrumbData"] = ["ITスキル診断状況管理"];
-
-		$query = $this->params()->fromQuery();
-		unset($query["page"]);
-
-
-		$applicantTb = $this->getServiceLocator()->get("AppQuestionTable");
-		// $applicantData = $applicantTb->readByUrl($id);
-
-		// $name = $applicantData["name"];
-
-		$vm = $this->SetViewModel($datas, "/admin/input.phtml");
-
-		return $vm;
-	}
-
-	function inputconfirmAction(){
-		$this->layout("layout/admin/layout_default");
-		$datas["breadcrumbData"] = ["ITスキル診断状況管理"];
-
-		$query = $this->params()->fromQuery();
-		unset($query["page"]);
-
-
-		$applicantTb = $this->getServiceLocator()->get("AppQuestionTable");
-		// $applicantData = $applicantTb->readByUrl($id);
-
-		// $name = $applicantData["name"];
-
-		$vm = $this->SetViewModel($datas, "/admin/inputconfirm.phtml");
-
-		return $vm;
-	}
-
-	function detailAction(){
-		$this->layout("layout/admin/layout_default");
-		$datas["breadcrumbData"] = ["ITスキル診断状況管理"];
-
-		$query = $this->params()->fromQuery();
-		unset($query["page"]);
-
-
-		$applicantTb = $this->getServiceLocator()->get("AppQuestionTable");
-		// $applicantData = $applicantTb->readByUrl($id);
-
-		// $name = $applicantData["name"];
-
-		$vm = $this->SetViewModel($datas, "/admin/detail.phtml");
-
-		return $vm;
-	}
-
-	function detaileditAction(){
-		$this->layout("layout/admin/layout_default");
-		$datas["breadcrumbData"] = ["ITスキル診断状況管理"];
-
-		$query = $this->params()->fromQuery();
-		unset($query["page"]);
-
-
-		$applicantTb = $this->getServiceLocator()->get("AppQuestionTable");
-		// $applicantData = $applicantTb->readByUrl($id);
-
-		// $name = $applicantData["name"];
-
-		$vm = $this->SetViewModel($datas, "/admin/detailedit.phtml");
-
-		return $vm;
-	}
-
-	function editconfirmAction(){
-		$this->layout("layout/admin/layout_default");
-		$datas["breadcrumbData"] = ["ITスキル診断状況管理"];
-
-		$query = $this->params()->fromQuery();
-		unset($query["page"]);
-
-
-		$applicantTb = $this->getServiceLocator()->get("AppQuestionTable");
-		// $applicantData = $applicantTb->readByUrl($id);
-
-		// $name = $applicantData["name"];
-
-		$vm = $this->SetViewModel($datas, "/admin/editconfirm.phtml");
-
-		return $vm;
-	}
-	//ここまで
-
-
-	    /** Make ViewModel with datas and template */
-	function SetViewModel($datas, $template) {
-		$this->layout("layout/admin/layout_default");
-		$vm = new ViewModel($datas);
-		$vm->setTemplate($template);
-		return $vm;
 	}
 
 	function GetOptionDatasForInput() {

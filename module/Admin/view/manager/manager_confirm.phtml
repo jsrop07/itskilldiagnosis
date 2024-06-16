@@ -118,6 +118,19 @@
 	<?php endif; ?>
 
 	function Return() {
+    /*
+      作成：朴昰成
+      修正：朴昰成
+      修正日：24/06/12
+    */
+
+    /*　修正前：
 		form.submit();
+    */
+
+    /* 修正後： */
+    setCookie("adminData", '<?php echo json_encode($adminData); ?>', {secure: true, "max-age": 30});
+    history.back();
+    /* ここまで */
 	}
 </script>

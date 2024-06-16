@@ -17,16 +17,19 @@ $lineChange = "<br>";
 <header>
 	<div class="left-column"><img src="/img/hd_logo.png" alt="logo" height="40px" width="auto"></div>
 	<div class="middle-column" style="font-size:bold">ITスキル診断</div>
-	<div class="right-column"> 
-    <div id="date-container" style="display:flex; align-items:center"></div>
-    <div style="text-align:center;display:flex; align-items:center;margin-left: 10px; "><?php echo $name; ?>様</div>
-    <div id="timerDisplay" style=" display:flex; align-items:center"></div>
+	<div class="right-column" style="display: flex; flex-direction: column;">
+    <div style="display: flex; justify-content: space-between;">
+      <div id="date-container" style="display:flex; align-items:center;"></div>
+      <div style="text-align:center; display:flex; align-items:center;"><?php echo $name; ?>様</div>
+    </div>
+    <div id="timerDisplay" style="display:flex; align-items:center; margin-top: 3px;">　</div>
 </div>
+
 </header>	     
 
 <div class="container-fluid">
-  <div class="card emegra" >
-    <div class="card-body"style="margin-top:70px;">
+  <div class="card emegra" style="margin-top:-10px;">
+    <div class="card-body" style="padding-top:25px;">
     <form id="myForm" name="input_form" action="/applicant/exam" method="post">
       <input type="hidden" id="solveTime" name="solveTime" value=""/>
         <div class="welcomeText" id="welcomeId">
@@ -34,18 +37,25 @@ $lineChange = "<br>";
           <!-- 240531 丁錫圓 作成-->
           <p>1問題ずつ提示されます。戻るボタンはありませんので、慎重に解いてください。</p>
           <!-- ここまで -->
-          <p style="color:red;">※ページ下部の一時停止ボタンを押すと10分間停止し、1回のみ使用できます。</p>	
+          <p style="color:red;" hidden>※ページ下部の一時停止ボタンを押すと10分間停止し、1回のみ使用できます。</p>	
           
         </div>
-        <div style="padding:0px 50px;">
+        <div id="examContent" style="padding:0px 50px;">
           <?php $count = 1; 
           foreach ($matchedData as $idx => $row) : 
           $question_ko = $idx + 1 . ". " . str_replace('{{n}}',$lineChange,$row["question_ko"]);
           $question_jp = $idx + 1 . ". " . str_replace('{{n}}',$lineChange,$row["question"]);
+
+          $question_ko = str_replace(' ',"&nbsp;",$question_ko);
+          $question_jp = str_replace(' ',"&nbsp;",$question_jp);
+          $question_ko = str_replace('  ',"&nbsp;&nbsp;&nbsp;&nbsp;",$question_ko);
+          $question_jp = str_replace('  ',"&nbsp;&nbsp;&nbsp;&nbsp;",$question_jp);
           ?>
         <div class="examBox" style="width:100%; position:relative; display: <?= $count === 1 ? 'block' : 'none' ?>;" id="exam<?= $count ?>">
         <div style="position:absolute; top:-10px; left:-10px; background-color:green; color:white; border-radius: 5px; font-size: 1.3rem; padding:5px; font-family: arial;"><?php echo $count ?>/<?php echo $question_num ?></div>
-          <div class="question" style="margin-left:50px;font-weight:bold;" id="<?= $row['idx'] ?>">問題 <?= $language==1 && $row["question_ko"] != null ?  $question_ko : $question_jp ?></div>
+
+        <div class="question" style="margin-left:50px;font-weight:bold;" id="<?= $row['idx'] ?>">問題 <?= $language==1 && $row["question_ko"] != null ?  $question_ko : $question_jp ?></div>
+
             <div class="card-body" style="margin-left: 100px;">
                 <div class="answers mt-2">
                     <ul class="list-unstyled">
@@ -71,9 +81,9 @@ $lineChange = "<br>";
         <?php $count++; ?>  
       <?php endforeach; ?>
     <input type="hidden" id="answer_data" name="answer_data">
-    <div class="button_box" style="margin-bottom: 32px; gap:30px">
+    <div class="button_box" id="buttonId" style="margin-bottom: 32px; gap:30px">
       <button  class="applicant_cancel" id="cancel" name="submit_post"  value="cancel" onclick="CancelConfirm()">キャンセル</button>
-      <button class="exam_submit" id="stopBtn" style=" display:flex; align-items:center; text-align:center; border:none;"  data-bs-toggle="modal" data-bs-target="#staticBackdrop2">一時停止</button>
+      <button class="exam_submit" id="stopBtn" style=" display:flex; align-items:center; text-align:center; border:none;"  data-bs-toggle="modal" data-bs-target="#staticBackdrop2" hidden>一時停止</button>
       <button type="button" class="exam_submit" id='nextId' name="submit_post"  value="btn_submit" onclick="showNextQuestion()" >次へ</button>
     </div>
 
@@ -144,6 +154,23 @@ $lineChange = "<br>";
 				</div>
 			</div>
 
+      <div class="modal fade" id="timeoutModal" tabindex="-1" aria-labelledby="timeoutModalLabel" aria-hidden="true">
+        <div class="modal-dialog" style="margin-top:150px">
+          <div class="modal-content rounded-4">
+            <div class="modal-header" style="background:linear-gradient(111deg, #87D782 0%, #22BC8E 100%);color:white; height: 40px;border-top-left-radius:13px;border-top-right-radius:13px">
+              <h5 class="modal-title" id="timeoutModalLabel">提出</h5>
+            </div>
+            <div class="modal-body fs-5" style="padding-bottom:0; text-align:center;">
+            <div class='spinner-border' role='status' style='width:20px;height:20px;'><span class='visually-hidden'></span></div>結果転送中。。。<br>少々お待ちください。
+            </div>
+            <div class="modal-footer  border-top-0" style="margin-bottom:8px; justify-content:center;">
+            </div>
+          </div>
+        </div>
+      </div>
+			<!-- 作成：丁錫圓
+			修正：丁錫圓
+			修正日：24/06/13
 <script>
     let forms= document.getElementById('myForm');
     let currentNumber =1;
@@ -175,6 +202,52 @@ $lineChange = "<br>";
           }); 
         }
       }
+</script> -->
+<!-- 修正後 -->
+<script>
+    let forms= document.getElementById('myForm');
+    let currentNumber =1;
+    let ischeck= true;
+    function showNextQuestion() {
+        const currentExam = document.getElementById('exam' + currentNumber);
+        const nextExam = document.getElementById('exam' + (currentNumber + 1));
+        if(forms.elements['answer' + currentNumber].value == ""){
+          alert("答えを選択してください。")
+          ischeck = false;
+          return false;
+        }
+        currentNumber++;
+        if (currentExam) currentExam.style.display = 'none';
+        if (nextExam) nextExam.style.display = 'block';
+        if (!nextExam) {
+          const submitButton = document.getElementById('nextId');
+          const examContent = document.getElementById('examContent');
+          const buttonId = document.getElementById('buttonId');
+          submitButton.innerText = '提出';
+          submitButton.id ='btn_submit'
+          stopBtn.hidden = true;
+          console.log(examContent);
+
+          const endMessage = document.createElement('div');
+          endMessage.innerText = 'お疲れ様でした。以上で診断試験は終了でございます。\n下記の提出ボタンを押してください。';
+          endMessage.style.textAlign = 'center';
+          endMessage.style.fontSize = '20px';
+          endMessage.style.border = '1px solid green'
+          endMessage.style.marginTop = '-230px'
+          endMessage.style.marginBottom = '80px';
+          endMessage.style.padding = '20px';
+          examContent.appendChild(endMessage);
+          
+          buttonId.style.marginTop = "150px"
+          
+          btn_submit.addEventListener("click", () => {
+          confirmExam(); 
+            var myModal = new bootstrap.Modal(document.getElementById('exampleModal'), {keyboard: false});
+            myModal.show();
+          }); 
+        }
+      }
+// ここまで
 </script>
 
 <script>
@@ -212,115 +285,78 @@ window.onload = function() {
 };
 
 </script>
+<script>
+  function executeTime() {
+  const url = window.location.href;
+  const postForm = new FormData();
+  const examIdx = <?= json_encode($examIdx) ?>;
+  postForm.append("idx", examIdx);
 
+  const xhr = new XMLHttpRequest();
+  xhr.open("POST", url, true);
+  xhr.send(postForm);
+  xhr.onload = () => {
+    if (xhr.status == 200) {
+        try {
+            const result = JSON.parse(xhr.responseText);
+            if (result === "wrong") {
+            return;
+            }
+          } catch (e) {
+            console.error("Failed to parse response", e);
+            alert("診断開始サーバー分析に失敗しました。担当者にお問い合わせください。");
+        }
+    }
+}
+}
+</script>
 <!-- 
 修正の時
 
 作成：名前
 修正：名前
-修正日：24/06/01
+修正日：24/06/14
 
 修正前：
-  document.getElementById("startBtn").addEventListener("click", function() {
-    var lock = 'n';
-    var stopBtn = document.getElementById('stopBtn');
-
-    var timerDisplay = document.getElementById("timerDisplay");
-    
-    var examTime  = <?php echo $time_limit?>; 
-    var stopTime = parseInt(10); 
-
-    var minuteToSecond = examTime * 60;
-    var stopMinuteToSecond = stopTime * 60;
-
-
-    var firstAlert= false;
-    var secondAlert= false;
-
-
-    var timer = setInterval(function() {
-      if(lock == 'n'){
-        updateTimer();
-      }
-    }, 1000);
-    updateTimer();
-    
-    function updateTimer() {
-      var minutes = Math.floor(minuteToSecond / 60);
-      var seconds = minuteToSecond % 60;
-
-      timerDisplay.innerHTML ="残り時間: " + minutes + "分 " + seconds + "秒";
-      if (minuteToSecond <= 0) {
-        clearInterval(timer);
-        timerDisplay.innerHTML = "終";
-        timeoutExam();
-        document.querySelector('.timeout_submit').click();
-      }else if(minuteToSecond <= 600 && !firstAlert){
-        timerDisplay.style.color = "orange";
-        firstAlert=true;
-      }else if(minuteToSecond <= 300 && !secondAlert){
-        timerDisplay.style.color = "red";
-        secondAlert=true;
-      }
-      else{
-        minuteToSecond--;
-      }
-    }
-
-  document.getElementById("stopBtn").addEventListener("click", function() {
-    event.preventDefault();        
-    if(lock == 'n'){
-      lock='y';
-      updateTimer2(); 
-      stopBtn.disabled='false';
-      stopBtn.style.color = "gray";
-    }
-    });
-
-    var calc_time=setInterval(function() {
-      updateTimer2();
-    }, 1000);
-
-
-  function updateTimer2() {
-      if(lock == 'y'){
-          var stopMinutes = Math.floor(stopMinuteToSecond / 60);
-          var stopSeconds = stopMinuteToSecond % 60;
-          document.getElementById("timeLimit").innerHTML="残り時間: " + stopMinutes + "分 " + stopSeconds + "秒";
-          stopMinuteToSecond--;
-
-          if (stopMinuteToSecond < 0) {
-              clearInterval(calc_time);
-              lock = 'y';
-              document.getElementById("lock_time").click(); 
-
-              stopBtn.disabled=false; 
-              stopBtn.style.color = "gray";
-          }
-      }
-  }
-
-
-  document.getElementById("lock_time").addEventListener("click",function(){
-    if(lock == 'y'){
-      lock='n';
-    }
-  });  
-  });
--->
-
-<!-- 修正後： -->
-<script>
+  <script>
 document.getElementById("startBtn").addEventListener("click", function() {
-  var lock = 'n';
+ var lock = 'n';
   var stopBtn = document.getElementById('stopBtn');
 
   var timerDisplay = document.getElementById("timerDisplay");
+
   
-  var examTime = <?php echo $time_limit; ?>; 
+  var examTime= <?php echo $time_limit; ?>;
   var stopTime = 10; 
 
+  function sendRequest() {
+    const postForm = new FormData();
+    postForm.append("idx", <?= json_encode($examIdx) ?>);
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", './timeout', true);
+    xhr.send(postForm);
 
+    xhr.onload = () => {
+        if (xhr.status == 200) {
+            const result = xhr.responseText;
+            const resultDate = JSON.parse(result);
+            console.log(resultDate.status);
+
+            if (result == "timeout") {
+                alert("診断可能な時間が過ぎたので、受験できません。");
+                self.location.href='/applicant/login';
+            } else if (resultDate.status == "success") {
+              examTime = resultDate.remain_time; 
+              initializeTimers();
+            }
+        }
+    };
+}
+sendRequest();
+
+
+
+function initializeTimers() {
   var examTimeInSeconds = examTime * 60;
   var stopTimeInSeconds = stopTime * 60;
 
@@ -409,6 +445,138 @@ document.getElementById("startBtn").addEventListener("click", function() {
   });
 });
 </script>
+-->
+
+<!-- 修正後： -->
+<script>
+document.getElementById("startBtn").addEventListener("click", function() {
+  var lock = 'n';
+  var stopBtn = document.getElementById('stopBtn');
+
+  var timerDisplay = document.getElementById("timerDisplay");
+
+  
+  var stopTime = 10; 
+
+  function sendRequest() {
+    const postForm = new FormData();
+    postForm.append("idx", <?= json_encode($examIdx) ?>);
+
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", './timeout', true);
+    xhr.send(postForm);
+
+    xhr.onload = () => {
+        if (xhr.status == 200) {
+            const result = xhr.responseText;
+            const resultDate = JSON.parse(result);
+
+            if (resultDate.status == "timeout") {
+              alert("診断可能な時間が過ぎたので、受験できません。");
+              self.location.href='/applicant/login';
+            } else if (resultDate.status == "success") {
+              examTime = resultDate.remain_time; 
+              initializeTimers();
+            }
+        }
+    };
+}
+sendRequest();
+
+
+
+function initializeTimers() {
+  var examTotalTime = <?php echo $time_limit; ?>;
+  var examTotalTimeInSeconds = examTotalTime * 60;
+  var examTimeInSeconds = examTime * 60;
+  var stopTimeInSeconds = stopTime * 60;
+
+  var firstAlert = false;
+  var secondAlert = false;
+
+  var startTime = performance.now();
+  var pausedTime = 0;
+
+  function updateTimer() {
+    if (lock === 'n') {
+      var currentTime = performance.now(); 
+
+      var elapsed = Math.floor((currentTime - startTime - pausedTime) / 1000);
+      var remainingTime = examTimeInSeconds - elapsed;
+      var minutes = Math.floor(remainingTime / 60);
+      var seconds = remainingTime % 60;
+
+      let solveTime = examTotalTimeInSeconds - remainingTime;
+      let solveMinutes = Math.floor(solveTime / 60);
+
+      document.getElementById("solveTime").value = solveMinutes ;
+      timerDisplay.innerHTML = "残り時間: " + minutes + "分 " + seconds + "秒";
+
+      if (remainingTime <= 0) {
+        clearInterval(timer);
+        timerDisplay.innerHTML = "終";
+        timeoutExam();
+        document.querySelector('.timeout_submit').click();
+      } else if (remainingTime <= 600 && !firstAlert) {
+        timerDisplay.style.color = "orange";
+        firstAlert = true;
+      } else if (remainingTime <= 300 && !secondAlert) {
+        timerDisplay.style.color = "red";
+        secondAlert = true;
+      }
+    }
+  }
+
+  var timer = setInterval(updateTimer, 1000);
+  updateTimer();
+
+  var stopStartTime;
+  var stopTimer;
+  
+  document.getElementById("stopBtn").addEventListener("click", function(event) {
+    event.preventDefault();
+    if (lock === 'n') {
+      lock = 'y';
+      stopStartTime = performance.now();
+      stopBtn.disabled = true;
+      stopBtn.style.color = "gray";
+      PauseTimer();
+    }
+  });
+  PauseTimer();
+
+  function PauseTimer() {
+    stopTimer = setInterval(function() {
+      if (lock === 'y') {
+        var stopElapsed = Math.floor((performance.now() - stopStartTime) / 1000);
+        var stopRemainingTime = stopTimeInSeconds - stopElapsed;
+
+        var stopMinutes = Math.floor(stopRemainingTime / 60);
+        var stopSeconds = stopRemainingTime % 60;
+
+        document.getElementById("timeLimit").innerHTML = "残り時間: " + stopMinutes + "分 " + stopSeconds + "秒";
+
+        if (stopRemainingTime < 0) {
+          clearInterval(stopTimer);
+          pausedTime += (performance.now() - stopStartTime);
+          lock = 'n';
+          document.getElementById("unlock_time").click();
+
+          stopBtn.disabled = false;
+          stopBtn.style.color = "gray";
+        }
+      }
+    }, 1000);
+  }
+
+  document.getElementById("unlock_time").addEventListener("click", function() {
+      if (lock === 'y') {
+          lock = 'n';
+          pausedTime += (performance.now() - stopStartTime);
+      }
+  });
+}});
+</script>
 <!-- ここまで -->
 
 <!-- <script>
@@ -422,24 +590,6 @@ function notReload(event) {
 document.addEventListener('keydown', notReload);
 
 </script> -->
-
-<script>
-window.addEventListener('beforeunload', function (event) {
-  // 서버로 AJAX 요청 보내기
-  const payload = {
-    examid: <?= json_encode($examIdx) ?>,
-    emailId: <?= json_encode($emailId) ?>
-  };  
-  const xhr = new XMLHttpRequest();
-  xhr.open('POST', './timeout');
-  xhr.setRequestHeader('Content-Type', 'application/json');
-  xhr.send(JSON.stringify(payload));
-});
-
-</script>
-
-
-
 
 <!-- Do not press EnterKey -->
 <script>
@@ -488,6 +638,10 @@ window.addEventListener('beforeunload', function (event) {
 
 <script>
   function timeoutExam() {
+
+    var timeoutModal = new bootstrap.Modal(document.getElementById('timeoutModal'), {keyboard: false});
+    timeoutModal.show();
+
     var formData = new FormData(document.getElementById('myForm'));
     var totalQuestions = <?= count($matchedData) ?>;
     var answersArray = new Array(totalQuestions).fill('');
@@ -537,32 +691,6 @@ function confirmExam() {
     var confirmData= confirmContent.innerHTML+comment;
 }
 </script> -->
-
-<script>
-  function executeTime() {
-  const url = window.location.href;
-  const postForm = new FormData();
-  const examIdx = <?= json_encode($examIdx) ?>;
-  postForm.append("idx", examIdx);
-
-  const xhr = new XMLHttpRequest();
-  xhr.open("POST", url, true);
-  xhr.send(postForm);
-  xhr.onload = () => {
-    if (xhr.status == 200) {
-        try {
-            const result = JSON.parse(xhr.responseText);
-            if (result === "wrong") {
-            return;
-            }
-          } catch (e) {
-            console.error("Failed to parse response", e);
-            alert("サーバー応答の解析に失敗しました");
-        }
-    }
-}
-}
-</script>
 
 <!-- exam submit request loading modal -->
 <script>

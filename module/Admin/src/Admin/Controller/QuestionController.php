@@ -4,6 +4,13 @@ namespace Admin\Controller;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Zend\Session\Container;
+/*
+	作成：朴昰成
+	作成日：24/06/13
+*/
+use Admin\Model\LogModule;
+/* ここまで */
+
 class QuestionController extends AbstractActionController
 {
 	function ChkLogin() {
@@ -29,10 +36,6 @@ class QuestionController extends AbstractActionController
 		$this->ChkLogin();
 		$datas["breadcrumbData"] = ["ITスキル診断問項管理"];
 		$datas["optionDatas"] = $this->GetOptionDatas();
-		/*
-			作成：朴昰成
-			作成日：24/06/04
-		*/
 
 		$optionTb = $this->getServiceLocator()->get("OptionTable");
 		$selectValueDatas = $this->GetOptionDatasForInput();
@@ -40,7 +43,6 @@ class QuestionController extends AbstractActionController
 		$selectValueDatas["status"][] = $optionTb->ReadByText("承認依頼");
 		$selectValueDatas["status"][] = $optionTb->ReadByText("承認済");
 		$datas["selectValueDatas"] = $selectValueDatas;
-		/* ここまで */
 
 		// Data of login user
 		$session = new Container("user");
@@ -70,27 +72,16 @@ class QuestionController extends AbstractActionController
 			$datas["searchDatas"]["title"] = $query["title"];
 		}
 
-		/*
-			作成：朴昰成
-			削除：朴昰成
-			削除日：24/06/04
-		
-		削除前：
-		// Set Align data
-		$sqlOrder = array();
-		if (isset($query["align"])) {
-			$sqlOrder["field"] = explode("-", $query["align"])[0];
-			$sqlOrder["seq"] = explode("-", $query["align"])[1];
-			$datas["searchDatas"]["align"] = $query["align"];
-		}
-		ここまで */
-		/*
-			作成：朴昰成
-			作成日：24/06/04
-		*/
 		if (isset($query["select"])) {
 			$selectData = explode("-", $query["select"]);
 
+			/*
+				作成：
+				修正：
+				修正日：24/06/13
+			*/
+
+			/* 修正前：
 			if ($selectData[0] == "class") {
 				$sqlWhere["class2nd"] = $selectData[2];
 			}
@@ -99,8 +90,18 @@ class QuestionController extends AbstractActionController
 			}
 
 			$datas["searchDatas"]["select"] = $selectData;
+			*/
+
+			/* 修正後： */
+			if (isset($selectData[2])) {
+				$sqlWhere["class2nd"] = $selectData[2];
+			}
+			else if (isset($selectData[1])) {
+				if ($selectData[0] == "class") { $sqlWhere["class1st"] = $selectData[1]; }
+				else { $sqlWhere[$selectData[0]] = $selectData[1]; }
+			}
+			/* ここまで */
 		}
-		/* ここまで */
 
 		$questionDatas = "";
 		// Check User Level
@@ -156,21 +157,8 @@ class QuestionController extends AbstractActionController
 	/** When you click 新規登録 button on 一覧 page */
 	public function inputAction() {
 		$this->ChkLogin();
-		/*
-			作成：朴昰成
-			修正：朴昰成
-			修正日：24/06/03
-		*/
-
-		/* 修正前：
-			$datas["breadcrumbData"] = ["ITスキル診断問項管理", "問題登録"];
-			$datas["title"] = "問題登録";
-		*/
-
-		/* 修正後： */
 		$datas["breadcrumbData"] = ["ITスキル診断問項管理", "問項登録"];
 		$datas["title"] = "問項登録";
-		/* ここまで */
 		$datas["optionDatas"] = $this->GetOptionDatasForInput();
 		$datas["languageCodeDatas"] = ["ko" => "韓国語"];
 
@@ -184,19 +172,7 @@ class QuestionController extends AbstractActionController
 	/** When you click 登録 button on 問題登録 page */
 	public function confirmAction() {
 		$this->ChkLogin();
-		/*
-			作成：朴昰成
-			修正：朴昰成
-			修正日：24/06/03
-		*/
-
-		/* 修正前：
-			$datas["breadcrumbData"] = ["ITスキル診断問項管理", "問題登録", "登録確認"];
-		*/
-
-		/* 修正後： */
 		$datas["breadcrumbData"] = ["ITスキル診断問項管理", "問項登録", "登録確認"];
-		/* ここまで */
 		$datas["title"] = "登録確認";
 		$datas["optionDatas"] = $this->GetOptionDatas();
 		$datas["languageCodeDatas"] = ["ko" => "韓国語"];
@@ -215,19 +191,7 @@ class QuestionController extends AbstractActionController
 	/** When you choose list data on 問題一覧 page */
 	public function detailAction() {
 		$this->ChkLogin();
-		/*
-			作成：朴昰成
-			修正：朴昰成
-			修正日：24/06/03
-		*/
-
-		/* 修正前：
-			$datas["breadcrumbData"] = ["ITスキル診断問項管理", "問題詳細"];
-		*/
-
-		/* 修正後： */
 		$datas["breadcrumbData"] = ["ITスキル診断問項管理", "問項詳細"];
-		/* ここまで */
 		$datas["optionDatas"] = $this->GetOptionDatas();
 	
 		$index = $this->params()->fromRoute("index");
@@ -259,21 +223,8 @@ class QuestionController extends AbstractActionController
 	/** When you click 修正 button on 問題詳細 page */
 	public function editAction() {
 		$this->ChkLogin();
-		/*
-			作成：朴昰成
-			修正：朴昰成
-			修正日：24/06/03
-		*/
-
-		/* 修正前：
-			$datas["breadcrumbData"] = ["ITスキル診断問項管理", "問題詳細", "問題修正"];
-			$datas["title"] = "問題修正";
-		*/
-
-		/* 修正後： */
 		$datas["breadcrumbData"] = ["ITスキル診断問項管理", "問項詳細", "問項修正"];
 		$datas["title"] = "問項修正";
-		/* ここまで */
 		$datas["optionDatas"] = $this->GetOptionDatasForInput();
 		$datas["languageCodeDatas"] = ["ko" => "韓国語"];
 
@@ -397,6 +348,14 @@ class QuestionController extends AbstractActionController
 		$idx = ["idx" => $post["idx"]];
 		unset($post["idx"]);
 
+		foreach ($post as $index => $data) {
+			if ($data == null) {
+				$post[$index] = "";
+				continue;
+			}
+			$post[$index] = str_replace("\n", "{{n}}", $data);
+		}
+
 		$post["admin_approve"] = null;
 		$post["date_approve"] = null;
 
@@ -438,12 +397,18 @@ class QuestionController extends AbstractActionController
 
 		$questionTb = $this->getServiceLocator()->get("QuestionTable");
 
+		$approvedIdxDatas = array();
 		$beforeNotes = array();
 		foreach ($idxDatas as $idx) {
 			try { $result = $questionTb->ReadByIdx($idx); }
 			catch (\Exception $e) { die($e->getMessage()); }
-			if ($result["date_approve"] != null) { die("fail"); }
+			if ($result["date_approve"] != null) { $approvedIdxDatas[] = $result["idx"]; }
 			else { array_push($beforeNotes, $result["note"]); }
+		}
+
+		if ($approvedIdxDatas) {
+			$error = ["reason" => "approved", "data_discrip" => "array of approved data's idx", "data" => $approvedIdxDatas];
+			die(json_encode($error));
 		}
 		
 		$log = "承認　" . date("Y.m.d") . "　" . $session["name"] . "\n";
@@ -466,9 +431,29 @@ class QuestionController extends AbstractActionController
 	}
 
 	public function createByCsvAction() {
-		if ($_FILES["csv_file"]["error"] == "0") {
-			header("Content-Type: text/html; charset=utf-8");
+		/*
+			作成：朴昰成
+			修正：朴昰成
+			修正日：24/06/13
+		*/
 
+		/* 修正前：
+		if ($_FILES["csv_file"]["error"] == "0") {
+		*/
+
+		/* 修正後： */
+		$log = new LogModule();
+
+		if ($_FILES["file"]["error"] == "0") {
+		/* ここまで */
+			header("Content-Type: text/html; charset=utf-8");
+			/*
+				作成：朴昰成
+				修正：朴昰成
+				修正日：24/06/13
+			*/
+
+			/* 修正前：
 			$filePointer = fopen($_FILES["csv_file"]["tmp_name"], "r");
 			if (!$filePointer) { die("ファイル　オープン　失敗"); }
 
@@ -477,7 +462,20 @@ class QuestionController extends AbstractActionController
 				$line = str_replace("{{44}}", ",", $line);
 				$csvStrings[] = $line;
 			}
+			*/
 
+			/* 修正後： */
+			if ($_FILES["file"]["type"] != "text/csv") { die($log->SaveLog(["reason" => "not csv file"])); }
+
+			$csvStrings = array();
+			try {
+			$csvStrings = array_map("str_getcsv", file($_FILES["file"]["tmp_name"]));
+			} catch (\Exception $e) {
+				$logData["reason"] = "not csv file";
+				$logData["message"] = $e->getMessage();
+				die($log->SaveLog($logData));
+			}
+			/* ここまで */
 			$keys = $csvStrings[0];
 			unset($csvStrings[0]);
 			// exception handling
@@ -489,7 +487,20 @@ class QuestionController extends AbstractActionController
 			$optionTb = $this->getServiceLocator()->get("OptionTable");
 
 			$questionData = array();
+			/*
+				作成：朴昰成
+				修正：朴昰成
+				修正日：24/06/13
+			*/
+	
+			/* 修正前：
 			foreach ($csvStrings as $csvDatas) {
+			*/
+	
+			/* 修正後： */
+			$logDatas = array();
+			foreach ($csvStrings as $index => $csvDatas) {
+			/* ここまで */
 				foreach ($csvDatas as $idx => $data) {
 					$questionData[$keys[$idx]] = $data;
 				}
@@ -530,18 +541,55 @@ class QuestionController extends AbstractActionController
 					
 					$questionTb->CreateQuestion($questionData);
 				} catch (\Exception $e) {
+					/*
+						作成：朴昰成
+						修正：朴昰成
+						修正日：24/06/13
+					*/
+			
+					/* 修正前：
 					die($e->getMessage());
+					*/
+			
+					/* 修正後： */
+					$logData["reason"] = "fail insert";
+					$logData["message"] = $e->getMessage();
+					$logDatas[$index + 1] = $logData;
+					/* ここまで */
 				}
 			}
+			/*
+				作成：朴昰成
+				作成日：24/06/13
+			*/
+			if ($logDatas) {
+				$noDatas = array();
+				foreach ($logDatas as $index => $logData) {
+					$log->SaveLog($logData);
+					$noDatas[] = $index;
+				}
+				die(json_encode($noDatas));
+			}
+
+			die("success");
+			/* ここまで */
 		}
 
+		/*
+			作成：朴昰成
+			修正：朴昰成
+			修正日：24/06/13
+		*/
+
+		/* 修正前：
 		die("success");
+		*/
+
+		/* 修正後： */
+		die($log->SaveLog(["reason" => "fail to open file"]));
+		/* ここまで */
 	}
 
-	/*
-		作成：朴昰成
-		作成日：24/06/04
-	*/
 	/** Read Option datas Organize by Type (class2nd's idx is text)
 	 * @return array $optionDatas ["type" => "text"]
 	 */
@@ -583,49 +631,6 @@ class QuestionController extends AbstractActionController
 		return $optionDatas;
 	}
 
-	/* ここまで */
-	/* comment out don't use code
-		作成：朴昰成
-		修正：朴昰成
-		修正日：24/06/04
-	*/
-
-	/* 修正前：
-		public function sortArrByKey($arr, $alignData) {
-			$optionTb = $this->getServiceLocator()->get("OptionTable");
-
-			$key = explode("_", $alignData)[0];
-			$align = explode("_", $alignData)[1];
-
-			$tempArr = array();
-			if ($key == "regist") {
-				$key = "date_regist";
-				foreach ($arr as $idx => $data) {
-					$tempArr[$idx] = $data[$key];
-				}
-			} else {
-				foreach ($arr as $idx => $data) {
-					$data[$key] = $optionTb->ReadOption(["idx" => $data[$key]])["text"];
-					$arr[$idx][$key] = $data[$key];
-					$tempArr[$idx] = $data[$key];
-				}
-			}
-
-			if ($align == "ASC") { array_multisort($tempArr, SORT_ASC, $arr); }
-			else { array_multisort($tempArr, SORT_DESC, $arr); }
-			unset($tempArr);
-
-			if ($key == "date_regist") { return $arr; }
-
-			foreach ($arr as $idx => $data) {
-				$arr[$idx][$key] = $optionTb->ReadOption(["text" => $data[$key]])["idx"];
-			}
-
-			return $arr;
-		}
-	*/
-
-	/* 修正後： */
 	// public function sortArrByKey($arr, $alignData) {
 	// 	$optionTb = $this->getServiceLocator()->get("OptionTable");
 
@@ -658,5 +663,4 @@ class QuestionController extends AbstractActionController
 
 	// 	return $arr;
 	// }
-	/* ここまで */
 }

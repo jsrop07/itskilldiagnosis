@@ -1,0 +1,886 @@
+<?php
+  $levelTexts = ["無級", "初級", "中級", "高級"];
+	$numTexts = array("①", "②", "③", "④", "⑤");
+
+	function ReplaceSymbol($string) {
+		$string = str_replace("<", "＜", $string);
+		$string = str_replace(">", "＞", $string);
+		return $string;
+	}
+
+	if (!isset($_SESSION)) { session_start(); }
+
+	$isSet = false;
+	if (isset($_COOKIE["diagnosisData"])) {
+		$isSet = true;
+    $diagnosisData = json_decode($_COOKIE["diagnosisData"], true);
+		setcookie("diagnosisData", "", time() - 3600, "/");
+	}
+
+	$isEdit = false;
+	if (isset($diagnosisData["idx"])) {
+		$isSet = true;
+		$isEdit = true;
+
+		$pointDatas = explode(",", $diagnosisData["result_points"]);
+		$textDatas = explode(",", $diagnosisData["result_texts"]);
+		$commentDatas = explode(",", $diagnosisData["result_comments"]);
+
+		for ($i = 1; $i <= 4; $i++) {
+			$diagnosisData["point" . $i] = $pointDatas[$i - 1];
+			$diagnosisData["text" . $i] = $textDatas[$i - 1];
+			$diagnosisData["comment" . $i] = $commentDatas[$i - 1];
+		}
+	}
+?>
+
+<?php echo $this->partial("breadcrumb", ["datas" => $breadcrumbData]); ?>
+
+<h1 class="title"><?php echo $title; ?></h1>
+
+<form id="form" method="post" action="./confirm">
+	<?php if ($isEdit): ?>
+		<input name="idx" value="<?php echo $diagnosisData["idx"]; ?>" hidden/>
+	<?php endif; ?>
+	<input name="question_idxs" value="<?php echo ($isSet) ? $diagnosisData["question_idxs"] : ""; ?>" hidden/>
+  <input name="point_total" value="<?php echo ($isSet) ? $diagnosisData["point_total"] : ""; ?>" hidden/>
+
+	<style type="text/css">
+		option { color: black; }
+		input::placeholder { font-style: italic; }
+	</style>
+
+	<div class="emegra card">
+		<div class="card-header">設定</div>
+
+		<div class="card-body">
+			<style type="text/css">
+				dl.emegra.setting { grid-template-columns: 140px 1fr; }
+			</style>
+			<dl class="emegra setting">
+				<?php if ($isEdit): ?>
+          <dt>問題ID</dt>
+					<dd><input class="form-control form-control-sm" name="code" style="width: 150px;" readonly value="<?php echo $diagnosisData["code"];?>"/></dd>
+				<?php endif; ?>
+
+				<dt class="essential">大分類</dt>
+				<dd>
+					<select class="form-select" name="class1st" onchange="ChangeClass1st(this)" style="width: 150px;">
+						<option value="" hidden>選択</option>
+						<?php foreach ($optionDatas["class1st"] as $data): ?>
+							<option value="<?php echo $data["idx"]; ?>"<?php echo ($isSet && $diagnosisData["class1st"] == $data["idx"]) ? " selected" : ""; ?>>
+								<?php echo $data["text"]; ?>
+							</option>
+						<?php endforeach; ?>
+					</select>
+				</dd>
+
+				<dt class="essential">小分類</dt>
+				<dd>
+					<select class="form-select" name="class2nd" id="class2nd" onchange="ChangeValue(this)" style="width: 150px;">
+						<option value="" hidden>選択</option>
+						<?php if ($isSet): ?>
+							<?php foreach ($optionDatas["class2nd"][$diagnosisData["class1st"]] as $data): ?>
+								<option value="<?php echo $data["idx"]; ?>"<?php echo ($diagnosisData["class2nd"] == $data["idx"]) ? " selected" : ""; ?>>
+									<?php echo $data["text"]; ?>
+								</option>
+							<?php endforeach; ?>
+						<?php endif; ?>
+					</select>
+				</dd>
+
+				<dt class="essential">レベル</dt>
+				<dd>
+					<select class="form-select" name="level" onchange="ChangeLevel(this)" style="width: 100px;">
+						<option value="" hidden>選択</option>
+						<?php for($i = 0; $i <= 3; $i++): ?>
+							<option value="<?= $i ?>"<?php echo ($isSet && $diagnosisData["level"] == $i) ? " selected" : ""; ?>>
+								<?= $levelTexts[$i]; ?>
+							</option>
+						<?php endfor; ?>
+					</select>
+				</dd>	
+
+				<dt class="essential">タイトル</dt>
+				<dd><input class="form-control" name="title" type="text" placeholder="タイトルを入力してください" value="<?php echo ($isSet) ? $diagnosisData["title"] : ""; ?>"/></dd>
+			</dl>
+		</div>
+	</div>
+
+	<div class="emegra card" style="margin-top: 32px;">
+		<div class="card-header">問題</div>
+
+		<div class="card-body">
+			<style type="text/css">
+				dl.emegra.question { grid-template-columns: 140px 1fr; }
+			</style>
+			<dl class="emegra question">
+				<dt class="essential">問項数</dt>
+        <dd><input type="number" class="form-control" name="question_num" style="width: 80px;" value="<?php echo ($isSet) ? $diagnosisData["question_num"] : "35"; ?>"/>題項</dd>
+
+				<dt class="essential">診断時間</dt>
+				<dd><input type="number" class="form-control" name="time_limit" style="width: 80px;" value="<?php echo ($isSet) ? $diagnosisData["time_limit"] : "50"; ?>"/>分</dd>
+
+				<dt class="essential" id="correct-title">問項一覧</dt>
+				<div style="width: 100%; display: flex;">
+					<style type="text/css">
+						table.emegra tr { grid-template-columns: 60px 1fr 60px 50px 30px; }
+						table.emegra th, table.emegra td { padding: 5px 0 !important; }
+						table.emegra input { height: 13px !important; }
+					</style>
+
+					<table class="emegra">
+						<thead>
+							<tr>
+								<th>No</th>
+								<th>問項タイトル</th>
+								<th>タイプ</th>
+								<th>点数</th>
+								<th><input type="checkbox" id="check-question_list" value="" onclick="CheckingList(this);"/></th>
+							</tr>
+						</thead>
+						<tbody id="tbody-question_list">
+							<?php if ($isSet): ?>
+							<?php else: ?>
+								<tr>
+                  <td style="grid-column: 1 / 6;">設定で大分類、小分類、レベルを選択し、左側のボタンを押してください。</td>
+								</tr>
+							<?php endif; ?>
+						</tbody>
+					</table>
+					<div style="width: 120px; margin-left: 8px;">
+						<button type="button" class="emegra" onclick="CreateList()">問題作成</button>
+						<button type="button" class="emegra" data-bs-toggle="modal" data-bs-target="#modal-question_select" style="margin-top: 8px;">追加</button>
+						<button type="button" class="emegra delete" onclick="DeleteQuestion()" style="margin-top: 8px;">削除</button>
+					</div>
+				</div>
+			</dl>
+		</div>
+	</div>
+
+	
+	<div class="modal fade" id="modal-question_select" tabindex="-1" data-bs-backdrop="static">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+				<div class="modal-header" style="padding: 0;">
+					<table class="emegra">
+						<thead>
+							<tr style="padding-right: 32px;">
+								<th>No</th>
+								<th>タイトル</th>
+								<th>タイプ</th>
+								<th>点数</th>
+								<th><input type="checkbox" id="check-question_select" value="" onclick="CheckingSelect(this);"/></th>
+							</tr>
+						</thead>
+					</table>
+				</div>
+				<div class="modal-body" style="padding: 0;">
+					<table class="emegra">
+						<tbody id="tbody-question_select">
+							<tr>
+                <td style="grid-column: 1 / 6;">設定で大分類、小分類、レベルを選択してください。</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="modal-footer" style="justify-content: center;">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="width: 120px;">閉じる</button>
+					<button type="button" class="emegra" onclick="AddQuestion()">追加</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="emegra card" style="margin-top: 32px;">
+		<div class="card-header">情報</div>
+
+		<div class="card-body">
+			<style type="text/css">
+				table.evaluation {
+					width: 100%;
+					text-align: center;
+				}
+				table.evaluation tr {
+					display: grid;
+					grid-template-columns: 100px 150px 150px 1fr;
+					gap: 10px 8px;
+				}
+				table.evaluation td {
+					padding: 4px 0;
+					display: flex;
+					align-items: center;
+					justify-content: center;
+				}
+			</style>
+			<table class="evaluation">
+				<thead>
+					<tr>
+						<th>評価等級</th>
+						<th>評価点数</th>
+						<th>評価</th>
+						<th>評価コメント</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>A</td>
+						<td style="display: flex; justify-content:space-between">
+							<input class="form-control form-control-sm" name="point1" style="width: 50px;" oninput="ChangePoint(this)" value="<?php echo ($isSet) ? $diagnosisData["point1"] : "91"; ?>"/>
+							~
+							<input class="form-control form-control-sm" style="width: 50px;" readonly value="100"/>
+						</td>
+						<td><input class="form-control form-control-sm" name="text1" value="<?php echo ($isSet) ? $diagnosisData["text1"] : ""; ?>"/></td>
+						<td><input class="form-control form-control-sm" name="comment1" value="<?php echo ($isSet) ? $diagnosisData["comment1"] : ""; ?>"/></td>
+					</tr>
+					<tr>
+						<td>B</td>
+						<td style="display: flex; justify-content:space-between">
+							<input class="form-control form-control-sm" name="point2" style="width: 50px;" oninput="ChangePoint(this)" value="<?php echo ($isSet) ? $diagnosisData["point2"] : "78"; ?>"/>
+							~
+							<input class="form-control form-control-sm" id="point1Child" readonly style="width: 50px;" value="<?php echo ($isSet) ? $diagnosisData["point1"] - 1 : "90"; ?>"/>
+						</td>
+						<td><input class="form-control form-control-sm" name="text2" value="<?php echo ($isSet) ? $diagnosisData["text2"] : ""; ?>"/></td>
+						<td><input class="form-control form-control-sm" name="comment2" value="<?php echo ($isSet) ? $diagnosisData["comment2"] : ""; ?>"/></td>
+					</tr>
+					<tr>
+						<td>C</td>
+						<td style="display: flex; justify-content:space-between">
+							<input class="form-control form-control-sm" name="point3" style="width: 50px;" oninput="ChangePoint(this)" value="<?php echo ($isSet) ? $diagnosisData["point3"] : "60"; ?>"/>
+							~
+							<input class="form-control form-control-sm" id="point2Child" readonly style="width: 50px;"  value="<?php echo ($isSet) ? $diagnosisData["point2"] - 1 : "77"; ?>"/>
+						</td>
+						<td><input class="form-control form-control-sm" name="text3" value="<?php echo ($isSet) ? $diagnosisData["text3"] : ""; ?>"/></td>
+						<td><input class="form-control form-control-sm" name="comment3" value="<?php echo ($isSet) ? $diagnosisData["comment3"] : ""; ?>"/></td>
+					</tr>
+					<tr>
+						<td>D</td>
+						<td style="display: flex; justify-content:space-between">
+							<input class="form-control form-control-sm" name="point4" readonly style="width: 50px;" value="0"/>
+							~
+							<input class="form-control form-control-sm" id="point3Child" readonly style="width: 50px;"  value="<?php echo ($isSet) ? $diagnosisData["point3"] - 1 : "59"; ?>"/>
+						</td>
+						<td><input class="form-control form-control-sm" name="text4" value="<?php echo ($isSet) ? $diagnosisData["text4"] : ""; ?>"/></td>
+						<td><input class="form-control form-control-sm" name="comment4" value="<?php echo ($isSet) ? $diagnosisData["comment4"] : ""; ?>"/></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</form>
+
+<div class="btn-place" style="margin-top: 32px;">
+  <button class="emegra cancel" onclick="history.back();">一覧へ</button>
+
+	<?php if ($isEdit): ?>
+		<button class="emegra" onclick="Update();">修正</button>
+	<?php else: ?>
+		<button class="emegra" onclick="Regist();">確認画面へ</button>
+	<?php endif; ?>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+<script type="text/javascript">
+	const numTexts = ["①", "②", "③", "④", "⑤"];
+
+	const listCheckbox = document.getElementById("check-question_list");
+	const questionListBody = document.getElementById("tbody-question_list");
+	const selectInputs = document.getElementsByTagName("select");
+
+	const modalDiv = document.getElementById("modal-question_select");
+	const modal = new bootstrap.Modal(modalDiv);
+	const selectCheckbox = document.getElementById("check-question_select");
+	const questionSelectBody = document.getElementById("tbody-question_select");
+
+	const form = document.getElementById("form");
+
+	let class1st = "<?php echo ($isSet) ? $diagnosisData["class1st"] : ""; ?>";
+	let class2nd = "<?php echo ($isSet) ? $diagnosisData["class2nd"] : ""; ?>";
+	let level = "<?php echo ($isSet) ? $diagnosisData["level"] : ""; ?>";
+
+	let selectCheckboxs = questionSelectBody.getElementsByTagName("input");
+
+	let popoverTriggerList = document.querySelectorAll("[data-bs-toggle='popover']");
+	let popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl));
+
+	window.onload = function() {
+		SetValue();
+		<?php if ($isSet): ?>
+			ReadList();
+		<?php endif; ?>
+	}
+
+	modalDiv.addEventListener("show.bs.modal", function (event) {
+		let selectCheckboxs = questionSelectBody.getElementsByTagName("input");
+		questionIdxs = form.question_idxs.value.split(",");
+		selectCheckbox.checked = false;
+
+		let no = 1;
+		for (let i = 0; i < selectCheckboxs.length; i++) {
+			if (questionIdxs.indexOf(selectCheckboxs[i].value) == -1) {
+				selectCheckboxs[i].parentNode.parentNode.hidden = false;
+				selectCheckboxs[i].checked = false;
+				selectCheckboxs[i].parentNode.parentNode.childNodes[0].innerText = no;
+				no++;
+			}
+			else {
+				selectCheckboxs[i].parentNode.parentNode.hidden = true;
+				selectCheckboxs[i].checked = true;
+			}
+		}
+    console.log(questionSelectBody);
+    console.log(questionSelectBody.children)
+    if (no != 1) {
+      questionSelectBody.children[0].hidden = true;
+    }
+    else {
+      questionSelectBody.children[0].hidden = false;
+    }
+
+	})
+
+	function SetValue() {
+		<?php if ($isSet): ?>
+			for (let i = 0; i < selectInputs.length; i++ ) {
+				var select = selectInputs.item(i);
+				if (select.value == "") { select.dataset.value = ""; }
+				else { select.dataset.value = "1"; }
+			}
+		<?php else: ?>
+			for (let i = 0; i < selectInputs.length; i++ ) {
+				var select = selectInputs.item(i);
+				if (select.value == "") { select.dataset.value = ""; }
+				else { select.dataset.value = "1"; }
+			}
+		<?php endif; ?>
+	}
+
+	function ChangeValue(element) { element.dataset.value = element.value; }
+
+	function ChangeClass1st(element) {
+		ChangeValue(element);
+
+		form.class2nd.replaceChildren();
+		form.class2nd.dataset.value = "";
+
+		switch (element.value) {
+			<?php foreach ($optionDatas["class2nd"] as $value => $class2nd): ?>
+				case "<?php echo $value; ?>":
+					var option = document.createElement("option");
+					option.value = "";
+					option.innerText = "選択";
+					option.hidden = true;
+					form.class2nd.appendChild(option);
+
+					<?php foreach ($class2nd as $data): ?>
+						var option = document.createElement("option");
+						option.value = <?php echo $data["idx"]; ?>;
+						option.innerText = "<?php echo $data["text"]; ?>";
+						form.class2nd.appendChild(option);
+					<?php endforeach; ?>
+					break;
+			<?php endforeach; ?>
+		}
+	}
+
+	function ChangeLevel(element) {
+		ChangeValue(element);
+
+		switch (element.value) {
+			<?php foreach ($resultDatas as $idx => $data): ?>
+				case "<?php echo $idx; ?>":
+					<?php foreach ($data as $name => $value): ?>
+						form.<?php echo $name; ?>.value = "<?php echo $value; ?>";
+
+						<?php if ($name == "point1" || $name == "point2" || $name == "point3"): ?>
+							var pointElement = document.getElementById("<?php echo $name; ?>Child");
+							pointElement.value = <?php echo $value - 1; ?>;
+						<?php elseif ($name == "point3"): ?>
+							var pointElement = document.getElementById("<?php echo $name; ?>Child");
+							pointElement.value = 0;
+						<?php endif; ?>
+					<?php endforeach; ?>
+					break;
+			<?php endforeach; ?>
+		}
+	}
+
+	function CreateList(element) {
+		if (form.class1st.value == "") {
+			RequestSelect(form.class1st, "大分類");
+			return false;
+		}
+
+		if (form.class2nd.value == "") {
+			RequestSelect(form.class2nd, "小分類");
+			return false;
+		}
+
+		if (form.level.value == "") {
+			RequestSelect(form.level, "レベル");
+			return false;
+		}
+
+		const postForm = new FormData();
+		postForm.append("class1st", form.class1st.value);
+		postForm.append("class2nd", form.class2nd.value);
+		postForm.append("level", form.level.value);
+		postForm.append("question_num", form.question_num.value);
+
+		const xhr = new XMLHttpRequest();
+		<?php if ($isSet): ?>
+			xhr.open("POST", "../read/question", true);
+		<?php else: ?>
+			xhr.open("POST", "./read/question", true);
+		<?php endif; ?>
+		xhr.send(postForm);
+		xhr.onload = () => {
+			if (xhr.status == 200) {
+				const result = xhr.responseText;
+
+				// Check is json
+				try {
+					questionDatas = JSON.parse(result);
+				}
+				catch (e) {
+					alert("error");
+					console.log(result);
+					return false;
+				}
+
+				UpdateQuestionDatas(questionDatas);
+				selectCheckboxs = questionSelectBody.getElementsByTagName("input");
+
+        if (form.question_num.value == 0) { return 0; }
+
+				<?php if ($isSet): ?>
+					xhr.open("POST", "../read/list", true);
+				<?php else: ?>
+					xhr.open("POST", "./read/list", true);
+				<?php endif; ?>
+				xhr.send(postForm);
+				xhr.onload = () => {
+					if (xhr.status == 200) {
+						const result = xhr.responseText;
+
+						// Check is json
+						try {
+							questionIdxs = JSON.parse(result);
+						}
+						catch (e) {
+							alert("error");
+							console.log(result);
+							return false;
+						}
+
+						class1st = form.class1st.value;
+						class2nd = form.class2nd.value;
+						level = form.level.value;
+
+						checkboxIdxs = [];
+						for (let i = 0; i < selectCheckboxs.length; i++) {
+							for (let j = 0; j < questionIdxs.length; j++) {
+								if (questionIdxs[j] == selectCheckboxs[i].value) {
+									checkboxIdxs.push(i);
+									break;
+								}
+							}
+						}
+						AddQuestionByIdxs(checkboxIdxs);
+					}
+				}
+			}
+		}
+	}
+
+	<?php if ($isSet): ?>
+		function ReadList() {
+			const postForm = new FormData();
+			postForm.append("class1st", form.class1st.value);
+			postForm.append("class2nd", form.class2nd.value);
+			postForm.append("level", form.level.value);
+			postForm.append("question_num", form.question_num.value);
+
+			const xhr = new XMLHttpRequest();
+			<?php if ($isEdit): ?>
+				xhr.open("POST", "../read/question", true);
+			<?php else: ?>
+				xhr.open("POST", "./read/question", true);
+			<?php endif; ?>
+			xhr.send(postForm);
+
+			xhr.onload = () => {
+				if (xhr.status == 200) {
+					const result = xhr.responseText;
+					
+					// Check is json
+					try {
+						questionDatas = JSON.parse(result);
+					}
+					catch (e) {
+						alert("error");
+						console.log(result);
+						return false;
+					}
+
+					UpdateQuestionDatas(questionDatas);
+					selectCheckboxs = questionSelectBody.getElementsByTagName("input");
+					questionIdxs = form.question_idxs.value.split(",");
+
+					checkboxIdxs = [];
+					for (let i = 0; i < selectCheckboxs.length; i++) {
+						for (let j = 0; j < questionIdxs.length; j++) {
+							if (questionIdxs[j] == selectCheckboxs[i].value) {
+								checkboxIdxs.push(i);
+								break;
+							}
+						}
+					}
+					AddQuestionByIdxs(checkboxIdxs);
+				}
+			}
+		}
+	<?php endif; ?>
+
+	function AddQuestion() {
+		chkCheked = false;
+		let checkboxIdxs = [];
+		for (let i = 0; i < selectCheckboxs.length; i++) {
+			if (selectCheckboxs[i].parentNode.parentNode.hidden == true) {
+				checkboxIdxs.push(i);
+			}
+			else if (selectCheckboxs[i].checked == true) {
+				chkCheked = true;
+
+				checkboxIdxs.push(i);
+			}
+		}
+
+		if (chkCheked) {
+			AddQuestionByIdxs(checkboxIdxs);
+			modal.hide();
+		}
+		else {
+			alert("追加する問題を選択してください。");
+		}
+	}
+
+	function DeleteQuestion() {
+		let listCheckboxs = questionListBody.getElementsByTagName("input");
+
+		chkCheked = false;
+		let questionIdxs = form.question_idxs.value.split(",");
+		let deleteIdxs = [];
+		for (let i = 0; i < listCheckboxs.length; i++) {
+			if (listCheckboxs[i].checked == true) {
+				chkCheked = true;
+
+				for (let j = 0; j < questionIdxs.length; j++) {
+					if(questionIdxs[j] == listCheckboxs[i].value) {
+						questionIdxs.splice(j, 1);
+						break;
+					}
+				}
+
+				deleteIdxs.push(i);
+			}
+		}
+
+		if (chkCheked) {
+			if (confirm("削除しますか？") === false) { return false; }
+
+			totalNum = form.question_num.value;
+			for (let i = deleteIdxs.length - 1; i >= 0; i--) {
+				listCheckboxs[deleteIdxs[i]].parentNode.parentNode.remove();
+				totalNum--;
+			}
+
+			totalPoint = 0;
+			for (let i = 0; i < questionListBody.childNodes.length - 1; i++) {
+				questionListBody.childNodes[i].childNodes[0].innerText = i + 1;
+				totalPoint += Number(questionListBody.childNodes[i].childNodes[3].innerText);
+			}
+			listCheckbox.checked = false;
+			questionListBody.lastChild.childNodes[1].innerText = totalPoint + "点";
+
+			form.question_idxs.value = questionIdxs.join(",");
+			form.question_num.value = totalNum;
+      form.point_total.value = totalPoint;
+		}
+		else {
+			alert("削除する問題を選択してください。");
+		}
+	}
+
+	function ChangePoint(element) {
+		let pointElement = document.getElementById(element.name + "Child");
+		pointElement.value = element.value - 1;
+	}
+
+	<?php if ($isEdit): ?>
+		function Update() {
+			if (ChkValid() == false) { return false; }
+			if (confirm("修正しますか？") === false) { return false; }
+
+			const postForm = new FormData(form);
+			const xhr = new XMLHttpRequest();
+			xhr.open("POST", "../update", true);
+			xhr.send(postForm);
+			xhr.onload = () => {
+				if (xhr.status == 200) {
+					const result = xhr.responseText;
+					if (result == "success") {
+						alert("修正しました。");
+						self.location.href = "../list";
+					}
+					else {
+						alert("Error");
+						console.log(result);
+					}
+				}
+			}
+		}
+	<?php else: ?>
+		function Regist() {
+			if (ChkValid() == false) { return false; }
+			form.submit();
+		}
+	<?php endif; ?>
+
+	function RequestSelect(element, text) {
+		alert(text + "を選択してください");
+		element.focus();
+	}
+
+	function UpdateQuestionDatas(questionDatas) {
+		questionSelectBody.replaceChildren();
+		
+    var tr = document.createElement("tr");
+    var td = document.createElement("td");
+    td.style.gridColumn = "1 / 6";
+    td.innerText = "問項がありません。";
+    tr.appendChild(td);
+    questionSelectBody.appendChild(tr);
+
+		for (let i = 0; i < questionDatas.length; i++) {
+			let tr = document.createElement("tr");
+
+			let td = document.createElement("td");
+			td.innerText = i + 1;
+			tr.appendChild(td);
+
+			td = document.createElement("td");
+			td.classList.add("left");
+			td.style.overflow = "hidden";
+			td.style.textOverflow = "ellipsis";
+			td.style.whiteSpace = "nowrap";
+
+			td.setAttribute("data-bs-toggle", "popover");
+			td.setAttribute("data-bs-placement", "bottom");
+			td.setAttribute("data-bs-title", questionDatas[i]["question"]);
+
+			let popoverContent = numTexts[0] + ChangeSymbol(questionDatas[i]["answer1"]);
+			for (let j = 2; j <= 5; j++) {
+				if (questionDatas[i]["answer" + j] == null) { break; }
+				popoverContent += "<br/>" + numTexts[j - 1] + ChangeSymbol(questionDatas[i]["answer" + j]);
+			}
+			td.setAttribute("data-bs-content", popoverContent);
+			td.setAttribute("data-bs-html", "true");
+			td.innerText = questionDatas[i]["title"];
+			tr.appendChild(td);
+
+			td = document.createElement("td");
+			td.innerText = questionDatas[i]["type"];
+			tr.appendChild(td);
+
+			td = document.createElement("td");
+			td.innerText = questionDatas[i]["point"];
+			tr.appendChild(td);
+
+			td = document.createElement("td");
+			let checkbox = document.createElement("input");
+			checkbox.type = "checkbox";
+			checkbox.value = questionDatas[i]["idx"];
+			checkbox.setAttribute("onClick", "CheckingSelect(this)");
+			td.appendChild(checkbox);
+			tr.appendChild(td);
+
+			questionSelectBody.appendChild(tr);
+		}
+		popoverTriggerList = document.querySelectorAll("[data-bs-toggle='popover']");
+		popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl));
+	}
+
+	function ChangeSymbol(string) {
+		string = string.replace(/</g, "＜");
+		string = string.replace(/>/g, "＞");
+		return string;
+	}
+
+	function CheckingList(element) {
+		if (element.value == "") {
+			for (let i = 0; i < listCheckboxs.length; i++) {
+				listCheckboxs[i].checked = element.checked;
+			}
+			return true;
+		}
+
+		let isAllChecked = true;
+		for (let i = 0; i < listCheckboxs.length; i++) {
+			if (listCheckboxs[i].checked == false) {
+				isAllChecked = false;
+				break;
+			}
+		}
+
+		listCheckbox.checked = isAllChecked;
+	}
+
+	function CheckingSelect(element) {
+		if (element.value == "") {
+			for (let i = 0; i < selectCheckboxs.length; i++) {
+				selectCheckboxs[i].checked = element.checked;
+			}
+			return true;
+		}
+
+		let isAllChecked = true;
+		for (let i = 0; i < selectCheckboxs.length; i++) {
+			if (selectCheckboxs[i].checked == false) {
+				if (selectCheckboxs[i].parentNode.parentNode.hidden == true) { continue; }
+				isAllChecked = false;
+				break;
+			}
+		}
+
+		selectCheckbox.checked = isAllChecked;
+	}
+
+	function AddQuestionByIdxs(checkboxIdxs) {
+		console.log(checkboxIdxs);
+		questionListBody.replaceChildren();
+
+		questionIdxs = [];
+		totalPoint = 0;
+		totalNum = 0;
+		for (let i = 0; i < checkboxIdxs.length; i++) {
+			let row = selectCheckboxs[checkboxIdxs[i]].parentNode.parentNode.cloneNode(true);
+			row.hidden = false;
+			row.childNodes[0].innerText = i + 1;
+			row.childNodes[4].childNodes[0].checked = false;
+			row.childNodes[4].childNodes[0].setAttribute("onClick", "CheckingList(this)");
+			questionListBody.appendChild(row);
+			totalPoint += Number(row.childNodes[3].innerText);
+
+			questionIdxs.push(selectCheckboxs[checkboxIdxs[i]].value);
+			totalNum++;
+		}
+
+		let tr = document.createElement("tr");
+		let td = document.createElement("td");
+		td.style.gridColumn = "1 / 4";
+		tr.appendChild(td);
+
+		td = document.createElement("td");
+		td.innerText = totalPoint + "点";
+		tr.appendChild(td);
+
+		td = document.createElement("td");
+		tr.appendChild(td);
+		questionListBody.appendChild(tr);
+
+		listCheckboxs = questionListBody.getElementsByTagName("input");
+		popoverTriggerList = document.querySelectorAll("[data-bs-toggle='popover']");
+		popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl));
+
+		form.question_idxs.value = questionIdxs.join(",");
+		form.question_num.value = totalNum;
+    form.point_total.value = totalPoint;
+	}
+
+	function ChkValid() {
+		if (form.class1st.value == "") {
+			RequestSelect(form.class1st, "大分類");
+			return false;
+		}
+
+		if (form.class2nd.value == "") {
+			RequestSelect(form.class2nd, "小分類");
+			return false;
+		}
+
+		if (form.level.value == "") {
+			RequestSelect(form.level, "レベル");
+			return false;
+		}
+
+		if (form.title.value.trim() == "") {
+			alert("タイトルを入力してください。");
+			setTimeout("form.title.focus()", 100);
+			return false;
+		}
+
+		if (form.question_idxs.value == "") {
+			alert("問題を作成してください。");
+			questionListBody.focus();
+			return false;
+		}
+
+		if (form.class1st.value != class1st) {
+			if (confirm("問題と大分類が違います。直しますか？") === true) {
+				form.class1st.value = class1st;
+				ChangeClass1st(form.class1st);
+			}
+			setTimeout("form.class1st.focus()", 100);
+			return false;
+		}
+
+		if (form.class2nd.value != class2nd) {
+			if (confirm("問題と小分類が違います。直しますか？") === true) {
+				form.class2nd.value = class2nd;
+			}
+			setTimeout("form.class2nd.focus()", 100);
+			return false;
+		}
+
+		if (form.level.value != level) {
+			if (confirm("問題とレベルが違います。直しますか？") === true) {
+				form.level.value = level;
+			}
+			setTimeout("form.level.focus()", 100);
+			return false;
+		}
+
+		<?php for ($i = 1; $i <= 4; $i++): ?>
+			if (form.point<?= $i ?>.value == "") {
+				alert("評価点数を入力してください。");
+				setTimeout("form.point<?= $i ?>.focus()", 100);
+				return false;
+			}
+
+			if (form.text<?= $i ?>.value == "") {
+				alert("評価を入力してください。");
+				setTimeout("form.text<?= $i ?>.focus()", 100);
+				return false;
+			}
+
+			if (form.text<?= $i ?>.value.includes(",")) {
+				alert("評価に「，」わ入力できません。");
+				setTimeout("form.text<?= $i ?>.focus()", 100);
+				return false;
+			}
+
+			if (form.comment<?= $i ?>.value == "") {
+				alert("評価コメントを入力してください。");
+				setTimeout("form.comment<?= $i ?>.focus()", 100);
+				return false;
+			}
+
+			if (form.comment<?= $i ?>.value.includes(",")) {
+				alert("評価コメントに「，」わ入力できません。");
+				setTimeout("form.comment<?= $i ?>.focus()", 100);
+				return false;
+			}
+		<?php endfor; ?>
+	}
+</script>

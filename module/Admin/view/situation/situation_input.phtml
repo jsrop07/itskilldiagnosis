@@ -40,7 +40,7 @@ function InitStyle() { return " font-style: italic; color: ;"; }
         </dd>
         
         <dt class="essential">パスワード</dt>
-        <dd><input class="form-control" name="password" type="text" style="width:220px;" readonly></dd>
+        <dd><input class="form-control" name="password" type="text" style="width:220px;"></dd>
 
         <dt class="essential">学歴</dt>
 				<dd>
@@ -134,7 +134,7 @@ function InitStyle() { return " font-style: italic; color: ;"; }
           </select>
 				</dd>
 
-				<dt class="essential" id="careerTitle">経験年数</dt>
+				<dt id="careerTitle">経験年数</dt>
 				<dd><input class="form-control" id="careerId" name="career" type="text" placeholder="記入" style="font-size:15px; width:80px;" maxlength='2'>年</dd> 
 		</dl>
 	</div>
@@ -152,7 +152,7 @@ function InitStyle() { return " font-style: italic; color: ;"; }
 		<dl class="emegra detail">  
       <dt class="essential">レベル</dt>
       <dd>
-        <select class="form-select" name="level" type="text" style="width:100px;">
+        <select class="form-select" id="levelId" name="level" type="text" style="width:100px;">
           <option value="0">無級</option>
           <option value="1">初級</option>
           <option value="2">中級</option>
@@ -168,7 +168,7 @@ function InitStyle() { return " font-style: italic; color: ;"; }
 				</dd> 
 				
 			<div class="modal modal-sheet py-5" style="backdrop-filter: blur(5px); " tabindex="-1" role="dialog" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-				<div class="modal-dialog" style="margin-top:150px;" role="document">
+				<div class="modal-dialog modal-dialog-scrollable" style="margin-top:150px;" role="document">
 					<div class="modal-content rounded-4">
             <div class="modal-header border-bottom-0" style="background:linear-gradient(111deg, #50D7C7 0%, #40ADF0 100%); color:white; height: 40px;border-top-left-radius:13px;border-top-right-radius:13px">
               <h3 class="modal-title fs-6" id="exampleModalLabel">診断問題検索</h3>
@@ -189,7 +189,7 @@ function InitStyle() { return " font-style: italic; color: ;"; }
                 </table>
               </div>
               <div class="modal-footer flex-column border-top-0" style="margin-bottom:8px;">
-                <button type="button" class="btn btn-lg  w-75 mx-0" data-bs-dismiss="modal" style="background:linear-gradient(111deg, #50D7C7 0%, #40ADF0 100%); color:white;">閉じる</button>
+                <button type="button" class="btn btn-lg" data-bs-dismiss="modal" style="width: 180px; font-size: 1rem; background:linear-gradient(111deg, #50D7C7 0%, #40ADF0 100%); color:white;">閉じる</button>
               </div>
           </div>
 				</div>
@@ -233,8 +233,8 @@ function InitStyle() { return " font-style: italic; color: ;"; }
     dl.emegra.detail { grid-template-columns: repeat(2, 150px 1fr); }
     </style>
     <dl class="emegra detail"> 
-    <dt>診断依頼</dt>
-    <dd><input class="form-control" type="text" style="width:220px;" id="currentDateTime" readonly></dd>                 
+    <!-- <dt>診断依頼</dt>
+    <dd><input class="form-control" type="text" style="width:220px;" id="currentDateTime" readonly></dd>                  -->
     <dt class="essential">診断予定日</dt>
     <dd><input class="form-control" name="schedule" id="scheduleId" type="text" style="width:220px;" value="<?php echo $dateSchedule?>"></dd>
     </dl>
@@ -289,7 +289,7 @@ function InitStyle() { return " font-style: italic; color: ;"; }
 
 <script>
 	window.onload=function(){
-		startTime()
+		// startTime()
 		randomPW();
 	}
 </script>
@@ -301,6 +301,9 @@ function InitStyle() { return " font-style: italic; color: ;"; }
 
   function SkillSelectChange(value){
     class2ndSelect.replaceChildren();
+    codeDisplay.innerText="";
+    form.code.value="";
+
     if (form.skill.value === '1') {
       class1stId.replaceChildren();
       var class1stOption1 = document.createElement("option");
@@ -323,6 +326,8 @@ function InitStyle() { return " font-style: italic; color: ;"; }
       careerId.readOnly =  true;
 
     } else {
+      codeDisplay.innerText="";
+      form.code.value="";
       class2ndId.value = "";
       class1stId.value = "";
       class1stId.replaceChildren();
@@ -555,7 +560,7 @@ function checkKana(input) {
             return false;
         }
 
-        if (form.class1stId.value === "") {
+        if (form.class1stId.value === "選択してください。" || form.class1stId.value === "") {
             alert("経験分野を入力してください。");
             setTimeout("form.class1stId.focus()",100);
             event.preventDefault();
@@ -568,16 +573,16 @@ function checkKana(input) {
         //     return false;
         // }
 
-        if (form.class2ndId.value == "") {
-            alert("問題種別を入力してください。");
+        if (form.class2ndId.value == "選択してください。" || form.class1stId.value === "") {
+            alert("経験分野詳細を入力してください。");
             setTimeout("form.class2ndId.focus()",100);
             event.preventDefault();
             return false;
         }
         // console.log(class2nd.value);
-        if ((isNaN(form.careerId.value) || form.careerId.value === "")) {
+        if ((isNaN(form.careerId.value))) {
             alert("IT経験年数を入力してください。");
-            setTimeout("form.careerInput.focus()",100);
+            setTimeout("form.careerId.focus()",100);
             event.preventDefault();
             return false;
         }
@@ -660,7 +665,7 @@ function checkKana(input) {
             return false;
         }
 
-        if (form.class1stId.value === "") {
+        if (form.class1stId.value === "選択してください。" || form.class1stId.value === "") {
             alert("経験分野を入力してください。");
             setTimeout("form.class1stId.focus()",100);
             event.preventDefault();
@@ -673,16 +678,16 @@ function checkKana(input) {
         //     return false;
         // }
 
-        if (form.class2ndId.value == "") {
-            alert("問題種別を入力してください。");
+        if (form.class2ndId.value == "選択してください。" || form.class1stId.value === "") {
+            alert("経験分野詳細を入力してください。");
             setTimeout("form.class2ndId.focus()",100);
             event.preventDefault();
             return false;
         }
         // console.log(class2nd.value);
-        if ((isNaN(form.careerId.value) || form.careerId.value === "")) {
+        if ((isNaN(form.careerId.value))) {
             alert("IT経験年数を入力してください。");
-            setTimeout("form.careerInput.focus()",100);
+            setTimeout("form.careerId.focus()",100);
             event.preventDefault();
             return false;
         }
@@ -747,7 +752,7 @@ function diagnosisValidation(){
     return false;
   }
   if (form.class2ndId.value == "選択してください。") {
-    alert("問題種別を入力してください。");
+    alert("経験分野詳細を入力してください。");
     setTimeout("form.class2ndId.focus()",100);
     document.getElementById('diagnosisId').setAttribute('data-bs-toggle', 'false');
     return false;
@@ -781,7 +786,7 @@ function diagnosisData() {
             updateTable(result);
         } catch (e) {
             console.error("Failed to parse response", e);
-            alert("サーバー応答の解析に失敗しました");
+            alert("診断サーバー応答の分析に失敗しました。 担当者にお問い合わせください。");
         }
     }
 }
@@ -791,14 +796,16 @@ function diagnosisData() {
     const tableBody = document.querySelector(".table tbody");
     tableBody.innerHTML = ""; 
     if (data === "wrong" || data.length === 0) {
-        const row = document.createElement("tr");
+      const row = document.createElement("tr");
 
-        const messageCell = document.createElement("td");
-        messageCell.setAttribute("colspan", "4");
-        messageCell.innerHTML = "該当する診断問題がありません。<br>経験分野、経験分野詳細、レベルを確認ください。";
-        row.appendChild(messageCell);
+      const messageCell = document.createElement("td");
+      messageCell.setAttribute("colspan", "4");
+      messageCell.innerHTML = "該当する診断問題がありません。<br>経験分野、経験分野詳細、レベルを確認ください。";
+      messageCell.style.paddingTop = "15px";
+      messageCell.style.paddingBottom = "15px";
+      row.appendChild(messageCell);
 
-        tableBody.appendChild(row);
+      tableBody.appendChild(row);
     } else {
       data.forEach((item, index) => {
         const row = document.createElement("tr");
@@ -828,6 +835,50 @@ function diagnosisData() {
           selectCode(item.code,item.title);
           selectQuestionNum(item.question_num);
           document.querySelector('.btn-close').click();        
+          skillSelect.addEventListener("mousedown", disableEvent);
+          class1stBox.addEventListener("mousedown", disableEvent);
+          class2ndSelect.addEventListener("mousedown", disableEvent);
+          careerSelect.addEventListener("mousedown", disableEvent);
+          document.getElementById("levelId").addEventListener("mousedown", disableEvent);
+          skillSelect.style.background = "#E2E2E2"
+          class1stBox.style.background = "#E2E2E2"
+          class2ndSelect.style.background = "#E2E2E2"
+          careerSelect.style.background = "#E2E2E2"
+          document.getElementById("levelId").style.background = "#E2E2E2"
+          diagnosisId.hidden = true;
+
+          const diagnosisCancel = document.createElement("button");
+          diagnosisCancel.innerText = "取り消し";
+          diagnosisCancel.id = "diagnosisCancel"; 
+          diagnosisCancel.style="background:linear-gradient(111deg, #50D7C7 0%, #40ADF0 100%); padding: 0px 10px; color:white; border-radius:5px;"
+
+          const parentElement = diagnosisId.parentNode; 
+          parentElement.appendChild(diagnosisCancel);
+
+          diagnosisCancel.addEventListener("click", () => {
+            SkillSelectChange();
+
+            skillSelect.removeEventListener("mousedown", disableEvent);
+            class1stBox.removeEventListener("mousedown", disableEvent);
+            class2ndSelect.removeEventListener("mousedown", disableEvent);
+            careerSelect.removeEventListener("mousedown", disableEvent);
+            document.getElementById("levelId").removeEventListener("mousedown", disableEvent);
+
+            // Reset styles
+            skillSelect.style.background = "";
+            class1stBox.style.background = "";
+            class2ndSelect.style.background = "";
+            careerSelect.style.background = "";
+            document.getElementById("levelId").style.background = "";
+            diagnosisCancel.hidden = true;
+            diagnosisId.hidden = false;
+
+            event.preventDefault();
+          });
+
+          function disableEvent(event) {
+            event.preventDefault(); 
+          }
         });
         
         selectCell.appendChild(button);
@@ -855,7 +906,7 @@ function selectCode(code, title) {
   }
 
 </script>
-<script>
+<!-- <script>
   function startTime() {
       const today = new Date();
       let y = today.getFullYear();
@@ -876,4 +927,4 @@ function selectCode(code, title) {
       if (i < 10) {i = "0" + i};  // Add zero in front of numbers < 10
       return i;
   }
-</script>
+</script> -->

@@ -39,6 +39,13 @@ return array(
 			),
 		),
 
-
+    'session' => array(
+      'remember_me_seconds' => 2419200,
+      'use_cookies'       => true,
+      'cookie_httponly'   => false,
+      'cookie_lifetime'   => 2419200,
+      'gc_maxlifetime'    => 2419200,
+      // 'cookie_domain' => '*',
+),
 
 );

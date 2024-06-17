@@ -280,4 +280,58 @@
       }
     }
   }
+  /*
+    作成：朴昰成
+    作成日：24/06/17
+  */
+
+
+
+  function ErrorString() {
+    let alertString = "予期せぬエラーが発生しました。";
+    alertString += "\n管理者にエラー内容をお知らせくださいますようお願いいたします。";
+    alertString += "\n\nエラー内容：";
+    return alertString;
+  }
+
+  function ChangeButton(button, text) {
+    button.replaceChildren();
+
+    var span = document.createElement("span");
+    span.classList.add("spinner-border");
+    span.classList.add("spinner-border-sm");
+    span.ariaHidden = "true";
+    button.appendChild(span);
+
+    var span = document.createElement("span");
+    span.role = "status";
+    span.innerText = text;
+    button.appendChild(span);
+    
+    for (let i = 0; i < buttonElements.length; i++) {
+      buttonElements[i].disabled = true;
+    }
+  }
+
+  function ReturnButton(button, text) {
+    button.replaceChildren();
+    button.innerText = text;
+    
+    for (let i = 0; i < buttonElements.length; i++) {
+      buttonElements[i].disabled = false;
+    }
+  }
+
+  function SendXhr(route, datas = new Array()) {
+    const postForm = new FormData();
+    for (let i = 0; i < datas.length; i++) {
+      postForm.append(datas[i]["key"], datas[i]["value"]);
+    }
+
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", route, true);
+    xhr.send(postForm);
+    return xhr;
+  }
+  /* ここまで */
 </script>

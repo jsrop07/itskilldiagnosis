@@ -27,9 +27,19 @@ class Module
 
     public function onBootstrap(MvcEvent $e)
     {
+        $serviceManager     = $e->getApplication()->getServiceManager();
         $eventManager        = $e->getApplication()->getEventManager();
         $moduleRouteListener = new ModuleRouteListener();
         $moduleRouteListener->attach($eventManager);
+        $config             = $serviceManager->get('config');
+        $sessionConfig = new \Zend\Session\Config\SessionConfig();
+        $sessionConfig->setOptions($config['session']);
+        // ini_set('session.cookie_domain', '/');
+
+        $sessionManager = new \Zend\Session\SessionManager( $sessionConfig , NULL, NULL );
+        $sessionManager->start();
+
+        \Zend\Session\Container::setDefaultManager($sessionManager);
     }
 
     public function getConfig()

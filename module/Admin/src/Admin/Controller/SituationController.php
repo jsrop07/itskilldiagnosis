@@ -5,6 +5,12 @@ use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Zend\Session\Container;
 use Admin\Model\MailRequest;
+/*
+	作成：朴昰成
+	作成日：24/06/17
+*/
+use Admin\Model\LogModule;
+/* ここまで */
 
 class SituationController extends AbstractActionController {
 	function ChkLogin() {
@@ -228,6 +234,12 @@ class SituationController extends AbstractActionController {
 		$idxs = $this->params()->fromPost("idxs");
 		$recordIdxs = explode(",", $idxs);
 
+		/*
+			作成：朴昰成
+			作成日：24/06/17
+		*/
+		$LogModule = new LogModule();
+		/* ここまで */
 		$applicantTb = $this->getServiceLocator()->get("ApplicantTable-Admin");
 		$recordTb = $this->getServiceLocator()->get("RecordTable-Admin");
 		$adminTb = $this->getServiceLocator()->get("AdminTable");
@@ -235,8 +247,27 @@ class SituationController extends AbstractActionController {
 		$recordDatas = array();
 		$errorRecordDatas = array();
 		foreach ($recordIdxs as $idx) {
+			/*
+				作成：朴昰成
+				修正：朴昰成
+				修正日：24/06/17
+			*/
+
+			/* 修正前：
 			try { $recordData = $recordTb->ReadByIdx($idx); }
 			catch (\Exception $e) { die($e->getMessage()); }
+			*/
+
+			/* 修正後： */
+			try {
+				$recordData = $recordTb->ReadByIdx($idx);
+			} catch (\Exception $e) {
+				$logData["reason"] = "exception at SituationController requestAction RecordTable ReadByIdx";
+				$logData["message"] = $e->getMessage();
+				$log = $LogModule->SaveLog($logData);
+				die($log);
+			}
+			/* ここまで */
 
 			if ($recordData["request_date"] != null) { $errorRecordDatas[] = $recordData; }
 			$recordDatas[] = $recordData;
@@ -263,6 +294,13 @@ class SituationController extends AbstractActionController {
 			/* ここまで */
 		}
 
+		/*
+			作成：朴昰成
+			修正：朴昰成
+			修正日：24/06/17
+		*/
+
+		/* 修正前：
 		try { $PICDatas = $adminTb->ReadPIC(); }
 		catch (\Exception $e) { die($e->getMessage()); }
 
@@ -284,6 +322,47 @@ class SituationController extends AbstractActionController {
 				catch (\Exception $e) { die($this->SaveLog($e->getMessage())); }
 			}
 		}
+		*/
+
+		/* 修正後： */
+		try {
+			$PICData = $adminTb->ReadPIC()[0];
+		} catch (\Exception $e) {
+			$logData["reason"] = "exception at SituationController requestAction AdminTable ReadPIC";
+			$logData["message"] = $e->getMessage();
+			$log = $LogModule->SaveLog($logData);
+			die($log);
+		}
+
+		foreach ($recordDatas as $recordData) {
+			try {
+				$applicantData = $applicantTb->ReadByIdx($recordData["applicant_idx"]);
+			} catch (\Exception $e) {
+				$logData["reason"] = "exception at SituationController requestAction ApplicantTable ReadByIdx";
+				$logData["message"] = $e->getMessage();
+				$log = $LogModule->SaveLog($logData);
+				die($log);
+			}
+
+			$skillText = "無";
+			if ($recordData["skill"] == 0) { $skillText = "有"; }
+
+			$caseText = "中途（経歴職）";
+			if($recordData["case"] == 0){ $caseText = "新卒"; }
+
+			$this->mailByRequest($PICData, $applicantData);
+			$this->mailByAdmin($applicantData, $skillText, $caseText, $PICData, $recordData);
+
+			try {
+				$recordTb->RequestByIdx($recordData["idx"]);
+			} catch (\Exception $e) {
+				$logData["reason"] = "exception at SituationController requestAction RecordTable RequestByIdx";
+				$logData["message"] = $e->getMessage();
+				$log = $LogModule->SaveLog($logData);
+				die($log);
+			}
+		}
+		/* ここまで */
 
 		die("success");
 	}

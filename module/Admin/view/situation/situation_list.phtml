@@ -239,7 +239,19 @@
           <td colspan="17">診断者情報がありません。</td>
         <?php else: ?>
           <?php foreach ($recordDatas as $index => $data): ?>
+            <!--
+              作成：朴昰成
+              修正：朴昰成
+              修正日：24/06/17
+            -->
+
+            <!-- 修正前： <?php /* ?>
             <tr <?php echo ($data["diagnosis_date"] == null) ? "style='background: lightcyan;'" : ""; ?>>
+            <?php */ ?> -->
+
+            <!-- 修正後： -->
+            <tr <?php echo ($data["diagnosis_code"] == null || $data["diagnosis_code"] == "") ? "style='background: lightcyan;'" : ""; ?>>
+            <!-- ここまで -->
               <td><?php echo $firstNo - $index; ?></td>
               <td><?php echo $data["status"]; ?></td>
 
@@ -258,7 +270,19 @@
               <?php
                 $isExpire = false;
                 if (isset($data["date_schedule"])) {
+                  /*
+                    作成：朴昰成
+                    修正：朴昰成
+                    修正日：24/06/17
+                  */
+
+                  /* 修正前：
                   if ((strtotime($data["date_schedule"]) < strtotime(date("Y-m-d H:i:s"))) && is_null($data["rank"])) {
+                  */
+
+                  /* 修正後： */
+                  if ((strtotime($data["date_schedule"]) < time()) && is_null($data["rank"])) {
+                  /* ここまで */
                     $isExpire = true;
                   }
                 }

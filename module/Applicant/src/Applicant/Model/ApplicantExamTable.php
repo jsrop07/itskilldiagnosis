@@ -230,17 +230,18 @@ class ApplicantExamTable
       );
       return json_encode($response);
 
-    } elseif(0 > $remain_time)
-    {
+    } 
+    // elseif(0 > $remain_time)
+    // {
 
-      $updateQry = $this->sql->update('record')->set(array('rank' => 'F'))->where(array('idx' => $row['idx']));
-      $updateResult = $this->sql->prepareStatementForSqlObject($updateQry)->execute();
-      $response = array(
-        'status' => 'timeout',
-        'remain_time' => $remain_time
-    );
-      return json_encode($response);
-    }
+    //   $updateQry = $this->sql->update('record')->set(array('rank' => 'F'))->where(array('idx' => $row['idx']));
+    //   $updateResult = $this->sql->prepareStatementForSqlObject($updateQry)->execute();
+    //   $response = array(
+    //     'status' => 'timeout',
+    //     'remain_time' => $remain_time
+    // );
+    //   return json_encode($response);
+    // }
   }
 
   // public function pauseCheck($idx)

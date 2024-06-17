@@ -439,7 +439,7 @@ class QuestionController extends AbstractActionController
 						作成：朴昰成
 						作成日：24/06/17
 					*/
-					$data = str_replace(",", "{{44}}", $data);
+					$data = str_replace("{{44}}", ",", $data);
 					/* ここまで　*/
 					$questionData[$keys[$idx]] = $data;
 				}

@@ -435,6 +435,12 @@ class QuestionController extends AbstractActionController
 			$logDatas = array();
 			foreach ($csvStrings as $index => $csvDatas) {
 				foreach ($csvDatas as $idx => $data) {
+					/*
+						作成：朴昰成
+						作成日：24/06/17
+					*/
+					$data = str_replace("{{44}}", ",", $data);
+					/* ここまで　*/
 					$questionData[$keys[$idx]] = $data;
 				}
 

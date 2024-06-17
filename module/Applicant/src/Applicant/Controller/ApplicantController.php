@@ -416,9 +416,7 @@ class ApplicantController extends AbstractActionController
 		// $emailId = $session->id;
 		if (isset($session->id)) {
 		  $emailId = $session->id;
-		} else {
-		$this->RedirectToLogin();		  
-	  }
+		} 
 		$diagnosisTb = $this->getServiceLocator()->get("DiagnosisTable-Admin");
 		$applicantInfo    = $applicantExamTbl->readById($emailId);
 		$examRecordInfo =  $applicantExamTbl->readByApplicantIdx($applicantInfo);

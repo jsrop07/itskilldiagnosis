@@ -606,6 +606,13 @@
 
     if (confirm("結果を送信しますか？") === false) { return false; }
 
+    /*
+      作成：朴昰成
+      修正：朴昰成
+      修正日：24/06/17
+    */
+
+    /* 修正前：
     button.replaceChildren();
 
     var span = document.createElement("span");
@@ -625,15 +632,36 @@
     const xhr = new XMLHttpRequest();
     xhr.open("POST", "./mail", true);
     xhr.send(postForm);
+    */
+
+    /* 修正後： */
+    ChangeButton(button, "送信中...");
+
+    formDatas = [{"key":"idxs", "value":idxs}];
+    const xhr = SendXhr("./mail", formDatas);
+    /* ここまで */
     xhr.onload = () => {
       if (xhr.status == 200) {
         const result = xhr.responseText;
+        /*
+          作成：朴昰成
+          作成日：24/06/17
+        */
+        console.log(result);
+        /* ここまで */
 
         if (result === "success") {
           alert("送信しました。");
           location.reload(true);
         }
         else {
+          /*
+            作成：朴昰成
+            修正：朴昰成
+            修正日：24/06/17
+          */
+
+          /* 修正前：
           try {
             let recordDatas = JSON.parse(result);
 
@@ -659,8 +687,55 @@
             console.log(result);
             return false;
           }
+          */
+
+          /* 修正後： */
+          try {
+            let recordDatas = JSON.parse(result);
+          }
+          catch (e) {
+            let alertString = ErrorString();
+            alertString += "\nexception error in situation_list SendMail";
+            alertString += "\nexception message: " + e;
+            alertString += "\nresponseText: " + result;
+            alert(alertString);
+
+            ReturnButton(button, "結果送信");
+            return false;
+          }
+
+          let alertString = "送信できない診断者がいます。\n\n";
+          alertString += "送信できない診断者";
+          for (let i = 0; i < recordDatas.length; i++) {
+            let applicantNo = "";
+            for (let j = 0; j < tableBodyList.children.length; j++) {
+              if (recordDatas[i]["idx"] = tableBodyList.children[j].children[16].children[0].value) {
+                applicantNo = tableBodyList.children[j].children[0].innerText;
+              }
+            }
+            $alertString += "\n" + applicantNo + "．" + recordDatas[i]["name"];
+          }
+          alert($alertString);
+
+          ReturnButton(button, "結果送信");
+          return false;
+          /* ここまで */
         }
       }
+      /*
+        作成：朴昰成
+        作成日：24/06/17
+      */
+      else {
+        let alertString = ErrorString();
+        alertString += "\nxhr error in situation_list SendMail";
+        alertString += "\nerror code: " + xhr.status;
+        alert(alertString);
+
+        ReturnButton(button, "結果送信");
+        return false;
+      }
+      /* ここまで */
     }
   }
   /*

@@ -372,14 +372,39 @@ class SituationController extends AbstractActionController {
 		$idxs = $this->params()->fromPost("idxs");
 		$idxDatas = explode(",", $idxs);
 		
+		/*
+			作成：朴昰成
+			作成日：24/06/17
+		*/
+		$LogModule = new LogModule();
+		/* ここまで */
 		$recordTb = $this->getServiceLocator()->get("RecordTable-Admin");
 
 		$recordDatas = array();
 		$recordIdxDatas = array();
 		foreach ($idxDatas as $idx) {
 			$recordData = "";
+			/*
+				作成：朴昰成
+				修正：朴昰成
+				修正日：24/06/17
+			*/
+
+			/* 修正前：
 			try { $recordData = $recordTb->ReadByIdx($idx); }
 			catch (\Exception $e) { die($e->getMessage()); }
+			*/
+
+			/* 修正後： */
+			try {
+				$recordData = $recordTb->ReadByIdx($idx);
+			} catch (\Exception $e) {
+				$logData["reason"] = "exception at SituationController mailAction RecordTable ReadByIdx";
+				$logData["message"] = $e->getMessage();
+				$log = $LogModule->SaveLog($logData);
+				die($log);
+			}
+			/* ここまで */
 
 			// when test didn't ended	
 			if ($recordData["rank"] == null) { $recordIdxDatas[] = $recordData; }
@@ -395,7 +420,26 @@ class SituationController extends AbstractActionController {
 
 			$applicantDatas = array();
 			foreach ($recordIdxDatas as $recordData) {
+				/*
+					作成：朴昰成
+					修正：朴昰成
+					修正日：24/06/17
+				*/
+	
+				/* 修正前：
 				$applicantDatas[] = $applicantTb->ReadByIdx($recordData["applicant_idx"]);
+				*/
+	
+				/* 修正後： */
+				try {
+					$applicantDatas[] = $applicantTb->ReadByIdx($recordData["applicant_idx"]);
+				} catch (\Exception $e) {
+					$logData["reason"] = "exception at SituationController mailAction ApplicantTable ReadByIdx";
+					$logData["message"] = $e->getMessage();
+					$log = $LogModule->SaveLog($logData);
+					die($log);
+				}
+				/* ここまで */
 			}
 
 			die(json_encode($applicantDatas));
@@ -403,6 +447,13 @@ class SituationController extends AbstractActionController {
 
 		// read pic_admin data
 		$adminTb = $this->getServiceLocator()->get("AdminTable");
+		/*
+			作成：朴昰成
+			修正：朴昰成
+			修正日：24/06/17
+		*/
+
+		/* 修正前：
 		$PicDatas = "";
 		try { $PicDatas = $adminTb->ReadPIC(); }
 		catch (\Exception $e) { die($e->getMessage()); }
@@ -428,6 +479,49 @@ class SituationController extends AbstractActionController {
 				return json_encode($applicantData);
 			}
 		}
+		*/
+
+		/* 修正後： */
+		$PicData = "";
+		try {
+			$PicData = $adminTb->ReadPIC()[0];
+		} catch (\Exception $e) {
+			$logData["reason"] = "exception at SituationController mailAction AdminTable ReadPIC";
+			$logData["message"] = $e->getMessage();
+			$log = $LogModule->SaveLog($logData);
+			die($log);
+		}
+
+		// send mail
+		$applicantTb = $this->getServiceLocator()->get("ApplicantTable-Admin");
+		foreach ($recordDatas as $data) {
+			// read applicant data
+			$applicantData = "";
+			try {
+				$applicantData = $applicantTb->ReadByIdx($data["applicant_idx"]);
+			} catch (\Exception $e) {
+				$logData["reason"] = "exception at SituationController mailAction ApplicantTable ReadByIdx";
+				$logData["message"] = $e->getMessage();
+				$log = $LogModule->SaveLog($logData);
+				die($log);
+			}
+
+			$result = $this->SendResultMailToApplicantByPICAdmin($applicantData, $data, $PicData);
+			if ($result == "exception" || $result == "fale") { return "mail failed"; }
+
+			// update applicant table
+			$sqlSet["date_mail"] = date("Y-m-d H:i:s");
+			try {
+				$recordTb->UpdateByIdx($data["idx"], $sqlSet);
+			}
+			catch (\Exception $e) {
+				$logData["reason"] = "exception at SituationController mailAction RecordTable UpdateByIdx";
+				$logData["message"] = $e->getMessage();
+				$log = $LogModule->SaveLog($logData);
+				die($log);
+			}
+		}
+		/* ここまで */
 
 		die("success");
 	}

@@ -171,12 +171,12 @@ class ApplicantController extends AbstractActionController
 			$resultJson = json_decode($loginTbl->login($p["id"], $p["password"]));
 
 			if ($resultJson->status == "success") {
-				$session["id"] = $p["id"];
+				$session["userid"] = $p["id"];
 			}
 			die($result);
     }
 
-		if(isset($session['id']) && $session['id'] != '') {
+		if(isset($session['userid']) && $session['userid'] != '') {
 			return $this->redirect()->toUrl("../applicant/exam");
 		}
 
@@ -196,8 +196,8 @@ class ApplicantController extends AbstractActionController
 
 
 	  $session = new Container("applicant");
-	  if (isset($session->id)) {
-		  $emailId = $session->id;
+	  if (isset($session->userid)) {
+		  $emailId = $session->userid;
 		} else {
 			$this->RedirectToLogin();		  
 	  }
@@ -357,7 +357,7 @@ class ApplicantController extends AbstractActionController
 				$this->mailByApplicantExam($applicantInfo,$sqlSet,$managerArray,$examRecordIdx);
 			}
 		
-			unset($session->id);
+			unset($session->userid);
 		
 			echo "
 			<script>
@@ -371,8 +371,8 @@ class ApplicantController extends AbstractActionController
 			// 修正日：24/06/14 
 			// 修正前：
 			// if($submit_post=='cancel'){
-			// 	if (isset($session->id)) {
-			// 		$emailId = $session->id;
+			// 	if (isset($session->userid)) {
+			// 		$emailId = $session->userid;
 			// 		unset($emailId);
 			// 		$applicantExamTbl->deletePasswordByIdx($applicantInfo["idx"]);
 			// 		$applicantExamTbl->disqualificationByCancel($examRecordInfo['idx']);
@@ -384,8 +384,8 @@ class ApplicantController extends AbstractActionController
 			// and all session unset part
 			// 修正後
 		  if($submit_post=='cancel'){
-				if (isset($session->id)) {
-					unset($session->id);
+				if (isset($session->userid)) {
+					unset($session->userid);
 					$applicantExamTbl->deletePasswordByIdx($applicantInfo["idx"]);
 					$applicantExamTbl->disqualificationByCancel($examRecordInfo['idx']);
 					$this->CancelToLogin();	
@@ -412,9 +412,9 @@ class ApplicantController extends AbstractActionController
 		$applicantExamTbl = $this->getServiceLocator()->get("ApplicantExamTable");
 		
 		$session = new Container("applicant");
-		// $emailId = $session->id;
-		if (isset($session->id)) {
-		  $emailId = $session->id;
+		// $emailId = $session->userid;
+		if (isset($session->userid)) {
+		  $emailId = $session->userid;
 		} 
 		$diagnosisTb = $this->getServiceLocator()->get("DiagnosisTable-Admin");
 		$applicantInfo    = $applicantExamTbl->readById($emailId);
@@ -456,7 +456,7 @@ class ApplicantController extends AbstractActionController
 		}
 		if (isset($timeoutData['status']) && $timeoutData['status'] === 'timeout') {
 				$applicantExamTbl->deletePasswordByIdx($applicantInfo['idx']);
-				// unset($session->id);
+				// unset($session->userid);
 				echo $timeout; 
 		} elseif (isset($timeoutData['status']) && $timeoutData['status'] === 'success') {
 				echo $timeout; 

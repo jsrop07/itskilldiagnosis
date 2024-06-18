@@ -53,7 +53,6 @@ class Module
 
         $sessionConfig = new \Zend\Session\Config\SessionConfig();
         $sessionConfig->setOptions($config['session']);
-        ini_set('session.cookie_domain', '.'.$_SERVER['SITE_URL']);
 
         $sessionManager = new \Zend\Session\SessionManager( $sessionConfig , NULL, $saveHandler );
         $sessionManager->start();

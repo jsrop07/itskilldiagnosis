@@ -241,7 +241,7 @@ $lineChange = "<br>";
           submitButton.innerText = '提出';
           submitButton.id ='btn_submit'
           stopBtn.hidden = true;
-          console.log(examContent);
+          // console.log(examContent);
 
           const endMessage = document.createElement('div');
           endMessage.innerText = 'お疲れ様でした。以上で診断試験は終了でございます。\n下記の提出ボタンを押してください。';
@@ -497,7 +497,7 @@ function initializeTimers() {
   function updateTimer() {
     if (lock === 'n') {
       var currentTime = Date.now(); 
-      console.log(currentTime);
+      // console.log(currentTime);
 
       var elapsed = Math.floor((currentTime - startTime - pausedTime) / 1000);
       var remainingTime = examTimeInSeconds - elapsed;

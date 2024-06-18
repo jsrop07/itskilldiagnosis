@@ -4,11 +4,11 @@
 
   /*
     作成：朴昰成
-    作成日：24/06/27
+    作成日：24/06/16
   */
   function ChangeString($string) {
     $string = htmlspecialchars($string, ENT_QUOTES);
-    $string = str_replace("{{n}}", "<br/>", $string);
+    $string = str_replace("{{n}}", "\n", $string);
     return $string;
   }
 
@@ -200,7 +200,7 @@
       <?php */ ?> -->
 
       <!-- 修正後： -->
-      <dd class="expand" style="grid-column: 2 / 5;"><?php echo ChangeString($questionData["note"]); ?></dd>
+      <dd class="expand" style="grid-column: 2 / 5;"><pre><?php echo ChangeString($questionData["note"]); ?></pre></dd>
       <!-- ここまで -->   
 		</dl>
 	</div>

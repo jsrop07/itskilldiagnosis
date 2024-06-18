@@ -5,12 +5,7 @@ use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Zend\Session\Container;
 use Admin\Model\MailRequest;
-/*
-	作成：朴昰成
-	作成日：24/06/17
-*/
 use Admin\Model\LogModule;
-/* ここまで */
 
 class SituationController extends AbstractActionController {
 	function ChkLogin() {
@@ -234,12 +229,7 @@ class SituationController extends AbstractActionController {
 		$idxs = $this->params()->fromPost("idxs");
 		$recordIdxs = explode(",", $idxs);
 
-		/*
-			作成：朴昰成
-			作成日：24/06/17
-		*/
 		$LogModule = new LogModule();
-		/* ここまで */
 		$applicantTb = $this->getServiceLocator()->get("ApplicantTable-Admin");
 		$recordTb = $this->getServiceLocator()->get("RecordTable-Admin");
 		$adminTb = $this->getServiceLocator()->get("AdminTable");
@@ -247,18 +237,6 @@ class SituationController extends AbstractActionController {
 		$recordDatas = array();
 		$errorRecordDatas = array();
 		foreach ($recordIdxs as $idx) {
-			/*
-				作成：朴昰成
-				修正：朴昰成
-				修正日：24/06/17
-			*/
-
-			/* 修正前：
-			try { $recordData = $recordTb->ReadByIdx($idx); }
-			catch (\Exception $e) { die($e->getMessage()); }
-			*/
-
-			/* 修正後： */
 			try {
 				$recordData = $recordTb->ReadByIdx($idx);
 			} catch (\Exception $e) {
@@ -267,64 +245,15 @@ class SituationController extends AbstractActionController {
 				$log = $LogModule->SaveLog($logData);
 				die($log);
 			}
-			/* ここまで */
 
 			if ($recordData["request_date"] != null) { $errorRecordDatas[] = $recordData; }
 			$recordDatas[] = $recordData;
 		}
 
 		if ($errorRecordDatas) {
-			/*
-				作成：朴昰成
-				修正：朴昰成
-				修正日：24/06/16
-			*/
-
-			/* 修正前：
-			$applicnatDatas = array();
-			foreach ($errorRecordDatas as $recordData) {
-				try { $applicnatDatas[] = $applicantTb->ReadByIdx($recordData["applicant_idx"]); }
-				catch (\Exception $e) { die($e->getMessage()); }
-			}
-			die(json_encode($applicnatDatas));
-			*/
-
-			/* 修正後： */
 			die(json_encode($errorRecordDatas));
-			/* ここまで */
 		}
 
-		/*
-			作成：朴昰成
-			修正：朴昰成
-			修正日：24/06/17
-		*/
-
-		/* 修正前：
-		try { $PICDatas = $adminTb->ReadPIC(); }
-		catch (\Exception $e) { die($e->getMessage()); }
-
-		foreach ($PICDatas as $adminData) {
-			foreach ($recordDatas as $recordData) {
-				try { $applicantData = $applicantTb->ReadByIdx($recordData["applicant_idx"]); }
-				catch (\Exception $e) { die($e->getMessage()); }
-
-				$skillText = "無";
-				if ($recordData["skill"] == 0) { $skillText = "有"; }
-
-				$caseText = "中途（経歴職）";
-				if($recordData["case"] == 0){ $caseText = "新卒"; }
-
-				$this->mailByRequest($adminData, $applicantData);
-				$this->mailByAdmin($applicantData, $skillText, $caseText, $adminData, $recordData);
-
-				try { $recordTb->RequestByIdx($recordData["idx"]); }
-				catch (\Exception $e) { die($this->SaveLog($e->getMessage())); }
-			}
-		}
-		*/
-
-		/* 修正後： */
 		try {
 			$PICData = $adminTb->ReadPIC()[0];
 		} catch (\Exception $e) {
@@ -362,7 +291,6 @@ class SituationController extends AbstractActionController {
 				die($log);
 			}
 		}
-		/* ここまで */
 
 		die("success");
 	}
@@ -371,31 +299,14 @@ class SituationController extends AbstractActionController {
 	public function mailAction() {
 		$idxs = $this->params()->fromPost("idxs");
 		$idxDatas = explode(",", $idxs);
-		
-		/*
-			作成：朴昰成
-			作成日：24/06/17
-		*/
+
 		$LogModule = new LogModule();
-		/* ここまで */
 		$recordTb = $this->getServiceLocator()->get("RecordTable-Admin");
 
 		$recordDatas = array();
 		$recordIdxDatas = array();
 		foreach ($idxDatas as $idx) {
 			$recordData = "";
-			/*
-				作成：朴昰成
-				修正：朴昰成
-				修正日：24/06/17
-			*/
-
-			/* 修正前：
-			try { $recordData = $recordTb->ReadByIdx($idx); }
-			catch (\Exception $e) { die($e->getMessage()); }
-			*/
-
-			/* 修正後： */
 			try {
 				$recordData = $recordTb->ReadByIdx($idx);
 			} catch (\Exception $e) {
@@ -404,7 +315,6 @@ class SituationController extends AbstractActionController {
 				$log = $LogModule->SaveLog($logData);
 				die($log);
 			}
-			/* ここまで */
 
 			// when test didn't ended	
 			if ($recordData["rank"] == null) { $recordIdxDatas[] = $recordData; }
@@ -420,17 +330,6 @@ class SituationController extends AbstractActionController {
 
 			$applicantDatas = array();
 			foreach ($recordIdxDatas as $recordData) {
-				/*
-					作成：朴昰成
-					修正：朴昰成
-					修正日：24/06/17
-				*/
-	
-				/* 修正前：
-				$applicantDatas[] = $applicantTb->ReadByIdx($recordData["applicant_idx"]);
-				*/
-	
-				/* 修正後： */
 				try {
 					$applicantDatas[] = $applicantTb->ReadByIdx($recordData["applicant_idx"]);
 				} catch (\Exception $e) {
@@ -439,7 +338,6 @@ class SituationController extends AbstractActionController {
 					$log = $LogModule->SaveLog($logData);
 					die($log);
 				}
-				/* ここまで */
 			}
 
 			die(json_encode($applicantDatas));
@@ -447,41 +345,6 @@ class SituationController extends AbstractActionController {
 
 		// read pic_admin data
 		$adminTb = $this->getServiceLocator()->get("AdminTable");
-		/*
-			作成：朴昰成
-			修正：朴昰成
-			修正日：24/06/17
-		*/
-
-		/* 修正前：
-		$PicDatas = "";
-		try { $PicDatas = $adminTb->ReadPIC(); }
-		catch (\Exception $e) { die($e->getMessage()); }
-
-		// send mail
-		$applicantTb = $this->getServiceLocator()->get("ApplicantTable-Admin");
-		foreach ($recordDatas as $data) {
-			// read applicant data
-			$applicantData = "";
-			try { $applicantData = $applicantTb->ReadByIdx($data["applicant_idx"]); }
-			catch (\Exception $e) { die($e->getMessage()); }
-
-			$result = $this->SendResultMailToApplicantByPICAdmin($applicantData, $data, $PicDatas[0]);
-			if ($result == "exception" || $result == "fale") { return "fail"; }
-
-			// update applicant table
-			$sqlSet["date_mail"] = date("Y-m-d H:i:s");
-			try {
-				$recordTb->UpdateByIdx($data["idx"], $sqlSet);
-			}
-			catch (\Exception $e) {
-				$this->SaveLog($e->getMessage());
-				return json_encode($applicantData);
-			}
-		}
-		*/
-
-		/* 修正後： */
 		$PicData = "";
 		try {
 			$PicData = $adminTb->ReadPIC()[0];
@@ -521,7 +384,6 @@ class SituationController extends AbstractActionController {
 				die($log);
 			}
 		}
-		/* ここまで */
 
 		die("success");
 	}

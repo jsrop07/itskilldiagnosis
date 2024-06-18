@@ -912,12 +912,29 @@ class SituationController extends AbstractActionController {
 				$applicantInfo = $situTb->getRecord();
 
 				$this->mailByAdmin($arr,$skillText,$caseText,$managerInfo,$applicantInfo);
+				/*
+					作成：丁錫圓
+					修正：朴昰成
+					修正日：24/06/18
+				*/
+
+				/* 修正前：
 				echo "
 				<script>
 				alert('依頼が完了しました')
 				self.location.href='/admin/situation/list';
 				</script>
 				";	
+				*/
+
+				/* 修正後： */
+				echo "
+				<script>
+				alert('依頼しました')
+				self.location.href='/admin/situation/list';
+				</script>
+				";	
+				/* ここまで */
 		
 				exit;
 			} elseif($inputDatas == "btn_save"){

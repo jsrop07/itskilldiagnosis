@@ -433,6 +433,12 @@
 	<?php if ($isEdit): ?>
 		function Edit() {
 			if (ChkValid() == false) { return false; }
+      /*
+        作成：朴昰成
+        作成日：24/06/18
+      */
+      if (confirm("修正しますか？") === false) { return false; }
+      /* ここまで */
 
 			const postForm = new FormData(form);
 			const xhr = new XMLHttpRequest();
@@ -441,15 +447,55 @@
 			xhr.onload = () => {
 				if (xhr.status == 200) {
 					const result = xhr.responseText;
+          /*
+            作成：朴昰成
+            作成日：24/06/18
+          */
+          console.log(result);
+
+
+          /* ここまで */
 					if (result == "success") {
 						alert("修正しました。");
 						self.location.href = "../list";
 					}
+          /*
+            作成：朴昰成
+            修正：朴昰成
+            作成日：24/06/18
+          */
+
+          /* 修正前： <?php /* ?>
 					else {
 						alert("Error");
 						console.log(result);
 					}
+          <?php */ ?> */
+
+          /* 修正後： */
+          else {
+            let alertString = ErrorString();
+            alertString += "\nresponse text is not success in question_input Edit";
+            alertString += "\nresponseText: " + result;
+            alert(alertString);
+
+            return false;
+          }
+          /* ここまで */
 				}
+        /*
+          作成：朴昰成
+          作成日：24/06/18
+        */
+        else {
+          let alertString = ErrorString();
+          alertString += "\nxhr error in question_input Edit";
+          alertString += "\nerror code: " + xhr.status;
+          alert(alertString);
+
+          return false;
+        }
+        /* ここまで */
 			}
 		}
 	<?php else: ?>
@@ -550,4 +596,18 @@
 		alert(text + "を選択してください");
 		element.focus();
 	}
+  /*
+    作成：朴昰成
+    作成日：24/06/18
+  */
+
+
+
+  function ErrorString() {
+    let alertString = "予期せぬエラーが発生しました。";
+    alertString += "\n管理者にエラー内容をお知らせくださいますようお願いいたします。";
+    alertString += "\n\nエラー内容：";
+    return alertString;
+  }
+  /* ここまで */
 </script>

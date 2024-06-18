@@ -1,7 +1,7 @@
 <?php
 $ses_id = (isset($_SESSION['applicant']) && !empty($_SESSION['applicant'])) ? $_SESSION['applicant'] : '';
 if ($ses_id) {
-    if ($_SESSION['applicant']['id']) {
+    if ($_SESSION['applicant']['userid']) {
         $logged = true;
     } else {
         $logged = false;

@@ -5,6 +5,8 @@ chdir(dirname(__DIR__));
 
 header('Access-Control-Allow-Origin: *');
 
+ini_set('session.cookie_lifetime', 86400);
+ini_set('session.gc_maxlifetime', 86400);
 
 
 // Decline static file requests back to the PHP built-in webserver

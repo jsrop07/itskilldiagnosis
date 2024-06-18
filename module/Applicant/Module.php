@@ -32,15 +32,35 @@ class Module
         $moduleRouteListener = new ModuleRouteListener();
         $moduleRouteListener->attach($eventManager);
         $config             = $serviceManager->get('config');
+
+
+        $this->initDbSession( $e );
+
+    }
+
+
+    private function initDbSession( MvcEvent $e )
+    {
+        // grab the config array
+        $serviceManager     = $e->getApplication()->getServiceManager();
+        $config             = $serviceManager->get('config');
+
+        $dbAdapter          = $serviceManager->get('Zend\Db\Adapter\Adapter');
+        $sessionOptions = new \Zend\Session\SaveHandler\DbTableGatewayOptions( null );
+
+        $sessionTableGateway = new \Zend\Db\TableGateway\TableGateway('session', $dbAdapter);
+        $saveHandler = new \Zend\Session\SaveHandler\DbTableGateway($sessionTableGateway, $sessionOptions);
+
         $sessionConfig = new \Zend\Session\Config\SessionConfig();
         $sessionConfig->setOptions($config['session']);
-        // ini_set('session.cookie_domain', '/');
+        ini_set('session.cookie_domain', '.'.$_SERVER['SITE_URL']);
 
-        $sessionManager = new \Zend\Session\SessionManager( $sessionConfig , NULL, NULL );
+        $sessionManager = new \Zend\Session\SessionManager( $sessionConfig , NULL, $saveHandler );
         $sessionManager->start();
 
         \Zend\Session\Container::setDefaultManager($sessionManager);
     }
+
 
     public function getConfig()
     {

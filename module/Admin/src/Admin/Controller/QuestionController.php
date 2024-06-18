@@ -300,6 +300,13 @@ class QuestionController extends AbstractActionController
 	public function registAction() {
 		$post = $this->params()->fromPost();
 
+		/*
+			作成：朴昰成
+			修正：朴昰成
+			修正日：24/06/18
+		*/
+
+		/* 修正前：
 		foreach ($post as $index => $data) {
 			if ($data == null) {
 				$post[$index] = "";
@@ -315,12 +322,55 @@ class QuestionController extends AbstractActionController
 		$questionTb = $this->getServiceLocator()->get("QuestionTable");
 		try { $questionTb->CreateQuestion($post); }
 		catch (\Exception $e) { die($e->getMessage()); }
+		*/
+
+		/* 修正後： */
+		$questionData = $post;
+
+		foreach ($questionData as $key => $value) {
+			if ($value == null) {
+				$questionData[$key] = "";
+				continue;
+			}
+			$questionData[$key] = str_replace("\n", "{{n}}", $value);
+		}
+
+		$LogModule = new LogModule();
+		$exceptionLogReason = "exception at QuestionController registAction ";
+
+		$optionTb = $this->getServiceLocator()->get("OptionTable");
+		try {
+			$questionData["status"] = $optionTb->ReadByText("新規")["idx"];
+		} catch (\Exception $e) {
+			$logData["reason"] = $exceptionLogReason . "OptionTable ReadByText";
+			$logData["message"] = $e->getMessage();
+			$log = $LogModule->SaveLog($logData);
+			die($log);
+		}
+
+		$questionTb = $this->getServiceLocator()->get("QuestionTable");
+		try {
+			$questionTb->CreateQuestion($questionData);
+		} catch (\Exception $e) {
+			$logData["reason"] = $exceptionLogReason . "QuestionTable CreateQuestion";
+			$logData["message"] = $e->getMessage();
+			$log = $LogModule->SaveLog($logData);
+			die($log);
+		}
+		/* ここまで */
 
 		die("success");
 	}
 
 	public function updateAction() {
 		$post = $this->params()->fromPost();
+		/*
+			作成：朴昰成
+			修正：朴昰成
+			修正日：24/06/18
+		*/
+
+		/* 修正前：
 		$idx = ["idx" => $post["idx"]];
 		unset($post["idx"]);
 
@@ -342,6 +392,48 @@ class QuestionController extends AbstractActionController
 		$questionTb = $this->getServiceLocator()->get("QuestionTable");
 		try { $questionTb->UpdateByIdx($idx, $post); }
 		catch (\Exception $e) { die($e->getMessage()); }
+		*/
+
+		/* 修正後： */
+		$questionData = $post;
+		$sqlWhere["idx"] = $questionData["idx"];
+		unset($questionData["idx"]);
+
+		foreach ($questionData as $key => $value) {
+			if ($value == null) {
+				$questionData[$key] = "";
+				continue;
+			}
+
+			$questionData[$key] = str_replace("\n", "{{n}}", $value);
+		}
+
+		$questionData["admin_approve"] = null;
+		$questionData["date_approve"] = null;
+
+		$LogModule = new LogModule();
+		$exceptionLogReason = "exception at QuestionController updateAction ";
+
+		$optionTb = $this->getServiceLocator()->get("OptionTable");
+		try {
+			$questionData["status"] = $optionTb->ReadByText("承認依頼")["idx"];
+		} catch (\Exception $e) {
+			$logData["reason"] = $exceptionLogReason . "OptionTable ReadByText";
+			$logData["message"] = $e->getMessage();
+			$log = $LogModule->SaveLog($logData);
+			die($log);
+		}
+
+		$questionTb = $this->getServiceLocator()->get("QuestionTable");
+		try {
+			$questionTb->UpdateByIdx($sqlWhere, $questionData);
+		} catch (\Exception $e) {
+			$logData["reason"] = $exceptionLogReason . "QuestionTable UpdateByIdx";
+			$logData["message"] = $e->getMessage();
+			$log = $LogModule->SaveLog($logData);
+			die($log);
+		}
+		/* ここまで */
 
 		die("success");
 	}

@@ -162,6 +162,7 @@ class ApplicantController extends AbstractActionController
   public function loginAction()
   {
 	$this->layout("layout/applicant/login_layout");
+	$session = new Container("applicant");
 	//モデル連動
     $p = $this->params()->fromPost();
     if (isset($p["id"])) {
@@ -170,16 +171,14 @@ class ApplicantController extends AbstractActionController
 			$resultJson = json_decode($loginTbl->login($p["id"], $p["password"]));
 
 			if ($resultJson->status == "success") {
-				$session = new Container("applicant");
 				$session["id"] = $p["id"];
 			}
 			die($result);
     }
 
-	$session = new Container("applicant");
-	if(isset($session['id']) && $session['id'] != '') {
-		return $this->redirect()->toUrl("../applicant/exam");
-	}
+		if(isset($session['id']) && $session['id'] != '') {
+			return $this->redirect()->toUrl("../applicant/exam");
+		}
 
     $vm = new ViewModel();
     $vm->setTemplate("/applicant/login.phtml");
@@ -200,7 +199,7 @@ class ApplicantController extends AbstractActionController
 	  if (isset($session->id)) {
 		  $emailId = $session->id;
 		} else {
-		$this->RedirectToLogin();		  
+			$this->RedirectToLogin();		  
 	  }
 
 	  // Read applicant info
@@ -406,7 +405,7 @@ class ApplicantController extends AbstractActionController
 	作成：丁錫圓
 	作成日：24/06/07
 	*/ 
-	public function timeoutAction()
+	public function  gettimeAction()
 	{
 		$post = $this->params()->fromPost();
 		$examIdx = $post['idx']; 
@@ -416,9 +415,7 @@ class ApplicantController extends AbstractActionController
 		// $emailId = $session->id;
 		if (isset($session->id)) {
 		  $emailId = $session->id;
-		} else {
-		$this->RedirectToLogin();		  
-	  }
+		} 
 		$diagnosisTb = $this->getServiceLocator()->get("DiagnosisTable-Admin");
 		$applicantInfo    = $applicantExamTbl->readById($emailId);
 		$examRecordInfo =  $applicantExamTbl->readByApplicantIdx($applicantInfo);
@@ -459,7 +456,7 @@ class ApplicantController extends AbstractActionController
 		}
 		if (isset($timeoutData['status']) && $timeoutData['status'] === 'timeout') {
 				$applicantExamTbl->deletePasswordByIdx($applicantInfo['idx']);
-				unset($session->id);
+				// unset($session->id);
 				echo $timeout; 
 		} elseif (isset($timeoutData['status']) && $timeoutData['status'] === 'success') {
 				echo $timeout; 

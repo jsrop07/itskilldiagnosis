@@ -311,7 +311,19 @@
   </div>
 
 <div class="pagination-place" style="margin-top: 10px;">
+  <!--
+    作成：朴昰成
+    修正：朴昰成
+    修正日：24/06/18
+  -->
+
+  <!-- 修正前： <?php /* ?>
 	<?php echo $this->paginationControl($this->noticelist, "sliding", array("pagination2", "Notice"), array("url" => "")); ?>
+  <?php */ ?> -->
+
+  <!-- 修正後： -->
+  <?php echo $this->paginationControl($this->noticelist, "sliding", array("pagination", "Notice"), array("url" => "")); ?>
+  <!-- ここまで -->
 </div>
 
 <div class="button-place" style="margin-top: 10px; justify-content:space-between;">

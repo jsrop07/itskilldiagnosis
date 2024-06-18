@@ -45,7 +45,7 @@ return array(
       'cookie_httponly'   => false,
       'cookie_lifetime'   => 2419200,
       'gc_maxlifetime'    => 2419200,
-      // 'cookie_domain' => '*',
+      'cookie_domain' => 'diagnosis.goms.jp',
 ),
 
 );

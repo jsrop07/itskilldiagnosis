@@ -203,7 +203,6 @@ class ApplicantExamTable
     $qry = new Sql($this->adapter);
     $select = $qry->select('record');
     $select->where(['idx' => $idx]);
-    $select->order('apply_date DESC'); 
     $selectSqlString = $qry->getSqlStringForSqlObject($select);
     $result = $this->adapter->query($selectSqlString, Adapter::QUERY_MODE_EXECUTE);
     $row = $result->current();

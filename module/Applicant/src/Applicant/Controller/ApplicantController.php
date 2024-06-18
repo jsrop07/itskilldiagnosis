@@ -406,7 +406,7 @@ class ApplicantController extends AbstractActionController
 	作成：丁錫圓
 	作成日：24/06/07
 	*/ 
-	public function timeoutAction()
+	public function  gettimeAction()
 	{
 		$post = $this->params()->fromPost();
 		$examIdx = $post['idx']; 
@@ -457,7 +457,7 @@ class ApplicantController extends AbstractActionController
 		}
 		if (isset($timeoutData['status']) && $timeoutData['status'] === 'timeout') {
 				$applicantExamTbl->deletePasswordByIdx($applicantInfo['idx']);
-				unset($session->id);
+				// unset($session->id);
 				echo $timeout; 
 		} elseif (isset($timeoutData['status']) && $timeoutData['status'] === 'success') {
 				echo $timeout; 

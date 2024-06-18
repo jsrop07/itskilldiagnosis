@@ -207,6 +207,22 @@ $lineChange = "<br>";
     let forms= document.getElementById('myForm');
     let currentNumber =1;
     let ischeck= true;
+
+    var lock = 'n';
+    var stopBtn = document.getElementById('stopBtn');
+    var timerDisplay = document.getElementById("timerDisplay");
+    var stopTime = 10; 
+  
+    var examTotalTime = '';
+    var examTotalTimeInSeconds = '';
+    var examTimeInSeconds = '';
+    var stopTimeInSeconds = '';
+    var firstAlert = '';
+    var secondAlert = '';
+    var startTime = '';
+    var pausedTime = '';
+    var timer = '';
+
     function showNextQuestion() {
         const currentExam = document.getElementById('exam' + currentNumber);
         const nextExam = document.getElementById('exam' + (currentNumber + 1));
@@ -285,7 +301,7 @@ window.onload = function() {
 
 </script>
 <script>
-  function executeTime() {
+function executeTime() {
   const url = window.location.href;
   const postForm = new FormData();
   const examIdx = <?= json_encode($examIdx) ?>;
@@ -295,18 +311,8 @@ window.onload = function() {
   xhr.open("POST", url, true);
   xhr.send(postForm);
   xhr.onload = () => {
-    if (xhr.status == 200) {
-        try {
-            const result = JSON.parse(xhr.responseText);
-            if (result === "wrong") {
-            return;
-            }
-          } catch (e) {
-            console.error("Failed to parse response", e);
-            alert("診断開始サーバー分析に失敗しました。担当者にお問い合わせください。");
-        }
-    }
-}
+    sendRequest();
+  }
 }
 </script>
 <!-- 
@@ -448,21 +454,14 @@ function initializeTimers() {
 
 <!-- 修正後： -->
 <script>
-document.getElementById("startBtn").addEventListener("click", function() {
-  var lock = 'n';
-  var stopBtn = document.getElementById('stopBtn');
 
-  var timerDisplay = document.getElementById("timerDisplay");
-
-  
-  var stopTime = 10; 
 
   function sendRequest() {
     const postForm = new FormData();
     postForm.append("idx", <?= json_encode($examIdx) ?>);
 
     const xhr = new XMLHttpRequest();
-    xhr.open("POST", './timeout', true);
+    xhr.open("POST", './gettime', true);
     xhr.send(postForm);
 
     xhr.onload = () => {
@@ -479,26 +478,26 @@ document.getElementById("startBtn").addEventListener("click", function() {
             }
         }
     };
-}
-sendRequest();
-
-
-
-function initializeTimers() {
-  var examTotalTime = <?php echo $time_limit; ?>;
-  var examTotalTimeInSeconds = examTotalTime * 60;
-  var examTimeInSeconds = examTime * 60;
-  var stopTimeInSeconds = stopTime * 60;
-
-  var firstAlert = false;
-  var secondAlert = false;
-
-  var startTime = performance.now();
-  var pausedTime = 0;
+  }
+</script>
+<script>
+  function initializeTimers() {
+    examTotalTime = <?php echo $time_limit; ?>;
+    examTotalTimeInSeconds = examTotalTime * 60;
+    examTimeInSeconds = examTime * 60;
+    stopTimeInSeconds = stopTime * 60;
+    firstAlert = false;
+    secondAlert = false;
+    startTime = Date.now();
+    pausedTime = 0;
+    timer = setInterval(updateTimer, 1000);
+    updateTimer();
+  }
 
   function updateTimer() {
     if (lock === 'n') {
-      var currentTime = performance.now(); 
+      var currentTime = Date.now(); 
+      console.log(currentTime);
 
       var elapsed = Math.floor((currentTime - startTime - pausedTime) / 1000);
       var remainingTime = examTimeInSeconds - elapsed;
@@ -525,56 +524,57 @@ function initializeTimers() {
       }
     }
   }
-
-  var timer = setInterval(updateTimer, 1000);
-  updateTimer();
-
-  var stopStartTime;
-  var stopTimer;
   
-  document.getElementById("stopBtn").addEventListener("click", function(event) {
-    event.preventDefault();
-    if (lock === 'n') {
-      lock = 'y';
-      stopStartTime = performance.now();
-      stopBtn.disabled = true;
-      stopBtn.style.color = "gray";
-      PauseTimer();
-    }
-  });
-  PauseTimer();
+  // function PauseTimer() {
+  //   stopTimer = setInterval(function() {
+  //     if (lock === 'y') {
+  //       var stopElapsed = Math.floor((performance.now() - stopStartTime) / 1000);
+  //       var stopRemainingTime = stopTimeInSeconds - stopElapsed;
 
-  function PauseTimer() {
-    stopTimer = setInterval(function() {
-      if (lock === 'y') {
-        var stopElapsed = Math.floor((performance.now() - stopStartTime) / 1000);
-        var stopRemainingTime = stopTimeInSeconds - stopElapsed;
+  //       var stopMinutes = Math.floor(stopRemainingTime / 60);
+  //       var stopSeconds = stopRemainingTime % 60;
 
-        var stopMinutes = Math.floor(stopRemainingTime / 60);
-        var stopSeconds = stopRemainingTime % 60;
+  //       document.getElementById("timeLimit").innerHTML = "残り時間: " + stopMinutes + "分 " + stopSeconds + "秒";
 
-        document.getElementById("timeLimit").innerHTML = "残り時間: " + stopMinutes + "分 " + stopSeconds + "秒";
+  //       if (stopRemainingTime < 0) {
+  //         clearInterval(stopTimer);
+  //         pausedTime += (performance.now() - stopStartTime);
+  //         lock = 'n';
+  //         document.getElementById("unlock_time").click();
 
-        if (stopRemainingTime < 0) {
-          clearInterval(stopTimer);
-          pausedTime += (performance.now() - stopStartTime);
-          lock = 'n';
-          document.getElementById("unlock_time").click();
+  //         stopBtn.disabled = false;
+  //         stopBtn.style.color = "gray";
+  //       }
+  //     }
+  //   }, 1000);
+  // }
 
-          stopBtn.disabled = false;
-          stopBtn.style.color = "gray";
-        }
-      }
-    }, 1000);
-  }
+document.getElementById("startBtn").addEventListener("click", function() {
+ 
 
-  document.getElementById("unlock_time").addEventListener("click", function() {
-      if (lock === 'y') {
-          lock = 'n';
-          pausedTime += (performance.now() - stopStartTime);
-      }
-  });
-}});
+
+  // var stopStartTime;
+  // var stopTimer;
+  
+  // document.getElementById("stopBtn").addEventListener("click", function(event) {
+  //   event.preventDefault();
+  //   if (lock === 'n') {
+  //     lock = 'y';
+  //     stopStartTime = performance.now();
+  //     stopBtn.disabled = true;
+  //     stopBtn.style.color = "gray";
+  //     PauseTimer();
+  //   }
+  // });
+  // PauseTimer();
+
+  // document.getElementById("unlock_time").addEventListener("click", function() {
+  //     if (lock === 'y') {
+  //         lock = 'n';
+  //         pausedTime += (performance.now() - stopStartTime);
+  //     }
+  // });
+});
 </script>
 <!-- ここまで -->
 

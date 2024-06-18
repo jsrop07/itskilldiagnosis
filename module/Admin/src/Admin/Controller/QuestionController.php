@@ -299,32 +299,6 @@ class QuestionController extends AbstractActionController
 
 	public function registAction() {
 		$post = $this->params()->fromPost();
-
-		/*
-			作成：朴昰成
-			修正：朴昰成
-			修正日：24/06/18
-		*/
-
-		/* 修正前：
-		foreach ($post as $index => $data) {
-			if ($data == null) {
-				$post[$index] = "";
-				continue;
-			}
-			$post[$index] = str_replace("\n", "{{n}}", $data);
-		}
-
-		$optionTb = $this->getServiceLocator()->get("OptionTable");
-		try { $post["status"] = $optionTb->ReadByText("新規")["idx"]; }
-		catch (\Exception $e) { die($e->getMessage()); }
-
-		$questionTb = $this->getServiceLocator()->get("QuestionTable");
-		try { $questionTb->CreateQuestion($post); }
-		catch (\Exception $e) { die($e->getMessage()); }
-		*/
-
-		/* 修正後： */
 		$questionData = $post;
 
 		foreach ($questionData as $key => $value) {
@@ -357,44 +331,12 @@ class QuestionController extends AbstractActionController
 			$log = $LogModule->SaveLog($logData);
 			die($log);
 		}
-		/* ここまで */
 
 		die("success");
 	}
 
 	public function updateAction() {
 		$post = $this->params()->fromPost();
-		/*
-			作成：朴昰成
-			修正：朴昰成
-			修正日：24/06/18
-		*/
-
-		/* 修正前：
-		$idx = ["idx" => $post["idx"]];
-		unset($post["idx"]);
-
-		foreach ($post as $index => $data) {
-			if ($data == null) {
-				$post[$index] = "";
-				continue;
-			}
-			$post[$index] = str_replace("\n", "{{n}}", $data);
-		}
-
-		$post["admin_approve"] = null;
-		$post["date_approve"] = null;
-
-		$optionTb = $this->getServiceLocator()->get("OptionTable");
-		try { $post["status"] = $optionTb->ReadByText("承認依頼")["idx"]; }
-		catch (\Exception $e) { die($e->getMessage()); }
-
-		$questionTb = $this->getServiceLocator()->get("QuestionTable");
-		try { $questionTb->UpdateByIdx($idx, $post); }
-		catch (\Exception $e) { die($e->getMessage()); }
-		*/
-
-		/* 修正後： */
 		$questionData = $post;
 		$sqlWhere["idx"] = $questionData["idx"];
 		unset($questionData["idx"]);
@@ -433,7 +375,6 @@ class QuestionController extends AbstractActionController
 			$log = $LogModule->SaveLog($logData);
 			die($log);
 		}
-		/* ここまで */
 
 		die("success");
 	}
@@ -527,12 +468,7 @@ class QuestionController extends AbstractActionController
 			$logDatas = array();
 			foreach ($csvStrings as $index => $csvDatas) {
 				foreach ($csvDatas as $idx => $data) {
-					/*
-						作成：朴昰成
-						作成日：24/06/17
-					*/
 					$data = str_replace("{{44}}", ",", $data);
-					/* ここまで　*/
 					$questionData[$keys[$idx]] = $data;
 				}
 

@@ -2,10 +2,6 @@
   $levelTexts = array("無級", "初級", "中級", "高級");
 	$numTexts = array("①", "②", "③", "④", "⑤");
 
-  /*
-    作成：朴昰成
-    作成日：24/06/16
-  */
   function ChangeString($string) {
     $string = htmlspecialchars($string, ENT_QUOTES);
     $string = str_replace("{{n}}", "\n", $string);
@@ -80,38 +76,11 @@
           <div class="tab-pane show active" id="nav" role="tabpanel" aria-labelledby="nav-tab">
             <dl class="emegra question">
               <dt>問題</dt>
-              <!--
-                作成：朴昰成
-                修正：朴昰成
-                修正日：24/06/17
-              -->
-
-              <!-- 修正前： <?php /* ?>
-              <dd class="expand"><?php echo str_replace("{{n}}", "<br/>", htmlspecialchars($questionData["question"], ENT_QUOTES)); ?></dd>
-              <?php */ ?> -->
-
-              <!-- 修正後： -->
               <dd class="expand"><pre><?php echo ChangeString($questionData["question"]); ?></pre></dd>
-              <!-- ここまで -->
 
               <dt>選択肢</dt>
               <dd class="expand">
-                <!--
-                  作成：朴昰成
-                  修正：朴昰成
-                  修正日：24/06/17
-                -->
-
-                <!-- 修正前： <?php /* ?>
-                <?php for ($i = 1; $i <= $answerNum; $i++): ?>
-                  <?= $numTexts[$i - 1]; ?>
-                  <?php echo htmlspecialchars($questionData["answer" . $i], ENT_QUOTES); ?></br>
-                <?php endfor; ?>
-                <?php */ ?> -->
-
-                <!-- 修正後： -->
                 <pre><?php for ($i = 1; $i <= $answerNum; $i++): ?><?= $numTexts[$i - 1]; ?><?php echo ChangeString($questionData["answer" . $i]); ?><br/><?php endfor; ?></pre>
-                <!-- ここまで -->
               </dd>
             </dl>
           </div>
@@ -120,38 +89,11 @@
             <div class="tab-pane" id="nav-<?php echo $code; ?>" role="tabpanel" aria-labelledby="nav-<?php echo $code; ?>-tab">
               <dl class="emegra question">
                 <dt>問題</dt>
-                <!--
-                  作成：朴昰成
-                  修正：朴昰成
-                  修正日：24/06/17
-                -->
-
-                <!-- 修正前： <?php /* ?>
-                <dd class="expand"><?php echo str_replace("{{n}}", "<br/>", htmlspecialchars($questionData["question_" . $code], ENT_QUOTES)); ?></dd>
-                <?php */ ?> -->
-
-                <!-- 修正後： -->
                 <dd class="expand"><pre><?php echo ChangeString($questionData["question_" . $code]); ?></pre></dd>
-                <!-- ここまで -->
 
                 <dt>選択肢</dt>
                 <dd class="expand">
-                  <!--
-                    作成：朴昰成
-                    修正：朴昰成
-                    修正日：24/06/17
-                  -->
-
-                  <!-- 修正前： <?php /* ?>
-                  <?php for ($i = 1; $i <= $answerNum; $i++): ?>
-                    <?= $numTexts[$i - 1]; ?>
-                    <?php echo htmlspecialchars($questionData["answer" . $i . "_" . $code], ENT_QUOTES); ?></br>
-                  <?php endfor; ?>
-                  <?php */ ?> -->
-
-                  <!-- 修正後： -->
                   <pre><?php for ($i = 1; $i <= $answerNum; $i++): ?><?= $numTexts[$i - 1]; ?><?php echo ChangeString($questionData["answer" . $i . "_" . $code]); ?><br/><?php endfor; ?></pre>
-                  <!-- ここまで -->
                 </dd>
               </dl>
             </div>
@@ -189,19 +131,7 @@
 			<dd ><?php echo isset($questionData["date_approve"]) ? date("y/m/d", strtotime($questionData["date_approve"])) : "未承認"; ?></dd>
 
 			<dt>備考</dt>
-      <!--
-        作成：朴昰成
-        修正：朴昰成
-        修正日：24/06/17
-      -->
-
-      <!-- 修正前： <?php /* ?>
-      <dd class="expand" style="grid-column: 2 / 5;"><?php echo str_replace("{{n}}", "<br/>", htmlspecialchars($questionData["note"], ENT_QUOTES)); ?></dd>
-      <?php */ ?> -->
-
-      <!-- 修正後： -->
       <dd class="expand" style="grid-column: 2 / 5;"><pre><?php echo ChangeString($questionData["note"]); ?></pre></dd>
-      <!-- ここまで -->   
 		</dl>
 	</div>
 </div>

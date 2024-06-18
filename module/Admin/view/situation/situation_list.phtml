@@ -239,19 +239,7 @@
           <td colspan="17">診断者情報がありません。</td>
         <?php else: ?>
           <?php foreach ($recordDatas as $index => $data): ?>
-            <!--
-              作成：朴昰成
-              修正：朴昰成
-              修正日：24/06/17
-            -->
-
-            <!-- 修正前： <?php /* ?>
-            <tr <?php echo ($data["diagnosis_date"] == null) ? "style='background: lightcyan;'" : ""; ?>>
-            <?php */ ?> -->
-
-            <!-- 修正後： -->
             <tr <?php echo ($data["diagnosis_code"] == null || $data["diagnosis_code"] == "") ? "style='background: lightcyan;'" : ""; ?>>
-            <!-- ここまで -->
               <td><?php echo $firstNo - $index; ?></td>
               <td><?php echo $data["status"]; ?></td>
 
@@ -270,19 +258,7 @@
               <?php
                 $isExpire = false;
                 if (isset($data["date_schedule"])) {
-                  /*
-                    作成：朴昰成
-                    修正：朴昰成
-                    修正日：24/06/17
-                  */
-
-                  /* 修正前：
-                  if ((strtotime($data["date_schedule"]) < strtotime(date("Y-m-d H:i:s"))) && is_null($data["rank"])) {
-                  */
-
-                  /* 修正後： */
                   if ((strtotime($data["date_schedule"]) < time()) && is_null($data["rank"])) {
-                  /* ここまで */
                     $isExpire = true;
                   }
                 }
@@ -311,19 +287,7 @@
   </div>
 
 <div class="pagination-place" style="margin-top: 10px;">
-  <!--
-    作成：朴昰成
-    修正：朴昰成
-    修正日：24/06/18
-  -->
-
-  <!-- 修正前： <?php /* ?>
-	<?php echo $this->paginationControl($this->noticelist, "sliding", array("pagination2", "Notice"), array("url" => "")); ?>
-  <?php */ ?> -->
-
-  <!-- 修正後： -->
   <?php echo $this->paginationControl($this->noticelist, "sliding", array("pagination", "Notice"), array("url" => "")); ?>
-  <!-- ここまで -->
 </div>
 
 <div class="button-place" style="margin-top: 10px; justify-content:space-between;">
@@ -345,13 +309,7 @@
 	const check_all = document.getElementById("checkAll");
 	const check_idxs = document.getElementsByName("checkIdx");
   const tableBodyList = document.getElementById("table-body-list");
-  /*
-    作成：朴昰成
-    作成日：24/06/17
-  */
-
   const buttonElements = document.getElementsByTagName("button");
-  /* ここまで */
 
 	function Checking(element) {
 		if (element == check_all) {
@@ -462,49 +420,14 @@
 
 		if (confirm("依頼しますか？") === false) { return false; }
 
-    /*
-      作成：朴昰成
-      修正：朴昰成
-      修正日：24/06/17
-    */
-
-    /* 修正前：
-    button.replaceChildren();
-
-    var span = document.createElement("span");
-    span.classList.add("spinner-border");
-    span.classList.add("spinner-border-sm");
-    span.ariaHidden = "true";
-    button.appendChild(span);
-
-    var span = document.createElement("span");
-    span.role = "status";
-    span.innerText = "送信中...";
-    button.appendChild(span);
-    button.disabled = true;
-
-		const postForm = new FormData();
-		postForm.append("idxs", idxs);
-		const xhr = new XMLHttpRequest();
-		xhr.open("POST", "./request", true);
-		xhr.send(postForm);
-    */
-
-    /* 修正後： */
     ChangeButton(button, "送信中...");
 
     formDatas = [{"key":"idxs", "value":idxs}];
     const xhr = SendXhr("./request", formDatas);
-    /* ここまで */
 		xhr.onload = () => {
 			if (xhr.status == 200) {
 				const result = xhr.responseText;
-        /*
-          作成：朴昰成
-          作成日：24/06/17
-        */
         console.log(result);
-        /* ここまで */
 
 				if (result === "success") {
 					alert("依頼しました。");
@@ -515,20 +438,6 @@
             recordDatas = JSON.parse(result);
           }
           catch (e) {
-            /*
-              作成：朴昰成
-              修正：朴昰成
-              修正日：24/06/17
-            */
-
-            /* 修正前：
-            return false;
-            alert("error");
-            console.log(result);
-            location.reload(true);
-            */
-
-            /* 修正後： */
             let alertString = ErrorString();
             alertString += "\nexception error in situation_list Request";
             alertString += "\nexception message: " + e;
@@ -537,24 +446,10 @@
 
             ReturnButton(button, "ITスキル診断依頼");
             return false;
-            /* ここまで */
           }
 
-          /*
-            作成：朴昰成
-            修正：朴昰成
-            修正日：24/06/17
-          */
-
-          /* 修正前：
-          $alertString = "依頼ができませんでした。";
-          $alertString += "\n\n依頼ができなかった診断者";
-          */
-
-          /* 修正後： */
           $alertString = "依頼ができない診断者がいます。";
           $alertString += "\n\n依頼ができない診断者";
-          /* ここまで */
           for (let i = 0; i < recordDatas.length; i++) {
             for (let j = 0; j < tableBodyList.children.length; j++) {
               if (recordDatas[i]["idx"] == tableBodyList.children[j].lastElementChild.children[0].value) {
@@ -566,26 +461,10 @@
             }
           }
           alert($alertString);
-          /*
-            作成：朴昰成
-            修正：朴昰成
-            修正日：24/06/17
-          */
-
-          /* 修正前：
-					location.reload(true);
-          */
-
-          /* 修正後： */
           ReturnButton(button, "ITスキル診断依頼");
           return false;
-          /* ここまで */
 				}
 			}
-      /*
-        作成：朴昰成
-        作成日：24/06/17
-      */
       else {
         let alertString = ErrorString();
         alertString += "\nxhr error in situation_list Request";
@@ -595,7 +474,6 @@
         ReturnButton(button, "ITスキル診断依頼");
         return false;
       }
-      /* ここまで */
 		}
 	}
 
@@ -618,90 +496,20 @@
 
     if (confirm("結果を送信しますか？") === false) { return false; }
 
-    /*
-      作成：朴昰成
-      修正：朴昰成
-      修正日：24/06/17
-    */
-
-    /* 修正前：
-    button.replaceChildren();
-
-    var span = document.createElement("span");
-    span.classList.add("spinner-border");
-    span.classList.add("spinner-border-sm");
-    span.ariaHidden = "true";
-    button.appendChild(span);
-
-    var span = document.createElement("span");
-    span.role = "status";
-    span.innerText = "送信中...";
-    button.appendChild(span);
-    button.disabled = true;
-
-    const postForm = new FormData();
-    postForm.append("idxs", idxs);
-    const xhr = new XMLHttpRequest();
-    xhr.open("POST", "./mail", true);
-    xhr.send(postForm);
-    */
-
-    /* 修正後： */
     ChangeButton(button, "送信中...");
 
     formDatas = [{"key":"idxs", "value":idxs}];
     const xhr = SendXhr("./mail", formDatas);
-    /* ここまで */
     xhr.onload = () => {
       if (xhr.status == 200) {
         const result = xhr.responseText;
-        /*
-          作成：朴昰成
-          作成日：24/06/17
-        */
         console.log(result);
-        /* ここまで */
 
         if (result === "success") {
           alert("送信しました。");
           location.reload(true);
         }
         else {
-          /*
-            作成：朴昰成
-            修正：朴昰成
-            修正日：24/06/17
-          */
-
-          /* 修正前：
-          try {
-            let recordDatas = JSON.parse(result);
-
-            console.log(recordDatas);
-
-            let alertString = "送信ができませんでした。\n\n";
-            alertString += "送信ができなかった診断者";
-            for (let i = 0; i < recordDatas.length; i++) {
-              let applicantNo = "";
-              for (let j = 0; j < tableBodyList.children.length; j++) {
-                if (recordDatas[i]["idx"] = tableBodyList.children[j].children[16].children[0].value) {
-                  applicantNo = tableBodyList.children[j].children[0].innerText;
-                }
-              }
-              $alertString += "\n" + applicantNo + "．" + recordDatas[i]["name"];
-            }
-
-            alert(alertString);
-            location.reload(true);
-            return false;
-          } catch (e) {
-            alert("error");
-            console.log(result);
-            return false;
-          }
-          */
-
-          /* 修正後： */
           try {
             let recordDatas = JSON.parse(result);
           }
@@ -731,13 +539,8 @@
 
           ReturnButton(button, "結果送信");
           return false;
-          /* ここまで */
         }
       }
-      /*
-        作成：朴昰成
-        作成日：24/06/17
-      */
       else {
         let alertString = ErrorString();
         alertString += "\nxhr error in situation_list SendMail";
@@ -747,13 +550,8 @@
         ReturnButton(button, "結果送信");
         return false;
       }
-      /* ここまで */
     }
   }
-  /*
-    作成：朴昰成
-    作成日：24/06/17
-  */
 
 
 
@@ -803,5 +601,4 @@
     xhr.send(postForm);
     return xhr;
   }
-  /* ここまで */
 </script>

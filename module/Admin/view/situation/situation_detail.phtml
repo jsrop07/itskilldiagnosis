@@ -158,7 +158,19 @@
         <dd><?php echo $recordData["rank"]; ?></dd>
 
         <dt>診断者のコメント</dt>
+        <!--
+          作成：朴昰成
+          修正：朴昰成
+          修正日：24/06/19
+        -->
+
+        <!-- 修正前： <?php /* ?>
         <dd><?php echo $recordData["diagnosis_comment"]; ?></dd>
+        <?php */ ?> -->
+
+        <!-- 修正後： -->
+        <dd class="expand"><?php echo $recordData["diagnosis_comment"]; ?></dd>
+        <!-- ここまで -->
 
         <dt>備考</dt>
         <dd><?php echo $recordData["comment"]; ?></dd>

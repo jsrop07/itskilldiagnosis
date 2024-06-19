@@ -777,7 +777,7 @@ class SituationController extends AbstractActionController {
 				/*
 					作成：丁錫圓
 					修正：朴昰成
-					修正日：24/06/18
+					修正日：24/06/19
 				*/
 
 				/* 修正前：
@@ -792,10 +792,10 @@ class SituationController extends AbstractActionController {
 				/* 修正後： */
 				echo "
 				<script>
-				alert('依頼しました')
-				self.location.href='/admin/situation/list';
+					alert('依頼しました。');
+					self.location.href='/admin/situation/list';
 				</script>
-				";	
+				";
 				/* ここまで */
 		
 				exit;
@@ -957,12 +957,29 @@ class SituationController extends AbstractActionController {
 	
 				$this->mailByRequest($managerInfo,$recentPassword);
 	
+				/*
+					作成：丁錫圓
+					修正：朴昰成
+					修正日：24/06/19
+				*/
+
+				/* 修正前：
 				echo "
 				<script>
 				alert('依頼が完了しました。')
 				self.location.href='/admin/situation/list';
 				</script>
 				";	
+				*/
+
+				/* 修正後： */
+				echo "
+				<script>
+					alert('依頼しました。');
+					self.location.href='/admin/situation/list';
+				</script>
+				";
+				/* ここまで */
 			}
 			elseif($editDatas == "btn_save"){
 				$recordlWhere['idx']=$post['recordindex'];

@@ -159,44 +159,27 @@ class ApplicantExamTable
   }
 			// 作成：丁錫圓
 			// 修正：丁錫圓
-			// 修正日：24/06/14 
+			// 修正日：24/06/19
 			// 修正前：
       // public function timeOut($idx,$time_limit)
       // {
-      //   $qry = new Sql($this->adapter);
-      //   $select = $qry->select('record');
-      //   $select->where(['idx' => $idx]);
-      //   $select->order('apply_date DESC'); 
-      //   $selectSqlString = $qry->getSqlStringForSqlObject($select);
-      //   $result = $this->adapter->query($selectSqlString, Adapter::QUERY_MODE_EXECUTE);
-      //   $row = $result->current();
+        // $qry = new Sql($this->adapter);
+        // $select = $qry->select('record');
+        // $select->where(['idx' => $idx]);
+        // $selectSqlString = $qry->getSqlStringForSqlObject($select);
+        // $result = $this->adapter->query($selectSqlString, Adapter::QUERY_MODE_EXECUTE);
+        // $row = $result->current();
     
-      //   $currentDateTime = date("Y-m-d H:i:s"); // current time
-      //   $dateSchedule = $row['execute_date']; // diagnosis schedule time 
+        // $currentDateTime = date("Y-m-d H:i:s"); // current time
+        // $execute_dateTime = $row['execute_date']; // diagnosis schedule time 
     
-      //   $currentDateTimeObj = date_create($currentDateTime); //turn to datetime object by cureenttDateTime 
-      //   $dateScheduleObj = date_create($dateSchedule); // turn to datetime object by dateScheduleTime
+        // $currentDateTimeObj = date_create($currentDateTime); //turn to datetime object by cureenttDateTime 
+        // $execute_dateTimeObj = date_create($execute_dateTime); // turn to datetime object by execute_dateTimeTime
         
-      //   $dateInterval = $currentDateTimeObj -> diff($dateScheduleObj); // calculate dateScheduletime - cureentDateTime
-      //   $minutesDifference = ($dateInterval->days * 24 * 60) + ($dateInterval->h * 60) + $dateInterval->i; //turn days, hour, minute to minute
-      //   if($minutesDifference <= $time_limit && $currentDateTimeObj > $dateScheduleObj){
-      //     // 作成：丁錫圓
-      //     // 作成日：24/06/13
-      //     $remain_time = $time_limit - $minutesDifference;
+        // $dateInterval = $currentDateTimeObj -> diff($execute_dateTimeObj); // calculate execute_dateTimetime - cureentDateTime
+        // $minutesDifference = ($dateInterval->days * 24 * 60) + ($dateInterval->h * 60) + $dateInterval->i; //turn days, hour, minute to minute
     
-      //     $response = array(
-      //       'status' => 'success',
-      //       'remain_time' => $remain_time
-      //   );
-    
-      //   return json_encode($response);
-    
-      //   } elseif($minutesDifference > $time_limit && $currentDateTimeObj > $dateScheduleObj){
-      //     $updateQry = $this->sql->update('record')->set(array('rank' => 'F'))->where(array('idx' => $row['idx']));
-      //     $updateResult = $this->sql->prepareStatementForSqlObject($updateQry)->execute();
-      //     return "timeout";
-      //   }
-      // }
+        // $remain_time = $time_limit - $minutesDifference;
       // 修正後：
   public function timeOut($idx,$time_limit)
   {
@@ -207,14 +190,15 @@ class ApplicantExamTable
     $result = $this->adapter->query($selectSqlString, Adapter::QUERY_MODE_EXECUTE);
     $row = $result->current();
 
-    $currentDateTime = date("Y-m-d H:i:s"); // current time
-    $execute_dateTime = $row['execute_date']; // diagnosis schedule time 
+    $currentDateTime = strtotime(date("Y-m-d H:i:s")); // current time
+    $execute_dateTime = strtotime($row['execute_date']); // diagnosis schedule time 
+    $dateInterval = $execute_dateTime - $currentDateTime; // seconds
+    $minutesDifference = $dateInterval / 60;
 
-    $currentDateTimeObj = date_create($currentDateTime); //turn to datetime object by cureenttDateTime 
-    $execute_dateTimeObj = date_create($execute_dateTime); // turn to datetime object by execute_dateTimeTime
-    
-    $dateInterval = $currentDateTimeObj -> diff($execute_dateTimeObj); // calculate execute_dateTimetime - cureentDateTime
-    $minutesDifference = ($dateInterval->days * 24 * 60) + ($dateInterval->h * 60) + $dateInterval->i; //turn days, hour, minute to minute
+    // $currentDateTimeObj = date_create($currentDateTime); //turn to datetime object by cureenttDateTime 
+    // $execute_dateTimeObj = date_create($execute_dateTime); // turn to datetime object by execute_dateTimeTime
+    // $dateInterval = $currentDateTimeObj -> diff($execute_dateTimeObj); // calculate execute_dateTimetime - cureentDateTime
+    // $minutesDifference = ($dateInterval->days * 24 * 60) + ($dateInterval->h * 60) + $dateInterval->i; //turn days, hour, minute to minute
 
     $remain_time = $time_limit - $minutesDifference;
 

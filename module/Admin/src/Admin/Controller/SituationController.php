@@ -535,71 +535,74 @@ class SituationController extends AbstractActionController {
 */
 
 /* 修正後： */
-	function mailByRequest($managerInfo,$recentPassword){
-		$mail = new MailRequest();
-		$applicantTb = $this->getServiceLocator()->get("ApplicantExamTable");
+		function mailByRequest($managerInfo,$recentPassword){
+			$mail = new MailRequest();
+			$applicantTb = $this->getServiceLocator()->get("ApplicantExamTable");
 
-		$applicantInfo = $applicantTb->readByApplicantIdx($recentPassword);
-		$dateSchduleEnd = date("Y-m-d H:i:s", strtotime($applicantInfo["date_schedule"] . ' +30 minutes'));
-		// 기본 메일 전송 관련 설정 로드
-		$param['config']=$this->getConfig();
-		// 메일 제목 지정 (일반적으로 DB에 메일폼 테이블을 만들어서 그것을 가져와서 아래의 title contents에 넣지만, 이건 샘플이므로 간단히.)
-		// 사람마다 변환해야 할 부분은 {{이렇게}} 메일폼에 넣어놓는다.
+			$applicantInfo = $applicantTb->readByApplicantIdx($recentPassword);
+			$dateSchduleEnd = date("Y-m-d H:i:s", strtotime($applicantInfo["date_schedule"] . ' +30 minutes'));
+			// 기본 메일 전송 관련 설정 로드
+			$param['config']=$this->getConfig();
+			// 메일 제목 지정 (일반적으로 DB에 메일폼 테이블을 만들어서 그것을 가져와서 아래의 title contents에 넣지만, 이건 샘플이므로 간단히.)
+			// 사람마다 변환해야 할 부분은 {{이렇게}} 메일폼에 넣어놓는다.
 
-		$param['title']="ITスキル診断依頼のお知らせ（ジエンジサービス）";
-		$param["content"] = "{{applicant_name}}様\n"
-											. "お世話になっております。\n\n"
-											. "ITスキル診断についてお知らせさせていただきます。\n"
-                      . "以下URLより「ITスキル診断サイト」にログインし診断を行ってください。\n\n"
-											. "ログインID ：{{login_id}}\n"
-											. "ログインPWD：{{login_password}}\n\n"
-											. "＜ITスキル診断URL＞\n"
-											. "{$param['config']['user-url']['applicant']}/login\n\n"
-											. "※ITスキル診断が可能な有効期限は{{dateSchedule}}分 ~ {{dateSchduleEnd}}です。\n"
-											. "   有効期限内に受験を受けない場合、自動的に失格となりますのでご了承ください。\n\n"
-											. "※ITスキル診断に不明点などございましたら下記の宛先まで\n"
-											. "   お問い合わせください。\n\n"
-											. "＜問い合わせ先＞\n"
-											. "担当者：ITスキル診断担当\n"
-											. "連絡先：tech@gngs.co.jp\n\n"
-											. "以上、よろしくお願いいたします。\n"
-											. "※このメールに返信しないでください。";
-/* ここまで */
+			// 수신자 이메일과 이름 설정
+			$param['managerEmail']=$managerInfo["id"];
+			$param['email']=$recentPassword["email"];;
+			$param['password']= $managerInfo["password"];
+			$param['name']= $managerInfo["name"];
+			$param['smtp_password']=$managerInfo["smtp_password"];
 
-		// print_r($param['title']);
-		// $param['content']=str_replace("{{user_name}}","変換する試験受け者名",$param['content']);
-		$param["content"] = str_replace("{{applicant_name}}", $recentPassword["name"], $param["content"]);
-		$param["content"] = str_replace("{{login_id}}", $recentPassword["email"], $param["content"]);
-		$param["content"] = str_replace("{{login_password}}", $recentPassword["password"], $param["content"]);
-		$param["content"] = str_replace("{{dateSchedule}}", $applicantInfo["date_schedule"], $param["content"]);
-		$param["content"] = str_replace("{{dateSchduleEnd}}", $dateSchduleEnd, $param["content"]);
-		// 수신자 이메일과 이름 설정
-		$param['managerEmail']=$managerInfo["id"];
-		$param['email']=$recentPassword["email"];;
-		$param['password']= $managerInfo["password"];
-		$param['name']= $managerInfo["name"];
-		$param['smtp_password']=$managerInfo["smtp_password"];
 
-		// 전송
-		$result = $mail->mailsender($param);
-		// $result = $this->getServiceLocator()->get("mailsender");
-	
-		$result_row = $result['transport']->getConnection()->getResponse();
-	
-		$results = str_replace("\r","",str_replace("\n","",str_replace(" ","",$result_row[0])));
-		switch(substr(strtolower($results),0,5)){
-			// 250ok 가 나오면 전송 의뢰 성공이다.
-				case "250ok":
-					$status = 'OK';
-						break;
-				// 그외의 것은 모두 실패로 처리한다.
-				default:
-					$status = 'FALSE';
-					die($result);
-						break;
-		}
-	  }
+			$param['title']="ITスキル診断依頼のお知らせ（ジエンジサービス）";
+			$param["content"] = "{{applicant_name}}様\n"
+												. "お世話になっております。\n\n"
+												. "ITスキル診断についてお知らせさせていただきます。\n"
+												. "以下URLより「ITスキル診断サイト」にログインし診断を行ってください。\n\n"
+												. "ログインID ：{{login_id}}\n"
+												. "ログインPWD：{{login_password}}\n\n"
+												. "＜ITスキル診断URL＞\n"
+												. "{{url}}/login\n\n"
+												. "※ITスキル診断が可能な有効期限は{{dateSchedule}}分 ~ {{dateSchduleEnd}}です。\n"
+												. "   有効期限内に受験を受けない場合、自動的に失格となりますのでご了承ください。\n\n"
+												. "※ITスキル診断に不明点などございましたら下記の宛先まで\n"
+												. "   お問い合わせください。\n\n"
+												. "＜問い合わせ先＞\n"
+												. "担当者：ITスキル診断担当\n"
+												. "連絡先：{{manager_email}}\n\n"
+												. "以上、よろしくお願いいたします。\n"
+												. "※このメールに返信しないでください。";
+		/* ここまで */
+			// print_r($param['title']);
+			// $param['content']=str_replace("{{user_name}}","変換する試験受け者名",$param['content']);
+			$param["content"] = str_replace("{{applicant_name}}", $recentPassword["name"], $param["content"]);
+			$param["content"] = str_replace("{{login_id}}", $recentPassword["email"], $param["content"]);
+			$param["content"] = str_replace("{{login_password}}", $recentPassword["password"], $param["content"]);
+			$param["content"] = str_replace("{{url}}", $param['config']['user-url']['applicant'], $param["content"]);
+			$param["content"] = str_replace("{{dateSchedule}}", $applicantInfo["date_schedule"], $param["content"]);
+			$param["content"] = str_replace("{{dateSchduleEnd}}", $dateSchduleEnd, $param["content"]);
+			$param["content"] = str_replace("{{manager_email}}", $param['managerEmail'], $param["content"]);
 
+
+			// 전송
+			$result = $mail->mailsender($param);
+			// $result = $this->getServiceLocator()->get("mailsender");
+
+			$result_row = $result['transport']->getConnection()->getResponse();
+
+			$results = str_replace("\r","",str_replace("\n","",str_replace(" ","",$result_row[0])));
+			switch(substr(strtolower($results),0,5)){
+				// 250ok 가 나오면 전송 의뢰 성공이다.
+					case "250ok":
+						$status = 'OK';
+							break;
+					// 그외의 것은 모두 실패로 처리한다.
+					default:
+						$status = 'FALSE';
+						die($result);
+							break;
+			}
+			}
     function mailByAdmin($arr,$skillText,$caseText,$managerInfo,$applicantInfo){
       $mail = new MailRequest();
       
@@ -664,12 +667,6 @@ class SituationController extends AbstractActionController {
 			$post = $this->params()->fromPost();
 	
 			$situTb = $this->getServiceLocator()->get("situTable");
-	
-			if (isset($post["class2nd"]) && isset($post['level'])) {
-				$result = $situTb->ReadDiagnosis($post["class2nd"], $post["level"]);
-				die(json_encode($result));
-				
-			}
 	
 			$datas["optionDatas"] = $this->GetOptionDatasForInput2();
 	
@@ -885,13 +882,6 @@ class SituationController extends AbstractActionController {
 				$diagnosisData = $diagnosisTb->ReadByCode($recordData["diagnosis_code"]);
 				$recordData = array_merge($diagnosisData, $recordData);
 			}
-	
-			if (isset($post["class2nd"]) && isset($post['level'])) {
-				$result = $situTb->ReadDiagnosis($post["class2nd"], $post["level"]);
-				die(json_encode($result));
-			}
-			
-			// $diagnosisData = $diagnosisTb->ReadByCode($recordData["diagnosis_code"]);
 			
 			$datas["optionDatas"] = $this->GetOptionDatasForInput2();
 			
@@ -1018,6 +1008,15 @@ class SituationController extends AbstractActionController {
 			self.location.href='/admin/situation/list';
 			</script>
 			";	
+			}
+		}
+
+		public function getdiagnosisdataAction(){
+			$post = $this->params()->fromPost();
+			$situTb = $this->getServiceLocator()->get("situTable");
+			if (isset($post["class2nd"]) && isset($post['level'])) {
+				$result = $situTb->ReadDiagnosis($post["class2nd"], $post["level"]);
+				die(json_encode($result));
 			}
 		}
 

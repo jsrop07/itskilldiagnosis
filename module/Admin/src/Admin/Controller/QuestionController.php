@@ -156,8 +156,8 @@ class QuestionController extends AbstractActionController
 
 		/* 修正後： */
 		if ($userLevel >= 1) {
-			try { 
-				$datas["totalNum"] = $questionTb->CountAllValid();
+			try {
+				$datas["totalNum"] = $questionTb->CountAllValid($userLevel);
 			} catch (\Exception $e) {
 				$logData["reason"] = "exception at QuestionController listAction QuestionTable CountAllList";
 				$logData["message"] = $e->getMessage();

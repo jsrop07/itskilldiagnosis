@@ -1,32 +1,6 @@
 <?php if ($this->pageCount): ?>
 
 <?php
-  /*
-    作成：朴昰成
-    修正：朴昰成
-    修正日：24/06/17
-  */
-
-  /* 修正前：
-	$url = $_SERVER["REQUEST_URI"];
-	$url = $url . "?";
-	$query = explode("?", $url)[1];
-	
-	if (!empty($query)) {
-		$queryDatas = explode("&", $query);
-
-		$newQueryDatas = array();
-		foreach ($queryDatas as $data) {
-			if (explode("=", $data)[0] != "page") {
-				array_push($newQueryDatas, $data);
-			}
-		}
-		$newQuery = implode("&", $newQueryDatas);
-		$url = explode("?", $_SERVER["REQUEST_URI"])[0] . "?" . $newQuery . "&";
-	}
-  */
-
-  /* 修正後： */
 	$urlData = explode("?", $_SERVER["REQUEST_URI"]);
   $route = $urlData[0];
   
@@ -46,7 +20,6 @@
     if ($newQuery != "") { $newQuery .= "&"; }
 	}
   $url = $route . "?" . $newQuery;
-  /* ここまで */
 ?>
 
 <nav aria-label="Page navigation">

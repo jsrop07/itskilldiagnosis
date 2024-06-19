@@ -91,16 +91,11 @@ class Module {
                     $table = new MailRequest($dbAdapter);
                     return $table;
                 },
-				/*
-					作成：朴昰成
-					作成日：24/05/13
-				*/
 				"RecordTable-Admin" => function($sm) {
 					$dbAdapter = $sm->get("Zend\Db\Adapter\Adapter");
 					$table = new RecordTable($dbAdapter);
 					return $table;
 				},
-				/* ここまで */
 			),
 		);
 	}

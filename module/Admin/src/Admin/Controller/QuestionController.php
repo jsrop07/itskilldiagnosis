@@ -545,15 +545,46 @@ class QuestionController extends AbstractActionController
 
 		if ($_FILES["file"]["error"] == "0") {
 			header("Content-Type: text/html; charset=utf-8");
+			/*
+				作成：朴昰成
+				修正：朴昰成
+				修正日：24/06/19
+			*/
+
+			/* 修正前：
 			if ($_FILES["file"]["type"] != "text/csv") { die($log->SaveLog(["reason" => "not csv file"])); }
+			*/
+
+			/* 修正後： */
+			if ($_FILES["file"]["type"] != "text/csv") {
+				$logData["reason"] = "not csv file";
+				$log->SaveLog(["reason" => "not csv file"]);
+				die(json_encode($logData));
+			}
+			/* ここまで */
 
 			$csvStrings = array();
 			try {
 			$csvStrings = array_map("str_getcsv", file($_FILES["file"]["tmp_name"]));
 			} catch (\Exception $e) {
+				/*
+					作成：朴昰成
+					修正：朴昰成
+					修正日：24/06/19
+				*/
+
+				/* 修正前：
 				$logData["reason"] = "not csv file";
 				$logData["message"] = $e->getMessage();
 				die($log->SaveLog($logData));
+				*/
+
+				/* 修正後： */
+				$logData["reason"] = "fail to open file";
+				$logData["message"] = $e->getMessage();
+				$log->SaveLog($logData);
+				die ($logData);
+				/* ここまで */
 			}
 			$keys = $csvStrings[0];
 			unset($csvStrings[0]);
@@ -592,9 +623,24 @@ class QuestionController extends AbstractActionController
 					case "高級":
 						$questionData["level"] = 3;
 						break;
+					/*
+						作成：朴昰成
+						作成日：24/06/19
+					*/
+					case "上級":
+						$questionData["level"] = 3;
+						break;
+					/* ここまで */
 				}
 
 				$session = new Container("user");
+				/*
+					作成：朴昰成
+					修正：朴昰成
+					修正日：24/06/19
+				*/
+
+				/* 修正前：
 				try {
 					$questionData["class1st"] = $optionTb->ReadByText([$questionData["class1st"]])["idx"];
 					$sqlWhere["type"] = "class2nd";
@@ -613,6 +659,28 @@ class QuestionController extends AbstractActionController
 					$logData["message"] = $e->getMessage();
 					$logDatas[$index + 1] = $logData;
 				}
+				*/
+
+				/* 修正後： */
+				try {
+					$questionData["class1st"] = $optionTb->ReadByText($questionData["class1st"])["idx"];
+					$sqlWhere["type"] = "class2nd";
+					$sqlWhere["text"] = $questionData["class2nd"];
+					$sqlWhere["class_upper"] = $questionData["class1st"];
+					$questionData["class2nd"] = $optionTb->ReadByOption($sqlWhere)[0]["idx"];
+					$questionData["type"] = $optionTb->ReadByText([$questionData["type"]])["idx"];
+					$questionData["note"] = "CSVで作成　" . date("Y.m.d") . "　" . $session["name"] . "\n";
+					$questionData["status"] = $optionTb->ReadByText(["新規"])["idx"];
+					$questionData["admin_regist"] = $session["code"];
+					$questionData["date_regist"] = date("Y-m-d H:i:s");
+					
+					$questionTb->CreateQuestion($questionData);
+				} catch (\Exception $e) {
+					$logData["reason"] = "exception at QuestionController createByCsvAction make question data";
+					$logData["message"] = $e;
+					$logDatas[$index] = $logData;
+				}
+				/* ここまで */
 			}
 			if ($logDatas) {
 				$noDatas = array();
@@ -626,7 +694,21 @@ class QuestionController extends AbstractActionController
 			die("success");
 		}
 
+		/*
+			作成：朴昰成
+			修正：朴昰成
+			修正日：24/06/19
+		*/
+
+		/* 修正前：
 		die($log->SaveLog(["reason" => "fail to open file"]));
+		*/
+
+		/* 修正後： */
+		$logData["reason"] = "fail to open file";
+		$log->SaveLog($logData);
+		die(json_encode($logData));
+		/* ここまで */
 	}
 
 	/** Read Option datas Organize by Type (class2nd's idx is text)

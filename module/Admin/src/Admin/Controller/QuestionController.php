@@ -43,6 +43,12 @@ class QuestionController extends AbstractActionController
 		$session = new Container("user");
 		$userLevel = $session["level"];
 
+		/*
+			作成：朴昰成
+			作成日：24/06/19
+		*/
+		$LogModule = new LogModule();
+		/* ここまで */
 		$questionTb = $this->getServiceLocator()->get("QuestionTable");
 		$query = $this->params()->fromQuery();
 
@@ -50,17 +56,33 @@ class QuestionController extends AbstractActionController
 		$page = 1;
 		if (isset($query["page"])) {
 			$page = $query["page"];
+			/*
+				作成：朴昰成
+				削除：朴昰成
+				削除日：24/06/19
+			*/
+
+			/* 削除前：
 			unset($query["page"]);
+			*/
 		}
 
 		// Set Search data
 		$sqlWhere = array();
+		/*
+			作成：朴昰成
+			削除：朴昰成
+			削除日：24/06/19
+		*/
+
+		/* 削除前：
 		if (isset($query["approver"])) {
 			$adminTb = $this->getServiceLocator()->get("AdminTable");
 			try { $sqlWhere["admin_approve"] = $adminTb->ReadByName($query["approver"])["code"]; }
 			catch (\Exception $e) { print_r($e->getMessage()); exit; }
 			$datas["searchDatas"]["approver"] = $query["approver"];
 		}
+		*/
 
 		if (isset($query["title"])) {
 			$sqlWhere["title"] = $query["title"];
@@ -81,6 +103,13 @@ class QuestionController extends AbstractActionController
 
 		$questionDatas = "";
 		// Check User Level
+		/*
+			作成：朴昰成
+			修正：朴昰成
+			修正日：24/06/19
+		*/
+
+		/* 修正前：
 		if ($userLevel >= 1) {
 			$datas["totalNum"] = $questionTb->CountAllList();
 
@@ -123,6 +152,78 @@ class QuestionController extends AbstractActionController
 				catch (\Exception $e) { print_r($e->getMessage()); exit; }
 			}
 		}
+		*/
+
+		/* 修正後： */
+		if ($userLevel >= 1) {
+			try { 
+				$datas["totalNum"] = $questionTb->CountAllValid();
+			} catch (\Exception $e) {
+				$logData["reason"] = "exception at QuestionController listAction QuestionTable CountAllList";
+				$logData["message"] = $e->getMessage();
+				$log = $LogModule->SaveLog($logData);
+				print_r($log);
+				exit;
+			}
+
+			// Check Search data and Align data
+			if (empty($sqlWhere)) {
+				try { 
+					$questionDatas = $questionTb->GetAllList();
+				} catch (\Exception $e) {
+					$logData["reason"] = "exception at QuestionController listAction QuestionTable GetAllList";
+					$logData["message"] = $e->getMessage();
+					$log = $LogModule->SaveLog($logData);
+					print_r($log);
+					exit;
+				}
+			} else {
+				try { 
+					$questionDatas = $questionTb->GetListBySearch($sqlWhere);
+				} catch (\Exception $e) {
+					$logData["reason"] = "exception at QuestionController listAction QuestionTable GetListBySearch";
+					$logData["message"] = $e->getMessage();
+					$log = $LogModule->SaveLog($logData);
+					print_r($log);
+					exit;
+				}
+			}
+		} else {
+			$userCode = $session["code"];
+
+			try { 
+				$datas["totalNum"] = $questionTb->CountAllValid($userCode);
+			} catch (\Exception $e) {
+				$logData["reason"] = "exception at QuestionController listAction QuestionTable CountAllValid";
+				$logData["message"] = $e->getMessage();
+				$log = $LogModule->SaveLog($logData);
+				print_r($log);
+				exit;
+			}
+
+			if (empty($sqlWhere)) {
+				try { 
+					$questionDatas = $questionTb->GetValidList($userCode);
+				} catch (\Exception $e) {
+					$logData["reason"] = "exception at QuestionController listAction QuestionTable GetValidList";
+					$logData["message"] = $e->getMessage();
+					$log = $LogModule->SaveLog($logData);
+					print_r($log);
+					exit;
+				}
+			} else {
+				try { 
+					$questionDatas = $questionTb->GetValidListBySearch($userCode, $sqlWhere);
+				} catch (\Exception $e) {
+					$logData["reason"] = "exception at QuestionController listAction QuestionTable GetValidListBySearch";
+					$logData["message"] = $e->getMessage();
+					$log = $LogModule->SaveLog($logData);
+					print_r($log);
+					exit;
+				}
+			}
+		}
+		/* ここまで */
 
 		$questionDatas->setCurrentPageNumber($page);
 		$questionDatas->setItemCountPerPage(10);
@@ -299,32 +400,6 @@ class QuestionController extends AbstractActionController
 
 	public function registAction() {
 		$post = $this->params()->fromPost();
-
-		/*
-			作成：朴昰成
-			修正：朴昰成
-			修正日：24/06/18
-		*/
-
-		/* 修正前：
-		foreach ($post as $index => $data) {
-			if ($data == null) {
-				$post[$index] = "";
-				continue;
-			}
-			$post[$index] = str_replace("\n", "{{n}}", $data);
-		}
-
-		$optionTb = $this->getServiceLocator()->get("OptionTable");
-		try { $post["status"] = $optionTb->ReadByText("新規")["idx"]; }
-		catch (\Exception $e) { die($e->getMessage()); }
-
-		$questionTb = $this->getServiceLocator()->get("QuestionTable");
-		try { $questionTb->CreateQuestion($post); }
-		catch (\Exception $e) { die($e->getMessage()); }
-		*/
-
-		/* 修正後： */
 		$questionData = $post;
 
 		foreach ($questionData as $key => $value) {
@@ -357,44 +432,12 @@ class QuestionController extends AbstractActionController
 			$log = $LogModule->SaveLog($logData);
 			die($log);
 		}
-		/* ここまで */
 
 		die("success");
 	}
 
 	public function updateAction() {
 		$post = $this->params()->fromPost();
-		/*
-			作成：朴昰成
-			修正：朴昰成
-			修正日：24/06/18
-		*/
-
-		/* 修正前：
-		$idx = ["idx" => $post["idx"]];
-		unset($post["idx"]);
-
-		foreach ($post as $index => $data) {
-			if ($data == null) {
-				$post[$index] = "";
-				continue;
-			}
-			$post[$index] = str_replace("\n", "{{n}}", $data);
-		}
-
-		$post["admin_approve"] = null;
-		$post["date_approve"] = null;
-
-		$optionTb = $this->getServiceLocator()->get("OptionTable");
-		try { $post["status"] = $optionTb->ReadByText("承認依頼")["idx"]; }
-		catch (\Exception $e) { die($e->getMessage()); }
-
-		$questionTb = $this->getServiceLocator()->get("QuestionTable");
-		try { $questionTb->UpdateByIdx($idx, $post); }
-		catch (\Exception $e) { die($e->getMessage()); }
-		*/
-
-		/* 修正後： */
 		$questionData = $post;
 		$sqlWhere["idx"] = $questionData["idx"];
 		unset($questionData["idx"]);
@@ -433,7 +476,6 @@ class QuestionController extends AbstractActionController
 			$log = $LogModule->SaveLog($logData);
 			die($log);
 		}
-		/* ここまで */
 
 		die("success");
 	}
@@ -503,15 +545,46 @@ class QuestionController extends AbstractActionController
 
 		if ($_FILES["file"]["error"] == "0") {
 			header("Content-Type: text/html; charset=utf-8");
+			/*
+				作成：朴昰成
+				修正：朴昰成
+				修正日：24/06/19
+			*/
+
+			/* 修正前：
 			if ($_FILES["file"]["type"] != "text/csv") { die($log->SaveLog(["reason" => "not csv file"])); }
+			*/
+
+			/* 修正後： */
+			if ($_FILES["file"]["type"] != "text/csv") {
+				$logData["reason"] = "not csv file";
+				$log->SaveLog(["reason" => "not csv file"]);
+				die(json_encode($logData));
+			}
+			/* ここまで */
 
 			$csvStrings = array();
 			try {
 			$csvStrings = array_map("str_getcsv", file($_FILES["file"]["tmp_name"]));
 			} catch (\Exception $e) {
+				/*
+					作成：朴昰成
+					修正：朴昰成
+					修正日：24/06/19
+				*/
+
+				/* 修正前：
 				$logData["reason"] = "not csv file";
 				$logData["message"] = $e->getMessage();
 				die($log->SaveLog($logData));
+				*/
+
+				/* 修正後： */
+				$logData["reason"] = "fail to open file";
+				$logData["message"] = $e->getMessage();
+				$log->SaveLog($logData);
+				die ($logData);
+				/* ここまで */
 			}
 			$keys = $csvStrings[0];
 			unset($csvStrings[0]);
@@ -527,12 +600,7 @@ class QuestionController extends AbstractActionController
 			$logDatas = array();
 			foreach ($csvStrings as $index => $csvDatas) {
 				foreach ($csvDatas as $idx => $data) {
-					/*
-						作成：朴昰成
-						作成日：24/06/17
-					*/
 					$data = str_replace("{{44}}", ",", $data);
-					/* ここまで　*/
 					$questionData[$keys[$idx]] = $data;
 				}
 
@@ -555,9 +623,24 @@ class QuestionController extends AbstractActionController
 					case "高級":
 						$questionData["level"] = 3;
 						break;
+					/*
+						作成：朴昰成
+						作成日：24/06/19
+					*/
+					case "上級":
+						$questionData["level"] = 3;
+						break;
+					/* ここまで */
 				}
 
 				$session = new Container("user");
+				/*
+					作成：朴昰成
+					修正：朴昰成
+					修正日：24/06/19
+				*/
+
+				/* 修正前：
 				try {
 					$questionData["class1st"] = $optionTb->ReadByText([$questionData["class1st"]])["idx"];
 					$sqlWhere["type"] = "class2nd";
@@ -576,6 +659,28 @@ class QuestionController extends AbstractActionController
 					$logData["message"] = $e->getMessage();
 					$logDatas[$index + 1] = $logData;
 				}
+				*/
+
+				/* 修正後： */
+				try {
+					$questionData["class1st"] = $optionTb->ReadByText($questionData["class1st"])["idx"];
+					$sqlWhere["type"] = "class2nd";
+					$sqlWhere["text"] = $questionData["class2nd"];
+					$sqlWhere["class_upper"] = $questionData["class1st"];
+					$questionData["class2nd"] = $optionTb->ReadByOption($sqlWhere)[0]["idx"];
+					$questionData["type"] = $optionTb->ReadByText([$questionData["type"]])["idx"];
+					$questionData["note"] = "CSVで作成　" . date("Y.m.d") . "　" . $session["name"] . "\n";
+					$questionData["status"] = $optionTb->ReadByText(["新規"])["idx"];
+					$questionData["admin_regist"] = $session["code"];
+					$questionData["date_regist"] = date("Y-m-d H:i:s");
+					
+					$questionTb->CreateQuestion($questionData);
+				} catch (\Exception $e) {
+					$logData["reason"] = "exception at QuestionController createByCsvAction make question data";
+					$logData["message"] = $e;
+					$logDatas[$index] = $logData;
+				}
+				/* ここまで */
 			}
 			if ($logDatas) {
 				$noDatas = array();
@@ -589,7 +694,21 @@ class QuestionController extends AbstractActionController
 			die("success");
 		}
 
+		/*
+			作成：朴昰成
+			修正：朴昰成
+			修正日：24/06/19
+		*/
+
+		/* 修正前：
 		die($log->SaveLog(["reason" => "fail to open file"]));
+		*/
+
+		/* 修正後： */
+		$logData["reason"] = "fail to open file";
+		$log->SaveLog($logData);
+		die(json_encode($logData));
+		/* ここまで */
 	}
 
 	/** Read Option datas Organize by Type (class2nd's idx is text)

@@ -777,7 +777,7 @@ class SituationController extends AbstractActionController {
 				/*
 					作成：丁錫圓
 					修正：朴昰成
-					修正日：24/06/18
+					修正日：24/06/19
 				*/
 
 				/* 修正前：
@@ -792,10 +792,10 @@ class SituationController extends AbstractActionController {
 				/* 修正後： */
 				echo "
 				<script>
-				alert('依頼しました')
-				self.location.href='/admin/situation/list';
+					alert('依頼しました。');
+					self.location.href='/admin/situation/list';
 				</script>
-				";	
+				";
 				/* ここまで */
 		
 				exit;
@@ -957,12 +957,29 @@ class SituationController extends AbstractActionController {
 	
 				$this->mailByRequest($managerInfo,$recentPassword);
 	
+				/*
+					作成：丁錫圓
+					修正：朴昰成
+					修正日：24/06/19
+				*/
+
+				/* 修正前：
 				echo "
 				<script>
 				alert('依頼が完了しました。')
 				self.location.href='/admin/situation/list';
 				</script>
 				";	
+				*/
+
+				/* 修正後： */
+				echo "
+				<script>
+					alert('依頼しました。');
+					self.location.href='/admin/situation/list';
+				</script>
+				";
+				/* ここまで */
 			}
 			elseif($editDatas == "btn_save"){
 				$recordlWhere['idx']=$post['recordindex'];
@@ -1165,4 +1182,39 @@ class SituationController extends AbstractActionController {
 
 		return $log;
 	}
+	/* temp */
+
+	public function diagnosisAction() {
+		$index = $this->params()->fromRoute("index");
+
+		$recordTb = $this->getServiceLocator()->get("RecordTable-Admin");
+		$diagnosisTb = $this->getServiceLocator()->get("DiagnosisTable-Admin");
+		$questionTb = $this->getServiceLocator()->get("QuestionTable");
+
+		$recordData = $recordTb->ReadByIdx($index);
+		$diagnosisData = $diagnosisTb->ReadByCode($recordData["diagnosis_code"]);
+		$answerDatas = explode(",", $recordData["answer_data"]);
+		$questionIdxDatas = explode(",", $diagnosisData["question_idxs"]);
+		$optionTb = $this->getServiceLocator()->get("OptionTable");
+
+		$tableDatas = array();
+		for ($i = 0; $i < count($questionIdxDatas); $i++) {
+			$questionData = $questionTb->ReadByIdx($questionIdxDatas[$i]);
+
+			$correctChar = "X";
+			if ($questionData["correct"] == $answerDatas[$i]) { $correctChar = "O"; }
+
+			$tableData["no"] = $i + 1;
+			$tableData["title"] = $questionData["title"];
+			$tableData["class1st"] = $optionTb->ReadByIdx($questionData["class1st"])["text"];
+			$tableData["class2nd"] = $optionTb->ReadByIdx($questionData["class2nd"])["text"];
+			$tableData["correct"] = $correctChar;
+
+			$tableDatas[] = $tableData;
+		}
+
+		$datas["tableDatas"] = $tableDatas;
+		return $this->SetViewModel($datas, "/situation/situation_diagnosis.phtml");
+	}
+	/* temp */
 }

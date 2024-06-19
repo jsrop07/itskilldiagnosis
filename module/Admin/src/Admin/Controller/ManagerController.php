@@ -29,19 +29,7 @@ class ManagerController extends AbstractActionController
 
 	public function listAction() {
 		$this->ChkLogin();
-		/*
-			作成：朴昰成
-			修正：朴昰成
-			修正日：24/06/13
-		*/
-
-		/* 修正前：
-		$datas["breadcrumbData"] = ["ITスキル診断問項管理"];
-		*/
-
-		/* 修正後： */
 		$datas["breadcrumbData"] = ["ITスキル診断管理者管理"];
-		/* ここまで */
 
 		$printDataNum = 10;	// Number of data to output on one page
 
@@ -79,19 +67,7 @@ class ManagerController extends AbstractActionController
 	/** When you click 新規登録 button on 一覧 page */
 	public function inputAction() {
 		$this->ChkLogin();
-		/*
-			作成：朴昰成
-			修正：朴昰成
-			修正日：24/06/13
-		*/
-
-		/* 修正前：
-		$datas["breadcrumbData"] = ["ITスキル診断問項管理", "管理者登録"];
-		*/
-
-		/* 修正後： */
 		$datas["breadcrumbData"] = ["ITスキル診断管理者管理", "管理者登録"];
-		/* ここまで */
 		$datas["title"] = "管理者登録";
 
 		// Check return from 登録確認　page
@@ -106,19 +82,7 @@ class ManagerController extends AbstractActionController
 	/** When you click 登録 button on 管理者登録 page */
 	public function confirmAction() {
 		$this->ChkLogin();
-		/*
-			作成：朴昰成
-			修正：朴昰成
-			修正日：24/06/13
-		*/
-
-		/* 修正前：
-		$datas["breadcrumbData"] = ["ITスキル診断問項管理", "管理者登録" ,"登録確認"];
-		*/
-
-		/* 修正後： */
 		$datas["breadcrumbData"] = ["ITスキル診断管理者管理", "管理者登録", "登録確認"];
-		/* ここまで */
 		$datas["title"] = "登録確認";
 
 		$datas["adminData"] = $this->params()->fromPost();
@@ -131,19 +95,7 @@ class ManagerController extends AbstractActionController
 	/** When you choose list data on 管理者一覧 page */
 	public function detailAction() {
 		$this->ChkLogin();
-		/*
-			作成：朴昰成
-			修正：朴昰成
-			修正日：24/06/13
-		*/
-
-		/* 修正前：
-		$datas["breadcrumbData"] = ["ITスキル診断書管理", "管理者詳細"];
-		*/
-
-		/* 修正後： */
 		$datas["breadcrumbData"] = ["ITスキル診断管理者管理", "管理者詳細"];
-		/* ここまで */
 		$datas["title"] = "管理者詳細";
 
 		// Get Code
@@ -159,19 +111,7 @@ class ManagerController extends AbstractActionController
 	/** When you click 修正 on 管理者詳細 page */
 	public function modifyAction() {
 		$this->ChkLogin();
-		/*
-			作成：朴昰成
-			修正：朴昰成
-			修正日：24/06/13
-		*/
-
-		/* 修正前：
-		$datas["breadcrumbData"] = ["ITスキル診断書管理", "管理者詳細", "管理者修正"];
-		*/
-
-		/* 修正後： */
 		$datas["breadcrumbData"] = ["ITスキル診断管理者管理", "管理者詳細", "管理者修正"];
-		/* ここまで */
 		$datas["title"] = "管理者修正";
 
 		$post = $this->params()->fromPost();

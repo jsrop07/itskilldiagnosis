@@ -7,17 +7,12 @@
     "level" => "レベル",
   );
 
-  /*
-    作成：朴昰成
-    作成日：24/06/17
-  */
   $selectNumberDatas = array(
     "status" => 1,
     "class" => 2,
     "level" => 1,
   );
 
-  /* ここまで */
   /** check delete authority
    * @param array $data questionData
    * @param array $optionDatas ["idx" => "text"]
@@ -43,13 +38,8 @@
     foreach ($querys as $query) {
       $queryData = explode("=", $query);
 
-      /*
-        作成：朴昰成
-        作成日：24/06/17
-      */
       if ($queryData[0] == "page") { continue; }
 
-      /* ここまで */
       if ($queryData[0] == "select") {
         $queryDatas["select"] = explode("-", $queryData[1]);
         $isSearch["select"] = true;
@@ -122,56 +112,17 @@
     <div></div>
 
     <div style="display: flex;">
-      <!--
-        作成：朴昰成
-        修正：朴昰成
-        修正日：24/06/17
-      -->
-
-      <!-- 修正前： <?php /* ?>
-      <select class="form-select form-select-sm" id="select-select_type" style="width: 120px; margin-left: 8px;" onchange="ChangeSelectType(this);">
-      <?php */ ?> -->
-
-      <!-- 修正前： -->
       <select class="form-select form-select-sm" id="select-select_key" style="width: 120px; margin-left: 8px;" onchange="SelectKey(this);">
-      <!-- ここまで -->
         <option value="">全て</option>
         <?php foreach ($selectTypeDatas as $value => $text): ?>
           <option value="<?= $value; ?>"<?php echo ($isSearch["select"] && $queryDatas["select"][0] == $value) ? " selected" : ""?>><?= $text; ?></option>
         <?php endforeach; ?>
       </select>
 
-      <!--
-        作成：朴昰成
-        修正：朴昰成
-        修正日：24/06/17
-      -->
-
-      <!-- 修正前： <?php /* ?>
-      <select class="form-select form-select-sm" id="select-select_value" style="width: 120px; margin-left: 8px;" onchange="ChangeSelectValue(this);">
-      <?php */ ?> -->
-
-      <!-- 修正前： -->
       <select class="form-select form-select-sm" id="select-select_value" style="width: 120px; margin-left: 8px;" onchange="Select(this);">
-      <!-- ここまで -->
-        <!--
-          作成：朴昰成
-          削除：朴昰成
-          削除日：24/06/17
-        -->
-
-        <!-- 削除前： <?php /* ?>
-        <option value="">選択</option>
-
-        <?php */ ?> -->
         <?php if ($isSearch["select"]): ?>
-          <!--
-            作成：朴昰成
-            作成日：24/06/17
-          -->
           <option value=""></option>
 
-          <!-- ここまで -->
           <?php if ($queryDatas["select"][0] == "level"): ?>
             <?php for ($i = 0; $i <= 3; $i++): ?>
               <option value="<?= $i; ?>"<?php echo (isset($queryDatas["select"][1]) && $queryDatas["select"][1] == $i) ? " selected" : ""?>><?= $levelTexts[$i]; ?></option>
@@ -188,37 +139,10 @@
         <?php endif; ?>
       </select>
 
-      <!--
-        作成：朴昰成
-        修正：朴昰成
-        修正日：24/06/17
-      -->
-
-      <!-- 修正前： <?php /* ?>
-      <select class="form-select form-select-sm" id="select-select_class" style="width: 120px; margin-left: 8px;" onchange="ChangeSelectClass(this);"<?php echo ($isSearch["select"] && $queryDatas["select"][0] == "class") ? "" : " disabled"; ?>>
-      <?php */ ?> -->
-
-      <!-- 修正前： -->
       <select class="form-select form-select-sm" id="select-select_class" style="width: 120px; margin-left: 8px;" onchange="Select(this);"<?php echo ($isSearch["select"] && $selectNumberDatas[$queryDatas["select"][0]] >= 2) ? "" : " disabled"; ?>>
-      <!-- ここまで -->
-        <!--
-          作成：朴昰成
-          削除：朴昰成
-          削除日：24/06/17
-        -->
-
-        <!-- 削除前： <?php /* ?>
-        <option value="">選択</option>
-
-        <?php */ ?> -->
         <?php if ($isSearch["select"] && $queryDatas["select"][0] == "class" && isset($queryDatas["select"][1])): ?>
-          <!--
-            作成：朴昰成
-            作成日：24/06/17
-          -->
           <option value=""></option>
 
-          <!-- ここまで -->
           <?php foreach($selectValueDatas["class2nd"][$queryDatas["select"][1]] as $data): ?>
             <option value="<?php echo $data["idx"]; ?>"<?php echo (isset($queryDatas["select"][2]) && $queryDatas["select"][2] == $data["idx"]) ? " selected" : ""?>><?php echo $data["text"]; ?></option>
           <?php endforeach; ?>
@@ -232,80 +156,39 @@
 
 
     <script>
-      /*
-        作成：朴昰成
-        修正：朴昰成
-        修正日：24/06/17
-      */
-
-      /* 修正前： <?php /* ?>
-      const selectSelectType = document.getElementById("select-select_type");
-      <?php */ ?> */
-
-      /* 修正後： */
       const selectSelectKey = document.getElementById("select-select_key");
-      /* ここまで */
       const selectSelectValue = document.getElementById("select-select_value");
       const selectSelectClass = document.getElementById("select-select_class");
 
-      /*
-        作成：朴昰成
-        修正：朴昰成
-        修正日：24/06/17
-      */
-
-      /* 修正前： <?php /* ?>
-      function ChangeSelectType(element) {
-      <?php */ ?> */
-
-      /* 修正後： */
       function SelectKey(element) {
-      /* ここまで */
         let value = element.value;
-        /*
-          作成：朴昰成
-          修正：朴昰成
-          修正日：24/06/17
-        */
-
-        /* 修正前： <?php /* ?>
-        if (value == "") { Select(); }
-        <?php */ ?> */
-
-        /* 修正後： */
         if (value == "") { Select(element); }
-        /* ここまで */
 
         selectSelectValue.replaceChildren();
         var option = document.createElement("option");
         option.value = "";
-        /*
-          作成：朴昰成
-          削除：朴昰成
-          削除日：24/06/17
-        */
-
-        /* 削除前： <?php /* ?>
-        option.innerText = "選択";
-        <?php */ ?> */
         selectSelectValue.appendChild(option);
 
         /*
           作成：朴昰成
-          削除：朴昰成
-          削除日：24/06/17
+          修正：朴昰成
+          修正前：24/06/19
         */
 
-        /* 削除前： <?php /* ?>
-        selectSelectClass.replaceChildren();
-        var option = document.createElement("option");
-        option.value = "";
-        option.innerText = "選択";
-        selectSelectClass.appendChild(option);
-        <?php */ ?> */
-
+        /* 修正前：
         if (value == "class") { selectSelectClass.disabled = false; }
         else { selectSelectClass.disabled = true; }
+        */
+
+        /* 修正後： */
+        if (value == "class") {
+          selectSelectClass.disabled = false;
+        }
+        else {
+          selectSelectClass.replaceChildren();
+          selectSelectClass.disabled = true;
+        }
+        /* ここまで */
 
         switch(value) {
           case "status":
@@ -334,36 +217,8 @@
             break;
         }
       }
-      /*
-        作成：朴昰成
-        削除：朴昰成
-        削除日：24/06/17
-      */
 
-      /* 削除前： <?php /* ?>
-
-      function ChangeSelectValue(element) {
-        Select();
-      }
-
-      function ChangeSelectClass(element) {
-        Select();
-      }
-      <?php */ ?> */ 
-
-      /*
-        作成：朴昰成
-        修正：朴昰成
-        修正日：24/06/17
-      */
-
-      /* 修正前： <?php /* ?>
-      function Select() {
-      <?php */ ?> */
-
-      /* 修正後： */
       function Select(element) {
-      /* ここまで */
         <?php
           $newQuery = "?";
 
@@ -381,36 +236,12 @@
         ?>
         let url = "<?= $url; ?>";
 
-        /*
-          作成：朴昰成
-          修正：朴昰成
-          修正日：24/06/17
-        */
-
-        /* 修正前： <?php /* ?>
-        if (selectSelectType.value == "") {
-        <?php */ ?> */
-
-        /* 修正後： */
         if (selectSelectKey.value == "") {
-        /* ここまで */
           url = url.slice(0, -1);
           self.window.location = url;
           return true;
         }
-        /*
-          作成：朴昰成
-          修正：朴昰成
-          修正日：24/06/17
-        */
-
-        /* 修正前： <?php /* ?>
-        url += "select=" + selectSelectType.value + "-";
-        <?php */ ?> */
-
-        /* 修正後： */
         url += "select=" + selectSelectKey.value + "-";
-        /* ここまで */
 
         if (selectSelectValue.value == "") {
           url = url.slice(0, -1);
@@ -419,19 +250,7 @@
         }
         url += selectSelectValue.value + "-";
 
-        /*
-          作成：朴昰成
-          修正：朴昰成
-          修正日：24/06/17
-        */
-
-        /* 修正前： <?php /* ?>
-        if (selectSelectClass.value == "") {
-        <?php */ ?> */
-
-        /* 修正後： */
         if (element == selectSelectValue || selectSelectClass.value == "") {
-        /* ここまで */
           url = url.slice(0, -1);
           self.window.location = url;
           return true;
@@ -556,12 +375,7 @@
       if (!empty($queryDatas)) {
         foreach ($queryDatas as $key => $data) {
           if ($key == "title") { continue; }
-          /*
-            作成：朴昰成
-            作成日：24/06/17
-          */
           if ($key == "page") { continue; }
-          /* ここまで */
 
           $newQuery .= $key . "=" . implode("-", $data) . "&";
         }

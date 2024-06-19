@@ -12,6 +12,20 @@ use Applicant\Model\MailSender;
 
 class ApplicantController extends AbstractActionController
 {
+	public function getConfig(){
+		if(isset($_SERVER['DOCUMENT_ROOT']) && $_SERVER['DOCUMENT_ROOT']!=''){
+				$droot = $_SERVER['DOCUMENT_ROOT'];
+		}else{
+				$droot = "abc";
+		}
+		if(is_file($droot.'/../config/autoload/local.php')){
+				$config = require $droot.'/../config/autoload/local.php';
+		}else{
+				$config = require $droot.'/../config/autoload/global.php';
+		}
+		return $config;
+}
+
 	public function indexAction() {
 		header("Location: applicant/login");
 		exit;
@@ -299,16 +313,16 @@ class ApplicantController extends AbstractActionController
 			];
 		}
 		foreach ($selectedRank as $item) {
-			if ($get_point > $selectedRank[0]['result_points']) {
+			if ($get_point >= $selectedRank[0]['result_points']) {
 				$recordRank="A";
 				$recordExamResult=$selectedRank[0]['result_comments'];
 			}
-			elseif($get_point <= $selectedRank[0]['result_points'] && $get_point > $selectedRank[1]['result_points']){
+			elseif($get_point < $selectedRank[0]['result_points'] && $get_point >= $selectedRank[1]['result_points']){
 				$recordRank="B";
 				$recordExamResult=$selectedRank[1]['result_comments'];
 
 			}
-			elseif($get_point <= $selectedRank[1]['result_points'] && $get_point > $selectedRank[2]['result_points']){
+			elseif($get_point < $selectedRank[1]['result_points'] && $get_point >= $selectedRank[2]['result_points']){
 				$recordRank="C";
 				$recordExamResult=$selectedRank[2]['result_comments'];
 
@@ -422,28 +436,7 @@ class ApplicantController extends AbstractActionController
 		$recordCode    = $examRecordInfo["diagnosis_code"];	
 		$diagnosisInfo = $diagnosisTb->ReadForRecordByCodenDate($recordCode, $examRecordInfo["diagnosis_date"]);	
 		$diagnosisTime = $diagnosisInfo['time_limit'];
-		// 作成：丁錫圓
-		// 修正：丁錫圓
-		// 修正日：24/06/13
-		// 修正前：
-		// $timeout = $applicantExamTbl->timeout($examIdx, $diagnosisTime);
 
-		// 	if ($timeout === 'timeout') {
-		// 			// Handle timeout case
-		// 			$applicantExamTbl->deletePasswordByIdx($applicantInfo['idx']);
-		// 			session_unset();
-		// 			echo json_encode(array('status' => 'timeout'));
-		// 	} elseif (is_string($timeout)) {
-		// 		echo $timeout; // Assuming $timeout is already JSON encoded by timeout() method
-		// 	} else {
-		// 			// Handle unexpected cases
-		// 			http_response_code(500); // Internal Server Error
-		// 			echo json_encode(array('error' => 'Unexpected error occurred'));
-		// 	}
-			
-    // // Terminate script execution
-    // exit;
-		// 修正後：
 		$timeout = $applicantExamTbl->timeout($examIdx, $diagnosisTime);
 		error_log("Timeout response: " . $timeout);
 
@@ -454,11 +447,12 @@ class ApplicantController extends AbstractActionController
 			echo json_encode(array('error' => 'Invalid JSON response', 'message' => $jsonError, 'raw_response' => $timeout));
 			exit;
 		}
-		if (isset($timeoutData['status']) && $timeoutData['status'] === 'timeout') {
-				$applicantExamTbl->deletePasswordByIdx($applicantInfo['idx']);
-				// unset($session->userid);
-				echo $timeout; 
-		} elseif (isset($timeoutData['status']) && $timeoutData['status'] === 'success') {
+		// if (isset($timeoutData['status']) && $timeoutData['status'] === 'timeout') {
+		// 		$applicantExamTbl->deletePasswordByIdx($applicantInfo['idx']);
+		// 		// unset($session->userid);
+		// 		echo $timeout; 
+		// } else
+		if (isset($timeoutData['status']) && $timeoutData['status'] === 'success') {
 				echo $timeout; 
 		} else {
 				http_response_code(500); 
@@ -596,21 +590,6 @@ function mailByApplicantExam($applicantInfo,$sqlSet,$managerArray,$examRecordIdx
     echo "<script>alert('メールの送信に失敗しました。');</script>";
 	}
   }
-
-
-	public function getConfig(){
-		if(isset($_SERVER['DOCUMENT_ROOT']) && $_SERVER['DOCUMENT_ROOT']!=''){
-				$droot = $_SERVER['DOCUMENT_ROOT'];
-		}else{
-				$droot = "abc";
-		}
-		if(is_file($droot.'/../config/autoload/local.php')){
-				$config = require $droot.'/../config/autoload/local.php';
-		}else{
-				$config = require $droot.'/../config/autoload/global.php';
-		}
-		return $config;
-}
 
 	function examclearAction() {
 		$this->layout("/applicant/examclear");

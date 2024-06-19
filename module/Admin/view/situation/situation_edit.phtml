@@ -587,13 +587,12 @@ $question_num = isset($diagnosisData['question_num']) ? $diagnosisData['question
 
 <script>
 window.onload = function() {
-  // startTime();
   randomPW();
 
   var selectedClass2nd = <?php echo json_encode($selectedClass2nd); ?>;
 
   if (form.skill.value == 1 && selectedClass2nd == null) {
-      SkillSelectChange();
+    SkillSelectChange();
   }
   else if(form.skill.value ==1){
     SkillSelectChange2();
@@ -603,48 +602,49 @@ window.onload = function() {
 	// 作成日：2406012
   if (form.code.value != "") {
     skillSelect.addEventListener("mousedown", disableEvent);
-          class1stBox.addEventListener("mousedown", disableEvent);
-          class2ndSelect.addEventListener("mousedown", disableEvent);
-          careerSelect.addEventListener("mousedown", disableEvent);
-          document.getElementById("levelId").addEventListener("mousedown", disableEvent);
-          skillSelect.style.background = "#E2E2E2"
-          class1stBox.style.background = "#E2E2E2"
-          class2ndSelect.style.background = "#E2E2E2"
-          careerSelect.style.background = "#E2E2E2"
-          document.getElementById("levelId").style.background = "#E2E2E2"
-          diagnosisId.hidden = true;
+      class1stBox.addEventListener("mousedown", disableEvent);
+      class2ndSelect.addEventListener("mousedown", disableEvent);
+      careerSelect.addEventListener("mousedown", disableEvent);
+      document.getElementById("levelId").addEventListener("mousedown", disableEvent);
+      skillSelect.style.background = "#E2E2E2"
+      class1stBox.style.background = "#E2E2E2"
+      class2ndSelect.style.background = "#E2E2E2"
+      careerSelect.style.background = "#E2E2E2"
+      document.getElementById("levelId").style.background = "#E2E2E2"
+      diagnosisId.hidden = true;
 
-          const diagnosisCancel = document.createElement("button");
-          diagnosisCancel.innerText = "取り消し";
-          diagnosisCancel.id = "diagnosisCancel"; 
-          diagnosisCancel.style="background:linear-gradient(111deg, #50D7C7 0%, #40ADF0 100%); padding: 0px 10px; color:white; border-radius:5px;"
+      const diagnosisCancel = document.createElement("button");
+      diagnosisCancel.innerText = "取り消し";
+      diagnosisCancel.id = "diagnosisCancel"; 
+      diagnosisCancel.style="background:linear-gradient(111deg, #50D7C7 0%, #40ADF0 100%); padding: 0px 10px; color:white; border-radius:5px;"
 
-          const parentElement = diagnosisId.parentNode; 
-          parentElement.appendChild(diagnosisCancel);
-          diagnosisCancel.addEventListener("click", () => {
-            codeDisplay.innerText="";
-            form.code.value="";
-            skillSelect.removeEventListener("mousedown", disableEvent);
-            class1stBox.removeEventListener("mousedown", disableEvent);
-            class2ndSelect.removeEventListener("mousedown", disableEvent);
-            careerSelect.removeEventListener("mousedown", disableEvent);
-            document.getElementById("levelId").removeEventListener("mousedown", disableEvent);
+      const parentElement = diagnosisId.parentNode; 
+      parentElement.appendChild(diagnosisCancel);
+      diagnosisCancel.addEventListener("click", () => {
+        codeDisplay.innerText="";
+        form.code.value="";
+        skillSelect.removeEventListener("mousedown", disableEvent);
+        class1stBox.removeEventListener("mousedown", disableEvent);
+        class2ndSelect.removeEventListener("mousedown", disableEvent);
+        careerSelect.removeEventListener("mousedown", disableEvent);
+        document.getElementById("levelId").removeEventListener("mousedown", disableEvent);
 
-            // Reset styles
-            skillSelect.style.background = "";
-            class1stBox.style.background = "";
-            class2ndSelect.style.background = "";
-            careerSelect.style.background = "";
-            document.getElementById("levelId").style.background = "";
-            diagnosisCancel.hidden = true;
-            diagnosisId.hidden = false;
+        // Reset styles
+        skillSelect.style.background = "";
+        class1stBox.style.background = "";
+        class2ndSelect.style.background = "";
+        careerSelect.style.background = "";
+        document.getElementById("levelId").style.background = "";
+        diagnosisCancel.hidden = true;
+        diagnosisId.hidden = false;
 
-            event.preventDefault();
-          });
-          
-          function disableEvent(event) {
-            event.preventDefault(); 
-          }  }
+        event.preventDefault();
+      });
+      
+      function disableEvent(event) {
+        event.preventDefault(); 
+      }  
+    }
 // ここまで
 };
 </script>
@@ -997,9 +997,6 @@ function checkKana(input) {
 			randomPw += pwEncoding.charAt(randomIndex);
 		}
 		form.password.value = randomPw;
-		// console.log(randomPW);
-
-
 	}
 </script>
 
@@ -1035,26 +1032,45 @@ function diagnosisData() {
   var levelValue = levelElement.options[levelElement.selectedIndex].value;
   var class2ndValue = class2ndElement.options[class2ndElement.selectedIndex].value;
  
-  const url = window.location.href;
+  // const url = window.location.href;
   const postForm = new FormData();
   postForm.append("level", levelValue);
   postForm.append("class2nd", class2ndValue);
   const xhr = new XMLHttpRequest();
-  xhr.open("POST", url, true);
+  xhr.open("POST", "../getdiagnosisdata", true);
   xhr.send(postForm);
   xhr.onload = () => {
     if (xhr.status == 200) {
-        try {
-            const result = JSON.parse(xhr.responseText);
-            if (result === "wrong") {
-              updateTable("wrong");
-              return;
-            }
-            updateTable(result);
-        } catch (e) {
-            console.error("Failed to parse response", e);
-            alert("診断サーバー応答の分析に失敗しました。 担当者にお問い合わせください。");
+      const result = xhr.responseText;
+      console.log(result);
+
+      try {
+        let resultData = JSON.parse(result);
+        if (result === "wrong") {
+          updateTable("wrong");
+          return;
         }
+        updateTable(resultData);
+
+        return false;
+        } catch (e) {
+          let alertString = ErrorString();
+          alertString += "\nexception error in situation_edit diagnosisData";
+          alertString += "\nexception message: " + e;
+          alertString += "\nresponseText: " + result;
+          alert(alertString);
+          console.log(result);
+
+          return false;
+        }
+    }
+    else {
+      let alertString = ErrorString();
+      alertString += "\nxhr error in situation_edit diagnosisData";
+      alertString += "\nerror code: " + xhr.status;
+      alert(alertString);
+
+      return false;
     }
 }
 }
@@ -1178,28 +1194,12 @@ if (questionNumElement) {
 }
 }
 </script>
-<!-- 作成：丁錫圓
-修正：丁錫圓 -->
-<!-- <script>
-  function startTime() {
-      const today = new Date();
-      let y = today.getFullYear();
-      let mo = today.getMonth() + 1; // Months are zero-based
-      let d = today.getDate();
-      let h = today.getHours();
-      let m = today.getMinutes();
-      let s = today.getSeconds();
-      mo = checkTime(mo);
-      d = checkTime(d);
-      m = checkTime(m);
-      s = checkTime(s);
-      document.getElementById('currentDateTime').value = `${y}-${mo}-${d} ${h}:${m}:${s}`;
-      setTimeout(startTime, 1000);
-  }
 
-  function checkTime(i) {
-      if (i < 10) {i = "0" + i};  // Add zero in front of numbers < 10
-      return i;
+<script>
+  function ErrorString() {
+  let alertString = "予期せぬエラーが発生しました。";
+  alertString += "\n管理者にエラー内容をお知らせくださいますようお願いいたします。";
+  alertString += "\n\nエラー内容：";
+  return alertString;
   }
-</script> -->
-<!-- /* ここまで */ -->
+</script>

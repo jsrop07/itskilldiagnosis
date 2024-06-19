@@ -289,7 +289,6 @@ function InitStyle() { return " font-style: italic; color: ;"; }
 
 <script>
 	window.onload=function(){
-		// startTime()
 		randomPW();
 	}
 </script>
@@ -767,29 +766,47 @@ function diagnosisData() {
   var class2ndElement = document.querySelector('select[name="class2nd"]');
   var levelValue = levelElement.options[levelElement.selectedIndex].value;
   var class2ndValue = class2ndElement.options[class2ndElement.selectedIndex].value;
-  const url = window.location.href;
+  
   const postForm = new FormData();
   postForm.append("level", levelValue);
   postForm.append("class2nd", class2ndValue);
   const xhr = new XMLHttpRequest();
-  xhr.open("POST", url, true);
+  xhr.open("POST", "./getdiagnosisdata", true);
   xhr.send(postForm);
   xhr.onload = () => {
     if (xhr.status == 200) {
+      const result = xhr.responseText;
+      console.log(result);
+
         try {
-            const result = JSON.parse(xhr.responseText);
-            console.log(result);
-            if (result === "wrong") {
-              updateTable("wrong");
-                return;
-            }
-            updateTable(result);
+          let resultData = JSON.parse(result);
+          if (result === "wrong") {
+            updateTable("wrong");
+            return;
+          }
+          updateTable(resultData);
+          
+          return false;
         } catch (e) {
-            console.error("Failed to parse response", e);
-            alert("診断サーバー応答の分析に失敗しました。 担当者にお問い合わせください。");
+          let alertString = ErrorString();
+          alertString += "\nexception error in situation_input diagnosisData";
+          alertString += "\nexception message: " + e;
+          alertString += "\nresponseText: " + result;
+          alert(alertString);
+          console.log(result);
+
+          return false;
         }
     }
-}
+    else {
+      let alertString = ErrorString();
+      alertString += "\nxhr error in situation_input diagnosisData";
+      alertString += "\nerror code: " + xhr.status;
+      alert(alertString);
+
+      return false;
+    }
+  }
 }
 
     function updateTable(data) {
@@ -906,25 +923,12 @@ function selectCode(code, title) {
   }
 
 </script>
-<!-- <script>
-  function startTime() {
-      const today = new Date();
-      let y = today.getFullYear();
-      let mo = today.getMonth() + 1; // Months are zero-based
-      let d = today.getDate();
-      let h = today.getHours();
-      let m = today.getMinutes();
-      let s = today.getSeconds();
-      mo = checkTime(mo);
-      d = checkTime(d);
-      m = checkTime(m);
-      s = checkTime(s);
-      document.getElementById('currentDateTime').value = `${y}-${mo}-${d} ${h}:${m}:${s}`;
-      setTimeout(startTime, 1000);
-  }
 
-  function checkTime(i) {
-      if (i < 10) {i = "0" + i};  // Add zero in front of numbers < 10
-      return i;
+<script>
+  function ErrorString() {
+  let alertString = "予期せぬエラーが発生しました。";
+  alertString += "\n管理者にエラー内容をお知らせくださいますようお願いいたします。";
+  alertString += "\n\nエラー内容：";
+  return alertString;
   }
-</script> -->
+</script>

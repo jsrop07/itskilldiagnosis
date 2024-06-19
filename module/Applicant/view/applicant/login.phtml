@@ -74,11 +74,11 @@ if ($ses_id) {
       }
     } else {
       console.error("Error: Unexpected status code " + xhr.status);
-      alert("ログインエラーが発生しました。担当者にお問い合わせください。");
+      alert(`ログインエラーが発生しました： (${xhr.status}) \n担当者にお問い合わせください。`);
     }
   } catch (error) {
     console.error("Error occurred during xhr request:", error);
-    alert("ログインエラーが発生しました。担当者にお問い合わせください。");
+    alert(`ログインエラーが発生しました。： (${error}) \n担当者にお問い合わせください。`);
   }
 }
 return false;

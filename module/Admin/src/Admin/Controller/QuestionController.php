@@ -43,6 +43,12 @@ class QuestionController extends AbstractActionController
 		$session = new Container("user");
 		$userLevel = $session["level"];
 
+		/*
+			作成：朴昰成
+			作成日：24/06/19
+		*/
+		$LogModule = new LogModule();
+		/* ここまで */
 		$questionTb = $this->getServiceLocator()->get("QuestionTable");
 		$query = $this->params()->fromQuery();
 
@@ -50,17 +56,33 @@ class QuestionController extends AbstractActionController
 		$page = 1;
 		if (isset($query["page"])) {
 			$page = $query["page"];
+			/*
+				作成：朴昰成
+				削除：朴昰成
+				削除日：24/06/19
+			*/
+
+			/* 削除前：
 			unset($query["page"]);
+			*/
 		}
 
 		// Set Search data
 		$sqlWhere = array();
+		/*
+			作成：朴昰成
+			削除：朴昰成
+			削除日：24/06/19
+		*/
+
+		/* 削除前：
 		if (isset($query["approver"])) {
 			$adminTb = $this->getServiceLocator()->get("AdminTable");
 			try { $sqlWhere["admin_approve"] = $adminTb->ReadByName($query["approver"])["code"]; }
 			catch (\Exception $e) { print_r($e->getMessage()); exit; }
 			$datas["searchDatas"]["approver"] = $query["approver"];
 		}
+		*/
 
 		if (isset($query["title"])) {
 			$sqlWhere["title"] = $query["title"];
@@ -81,6 +103,13 @@ class QuestionController extends AbstractActionController
 
 		$questionDatas = "";
 		// Check User Level
+		/*
+			作成：朴昰成
+			修正：朴昰成
+			修正日：24/06/19
+		*/
+
+		/* 修正前：
 		if ($userLevel >= 1) {
 			$datas["totalNum"] = $questionTb->CountAllList();
 
@@ -123,6 +152,78 @@ class QuestionController extends AbstractActionController
 				catch (\Exception $e) { print_r($e->getMessage()); exit; }
 			}
 		}
+		*/
+
+		/* 修正後： */
+		if ($userLevel >= 1) {
+			try { 
+				$datas["totalNum"] = $questionTb->CountAllValid();
+			} catch (\Exception $e) {
+				$logData["reason"] = "exception at QuestionController listAction QuestionTable CountAllList";
+				$logData["message"] = $e->getMessage();
+				$log = $LogModule->SaveLog($logData);
+				print_r($log);
+				exit;
+			}
+
+			// Check Search data and Align data
+			if (empty($sqlWhere)) {
+				try { 
+					$questionDatas = $questionTb->GetAllList();
+				} catch (\Exception $e) {
+					$logData["reason"] = "exception at QuestionController listAction QuestionTable GetAllList";
+					$logData["message"] = $e->getMessage();
+					$log = $LogModule->SaveLog($logData);
+					print_r($log);
+					exit;
+				}
+			} else {
+				try { 
+					$questionDatas = $questionTb->GetListBySearch($sqlWhere);
+				} catch (\Exception $e) {
+					$logData["reason"] = "exception at QuestionController listAction QuestionTable GetListBySearch";
+					$logData["message"] = $e->getMessage();
+					$log = $LogModule->SaveLog($logData);
+					print_r($log);
+					exit;
+				}
+			}
+		} else {
+			$userCode = $session["code"];
+
+			try { 
+				$datas["totalNum"] = $questionTb->CountAllValid($userCode);
+			} catch (\Exception $e) {
+				$logData["reason"] = "exception at QuestionController listAction QuestionTable CountAllValid";
+				$logData["message"] = $e->getMessage();
+				$log = $LogModule->SaveLog($logData);
+				print_r($log);
+				exit;
+			}
+
+			if (empty($sqlWhere)) {
+				try { 
+					$questionDatas = $questionTb->GetValidList($userCode);
+				} catch (\Exception $e) {
+					$logData["reason"] = "exception at QuestionController listAction QuestionTable GetValidList";
+					$logData["message"] = $e->getMessage();
+					$log = $LogModule->SaveLog($logData);
+					print_r($log);
+					exit;
+				}
+			} else {
+				try { 
+					$questionDatas = $questionTb->GetValidListBySearch($userCode, $sqlWhere);
+				} catch (\Exception $e) {
+					$logData["reason"] = "exception at QuestionController listAction QuestionTable GetValidListBySearch";
+					$logData["message"] = $e->getMessage();
+					$log = $LogModule->SaveLog($logData);
+					print_r($log);
+					exit;
+				}
+			}
+		}
+		/* ここまで */
 
 		$questionDatas->setCurrentPageNumber($page);
 		$questionDatas->setItemCountPerPage(10);

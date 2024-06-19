@@ -169,8 +169,26 @@
         option.value = "";
         selectSelectValue.appendChild(option);
 
+        /*
+          作成：朴昰成
+          修正：朴昰成
+          修正前：24/06/19
+        */
+
+        /* 修正前：
         if (value == "class") { selectSelectClass.disabled = false; }
         else { selectSelectClass.disabled = true; }
+        */
+
+        /* 修正後： */
+        if (value == "class") {
+          selectSelectClass.disabled = false;
+        }
+        else {
+          selectSelectClass.replaceChildren();
+          selectSelectClass.disabled = true;
+        }
+        /* ここまで */
 
         switch(value) {
           case "status":

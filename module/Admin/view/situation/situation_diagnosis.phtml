@@ -1,0 +1,22 @@
+<table class="table">
+	<thead>
+		<tr>
+			<th>No</th>
+			<th>大分類</th>
+			<th>小分類</th>
+			<th>タイトル</th>
+			<th>正解</th>
+		</tr>
+	</thead>
+	<tbody>
+		<?php foreach ($tableDatas as $data): ?>
+			<tr>
+				<td><?php echo $data["no"]; ?></td>
+				<td><?php echo $data["class1st"]; ?></td>
+				<td><?php echo $data["class2nd"]; ?></td>
+				<td><?php echo $data["title"]; ?></td>
+				<td><?php echo $data["correct"]; ?></td>
+			</tr>
+		<?php endforeach; ?>
+	</tbody>
+</table>

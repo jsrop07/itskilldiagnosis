@@ -60,19 +60,19 @@ $lineChange = "<br>";
                 <div class="answers mt-2">
                     <ul class="list-unstyled">
                         <?php for ($i = 1; $i <= 5; $i++) : ?>
-                            <?php 
-                            $answerKey = "answer$i";
-                            $answerKey_ko = "answer$i"."_ko";
-                            $answer_ko = htmlspecialchars($row[$answerKey_ko], ENT_QUOTES);
-                            $answer_jp = htmlspecialchars($row[$answerKey], ENT_QUOTES);
-                            if (!empty($row[$answerKey])) :
-                            ?>
-                                <li style="padding: 10px 0">
-                                <label>
-                                    <input type="radio" name="answer<?= $idx + 1 ?>" value="<?= $i ?>"> <?php echo $language == 1 && $answer_ko != null? $answer_ko : $answer_jp ?>
-                                    </label>
-                                </li>
-                            <?php endif; ?>
+                          <?php 
+                          $answerKey = "answer$i";
+                          $answerKey_ko = "answer$i"."_ko";
+                          $answer_ko = htmlspecialchars($row[$answerKey_ko], ENT_QUOTES);
+                          $answer_jp = htmlspecialchars($row[$answerKey], ENT_QUOTES);
+                          if (!empty($row[$answerKey])) :
+                          ?>
+                            <li style="padding: 10px 0">
+                            <label>
+                              <input type="radio" name="answer<?= $idx + 1 ?>" value="<?= $i ?>"> <?php echo $language == 1 && $answer_ko != null? $answer_ko : $answer_jp ?>
+                              </label>
+                            </li>
+                          <?php endif; ?>
                         <?php endfor; ?>
                     </ul>
                 </div>
@@ -311,7 +311,7 @@ function executeTime() {
   xhr.open("POST", url, true);
   xhr.send(postForm);
   xhr.onload = () => {
-    sendRequest();
+    requestRemainTime();
   }
 }
 </script>
@@ -334,7 +334,7 @@ document.getElementById("startBtn").addEventListener("click", function() {
   var examTime= <?php echo $time_limit; ?>;
   var stopTime = 10; 
 
-  function sendRequest() {
+  function requestRemainTime() {
     const postForm = new FormData();
     postForm.append("idx", <?= json_encode($examIdx) ?>);
     const xhr = new XMLHttpRequest();
@@ -357,7 +357,7 @@ document.getElementById("startBtn").addEventListener("click", function() {
         }
     };
 }
-sendRequest();
+requestRemainTime();
 
 
 
@@ -456,7 +456,7 @@ function initializeTimers() {
 <script>
 
 
-  function sendRequest() {
+  function requestRemainTime() {
     const postForm = new FormData();
     postForm.append("idx", <?= json_encode($examIdx) ?>);
 
@@ -469,13 +469,18 @@ function initializeTimers() {
             const result = xhr.responseText;
             const resultDate = JSON.parse(result);
 
-            if (resultDate.status == "timeout") {
-              alert("診断可能な時間が過ぎたので、受験できません。");
-              self.location.href='/applicant/login';
-            } else if (resultDate.status == "success") {
+            // if (resultDate.status == "timeout") {
+            //   alert("診断可能な時間が過ぎたので、受験できません。");
+            //   self.location.href='/applicant/login';
+            // } else 
+            if (resultDate.status == "success") {
               examTime = resultDate.remain_time; 
               initializeTimers();
             }
+        }
+        else{
+          console.error("Error: Unexpected status code " + xhr.status);
+          alert(`残りの時間を読み込めませんでした： (${xhr.status}) \n担当者にお問い合わせください。`);
         }
     };
   }
@@ -550,9 +555,6 @@ function initializeTimers() {
   // }
 
 document.getElementById("startBtn").addEventListener("click", function() {
- 
-
-
   // var stopStartTime;
   // var stopTimer;
   
@@ -630,29 +632,24 @@ document.addEventListener('keydown', notReload);
     var combinedAnswers = radioIdsArray.join(',');
 
     document.getElementById('answer_data').value = combinedAnswers;
-    
-    // var confirmData= confirmContent.innerHTML;
 }
 </script>
 
 <script>
   function timeoutExam() {
-
     var timeoutModal = new bootstrap.Modal(document.getElementById('timeoutModal'), {keyboard: false});
     timeoutModal.show();
 
     var formData = new FormData(document.getElementById('myForm'));
     var totalQuestions = <?= count($matchedData) ?>;
     var answersArray = new Array(totalQuestions).fill('');
-    // var confirmContent = document.getElementById('confirmContent');
-    // confirmContent.innerHTML = '試験を提出しますか？';
 
     for (var pair of formData.entries()) {
         var questionIdx = parseInt(pair[0].replace('answer', ''), 10); // 'answer' 제거 후 숫자로 변환
         var selectedRadio = document.querySelector('input[name="' + pair[0] + '"]:checked');
         if (selectedRadio) {
-            var radioId = selectedRadio.value;
-            answersArray[questionIdx - 1] = radioId; // question index start 1
+          var radioId = selectedRadio.value;
+          answersArray[questionIdx - 1] = radioId; // question index start 1
         }
     }
 
@@ -661,35 +658,6 @@ document.addEventListener('keydown', notReload);
     document.getElementById('answer_data').value = combinedAnswers;
   }
 </script>
-<!-- <script>
-function confirmExam() {
-    var formData = new FormData(document.getElementById('myForm'));
-    var radioIdsArray= [];
-    var comment = document.getElementById('comment').value;
-    var confirmContent = document.getElementById('confirmContent');
-    confirmContent.innerHTML = '';
-
-    let count = 1;   
-
-    for (var pair of formData.entries()) {
-      var questionIdx = pair[0];
-      var selectedRadio = document.querySelector('input[name="' + questionIdx + '"]:checked');
-      if (selectedRadio) {
-        var radioId = selectedRadio.value;
-        confirmContent.innerHTML += count++ + '. ' + radioId  + "番" + '<br>';
-        formData.append('answer_data', radioId);
-        radioIdsArray.push(radioId);
-      }      
-    }
-
-    confirmComment.innerHTML=comment;
-    var combinedAnswers = radioIdsArray.join(',');
-      document.getElementById('answer_data').value = combinedAnswers;
-
-      
-    var confirmData= confirmContent.innerHTML+comment;
-}
-</script> -->
 
 <!-- exam submit request loading modal -->
 <script>
@@ -704,38 +672,4 @@ function confirmExam() {
     });
 });
 </script>
-<!-- log
-	作成：丁錫圓
-	作成日：24/06/07
--->
-<!-- <script>
-const interval = 60000; 
-
-function sendRequest() {
-    const postForm = new FormData();
-    postForm.append("idx", <?= json_encode($examIdx) ?>);
-    const xhr = new XMLHttpRequest();
-    xhr.open("POST", './timeout', true);
-    xhr.send(postForm);
-
-    xhr.onload = () => {
-        if (xhr.status == 200) {
-            const result = xhr.responseText;
-            if (result == "timeout") {
-                alert("診断可能な時間が過ぎたので、受験できません。");
-                self.location.href='/applicant/login';
-            } else if (result == "success") {
-              console.log("success");
-            }
-        }
-    };
-}
-
-sendRequest();
-
-setInterval(sendRequest, interval);
-
-</script> -->
-<!-- ここまで -->
-
 <?php endif; ?>

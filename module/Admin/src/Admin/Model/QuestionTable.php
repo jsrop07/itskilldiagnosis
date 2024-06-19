@@ -32,9 +32,27 @@ class QuestionTable {
 	 * @return Paginator
 	*/
 	public function GetAllList() {
+		/*
+			作成：朴昰成
+			修正：朴昰成
+			修正日：24/06/19
+		*/
+
+		/* 修正前：
 		$qry = $this->sql->select("question")->where(["date_delete" => null])->order("date_regist desc");
 		$paginatorAdapter = new DbSelect($qry, $this->adapter);
 		return new Paginator($paginatorAdapter);
+		*/
+
+		/* 修正後： */
+		$order["date_regist"] = "desc";
+		$order["idx"] = "desc";
+
+		$qry = $this->sql->select("question")->where(["date_delete" => null])->order($order);
+		$paginatorAdapter = new DbSelect($qry, $this->adapter);
+		$paginator = new Paginator($paginatorAdapter);
+		return $paginator;
+		/* ここまで */
 	}
 	
 	/** Get List by Search data 
@@ -42,6 +60,13 @@ class QuestionTable {
 	 * @return Paginator
 	*/
 	public function GetListBySearch($whereDatas) {
+		/*
+			作成：朴昰成
+			修正：朴昰成
+			修正日：24/06/19
+		*/
+
+		/* 修正前：
 		$where = new Where();
 		$where->isNull("date_delete");
 		foreach ($whereDatas as $field => $data) {
@@ -55,6 +80,27 @@ class QuestionTable {
 		$qry = $this->sql->select("question")->where($where)->order("date_regist DESC");
 		$paginatorAdapter = new DbSelect($qry, $this->adapter);
 		return new Paginator($paginatorAdapter);
+		*/
+
+		/* 修正後： */
+		$where = new Where();
+		$where->isNull("date_delete");
+		foreach ($whereDatas as $field => $data) {
+			if ($field == "title") {
+				$where->and->like("title", "%" . $data . "%");
+				continue;
+			}
+			$where->and->equalTo($field, $data);
+		}
+	
+		$order["date_regist"] = "desc";
+		$order["idx"] = "desc";
+
+		$qry = $this->sql->select("question")->where($where)->order($order);
+		$paginatorAdapter = new DbSelect($qry, $this->adapter);
+		$paginator = new Paginator($paginatorAdapter);
+		return $paginator;
+		/* ここまで */
 	}
 
 	/** Get List by Order data
@@ -119,6 +165,13 @@ class QuestionTable {
 	 * @return Pagniator
 	 */
 	public function GetValidList($code) {
+		/*
+			作成：朴昰成
+			修正：朴昰成
+			修正日：24/06/19
+		*/
+
+		/* 修正前：
 		$where = new Where();
 		$where->isNull("date_delete")
 			->and->nest()
@@ -129,6 +182,24 @@ class QuestionTable {
 		$qry = $this->sql->select("question")->where($where)->order("date_regist DESC");
 		$paginatorAdapter = new DbSelect($qry, $this->adapter);
 		return new Paginator($paginatorAdapter);
+		*/
+
+		/* 修正後： */
+		$where = new Where();
+		$where->isNull("date_delete")
+		->and->nest()
+			->isNotNull("date_approve")
+			->or->equalTo("admin_regist", $code)
+		->unnest();
+	
+		$order["date_regist"] = "desc";
+		$order["idx"] = "desc";
+
+		$qry = $this->sql->select("question")->where($where)->order($order);
+		$paginatorAdapter = new DbSelect($qry, $this->adapter);
+		$paginator = new Paginator($paginatorAdapter);
+		return $paginator;
+		/* ここまで */
 	}
 
 	/** Get List by Code, Search data
@@ -137,6 +208,13 @@ class QuestionTable {
 	 * @return Pagniator
 	*/
 	public function GetValidListBySearch($code, $whereDatas) {
+		/*
+			作成：朴昰成
+			修正：朴昰成
+			修正日：24/06/19
+		*/
+
+		/* 修正前：
 		$where = new Where();
 		$where->isNull("date_delete")
 			->and->nest()
@@ -154,6 +232,31 @@ class QuestionTable {
 		$qry = $this->sql->select("question")->where($where)->order("date_regist DESC");
 		$paginatorAdapter = new DbSelect($qry, $this->adapter);
 		return new Paginator($paginatorAdapter);
+		*/
+
+		/* 修正後： */
+		$where = new Where();
+		$where->isNull("date_delete")
+			->and->nest()
+				->isNotNull("date_approve")
+				->or->equalTo("admin_regist", $code)
+			->unnest();
+		foreach ($whereDatas as $field => $data) {
+			if ($field == "title") {
+				$where->and->like("title", "%" . $data . "%");
+				continue;
+			}
+			$where->and->equalTo($field, $data);
+		}
+	
+		$order["date_regist"] = "desc";
+		$order["idx"] = "desc";
+
+		$qry = $this->sql->select("question")->where($where)->order($order);
+		$paginatorAdapter = new DbSelect($qry, $this->adapter);
+		$paginator = new Paginator($paginatorAdapter);
+		return $paginator;
+		/* ここまで */
 	}
 
 	/** Get List by Code, Order data

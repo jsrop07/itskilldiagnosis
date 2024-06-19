@@ -274,23 +274,6 @@
 </form>
 
 <div class="btn-place" style="margin-top: 32px;">
-  <!--
-    作成：朴昰成
-    修正：朴昰成
-    修正日：24/06/17
-  -->
-
-  <!-- 修正前： <?php /* />
-  <button class="emegra cancel" onclick="history.back();">一覧へ</button>
-
-	<?php if ($isEdit): ?>
-		<button class="emegra" onclick="Edit();">修正</button>
-	<?php else: ?>
-		<button class="emegra" onclick="Confirm();">確認画面へ</button>
-	<?php endif; ?>
-  <?php */ ?> -->
-
-  <!-- 修正後： -->
   <?php if ($isEdit): ?>
     <button class="emegra cancel" onclick="history.back();">戻る</button>
     <button class="emegra" onclick="Edit();">修正</button>
@@ -298,7 +281,6 @@
     <button class="emegra cancel" onclick="history.back();">一覧へ</button>
     <button class="emegra" onclick="Confirm();">確認画面へ</button>
   <?php endif; ?>
-  <!-- ここまで -->
 </div>
 
 <script type="text/javascript">
@@ -433,12 +415,7 @@
 	<?php if ($isEdit): ?>
 		function Edit() {
 			if (ChkValid() == false) { return false; }
-      /*
-        作成：朴昰成
-        作成日：24/06/18
-      */
       if (confirm("修正しますか？") === false) { return false; }
-      /* ここまで */
 
 			const postForm = new FormData(form);
 			const xhr = new XMLHttpRequest();
@@ -447,32 +424,13 @@
 			xhr.onload = () => {
 				if (xhr.status == 200) {
 					const result = xhr.responseText;
-          /*
-            作成：朴昰成
-            作成日：24/06/18
-          */
           console.log(result);
 
 
-          /* ここまで */
 					if (result == "success") {
 						alert("修正しました。");
 						self.location.href = "../list";
 					}
-          /*
-            作成：朴昰成
-            修正：朴昰成
-            作成日：24/06/18
-          */
-
-          /* 修正前： <?php /* ?>
-					else {
-						alert("Error");
-						console.log(result);
-					}
-          <?php */ ?> */
-
-          /* 修正後： */
           else {
             let alertString = ErrorString();
             alertString += "\nresponse text is not success in question_input Edit";
@@ -481,12 +439,7 @@
 
             return false;
           }
-          /* ここまで */
 				}
-        /*
-          作成：朴昰成
-          作成日：24/06/18
-        */
         else {
           let alertString = ErrorString();
           alertString += "\nxhr error in question_input Edit";
@@ -495,7 +448,6 @@
 
           return false;
         }
-        /* ここまで */
 			}
 		}
 	<?php else: ?>
@@ -596,10 +548,6 @@
 		alert(text + "を選択してください");
 		element.focus();
 	}
-  /*
-    作成：朴昰成
-    作成日：24/06/18
-  */
 
 
 
@@ -609,5 +557,4 @@
     alertString += "\n\nエラー内容：";
     return alertString;
   }
-  /* ここまで */
 </script>

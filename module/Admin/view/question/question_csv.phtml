@@ -28,35 +28,14 @@
 		xhr.onload = () => {
 			if (xhr.status == 200) {
 				const result = xhr.responseText;	
-        /*
-          作成：朴昰成
-          作成日：24/06/19
-        */
         console.log(result);
 
-        /* ここまで */
 				if (result == "success") {
 					alert("登録しました。");
 					self.location.href = "list";
 				}
 				else {
           try {
-            /*
-              作成：朴昰成
-              修正：朴昰成
-              修正日：24/06/19
-            */
-
-            /* 修正前：
-            noDatas = JSON.parse(result);
-            let alertString = "登録できんかった問項があります。\n\n";
-            alertString += "登録できなかった問項番号\n";
-            alertString += noDatas.join(",");
-            alert(alertString);
-            console.log(result);
-            */
-
-            /* 修正後： */
             let resultData = JSON.parse(result);
             
             if (resultData.hasOwnProperty("reason")) {
@@ -80,23 +59,7 @@
             console.log(resultData);
             ReturnButton(button);
             return false;
-            /* ここまで */
           } catch (e) {
-            /*
-              作成：朴昰成
-              修正：朴昰成
-              修正日：24/06/19
-            */
-
-            /* 修正前：
-            let alertString = "CSV形式ではありません。\n";
-            alertString += "正しいCSVファイルを登録してください。";
-            alert(alertString);
-            console.log(result);
-            console.log(e);
-            */
-
-            /* 修正後： */
             let alertString = ErrorString();
             alertString += "\nexception error in question_csv Regist";
             alertString += "\nexception message: " + e;
@@ -105,24 +68,9 @@
 
             ReturnButton(button);
             return false;
-            /* ここまで */
           }
-          /*
-            作成：朴昰成
-            削除：朴昰成
-            削除日：24/06/19
-          */
-
-          /* 削除前：
-          ChangeButton(button);
-          return false;
-          */
 				}
 			}
-      /*
-        作成：朴昰成
-        作成日：24/06/19
-      */
       else {
         let alertString = ErrorString();
         alertString += "\nxhr error in diagnosis_input SetDiagnosisList";
@@ -132,47 +80,9 @@
         ReturnButton();
         return false;
       }
-      /* ここまで */
 		}
 	}
 
-  /*
-    作成：朴昰成
-    修正：朴昰成
-    修正日：24/06/19
-  */
-
-  /* 修正前：
-  function ChangeButton(button) {
-    button.replaceChildren();
-
-    if (button.disabled == true) {
-      button.innerText = "登録";
-
-      for (let i = 0; i < buttonElements.length; i++) {
-        buttonElements[i].disabled = false;
-      }
-    }
-    else {
-      var span = document.createElement("span");
-      span.classList.add("spinner-border");
-      span.classList.add("spinner-border-sm");
-      span.ariaHidden = "true";
-      button.appendChild(span);
-
-      var span = document.createElement("span");
-      span.role = "status";
-      span.innerText = "登録中...";
-      button.appendChild(span);
-
-      for (let i = 0; i < buttonElements.length; i++) {
-        buttonElements[i].disabled = true;
-      }
-    }
-  }
-  */
-
-  /* 修正後： */
 
 
   function ErrorString() {
@@ -210,5 +120,4 @@
       buttonElements[i].disabled = false;
     }
   }
-  /* ここまで */
 </script>

@@ -30,6 +30,13 @@ class SituationController extends AbstractActionController {
 	public function listAction() {
 		$this->ChkLogin();
 		$datas["breadcrumbData"] = ["ITスキル診断状況管理"];
+		/*
+			作成：朴昰成
+			修正：朴昰成
+			修正日：24/06/21
+		*/
+
+		/* 修正前：
 
 		// Number of data to output on one page
 		$printDataNum = 10;
@@ -193,6 +200,105 @@ class SituationController extends AbstractActionController {
 		$vm->noticelist->setCurrentPageNumber($page);
 		$vm->noticelist->setItemCountPerPage($printDataNum);
 		return $vm;
+		*/
+
+		/* 修正後： */
+		$datas = $this->GetOptionDatas($datas);
+
+		$LogModule = new LogModule();
+		$recordTb = $this->getServiceLocator()->get("RecordTable-Admin");
+
+		try {
+			$datas["totalApply"] = $recordTb->CountApplyData();
+			$datas["totalRequest"] = $recordTb->CountRequestData();
+			$datas["countOver"] = $recordTb->CountOverData();
+		} catch (\Exception $e) {
+			$logData["reason"] = "exception at SituationController listAction RecordTable Count";
+			$logData["message"] = $e->getMessage();
+			$log = $LogModule->SaveLog($logData);
+			print_r($log);
+			exit;
+		}
+		
+		$query  = $this->params()->fromQuery();
+		$page = 1;
+		if (isset($query["page"])) { $page = $query["page"]; }
+
+		$sqlWhere = array();
+		if (isset($query["name"])) { $sqlWhere["name"] = $query["name"]; }
+		if (isset($query["date"])) { $sqlWhere["date_schedule"] = $query["date"]; }
+
+		if (isset($query["select"])) {
+			$selectData = explode("-", $query["select"]);
+
+			switch ($selectData[0]) {
+				case "status":
+					switch ($selectData[1]) {
+						case "apply":
+							$sqlWhere["request_date"] = "null";
+							break;
+						case "request":
+							$sqlWhere["request_date"] = "not null";
+							$sqlWhere["rank"] = "null";
+							break;
+						case "execute":
+							$sqlWhere["request_date"] = "not null";
+							$sqlWhere["execute_date"] = "not null";
+							$sqlWhere["rank"] = "not-F";
+							break;
+						case "unexecute":
+							$sqlWhere["request_date"] = "not null";
+							$sqlWhere["execute_date"] = "not null";
+							$sqlWhere["rank"] = "F";
+							break;
+					}
+					break;
+				case "education":
+					switch ($selectData[1]) {
+						case "high":
+							$sqlWhere["education"] = "高卒"; break;
+						case "voca":
+							$sqlWhere["education"] = "専門卒"; break;
+						case "uni":
+							$sqlWhere["education"] = "大卒"; break;
+						case "grad":
+							$sqlWhere["education"] = "大学院卒"; break;
+					}
+					break;
+				default:
+					$sqlWhere[$selectData[0]] = $selectData[1];
+					break;
+			}
+		}
+
+		$recordPaginator = "";
+		if (empty($sqlWhere)) {
+			try {
+				$recordPaginator = $recordTb->GetAllList();
+			} catch (\Exception $e) {
+				$logData["reason"] = "exception at SituationController listAction RecordTable GetAllList";
+				$logData["message"] = $e->getMessage();
+				$log = $LogModule->SaveLog($logData);
+				print_r($log);
+				exit;
+			}
+		} else {
+			try {
+				$recordPaginator = $recordTb->GetListBySearch($sqlWhere);
+			} catch (\Exception $e) {
+				$logData["reason"] = "exception at QuestionController listAction RecordTable GetListBySearch";
+				$logData["message"] = $e->getMessage();
+				$log = $LogModule->SaveLog($logData);
+				print_r($log);
+				exit;
+			}
+		}
+		$recordPaginator->setCurrentPageNumber($page);
+		$recordPaginator->setItemCountPerPage(10);
+		$datas["recordPaginator"] = $recordPaginator;
+
+		return $this->SetViewModel($datas, "/situation/situation_list.phtml");
+		/* ここまで */
 	}
 
 	/** When you choose list data on 診断者一覧 page */

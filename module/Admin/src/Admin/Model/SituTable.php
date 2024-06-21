@@ -172,8 +172,13 @@ public function updateRecordInfo($recordlWhere, $recordSet){
 	if($recordSet["mail_delay"] == ""){
 		$recordSet["mail_delay"] = null;
 	}
+	if($recordSet["diagnosis_code"] != NULL){
+		$recordSet["diagnosis_date"] = date("Y-m-d H:i:s");
+	}else if ($recordSet["diagnosis_code"] == ""){
+		$recordSet['diagnosis_date'] = NULL;
+	}
 
-	$recordSet["diagnosis_date"] = date("Y-m-d H:i:s");
+
 
 	$update->set($recordSet);
 	$update->where($recordlWhere);
@@ -276,8 +281,7 @@ public function getRecord(){
 
 		$values = array(
 			'apply_date' => date("Y-m-d H:i:s"),
-			'diagnosis_date' => date("Y-m-d H:i:s"),
-			// 'date_mail' => date("Y-m-d H:i:s"),
+			// 'diagnosis_date' => date("Y-m-d H:i:s"),
 			'case' => $dataArray['case'],
 			'education' => $dataArray['education'],
 			'major' => $dataArray['major'],
@@ -293,10 +297,14 @@ public function getRecord(){
 		if ($dataArray['mail_delay'] != "") {
 			$values['mail_delay'] = $dataArray['mail_delay'];
 		}
+		if($dataArray['code'] !== ""){
+			$values['diagnosis_date'] = date("Y-m-d H:i:s");
+		}
 
 		if (!isset($dataArray['save'])) {
 			$values['request_date'] = date("Y-m-d H:i:s");
 		}
+
 		$recordInsert = $qry->insert('record');
 		$recordInsert->values($values);
 

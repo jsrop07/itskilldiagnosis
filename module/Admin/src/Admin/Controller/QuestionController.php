@@ -43,12 +43,7 @@ class QuestionController extends AbstractActionController
 		$session = new Container("user");
 		$userLevel = $session["level"];
 
-		/*
-			作成：朴昰成
-			作成日：24/06/19
-		*/
 		$LogModule = new LogModule();
-		/* ここまで */
 		$questionTb = $this->getServiceLocator()->get("QuestionTable");
 		$query = $this->params()->fromQuery();
 
@@ -56,33 +51,10 @@ class QuestionController extends AbstractActionController
 		$page = 1;
 		if (isset($query["page"])) {
 			$page = $query["page"];
-			/*
-				作成：朴昰成
-				削除：朴昰成
-				削除日：24/06/19
-			*/
-
-			/* 削除前：
-			unset($query["page"]);
-			*/
 		}
 
 		// Set Search data
 		$sqlWhere = array();
-		/*
-			作成：朴昰成
-			削除：朴昰成
-			削除日：24/06/19
-		*/
-
-		/* 削除前：
-		if (isset($query["approver"])) {
-			$adminTb = $this->getServiceLocator()->get("AdminTable");
-			try { $sqlWhere["admin_approve"] = $adminTb->ReadByName($query["approver"])["code"]; }
-			catch (\Exception $e) { print_r($e->getMessage()); exit; }
-			$datas["searchDatas"]["approver"] = $query["approver"];
-		}
-		*/
 
 		if (isset($query["title"])) {
 			$sqlWhere["title"] = $query["title"];
@@ -103,58 +75,6 @@ class QuestionController extends AbstractActionController
 
 		$questionDatas = "";
 		// Check User Level
-		/*
-			作成：朴昰成
-			修正：朴昰成
-			修正日：24/06/19
-		*/
-
-		/* 修正前：
-		if ($userLevel >= 1) {
-			$datas["totalNum"] = $questionTb->CountAllList();
-
-			// Check Search data and Align data
-			if (!empty($sqlOrder) && !empty($sqlWhere)) {
-				try { $questionDatas = $questionTb->GetListBySearchnAlign($sqlWhere, $sqlOrder); }
-				catch (\Exception $e) { print_r($e->getMessage()); exit; }
-			}
-			else if (!empty($sqlOrder) && empty($sqlWhere)) {
-				try { $questionDatas = $questionTb->GetListByAlign($sqlOrder); }
-				catch (\Exception $e) { print_r($e->getMessage()); exit; }
-			}
-			else if (empty($sqlOrder) && !empty($sqlWhere)) {
-				try { $questionDatas = $questionTb->GetListBySearch($sqlWhere); }
-				catch (\Exception $e) { print_r($e->getMessage()); exit; }
-			}
-			else {
-				try { $questionDatas = $questionTb->GetAllList(); }
-				catch (\Exception $e) { print_r($e->getMessage()); exit; }
-			}
-		} else {
-			$userCode = $session["code"];
-
-			$datas["totalNum"] = $questionTb->CountAllValid($userCode);
-
-			if (!empty($sqlOrder) && !empty($sqlWhere)) {
-				try { $questionDatas = $questionTb->GetListValidBySearchnAlign($userCode, $sqlWhere, $sqlOrder); }
-				catch (\Exception $e) { print_r($e->getMessage()); exit; }
-			}
-			else if (!empty($sqlOrder) && empty($sqlWhere)) {
-				try { $questionDatas = $questionTb->GetValidListByAlign($userCode, $sqlOrder); }
-				catch (\Exception $e) { print_r($e->getMessage()); exit; }
-			}
-			else if (empty($sqlOrder) && !empty($sqlWhere)) {
-				try { $questionDatas = $questionTb->GetValidListBySearch($userCode, $sqlWhere); }
-				catch (\Exception $e) { print_r($e->getMessage()); exit; }
-			}
-			else {
-				try { $questionDatas = $questionTb->GetValidList($userCode); }
-				catch (\Exception $e) { print_r($e->getMessage()); exit; }
-			}
-		}
-		*/
-
-		/* 修正後： */
 		if ($userLevel >= 1) {
 			try {
 				$datas["totalNum"] = $questionTb->CountAllValid($userLevel);
@@ -223,7 +143,6 @@ class QuestionController extends AbstractActionController
 				}
 			}
 		}
-		/* ここまで */
 
 		$questionDatas->setCurrentPageNumber($page);
 		$questionDatas->setItemCountPerPage(10);
@@ -545,46 +464,20 @@ class QuestionController extends AbstractActionController
 
 		if ($_FILES["file"]["error"] == "0") {
 			header("Content-Type: text/html; charset=utf-8");
-			/*
-				作成：朴昰成
-				修正：朴昰成
-				修正日：24/06/19
-			*/
-
-			/* 修正前：
-			if ($_FILES["file"]["type"] != "text/csv") { die($log->SaveLog(["reason" => "not csv file"])); }
-			*/
-
-			/* 修正後： */
 			if ($_FILES["file"]["type"] != "text/csv") {
 				$logData["reason"] = "not csv file";
 				$log->SaveLog(["reason" => "not csv file"]);
 				die(json_encode($logData));
 			}
-			/* ここまで */
 
 			$csvStrings = array();
 			try {
 			$csvStrings = array_map("str_getcsv", file($_FILES["file"]["tmp_name"]));
 			} catch (\Exception $e) {
-				/*
-					作成：朴昰成
-					修正：朴昰成
-					修正日：24/06/19
-				*/
-
-				/* 修正前：
-				$logData["reason"] = "not csv file";
-				$logData["message"] = $e->getMessage();
-				die($log->SaveLog($logData));
-				*/
-
-				/* 修正後： */
 				$logData["reason"] = "fail to open file";
 				$logData["message"] = $e->getMessage();
 				$log->SaveLog($logData);
 				die ($logData);
-				/* ここまで */
 			}
 			$keys = $csvStrings[0];
 			unset($csvStrings[0]);
@@ -623,45 +516,12 @@ class QuestionController extends AbstractActionController
 					case "高級":
 						$questionData["level"] = 3;
 						break;
-					/*
-						作成：朴昰成
-						作成日：24/06/19
-					*/
 					case "上級":
 						$questionData["level"] = 3;
 						break;
-					/* ここまで */
 				}
 
 				$session = new Container("user");
-				/*
-					作成：朴昰成
-					修正：朴昰成
-					修正日：24/06/19
-				*/
-
-				/* 修正前：
-				try {
-					$questionData["class1st"] = $optionTb->ReadByText([$questionData["class1st"]])["idx"];
-					$sqlWhere["type"] = "class2nd";
-					$sqlWhere["text"] = $questionData["class2nd"];
-					$sqlWhere["class_upper"] = $questionData["class1st"];
-					$questionData["class2nd"] = $optionTb->ReadByOption($sqlWhere)[0]["idx"];
-					$questionData["type"] = $optionTb->ReadByText([$questionData["type"]])["idx"];
-					$questionData["note"] = "CSVで作成　" . date("Y.m.d") . "　" . $session["name"] . "\n";
-					$questionData["status"] = $optionTb->ReadByText(["新規"])["idx"];
-					$questionData["admin_regist"] = $session["code"];
-					$questionData["date_regist"] = date("Y-m-d H:i:s");
-					
-					$questionTb->CreateQuestion($questionData);
-				} catch (\Exception $e) {
-					$logData["reason"] = "fail insert";
-					$logData["message"] = $e->getMessage();
-					$logDatas[$index + 1] = $logData;
-				}
-				*/
-
-				/* 修正後： */
 				try {
 					$questionData["class1st"] = $optionTb->ReadByText($questionData["class1st"])["idx"];
 					$sqlWhere["type"] = "class2nd";
@@ -680,7 +540,6 @@ class QuestionController extends AbstractActionController
 					$logData["message"] = $e;
 					$logDatas[$index] = $logData;
 				}
-				/* ここまで */
 			}
 			if ($logDatas) {
 				$noDatas = array();
@@ -694,21 +553,9 @@ class QuestionController extends AbstractActionController
 			die("success");
 		}
 
-		/*
-			作成：朴昰成
-			修正：朴昰成
-			修正日：24/06/19
-		*/
-
-		/* 修正前：
-		die($log->SaveLog(["reason" => "fail to open file"]));
-		*/
-
-		/* 修正後： */
 		$logData["reason"] = "fail to open file";
 		$log->SaveLog($logData);
 		die(json_encode($logData));
-		/* ここまで */
 	}
 
 	/** Read Option datas Organize by Type (class2nd's idx is text)

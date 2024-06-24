@@ -127,10 +127,17 @@ class SituationController extends AbstractActionController {
 		return $this->SetViewModel($datas, "/situation/situation_list.phtml");
 	}
 
-	/** When you choose list data on 診断者一覧 page */
+	/** When you choose list data on 診断者一覧 page 朴昰成 */
 	public function detailAction() {
 		$this->ChkLogin();
 		$datas["breadcrumbData"] = ["ITスキル診断状況管理", "診断状況詳細"];
+		/*
+			作成：朴昰成
+			修正：朴昰成
+			修正日：24/06/21
+		*/
+
+		/* 修正前：
 		$index = $this->params()->fromRoute("index");
 
 		$recordTb = $this->getServiceLocator()->get("RecordTable-Admin");
@@ -153,6 +160,71 @@ class SituationController extends AbstractActionController {
 
 		$datas["recordData"] = $recordData;
 
+		*/
+
+		/* 修正後： */
+		$datas = $this->GetOptionDatas($datas);
+		$idx = $this->params()->fromRoute("index");
+
+		$LogModule = new LogModule();
+		$recordTb = $this->getServiceLocator()->get("RecordTable-Admin");
+		$recordData = "";
+		try {
+			$recordData = $recordTb->ReadByIdx($idx);
+		} catch (\Exception $e) {
+			$logData["reason"] = "exception at SituationController detailAction RecordTable ReadByIdx";
+			$logData["message"] = $e->getMessage();
+			$log = $LogModule->SaveLog($logData);
+			die($log);
+		}
+
+		if (is_null($recordData["diagnosis_date"])) {
+			header("Location: ../edit/" . $idx);
+			exit;
+		}
+		$datas["recordData"] = $recordData;
+
+		$applicantTb = $this->getServiceLocator()->get("ApplicantTable-Admin");
+		try {
+			$datas["applicantData"] = $applicantTb->ReadByIdx($recordData["applicant_idx"]);
+		} catch (\Exception $e) {
+			$logData["reason"] = "exception at SituationController detailAction ApplicantTable ReadByIdx";
+			$logData["message"] = $e->getMessage();
+			$log = $LogModule->SaveLog($logData);
+			die($log);
+		}
+
+		$diagnosisTb = $this->getServiceLocator()->get("DiagnosisTable-Admin");
+		$diagnosisData = "";
+		try {
+			$diagnosisData = $diagnosisTb->ReadForRecordByCodenDate($recordData["diagnosis_code"], $recordData["diagnosis_date"]);
+		} catch (\Exception $e) {
+			$logData["reason"] = "exception at SituationController detailAction ApplicantTable ReadForRecordByCodenDate";
+			$logData["message"] = $e->getMessage();
+			$log = $LogModule->SaveLog($logData);
+			die($log);
+		}
+		$datas["diagnosisData"] = $diagnosisData;
+
+		$questionTb = $this->getServiceLocator()->get("QuestionTable");
+		$questionIdxDatas = explode(",", $diagnosisData["question_idxs"]);
+		$questionDatas = array();
+		foreach ($questionIdxDatas as $index => $questionIdx) {
+			$questionData = "";
+			try {
+				$questionData = $questionTb->ReadByIdx($questionIdx);
+			} catch (\Exception $e) {
+				$logData["reason"] = "exception at SituationController detailActio QuestionTable ReadByIdx foreach: " . $index;
+				$logData["message"] = $e->getMessage();
+				$log = $LogModule->SaveLog($logData);
+				die($log);
+			}
+
+			$questionDatas[] = $questionData;
+		}
+		$datas["questionDatas"] = $questionDatas;
+
+		/* ここまで */
 		return $this->SetViewModel($datas, "/situation/situation_detail.phtml");
 	}
 
@@ -804,6 +876,7 @@ class SituationController extends AbstractActionController {
 			$diagnosisTb = $this->getServiceLocator()->get("DiagnosisTable-Admin");
 			$situTb = $this->getServiceLocator()->get("situTable");
 	
+
 			$recordData = $recordTb->ReadByIdx($index);
 
 			$applicantData = $applicantTb->ReadByIdx($recordData["applicant_idx"]);

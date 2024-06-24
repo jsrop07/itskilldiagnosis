@@ -105,43 +105,43 @@
     <?php */ ?> -->
 
     <!-- 修正後： -->
-		<dl class="emegra info">
+    <dl class="emegra info">
       <dt>ID</dt>
-			<dd><?php echo $applicantData["email"]; ?></dd>
+      <dd><?php echo $applicantData["email"]; ?></dd>
 
-			<dt>応募区分</dt>
-			<dd><?php echo $caseTexts[$recordData["case"]]; ?></dd>
+      <dt>応募区分</dt>
+      <dd><?php echo $caseTexts[$recordData["case"]]; ?></dd>
 
-			<dt>パスワード</dt>
-			<dd><?php echo $applicantData["password"]; ?></dd>
+      <dt>パスワード</dt>
+      <dd><?php echo $applicantData["password"]; ?></dd>
 
-			<dt>お名前（漢字）</dt>
-			<dd><?php echo $applicantData["name"]; ?></dd>
+      <dt>お名前（漢字）</dt>
+      <dd><?php echo $applicantData["name"]; ?></dd>
 
-			<dt>申込日</dt>
-			<dd><?php echo date("y.m.d", strtotime($applicantData["apply_date"])); ?></dd>
+      <dt>申込日</dt>
+      <dd><?php echo date("y.m.d", strtotime($applicantData["apply_date"])); ?></dd>
 
-			<dt>お名前（カナ）</dt>
-			<dd><?php echo $applicantData["kana"]; ?></dd>
+      <dt>お名前（カナ）</dt>
+      <dd><?php echo $applicantData["kana"]; ?></dd>
 
-			<dt>性別</dt>
-			<dd><?php echo ($applicantData["gender"] == null) ? "未設定" : $genderTexts[$recordData["gender"]]; ?></dd>
+      <dt>性別</dt>
+      <dd><?php echo ($applicantData["gender"] == null) ? "未設定" : $genderTexts[$recordData["gender"]]; ?></dd>
 
-			<dt>学歴</dt>
-			<dd><?php echo $recordData["education"]; ?></dd>
+      <dt>学歴</dt>
+      <dd><?php echo $recordData["education"]; ?></dd>
 
-			<dt>IT関連資格</dt>
-			<dd><?php echo ($applicantData["certificates"] == null) ? "未設定" : $applicantData["certificates"]; ?></dd>
+      <dt>IT関連資格</dt>
+      <dd><?php echo ($applicantData["certificates"] == null) ? "未設定" : $applicantData["certificates"]; ?></dd>
 
-			<dt>生年月日</dt>
-			<dd><?php echo date("Y.m.d", strtotime($applicantData["birth"])); ?></dd>
+      <dt>生年月日</dt>
+      <dd><?php echo date("Y.m.d", strtotime($applicantData["birth"])); ?></dd>
 
-			<dt>専攻</dt>
-			<dd><?php echo ($recordData["major"] == null) ? "未設定" : $recordData["major"]; ?></dd>
+      <dt>専攻</dt>
+      <dd><?php echo ($recordData["major"] == null) ? "未設定" : $recordData["major"]; ?></dd>
 
-			<dt>その他</dt>
-			<dd><?php echo $applicantData["other"]; ?></dd>
-		</dl>
+      <dt>その他</dt>
+      <dd><?php echo $applicantData["other"]; ?></dd>
+    </dl>
     <!-- ここまで -->
 	</div>
 </div>
@@ -197,10 +197,10 @@
 			*/
 
 			/* 修正後： */
-			dl.emegra.setting {
-				min-width: calc(170px + 16px + 1200px);
-				grid-template-columns: repeat(2, 170px 1fr);
-			}
+      dl.emegra.setting {
+        min-width: calc(170px + 16px + 1200px);
+        grid-template-columns: repeat(2, 170px 1fr);
+      }
 			/* ここまで */
     </style>
     <dl class="emegra setting">

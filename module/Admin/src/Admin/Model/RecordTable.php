@@ -37,34 +37,14 @@ class RecordTable {
 		return $result;
 	}
 	public function GetAllList() {
-		/*
-			作成：朴昰成
-			修正：朴昰成
-			修正日：24/06/21
-		*/
-		
-		/* 修正前：
-		$qry = $this->sql->select("record");
-		$paginatorAdapter = new DbSelect($qry, $this->adapter);
-		return new Paginator($paginatorAdapter);
-		*/
-
-		/* 修正後： */
-		// $order[] = "ISNULL(diagnosis_code)";
-		// $order["apply_date"] = "desc";
 		$qry = $this->sql->select("record")->join("applicant", "record.applicant_idx = applicant.idx", array("name" => "name", "kana" => "kana"), "INNER");
 		$qry->order(new \Zend\Db\Sql\Expression("diagnosis_code IS NULL DESC, apply_date DESC"));
 
 		$paginatorAdapter = new DbSelect($qry, $this->adapter);
 		$paginator = new Paginator($paginatorAdapter);
 		return $paginator;
-		/* ここまで */
 	}
 
-	/*
-		作成：朴昰成
-		作成日：24/06/21
-	*/
 	public function GetListBySearch($whereDatas) {
 		$where = new Where();
 		// $where->isNotNull("idx");
@@ -101,7 +81,6 @@ class RecordTable {
 		return $paginator;
 	}
 
-	/* ここまで */
 	public function ReadApplyData() {
 		$qry = $this->sql->select("record")->where(["request_date" => null]);
 		$result = iterator_to_array($this->sql->prepareStatementForSqlObject($qry)->execute());
@@ -148,16 +127,11 @@ class RecordTable {
 			else if ($field == "date") {
 				$where->and->like("date_schedule", $data . "%");
 			}
-			/*
-				作成：朴昰成
-				作成日：24/06/20
-			*/
 			else if (substr($data, 0, 4) == "not-") {
 				$data = explode("-", $data)[1];
 				$where->and->isNotNull($field);
 				$where->and->notEqualTo($field, $data);
 			}
-			/* ここまで */
 			else {
 				switch($data) {
 					case "null":
@@ -173,21 +147,6 @@ class RecordTable {
 			}
 		}
 
-		/*
-			作成：朴昰成
-			修正：朴昰成
-			修正日：24/06/21
-		*/
-
-		/* 修正前：
-
-		$qry = $this->sql->select("record")->where($where)->order(["apply_date" => "DESC"])->offset($offset)->limit(10);
-		$qry->join("applicant", "record.applicant_idx = applicant.idx", array("name" => "name", "kana" => "kana"), "INNER");
-		$result = iterator_to_array($this->sql->prepareStatementForSqlObject($qry)->execute());
-		return $result;
-		*/
-
-		/* 修正後： */
 		$order["diagnosis_code"] = "is null desc";
 		$order["apply_date"] = "desc";
 
@@ -195,7 +154,6 @@ class RecordTable {
 		$qry->join("applicant", "record.applicant_idx = applicant.idx", array("name" => "name", "kana" => "kana"), "INNER");
 		$result = iterator_to_array($this->sql->prepareStatementForSqlObject($qry)->execute());
 		return $result;
-		/* ここまで */
 	}
 	public function ReadRestListBySearchnOffsetnLimit($whereDatas, $offset, $limit) {
 		$where = new Where();
@@ -208,16 +166,11 @@ class RecordTable {
 			else if ($field == "date") {
 				$where->and->like("date_schedule", $data . "%");
 			}
-			/*
-				作成：朴昰成
-				作成日：24/06/20
-			*/
 			else if (substr($data, 0, 4) == "not-") {
 				$data = explode("-", $data)[1];
 				$where->and->isNotNull($field);
 				$where->and->notEqualTo($field, $data);
 			}
-			/* ここまで */
 			else {
 				switch($data) {
 					case "null":
@@ -233,20 +186,6 @@ class RecordTable {
 			}
 		}
 
-		/*
-			作成：朴昰成
-			修正：朴昰成
-			修正日：24/06/21
-		*/
-
-		/* 修正前：
-		$qry = $this->sql->select("record")->where($where)->order(["apply_date" => "DESC"])->offset($offset)->limit($limit);
-		$qry->join("applicant", "record.applicant_idx = applicant.idx", array("name" => "name", "kana" => "kana"), "INNER");
-		$result = iterator_to_array($this->sql->prepareStatementForSqlObject($qry)->execute());
-		return $result;
-		*/
-
-		/* 修正後： */
 		$order["diagnosis_code"] = "is null desc";
 		$order["apply_date"] = "desc";
 
@@ -254,46 +193,7 @@ class RecordTable {
 		$qry->join("applicant", "record.applicant_idx = applicant.idx", array("name" => "name", "kana" => "kana"), "INNER");
 		$result = iterator_to_array($this->sql->prepareStatementForSqlObject($qry)->execute());
 		return $result;
-		/* ここまで */
 	}
-	/*
-		作成：朴昰成
-		削除：朴昰成
-		削除日：24/06/21
-	*/
-
-	/* 削除前：
-	public function GetListBySearch($whereDatas) {
-		$where = new Where();
-		foreach ($whereDatas as $field => $data) {
-			if ($field == "name") {
-				$where->and->nest()->like("name", "%" . $data . "%")
-					->or->like("kana", "%" . $data . "%")->unnest();
-			}
-			else if ($field == "date") {
-				$where->and->like("date_schedule", $data . "%");
-			}
-			else {
-				switch($data) {
-					case "null":
-						$where->and->isNull($field);
-						break;
-					case "not null":
-						$where->and->isNotNull($field);
-						break;
-					default:
-						$where->and->equalTo($field, $data);
-						break;
-				}
-			}
-		}
-
-		$qry = $this->sql->select("record")->where($where);
-		$qry->join("applicant", "record.applicant_idx = applicant.idx", array("name" => "name", "kana" => "kana"), "INNER");
-		$paginatorAdapter = new DbSelect($qry, $this->adapter);
-		return new Paginator($paginatorAdapter);
-	}
-	*/
 
 	public function ReadRecord($selectDatas, $whereDatas) {
 		$qry = $this->sql->select("record", $selectDatas)->where($whereDatas);

@@ -30,175 +30,114 @@ class SituationController extends AbstractActionController {
 	public function listAction() {
 		$this->ChkLogin();
 		$datas["breadcrumbData"] = ["ITスキル診断状況管理"];
-
-		// Number of data to output on one page
-		$printDataNum = 10;
-		
-		$datas = $this->GetOptionDatasForInput($datas);
-		
-		// Get Current Page
-		$page = $this->params()->fromQuery("page", 1);
-
-		// Get Query Except page
-		$query  = $this->params()->fromQuery();
-		unset($query["page"]);
-
-		$recordTb = $this->getServiceLocator()->get("RecordTable-Admin");
-		$paginationData = "";
-
-		$recordDatas = array();
-		$offset = ($page - 1) * 10;
-		if (!empty($query)) {
-			$sqlWhere = array();
-			$datas["searchDatas"] = $query;
-
-			if (isset($query["name"])) { $sqlWhere["name"] = $query["name"]; }
-			if (isset($query["date"])) { $sqlWhere["date"] = $query["date"]; }
-
-			if (isset($query["select"])) {
-				$data = explode("-", $query["select"]);
-
-				switch ($data[0]) {
-					case "status":
-						switch ($data[1]) {
-							case "apply":
-								$sqlWhere["request_date"] = "null";
-								break;
-							case "request":
-								$sqlWhere["request_date"] = "not null";
-								$sqlWhere["rank"] = "null";
-								break;
-							case "execute":
-								$sqlWhere["request_date"] = "not null";
-								$sqlWhere["execute_date"] = "not null";
-								$sqlWhere["rank"] = "A";
-								$sqlWhere["rank"] = "B";
-								$sqlWhere["rank"] = "C";
-								$sqlWhere["rank"] = "D";
-								break;
-							case "unexecute":
-								$sqlWhere["request_date"] = "not null";
-								$sqlWhere["execute_date"] = "not null";
-								$sqlWhere["rank"] = "F";
-								break;
-						}
-						break;
-					case "education":
-						switch ($data[1]) {
-							case "high":
-								$sqlWhere["education"] = "高卒";
-								break;
-							case "voca":
-								$sqlWhere["education"] = "専門卒";
-								break;
-							case "uni":
-								$sqlWhere["education"] = "大卒";
-								break;
-							case "grad":
-								$sqlWhere["education"] = "大学院卒";
-								break;
-						}
-						break;
-					default:
-						$sqlWhere[$data[0]] = $data[1];
-						break;
-				}
-			}
-			try { $newRecordDatas = $recordTb->ReadNewListBySearchnOffset($sqlWhere, $offset); }
-			catch (\Exception $e) { print_r($e->getMessage()); exit; }
-
-			if (count($newRecordDatas) < 10) {
-				$limit = 10 - count($newRecordDatas);
-				$offset -= $recordTb->CountNewDataBySearch($sqlWhere);
-				if ($offset < 0) { $offset = 0; }
-
-				try { $restRecordDatas = $recordTb->ReadRestListBySearchnOffsetnLimit($sqlWhere, $offset, $limit); }
-				catch (\Exception $e) { print_r($e->getMessage()); exit; }
-
-				$recordDatas = array_merge($newRecordDatas, $restRecordDatas);
-			}
-			else {
-				$recordDatas = $newRecordDatas;
-			}
-			try { $paginationData = $recordTb->GetListBySearch($sqlWhere); }
-			catch (\Exception $e) { print_r($e->getMessage()); exit; }
-		}
-		else {
-			try { $newRecordDatas = $recordTb->ReadNewListByOffset($offset); }
-			catch (\Exception $e) { print_r($e->getMessage()); exit; }
-
-			if (count($newRecordDatas) <= 10) {
-				$limit = 10 - count($newRecordDatas);
-				$offset -= $recordTb->CountNewData();
-				if ($offset < 0) { $offset = 0; }
-
-				try { $restRecordDatas = $recordTb->ReadRestListByOffsetnLimit($offset, $limit); }
-				catch (\Exception $e) { print_r($e->getMessage()); exit; 
-				}
-
-				$recordDatas = array_merge($newRecordDatas, $restRecordDatas);
-			}
-			else {
-				$recordDatas = $newRecordDatas;
-			}
-			$paginationData = $recordTb->GetAllList();
-		}
-
-
-			try {
-				$datas["totalApply"] = $recordTb->CountApplyData();
-				$datas["totalRequest"] = $recordTb->CountRequestData();
-				$datas["countOver"] = $recordTb->CountOverData();
-				$datas["totalData"] = $recordTb->CountAllData();
-			} catch (\Exception $e) {
-				print_r($e->getMessage());
-				exit;
-			}
-
-		$applicantTb = $this->getServiceLocator()->get("ApplicantTable-Admin");
-		$diagnosisTb = $this->getServiceLocator()->get("DiagnosisTable-Admin");
-		// Extract output datas and Add numbering
-
-			foreach ($recordDatas as $index => $data) {
-				try { $applicantData = $applicantTb->ReadByIdx($data["applicant_idx"]); }
-				catch (\Exception $e) { print_r($e->getMessage()); exit; }
-				$data = array_merge($applicantData, $data);
-
-				if (($data["diagnosis_code"]) != null) {
-					try { $diagnosisData = $diagnosisTb->ReadByCode($data["diagnosis_code"]); }
-					catch (\Exception $e) { print_r($e->getMessage()); exit; }
-					$data = array_merge($diagnosisData, $data);
-				}
-
-				if (is_null($data["request_date"])) {
-					$data["status"] = "新規";
-				}
-				else {
-					if (is_null($data["rank"])) { $data["status"] = "診断"; }
-					else if ($data["rank"] == "F") { $data["status"] = "失格"; }
-					else { $data["status"] = "終了"; }
-				}
-
-				$data["num"] = $datas["totalData"] - (($page - 1) * 10) - $index;
-				
-				$recordDatas[$index] = $data;
-			}
-
-			$datas["recordDatas"] = $recordDatas;
-
 		$datas = $this->GetOptionDatas($datas);
 
-		$vm = $this->SetViewModel($datas, "/situation/situation_list.phtml");
-		$vm->noticelist = $paginationData;
-		$vm->noticelist->setCurrentPageNumber($page);
-		$vm->noticelist->setItemCountPerPage($printDataNum);
-		return $vm;
+		$LogModule = new LogModule();
+		$recordTb = $this->getServiceLocator()->get("RecordTable-Admin");
+
+		try {
+			$datas["totalApply"] = $recordTb->CountApplyData();
+			$datas["totalRequest"] = $recordTb->CountRequestData();
+			$datas["countOver"] = $recordTb->CountOverData();
+		} catch (\Exception $e) {
+			$logData["reason"] = "exception at SituationController listAction RecordTable Count";
+			$logData["message"] = $e->getMessage();
+			$log = $LogModule->SaveLog($logData);
+			print_r($log);
+			exit;
+		}
+		
+		$query  = $this->params()->fromQuery();
+		$page = 1;
+		if (isset($query["page"])) { $page = $query["page"]; }
+
+		$sqlWhere = array();
+		if (isset($query["name"])) { $sqlWhere["name"] = $query["name"]; }
+		if (isset($query["date"])) { $sqlWhere["date_schedule"] = $query["date"]; }
+
+		if (isset($query["select"])) {
+			$selectData = explode("-", $query["select"]);
+
+			switch ($selectData[0]) {
+				case "status":
+					switch ($selectData[1]) {
+						case "apply":
+							$sqlWhere["request_date"] = "null";
+							break;
+						case "request":
+							$sqlWhere["request_date"] = "not null";
+							$sqlWhere["rank"] = "null";
+							break;
+						case "execute":
+							$sqlWhere["request_date"] = "not null";
+							$sqlWhere["execute_date"] = "not null";
+							$sqlWhere["rank"] = "not-F";
+							break;
+						case "unexecute":
+							$sqlWhere["request_date"] = "not null";
+							$sqlWhere["execute_date"] = "not null";
+							$sqlWhere["rank"] = "F";
+							break;
+					}
+					break;
+				case "education":
+					switch ($selectData[1]) {
+						case "high":
+							$sqlWhere["education"] = "高卒"; break;
+						case "voca":
+							$sqlWhere["education"] = "専門卒"; break;
+						case "uni":
+							$sqlWhere["education"] = "大卒"; break;
+						case "grad":
+							$sqlWhere["education"] = "大学院卒"; break;
+					}
+					break;
+				default:
+					$sqlWhere[$selectData[0]] = $selectData[1];
+					break;
+			}
+		}
+
+		$recordPaginator = "";
+		if (empty($sqlWhere)) {
+			try {
+				$recordPaginator = $recordTb->GetAllList();
+			} catch (\Exception $e) {
+				$logData["reason"] = "exception at SituationController listAction RecordTable GetAllList";
+				$logData["message"] = $e->getMessage();
+				$log = $LogModule->SaveLog($logData);
+				print_r($log);
+				exit;
+			}
+		} else {
+			try {
+				$recordPaginator = $recordTb->GetListBySearch($sqlWhere);
+			} catch (\Exception $e) {
+				$logData["reason"] = "exception at QuestionController listAction RecordTable GetListBySearch";
+				$logData["message"] = $e->getMessage();
+				$log = $LogModule->SaveLog($logData);
+				print_r($log);
+				exit;
+			}
+		}
+		$recordPaginator->setCurrentPageNumber($page);
+		$recordPaginator->setItemCountPerPage(10);
+		$datas["recordPaginator"] = $recordPaginator;
+
+		return $this->SetViewModel($datas, "/situation/situation_list.phtml");
 	}
 
-	/** When you choose list data on 診断者一覧 page */
+	/** When you choose list data on 診断者一覧 page 朴昰成 */
 	public function detailAction() {
 		$this->ChkLogin();
 		$datas["breadcrumbData"] = ["ITスキル診断状況管理", "診断状況詳細"];
+		/*
+			作成：朴昰成
+			修正：朴昰成
+			修正日：24/06/21
+		*/
+
+		/* 修正前：
 		$index = $this->params()->fromRoute("index");
 
 		$recordTb = $this->getServiceLocator()->get("RecordTable-Admin");
@@ -221,6 +160,71 @@ class SituationController extends AbstractActionController {
 
 		$datas["recordData"] = $recordData;
 
+		*/
+
+		/* 修正後： */
+		$datas = $this->GetOptionDatas($datas);
+		$idx = $this->params()->fromRoute("index");
+
+		$LogModule = new LogModule();
+		$recordTb = $this->getServiceLocator()->get("RecordTable-Admin");
+		$recordData = "";
+		try {
+			$recordData = $recordTb->ReadByIdx($idx);
+		} catch (\Exception $e) {
+			$logData["reason"] = "exception at SituationController detailAction RecordTable ReadByIdx";
+			$logData["message"] = $e->getMessage();
+			$log = $LogModule->SaveLog($logData);
+			die($log);
+		}
+
+		if (is_null($recordData["diagnosis_date"])) {
+			header("Location: ../edit/" . $idx);
+			exit;
+		}
+		$datas["recordData"] = $recordData;
+
+		$applicantTb = $this->getServiceLocator()->get("ApplicantTable-Admin");
+		try {
+			$datas["applicantData"] = $applicantTb->ReadByIdx($recordData["applicant_idx"]);
+		} catch (\Exception $e) {
+			$logData["reason"] = "exception at SituationController detailAction ApplicantTable ReadByIdx";
+			$logData["message"] = $e->getMessage();
+			$log = $LogModule->SaveLog($logData);
+			die($log);
+		}
+
+		$diagnosisTb = $this->getServiceLocator()->get("DiagnosisTable-Admin");
+		$diagnosisData = "";
+		try {
+			$diagnosisData = $diagnosisTb->ReadForRecordByCodenDate($recordData["diagnosis_code"], $recordData["diagnosis_date"]);
+		} catch (\Exception $e) {
+			$logData["reason"] = "exception at SituationController detailAction ApplicantTable ReadForRecordByCodenDate";
+			$logData["message"] = $e->getMessage();
+			$log = $LogModule->SaveLog($logData);
+			die($log);
+		}
+		$datas["diagnosisData"] = $diagnosisData;
+
+		$questionTb = $this->getServiceLocator()->get("QuestionTable");
+		$questionIdxDatas = explode(",", $diagnosisData["question_idxs"]);
+		$questionDatas = array();
+		foreach ($questionIdxDatas as $index => $questionIdx) {
+			$questionData = "";
+			try {
+				$questionData = $questionTb->ReadByIdx($questionIdx);
+			} catch (\Exception $e) {
+				$logData["reason"] = "exception at SituationController detailActio QuestionTable ReadByIdx foreach: " . $index;
+				$logData["message"] = $e->getMessage();
+				$log = $LogModule->SaveLog($logData);
+				die($log);
+			}
+
+			$questionDatas[] = $questionData;
+		}
+		$datas["questionDatas"] = $questionDatas;
+
+		/* ここまで */
 		return $this->SetViewModel($datas, "/situation/situation_detail.phtml");
 	}
 
@@ -872,6 +876,7 @@ class SituationController extends AbstractActionController {
 			$diagnosisTb = $this->getServiceLocator()->get("DiagnosisTable-Admin");
 			$situTb = $this->getServiceLocator()->get("situTable");
 	
+
 			$recordData = $recordTb->ReadByIdx($index);
 
 			$applicantData = $applicantTb->ReadByIdx($recordData["applicant_idx"]);

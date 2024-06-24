@@ -58,8 +58,8 @@
     }
   }
 
-	$firstNo = $this->noticelist->getTotalItemCount();
-	$firstNo -= (($this->noticelist->getCurrentPageNumber() - 1) * $this->noticelist->getitemCountPerPage());
+  $firstNo = $recordPaginator->getTotalItemCount();
+  $firstNo -= (($recordPaginator->getCurrentPageNumber() - 1) * $recordPaginator->getitemCountPerPage());
 
 	$isPick = false;
 	if (isset($searchDatas["pick"])) {
@@ -122,7 +122,7 @@
         <div class="count" style="margin-left:50px;"><p>診断中</p><p><span class="num"><?php echo $totalRequest; ?></span>名</p></div>
         <div class="count" style="margin-left:50px;"><p>診断完了</p><p><span class="num"><?php echo $countOver; ?></span>名</p></div>
       </div>
-      <div class="count"><p>診断状況</p><p><span class="num"><?php echo $totalData; ?></span>名</p></div>
+      <div class="count"><p>診断状況</p><p><span class="num"><?php echo $firstNo = $recordPaginator->getTotalItemCount(); ?></span>名</p></div>
     </div>
 
 		<div style="display: flex; justify-content: right;padding-top: 24px;">
@@ -235,13 +235,23 @@
         </tr>
       </thead>
       <tbody id="table-body-list">
-        <?php if (empty($recordDatas)): ?>
+        <?php if (empty(iterator_to_array($recordPaginator))): ?>
           <td colspan="17">診断者情報がありません。</td>
         <?php else: ?>
-          <?php foreach ($recordDatas as $index => $data): ?>
-            <tr <?php echo ($data["diagnosis_code"] == null || $data["diagnosis_code"] == "") ? "style='background: lightcyan;'" : ""; ?>>
+          <?php foreach ($recordPaginator as $index => $data): ?>
+            <?php
+              if (is_null($data["request_date"])) {
+                $status = "新規";
+              }
+              else {
+                if (is_null($data["rank"])) { $status = "診断"; }
+                else if ($data["rank"] == "F") { $status = "失格"; }
+                else { $status = "終了"; }
+              }
+            ?>
+            <tr <?php echo (is_null($data["diagnosis_date"])) ? "style='background: lightcyan;'" : ""; ?>>
               <td><?php echo $firstNo - $index; ?></td>
-              <td><?php echo $data["status"]; ?></td>
+              <td><?php echo $status; ?></td>
 
               <td><?php echo date("y.m.d", strtotime($data["apply_date"])); ?></td>
               <td><?php echo $caseTexts[$data["case"]]; ?></td>
@@ -263,19 +273,7 @@
                   }
                 }
               ?>
-              <!--
-                作成：朴昰成
-                修正：朴昰成
-                修正日：24/06/19
-              -->
-
-              <!-- 修正前： <?php /* />
-              <td style="<?php echo ($isExpire) ? "color: red;" : "" ?>"><?php echo (isset($data["date_schedule"])) ?  date("y.m.d H:i:m", strtotime($data["date_schedule"])) : "未設定"; ?></td>
-              <?php */ ?> -->
-
-              <!-- 修正後： -->
               <td style="<?php echo ($isExpire) ? "color: red;" : "" ?>"><?php echo (isset($data["date_schedule"])) ?  date("y.m.d H:i:s", strtotime($data["date_schedule"])) : "未設定"; ?></td>
-              <!-- ここまで -->
               <?php if (isset($data["rank"])): ?>
                 <td><?php echo (isset($data["solve_time"])) ? $data["solve_time"] : "0"; ?>分</td>
                 <td><?php echo ($data["rank"] != "F") ? $data["get_point"] . "/100" : "失格"; ?></td>
@@ -299,7 +297,7 @@
   </div>
 
 <div class="pagination-place" style="margin-top: 10px;">
-  <?php echo $this->paginationControl($this->noticelist, "sliding", array("pagination", "Notice"), array("url" => "")); ?>
+  <?php echo $this->paginationControl($recordPaginator, "sliding", array("pagination", "Notice"), array("url" => "")); ?>
 </div>
 
 <div class="button-place" style="margin-top: 10px; justify-content:space-between;">

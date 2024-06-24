@@ -1,10 +1,31 @@
 <?php
+  /*
+    作成：朴昰成
+    作成日：24/06/21
+  */
+  $numTextDatas = ["①", "②", "③", "④", "⑤"];
+  $levelTextDatas = ["無級", "初級", "中級", "高級"];
+  /* ここまで */
 	$caseTexts = ["新卒", "中途"];
 	$genderTexts = ["男", "女"];
 	$skillTexts = ["有", "無"];
   $levelTexts = ["無級", "初級", "中級", "高級"];
   $languageTexts = ["日本語", "韓国語"];
 
+  /*
+    作成：朴昰成
+    作成日：24/06/21
+  */
+  function ChangeToPopoverForm($string) {
+    $string = str_replace("<", "＜", $string);
+    $string = str_replace(">", "＞", $string);
+    $string = str_replace('"', "”", $string);
+    $string = str_replace("{{n}}", "<br/>", $string);
+    $string = "<pre>" . $string . "</pre>";
+    return $string;
+  }
+
+  /* ここまで */
 	$isRequest = false;
 	$isExecute = false;
 	if ($recordData["request_date"] != null) {
@@ -13,6 +34,13 @@
       $isExecute = true;
     }
 	}
+  /*
+    作成：朴昰成
+    作成日：24/06/21
+  */
+
+  $diagnosisAnswerDatas = explode(",", $recordData["answer_data"]);
+  /* ここまで */
 ?>
 
 <?php echo $this->partial("breadcrumb", ["datas" => $breadcrumbData]); ?>
@@ -31,6 +59,13 @@
 		<style type="text/css">
 			dl.emegra.info { grid-template-columns:  repeat(2, 170px 1fr) }
 		</style>
+    <!--
+      作成：朴昰成
+      修正：朴昰成
+      修正日：24/06/21
+    -->
+
+    <!-- 修正前： <?php /* ?>
 		<dl class="emegra info">			<dt>ID</dt>
 			<dd><?php echo $recordData["email"]; ?></dd>
 
@@ -67,6 +102,47 @@
 			<dt>その他</dt>
 			<dd><?php echo $recordData["other"]; ?></dd>
 		</dl>
+    <?php */ ?> -->
+
+    <!-- 修正後： -->
+    <dl class="emegra info">
+      <dt>ID</dt>
+      <dd><?php echo $applicantData["email"]; ?></dd>
+
+      <dt>応募区分</dt>
+      <dd><?php echo $caseTexts[$recordData["case"]]; ?></dd>
+
+      <dt>パスワード</dt>
+      <dd><?php echo $applicantData["password"]; ?></dd>
+
+      <dt>お名前（漢字）</dt>
+      <dd><?php echo $applicantData["name"]; ?></dd>
+
+      <dt>申込日</dt>
+      <dd><?php echo date("y.m.d", strtotime($applicantData["apply_date"])); ?></dd>
+
+      <dt>お名前（カナ）</dt>
+      <dd><?php echo $applicantData["kana"]; ?></dd>
+
+      <dt>性別</dt>
+      <dd><?php echo ($applicantData["gender"] == null) ? "未設定" : $genderTexts[$recordData["gender"]]; ?></dd>
+
+      <dt>学歴</dt>
+      <dd><?php echo $recordData["education"]; ?></dd>
+
+      <dt>IT関連資格</dt>
+      <dd><?php echo ($applicantData["certificates"] == null) ? "未設定" : $applicantData["certificates"]; ?></dd>
+
+      <dt>生年月日</dt>
+      <dd><?php echo date("Y.m.d", strtotime($applicantData["birth"])); ?></dd>
+
+      <dt>専攻</dt>
+      <dd><?php echo ($recordData["major"] == null) ? "未設定" : $recordData["major"]; ?></dd>
+
+      <dt>その他</dt>
+      <dd><?php echo $applicantData["other"]; ?></dd>
+    </dl>
+    <!-- ここまで -->
 	</div>
 </div>
 
@@ -88,7 +164,19 @@
       <dd><?php echo $optionDatas[$recordData["class2nd"]]; ?></dd>
 
       <dt>経験年数</dt>
+      <!--
+        作成：朴昰成
+        修正：朴昰成
+        修正日：24/06/21
+      -->
+
+      <!-- 修正前： <?php /* ?>
       <dd><?php echo ($recordData["career"] != null) ? $recordData["career"] . "年" : "無"; ?></dd>
+      <?php */ ?> -->
+
+      <!-- 修正後： -->
+      <dd><?php echo (is_null($applicantData["career"])) ? "無" : $applicantData["career"] . "年"; ?></dd>
+      <!-- ここまで -->
     </dl>
   </div>
 </div>
@@ -98,17 +186,56 @@
 
   <div class="card-body">
     <style type="text/css">
+			/*
+				作成：朴昰成
+				修正：朴昰成
+				修正日：24/06/24
+			*/
+
+			/* 修正前：
       dl.emegra.setting { grid-template-columns: repeat(2, 170px 1fr); }
+			*/
+
+			/* 修正後： */
+      dl.emegra.setting {
+        min-width: calc(170px + 16px + 1200px);
+        grid-template-columns: repeat(2, 170px 1fr);
+      }
+			/* ここまで */
     </style>
     <dl class="emegra setting">
       <dt>レベル</dt>
+      <!--
+        作成：朴昰成
+        修正：朴昰成
+        修正日：24/06/21
+      -->
+
+      <!-- 修正前： <?php /* ?>
       <dd><?php echo $levelTexts[$recordData["level"]]; ?></dd>
+      <?php */ ?> -->
+
+      <!-- 修正後： -->
+      <dd><?php echo $levelTexts[$diagnosisData["level"]]; ?></dd>
+      <!-- ここまで -->
 
       <dt>問題ID</dt>
       <dd><?php echo $recordData["diagnosis_code"]; ?></dd>
 
       <dt>問項数</dt>
+      <!--
+        作成：朴昰成
+        修正：朴昰成
+        修正日：24/06/21
+      -->
+
+      <!-- 修正前： <?php /* ?>
       <dd><?php echo $recordData["question_num"]; ?>問項</dd>
+      <?php */ ?> -->
+
+      <!-- 修正後： -->
+      <dd><?php echo $diagnosisData["question_num"]; ?>問項</dd>
+      <!-- ここまで -->
 
       <dt>診断方法</dt>
       <dd><?php echo $recordData["method"]; ?></dd>
@@ -157,20 +284,74 @@
         <dt>評価等級</dt>
         <dd><?php echo $recordData["rank"]; ?></dd>
 
-        <dt>診断者のコメント</dt>
         <!--
-          作成：朴昰成
-          修正：朴昰成
-          修正日：24/06/19
+          作成：
+          作成日：24/06/21
         -->
+        <dt>問項一覧</dt>
+        <div style="grid-column: 2 / 5;">
+          <style type="text/css">
+            input.checkbox { height: 20px !important; }
 
-        <!-- 修正前： <?php /* ?>
-        <dd><?php echo $recordData["diagnosis_comment"]; ?></dd>
-        <?php */ ?> -->
+            div.emegra-table th, div.emegra-table td { padding: 0; }
+            div.emegra-table {
+              max-height: 500px;
+              overflow-y: auto;
+            }
+            div.emegra-table th {
+              position: sticky;
+              top: 0;
+            }
+          </style>
 
-        <!-- 修正後： -->
-        <dd class="expand"><?php echo $recordData["diagnosis_comment"]; ?></dd>
+          <div style="display: flex;">
+            <div class="emegra-table">
+              <table class="table table-bordered" id="table-diagnosis_list">
+                <thead>
+                  <tr>
+                    <th>No</th>
+                    <th>問項タイトル</th>
+                    <th>大分類</th>
+                    <th>小分類</th>
+                    <th>レベル</th>
+                    <th>点数</th>
+                    <th>結果</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <?php foreach ($questionDatas as $index => $data): ?>
+                    <?php
+                      $popoverContent = $numTextDatas[0] . $data["answer1"];
+                      for ($i = 2; $i <= 5; $i++) {
+                        if ($data["answer" . $i] == null) { break; }
+                        $popoverContent .= "{{n}}" . $numTextDatas[$i -1] . $data["answer" . $i];
+                      }
+                      $popoverContent = ChangeToPopoverForm($popoverContent);
+
+                      $correctText = "X";
+                      if ($data["correct"] == $diagnosisAnswerDatas[$index]) { $correctText = "O"; }
+                    ?>
+                    <tr>
+                      <td><?php echo $index + 1; ?></td>
+                      <td class="start" data-bs-toggle='popover' data-bs-placement="bottom" data-bs-title="<?php echo ChangeToPopoverForm($data["question"]); ?>" data-bs-content="<?php echo $popoverContent; ?>" data-bs-html="true">
+                        <?php echo $data["title"]; ?>
+                      </td>
+                      <td><?php echo $optionDatas[$data["class1st"]]; ?></td>
+                      <td><?php echo $optionDatas[$data["class2nd"]]; ?></td>
+                      <td><?php echo $levelTextDatas[$data["level"]]; ?></td>
+                      <td><?php echo $data["point"]; ?></td>
+                      <td><?php echo $correctText; ?></td>
+                    </tr>
+                  <?php endforeach; ?>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
         <!-- ここまで -->
+        <dt>診断者のコメント</dt>
+        <dd class="expand"><?php echo $recordData["diagnosis_comment"]; ?></dd>
 
         <dt>備考</dt>
         <dd><?php echo $recordData["comment"]; ?></dd>
@@ -191,6 +372,12 @@
 	<?php endif; ?>
 </div>
 
+<!--
+  作成：朴昰成
+  作成日：24/06/21
+-->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+<!-- ここまで -->
 <script type="text/javascript">
 	const idx = <?php echo $recordData["idx"]; ?>
 

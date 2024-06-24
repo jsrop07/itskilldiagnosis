@@ -420,7 +420,10 @@ div.emegra-table table {
   border-collapse: collapse;
   border-style: hidden;
 }
+div.emegra-table tr { background: white; }
 div.emegra-table th, div.emegra-table td {
+	background: transparent;
+
   vertical-align: middle;
   text-align: center;
 }

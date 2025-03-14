@@ -1190,6 +1190,7 @@ class SituationController extends AbstractActionController {
 
 	public function diagnosisAction() {
 		$index = $this->params()->fromRoute("index");
+		$datas["breadcrumbData"] = ["ITスキル診断状況管理", "問題確認"];
 
 		$recordTb = $this->getServiceLocator()->get("RecordTable-Admin");
 		$diagnosisTb = $this->getServiceLocator()->get("DiagnosisTable-Admin");
@@ -1210,14 +1211,23 @@ class SituationController extends AbstractActionController {
 
 			$tableData["no"] = $i + 1;
 			$tableData["title"] = $questionData["title"];
+			$tableData["level"] = $questionData["level"];
+			$tableData["point"] = $questionData["point"];
+
+
+			$tableData["answerDatas"] = $answerDatas[$i];
+			
+			
+			$tableData["correct"] = $questionData["correct"];
 			$tableData["class1st"] = $optionTb->ReadByIdx($questionData["class1st"])["text"];
 			$tableData["class2nd"] = $optionTb->ReadByIdx($questionData["class2nd"])["text"];
-			$tableData["correct"] = $correctChar;
+			$tableData["correctChar"] = $correctChar;
 
 			$tableDatas[] = $tableData;
 		}
 
 		$datas["tableDatas"] = $tableDatas;
+
 		return $this->SetViewModel($datas, "/situation/situation_diagnosis.phtml");
 	}
 	/* temp */

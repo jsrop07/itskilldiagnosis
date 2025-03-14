@@ -1,22 +1,167 @@
-<table class="table">
-	<thead>
-		<tr>
-			<th>No</th>
-			<th>大分類</th>
-			<th>小分類</th>
-			<th>タイトル</th>
-			<th>正解</th>
-		</tr>
-	</thead>
-	<tbody>
-		<?php foreach ($tableDatas as $data): ?>
-			<tr>
-				<td><?php echo $data["no"]; ?></td>
-				<td><?php echo $data["class1st"]; ?></td>
-				<td><?php echo $data["class2nd"]; ?></td>
-				<td><?php echo $data["title"]; ?></td>
-				<td><?php echo $data["correct"]; ?></td>
-			</tr>
-		<?php endforeach; ?>
-	</tbody>
-</table>
+<?php
+  $levelTextDatas = ["無級", "初級", "中級", "高級"];
+?>
+<?php echo $this->partial("breadcrumb", ["datas" => $breadcrumbData]); ?>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<h1 class="title">ITスキル問題詳細管理</h1>
+
+<div class="emegra card">
+<div class="card-header accordion-toggle">問項一覧</div>
+
+<div class="card-body">
+    <div class="emegra-table">
+        <table class="table table-bordered" id="table-diagnosis_list">
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>大分類</th>
+                    <th>小分類</th>
+                    <th>レベル</th>
+                    <th>タイトル</th>
+                    <th>解答</th>
+                    <th>正答</th>
+                    <th>O/X</th>
+                    <th>点数</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($tableDatas as $data): ?>
+                    <tr>
+                        <td><?php echo $data["no"]; ?></td>
+                        <td><?php echo $data["class1st"]; ?></td>
+                        <td><?php echo $data["class2nd"]; ?></td>
+                        <td><?php echo $levelTextDatas[$data["level"]]; ?></td>
+                        <td><?php echo $data["title"]; ?></td>
+                        <td><?php echo $data["answerDatas"]; ?></td>
+                        <td><?php echo $data["correct"]; ?></td>
+                        <td><?php echo $data["correctChar"]; ?></td>
+                        <td><?php echo $data["point"]; ?></td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+</div>
+</div>
+
+<style>
+.card-header {
+    cursor: pointer;
+    background-color: #f8f9fa;
+    padding: 10px;
+    font-weight: bold;
+}
+
+</style>
+<script>
+$(document).ready(function(){
+    $(".card-header").click(function(){
+        $(this).next(".card-body").slideToggle(); // 부드럽게 열리고 닫힘
+    });
+});
+</script>
+
+<div class="emegra card" style="margin-top:32px;">
+    <div class="card-header">分析</div>
+    
+    <div class="card-body">
+        <div class="content-container">
+            <div class="graph-section">
+                <!-- 그래프 추가 (예: Canvas) -->
+                <canvas id="skillChart"></canvas>
+            </div>
+            <div class="divider"></div>
+            <div class="description-section">
+            <p>論理的思考</p>
+            <p>論理的思考</p>
+            <p>論理的思考</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="btn-place" style="margin-top: 32px;">
+  <button class="emegra cancel" onclick="history.back();">戻る</button>
+</div>
+
+
+
+<style>
+    .content-container {
+        display: flex;
+        align-items: center;
+    }
+
+    .graph-section {
+        flex: 1;
+        text-align: center;
+    }
+
+    .graph-section canvas {
+        width: 500px;  /* 그래프 크기 줄이기 */
+        height: 500px;
+    }
+
+    .description-section {
+        flex: 1;
+        padding: 0 20px;
+    }
+
+    .divider {
+        width: 2px;
+        background-color: #ccc;
+        height: 100%;
+        margin: 0 10px;
+    }
+</style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const ctx = document.getElementById('skillChart').getContext('2d');
+    
+    new Chart(ctx, {
+        type: 'radar',
+        data: {
+            labels: ['論理的思考', '基礎', 'ALGORISM', '総点'],
+            datasets: [{
+                label: '丁錫圓様の力量分析データ (JAVA・初級)',
+                data: [80, 70, 50, 90],
+                fill: true,
+                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                borderColor: 'rgba(255, 99, 132, 1)',
+                pointBackgroundColor: 'rgba(255, 99, 132, 1)',
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,  // 그래프 크기 조절 허용
+            plugins: {
+                legend: {
+                    labels: {
+                        font: {
+                            size: 16 // 데이터셋 라벨 폰트 크기 증가
+                        }
+                    }
+                    
+                }
+                
+            },
+            scales: {
+                r: {
+                    beginAtZero: true,
+                    min: 0,
+                    max: 100,
+                    ticks: {
+                        stepSize: 20
+                    },
+                    pointLabels: {
+                        font: {
+                            size: 20  // 라벨 폰트 크기 증가
+                        }
+                    }
+                }
+            }
+        }
+    });
+</script>

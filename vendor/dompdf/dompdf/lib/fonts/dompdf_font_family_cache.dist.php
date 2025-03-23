@@ -91,5 +91,11 @@ return array(
             'bold_italic' => $distFontDir . 'DejaVuSerif-BoldItalic',
             'italic' => $distFontDir . 'DejaVuSerif-Italic',
             'normal' => $distFontDir . 'DejaVuSerif'
-        )
+        ),
+        'ipaexm' => array(
+            'normal' => $fontDir . '/ipaexm',
+            'bold' => $fontDir . '/ipaexm',
+            'italic' => $fontDir . '/ipaexm',
+            'bold_italic' => $fontDir . '/ipaexm',
+          ),
 );

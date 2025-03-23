@@ -313,8 +313,9 @@
 </div>
 
 <div class="btn-place" style="margin-top: 32px;">
-  <button class="emegra cancel" onclick="history.back();">一覧へ</button>
-	<?php if (!$isRequest): ?>
+<button class="emegra cancel" onclick="history.back();">一覧へ</button>
+<button class="emegra" onclick="self.window.location='/pdf_diagnosis.html'">分析表を見る</button>
+<?php if (!$isRequest): ?>
     <button class="emegra" style="background:orange;" onclick="self.location.href='../edit/<?php echo $recordData['idx']	?>';">修正</button>
     <button class="emegra" style="width:150px;" onclick="Request(this);">ITスキル診断依頼</button>
   <?php else: ?>

@@ -1,11 +1,18 @@
 <?php
 namespace Admin\Controller;
-
+require 'vendor/autoload.php';
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Zend\Session\Container;
 use Admin\Model\MailRequest;
 use Admin\Model\LogModule;
+use Dompdf\Dompdf;
+use Dompdf\Options;
+
+use DOMPDFModule\View\Model\PdfModel;
+
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class SituationController extends AbstractActionController {
 	function ChkLogin() {
@@ -1231,4 +1238,98 @@ class SituationController extends AbstractActionController {
 		return $this->SetViewModel($datas, "/situation/situation_diagnosis.phtml");
 	}
 	/* temp */
+
+	public function itdigsnosisAction(){
+		// exit;
+		$p = $this->params()->fromPost();
+		$q = $this->params()->fromQuery();
+
+		$recordTb = $this->getServiceLocator()->get("RecordTable-Admin");
+		$recordData = "";
+		try {
+			$recordData = $recordTb->ReadByIdx($p);
+		} catch (\Exception $e) {
+			$logData["reason"] = "exception at SituationController detailAction RecordTable ReadByIdx";
+			$logData["message"] = $e->getMessage();
+			$log = $LogModule->SaveLog($logData);
+			die($log);
+		}
+
+		if (is_null($recordData["diagnosis_date"])) {
+			header("Location: ../edit/" . $idx);
+			exit;
+		}
+		$datas["recordData"] = $recordData;
+		$datas['optionDatas'] = $this->GetOptionDatas($datas);
+
+        // print_r($datas["recordData"]);exit;
+		$applicantTb = $this->getServiceLocator()->get("ApplicantTable-Admin");
+		try {
+			$datas["applicantData"] = $applicantTb->ReadByIdx($recordData["applicant_idx"]);
+		} catch (\Exception $e) {
+			$logData["reason"] = "exception at SituationController detailAction ApplicantTable ReadByIdx";
+			$logData["message"] = $e->getMessage();
+			$log = $LogModule->SaveLog($logData);
+			die($log);
+		}
+
+
+		$recordClass2nd = $datas['optionDatas']['recordData']['class2nd'];
+		$optionDatasClass2nd = $datas['optionDatas']['optionDatas'][$recordClass2nd];
+		$skillTexts = ["有", "無"];
+		$recordDataSkill=$datas["recordData"]['skill'];
+		$logoPath = $_SERVER['DOCUMENT_ROOT'] . "/img/logo_about.png";
+		$result = [];   
+                    $htmlTemplatePath = $_SERVER['DOCUMENT_ROOT'] . "/pdf/diagnosis_sheet.html";
+            // if (!file_exists($htmlTemplatePath)) {
+            //         return json_encode(["error" => "HTML template not found"]);
+            // }
+						// exit;
+						$dir_route = $_SERVER['DOCUMENT_ROOT'] . "/pdf/";
+
+            $filename ="IT診断分析表" .  ".pdf";
+
+            $html = file_get_contents($htmlTemplatePath);
+						$html = str_replace("{{logo}}", $logoPath, $html);
+            $html = str_replace("{{name}}", $datas["applicantData"]['name'], $html);
+            $html = str_replace("{{birth}}", $datas["applicantData"]['birth'], $html);
+            $html = str_replace("{{education}}", $datas["recordData"]['education'], $html);
+            $html = str_replace("{{class2nd}}", $optionDatasClass2nd, $html);
+            $html = str_replace("{{skill}}", $skillTexts[$recordDataSkill], $html);
+						$html = str_replace("{{apply_date}}", date("Y-m-d", strtotime($datas["applicantData"]['apply_date'])), $html);
+
+						$options = new Options();
+						$dompdf = new Dompdf();
+						$dompdf->set_option("paperSize", "a4");
+            $dompdf->set_option('defaultMediaType', 'all');
+            $dompdf->set_option('isFontSubsettingEnabled', true);
+            $dompdf->setPaper('a4', 'portrait');
+            $dompdf->loadHtml($html, 'UTF-8');
+            $dompdf->render();
+						$contents_data = $dompdf->output();
+
+
+						file_put_contents($dir_route . $filename, $contents_data);
+		
+						$pdf_url = "/pdf/" . $filename;
+		
+						$result[] = [
+								"pdf_url" => $pdf_url
+						];
+
+						header('Pragma: public');
+						header('Expires: 0');
+						header('Content-Type: application/pdf');
+						header('Content-Description: File Transfer');
+						header("Content-Disposition: inline; filename*=UTF-8''" . rawurlencode($pdf_url));
+						header('Content-Transfer-Encoding: binary');
+						header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+						header('Content-Length: ' . strlen($contents_data));
+						ob_clean();
+						flush();
+						echo $contents_data;
+					
+					echo json_encode($result);
+				exit;
+		}
 }

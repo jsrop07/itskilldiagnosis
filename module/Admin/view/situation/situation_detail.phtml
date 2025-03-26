@@ -11,7 +11,6 @@
 	$skillTexts = ["有", "無"];
   $levelTexts = ["無級", "初級", "中級", "高級"];
   $languageTexts = ["日本語", "韓国語"];
-
   /*
     作成：朴昰成
     作成日：24/06/21
@@ -312,9 +311,10 @@
   </div>
 </div>
 
-<div class="btn-place" style="margin-top: 32px;">
+<div class="btn-place" style="margin-top: 32px;margin-bottom:20px;">
 <button class="emegra cancel" onclick="history.back();">一覧へ</button>
-<button class="emegra" onclick="self.window.location='/pdf_diagnosis.html'">分析表を見る</button>
+<button class="emegra" onclick="sendData()">分析表を見る</button>
+
 <?php if (!$isRequest): ?>
     <button class="emegra" style="background:orange;" onclick="self.location.href='../edit/<?php echo $recordData['idx']	?>';">修正</button>
     <button class="emegra" style="width:150px;" onclick="Request(this);">ITスキル診断依頼</button>
@@ -325,6 +325,15 @@
 	<?php endif; ?>
 </div>
 
+
+
+<script>
+function sendData() {
+    window.location.href = '/pdf_diagnosis.html?id=<?= $idx ?>';
+}
+</script>
+
+
 <!--
   作成：朴昰成
   作成日：24/06/21
@@ -333,7 +342,6 @@
 <!-- ここまで -->
 <script type="text/javascript">
 	const idx = <?php echo $recordData["idx"]; ?>
-
   const buttonElements = document.getElementsByTagName("button");
 
   function Request(button) {

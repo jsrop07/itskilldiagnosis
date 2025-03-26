@@ -138,41 +138,10 @@ class SituationController extends AbstractActionController {
 	public function detailAction() {
 		$this->ChkLogin();
 		$datas["breadcrumbData"] = ["ITスキル診断状況管理", "診断状況詳細"];
-		/*
-			作成：朴昰成
-			修正：朴昰成
-			修正日：24/06/21
-		*/
-
-		/* 修正前：
-		$index = $this->params()->fromRoute("index");
-
-		$recordTb = $this->getServiceLocator()->get("RecordTable-Admin");
-		$recordData = $recordTb->ReadByIdx($index);
-		if (($recordData["diagnosis_code"]) == null) {
-			header("Location: ../edit/" . $index);
-			exit;
-		}
-
-		$applicantTb = $this->getServiceLocator()->get("ApplicantTable-Admin");
-		$diagnosisTb = $this->getServiceLocator()->get("DiagnosisTable-Admin");
-
-		$applicantData = $applicantTb->ReadByIdx($recordData["applicant_idx"]);
-		$recordData = array_merge($applicantData, $recordData);
-
-		$diagnosisData = $diagnosisTb->ReadForRecordByCodenDate($recordData["diagnosis_code"], $recordData["diagnosis_date"]);
-		$recordData = array_merge($diagnosisData, $recordData);
 		
 		$datas = $this->GetOptionDatas($datas);
-
-		$datas["recordData"] = $recordData;
-
-		*/
-
-		/* 修正後： */
-		$datas = $this->GetOptionDatas($datas);
 		$idx = $this->params()->fromRoute("index");
-
+		$datas['idx'] =$idx;
 		$LogModule = new LogModule();
 		$recordTb = $this->getServiceLocator()->get("RecordTable-Admin");
 		$recordData = "";
@@ -1239,11 +1208,9 @@ class SituationController extends AbstractActionController {
 	}
 	/* temp */
 
-	public function itdigsnosisAction(){
-		// exit;
+	public function itdiagnosisAction() {
 		$p = $this->params()->fromPost();
 		$q = $this->params()->fromQuery();
-
 		$recordTb = $this->getServiceLocator()->get("RecordTable-Admin");
 		$recordData = "";
 		try {
@@ -1254,15 +1221,14 @@ class SituationController extends AbstractActionController {
 			$log = $LogModule->SaveLog($logData);
 			die($log);
 		}
-
+	
 		if (is_null($recordData["diagnosis_date"])) {
 			header("Location: ../edit/" . $idx);
 			exit;
 		}
 		$datas["recordData"] = $recordData;
 		$datas['optionDatas'] = $this->GetOptionDatas($datas);
-
-        // print_r($datas["recordData"]);exit;
+	
 		$applicantTb = $this->getServiceLocator()->get("ApplicantTable-Admin");
 		try {
 			$datas["applicantData"] = $applicantTb->ReadByIdx($recordData["applicant_idx"]);
@@ -1273,63 +1239,285 @@ class SituationController extends AbstractActionController {
 			die($log);
 		}
 
+	
+		$diagnosisTb = $this->getServiceLocator()->get("DiagnosisTable-Admin");
+		$questionTb = $this->getServiceLocator()->get("QuestionTable");
+		$optionTb = $this->getServiceLocator()->get("OptionTable");
 
+		$diagnosisData = $diagnosisTb->ReadByCode($recordData["diagnosis_code"]);
+		$answerDatas = explode(",", $recordData["answer_data"]);
+		$questionIdxDatas = explode(",", $diagnosisData["question_idxs"]);
+
+		$tableDatas = array();
+		for ($i = 0; $i < count($questionIdxDatas); $i++) {
+			$questionData = $questionTb->ReadByIdx($questionIdxDatas[$i]);
+
+			$correctChar = "X";
+			if ($questionData["correct"] == $answerDatas[$i]) { $correctChar = "O"; }
+
+			$tableData["no"] = $i + 1;
+			$tableData["title"] = $questionData["title"];
+			$tableData["level"] = $questionData["level"];
+			$tableData["point"] = $questionData["point"];
+
+
+			$tableData["answerDatas"] = $answerDatas[$i];
+			
+			
+			$tableData["correct"] = $questionData["correct"];
+			$tableData["point"] = $questionData["point"];
+			$tableData["class1st"] = $optionTb->ReadByIdx($questionData["class1st"])["text"];
+			$tableData["class2nd"] = $optionTb->ReadByIdx($questionData["class2nd"])["text"];
+			$tableData["correctChar"] = $correctChar;
+
+			$tableDatas[] = $tableData;
+		}
+
+		$datas["tableDatas"] = $tableDatas;
+		$count = [];
+		
+	// 분류별 집계
+	foreach ($tableDatas as $data) {
+		$class2nd = $data["class2nd"];
+		$title = $data["title"];
+
+		// 분류 기준
+		if ($class2nd === "論理的思考") {
+			$key = "論理的思考";
+		} elseif (strpos($title, "algorithm") !== false) {
+			$key = "algorithm";
+		} else {
+			$key = $class2nd;
+		}
+
+		// 초기화
+		if (!isset($count[$key])) {
+			$count[$key] = [
+				"total" => 0,
+				"correct" => 0,
+				"point_total" => 0,
+				"point_correct" => 0
+			];
+		}
+
+		// 전체 문제 수
+		$count[$key]["total"]++;
+
+		// 포인트 누적
+		$point = $data["point"] ?? 0;
+		$count[$key]["point_total"] += $point;
+
+		// 정답 처리
+		if (isset($data["answerDatas"], $data["correct"]) && $data["answerDatas"] == $data["correct"]) {
+			$count[$key]["correct"]++;
+			$count[$key]["point_correct"] += $point;
+		}
+	}
+
+	$datass = [];
+
+	foreach ($count as $key => $data) {
+		$datass[] = [$key, $data["point_correct"]];
+	}
+	
+	$width = 800;
+	$height = 800;
+	
+	$image = imagecreatetruecolor($width, $height);
+	imagesavealpha($image, true);
+	$bg_color = imagecolorallocatealpha($image, 255, 255, 255, 0);
+	imagefill($image, 0, 0, $bg_color);
+	
+	$line_color = imagecolorallocate($image, 0, 0, 255);
+	$gray_color = imagecolorallocate($image, 220, 220, 220);
+	$text_color = imagecolorallocate($image, 0, 0, 0);
+	$fill_color = imagecolorallocatealpha($image, 0, 0, 255, 80);
+	
+	$centerX = $width / 2;
+	$centerY = $height / 2;
+	$radius = 300;
+	$angle = 360 / count($datass);
+	
+	// ✅ 폰트 경로
+	$fontPath = dirname(__DIR__, 5)  . '/vendor/dompdf/dompdf/lib/fonts/ipaexm.ttf'; // TTF 경로
+	
+	// ▶ 원형 보조선 + 수치
+	for ($i = 1; $i <= 4; $i++) {
+		$r = $radius * $i / 4;
+		imageellipse($image, $centerX, $centerY, $r * 2, $r * 2, $gray_color);
+		$value = 	$diagnosisData['point_total'] * $i / 4;
+		imagettftext($image, 20, 0, $centerX + 10, $centerY - $r + 10, $text_color, $fontPath, (string)$value);
+	}
+	
+	// ▶ 축선 + 라벨
+	foreach ($datass as $index => $data) {
+		$currentAngle = deg2rad($index * $angle - 90);
+		$x = $centerX + cos($currentAngle) * $radius;
+		$y = $centerY + sin($currentAngle) * $radius;
+		imageline($image, $centerX, $centerY, $x, $y, $gray_color);
+	
+		$labelX = $centerX + cos($currentAngle) * ($radius + 30);
+		$labelY = $centerY + sin($currentAngle) * ($radius + 30);
+		imagettftext($image, 24, 0, $labelX - 40, $labelY, $text_color, $fontPath, $data[0]);
+	}
+	
+	// ▶ 데이터 점 좌표 계산
+	$points = [];
+	foreach ($datass as $index => $data) {
+		$currentAngle = deg2rad($index * $angle - 90); 
+		$x = $centerX + cos($currentAngle) * ($radius * ($data[1] / 100));
+		$y = $centerY + sin($currentAngle) * ($radius * ($data[1] / 100));
+		$points[] = $x;
+		$points[] = $y;
+	}
+	
+	// ▶ 내부 면 채우기 + 외곽선
+	imagefilledpolygon($image, $points, count($datass), $fill_color);
+	imagepolygon($image, $points, count($datass), $line_color);
+	
+	// ▶ 저장
+	$chartImagePath = $_SERVER['DOCUMENT_ROOT'] . "/img/radar_chart.png";
+	imagepng($image, $chartImagePath);
+	imagedestroy($image);
+
+
+
+	// // 예시 데이터
+	$barData = [];
+
+	foreach ($count as $key => $data) {
+		$barData[] = [$key, $data["point_correct"]];
+	}
+	
+	// ▶ 이미지 크기 설정
+	$canvasW = 600;
+	$canvasH = 450;
+	
+	// ▶ 이미지 생성
+	$chartImg = imagecreatetruecolor($canvasW, $canvasH);
+	imagesavealpha($chartImg, true);
+	$bgAlpha = imagecolorallocatealpha($chartImg, 255, 255, 255, 0);
+	imagefill($chartImg, 0, 0, $bgAlpha);
+	
+	// ▶ 색상 정의
+	$barFill = imagecolorallocate($chartImg, 0, 0, 255); // 도돈 블루
+	$gridLine = imagecolorallocate($chartImg, 200, 200, 200);
+	$fontColor = imagecolorallocate($chartImg, 0, 0, 0);
+	
+	$jpFont = dirname(__DIR__, 5)  . '/vendor/dompdf/dompdf/lib/fonts/ipaexm.ttf'; // TTF 경로
+	
+	// ▶ 레이아웃 값
+	$leftPad = 60;
+	$bottomPad = 60;
+	$topPad = 50;
+	$rightPad = 30;
+	
+	$eachWidth = 70;
+	$gapBetween = 50;
+	
+	$maxY = $diagnosisData['point_total'];
+	$chartAreaH = $canvasH - $topPad - $bottomPad;
+	
+	// ▶ Y축 보조선 및 눈금
+	for ($tick = 0; $tick <= 5; $tick++) {
+		$lineY = $topPad + $chartAreaH - ($chartAreaH / 5 * $tick);
+		imageline($chartImg, $leftPad, $lineY, $canvasW - $rightPad, $lineY, $gridLine);
+		$labelVal = $tick * 20;
+		imagettftext($chartImg, 13, 0, 20, $lineY + 5, $fontColor, $jpFont, (string)$labelVal);
+	}
+	
+	// ▶ 막대 출력
+	foreach ($barData as $idx => $item) {
+		list($title, $score) = $item;
+	
+		$startX = $leftPad + ($eachWidth + $gapBetween) * $idx;
+		$barH = ($score / $maxY) * $chartAreaH;
+		$topY = $topPad + $chartAreaH - $barH;
+		$bottomY = $topPad + $chartAreaH;
+	
+		imagefilledrectangle($chartImg, $startX, $topY, $startX + $eachWidth, $bottomY, $barFill);
+	
+		// 라벨
+		$labelPosX = $startX + 5;
+		$labelPosY = $bottomY + 25;
+		imagettftext($chartImg, 14, 0, $labelPosX - 10, $labelPosY, $fontColor, $jpFont, $title);
+	}
+	
+	// ▶ 저장
+	$barChartPath = $_SERVER['DOCUMENT_ROOT'] . "/img/bar_chart2.png";
+	imagepng($chartImg, $barChartPath);
+	imagedestroy($chartImg);
+
+		// PDF에 차트 이미지 삽입
 		$recordClass2nd = $datas['optionDatas']['recordData']['class2nd'];
 		$optionDatasClass2nd = $datas['optionDatas']['optionDatas'][$recordClass2nd];
 		$skillTexts = ["有", "無"];
-		$recordDataSkill=$datas["recordData"]['skill'];
+		$recordDataSkill = $datas["recordData"]['skill'];
 		$logoPath = $_SERVER['DOCUMENT_ROOT'] . "/img/logo_about.png";
 		$result = [];   
-                    $htmlTemplatePath = $_SERVER['DOCUMENT_ROOT'] . "/pdf/diagnosis_sheet.html";
-            // if (!file_exists($htmlTemplatePath)) {
-            //         return json_encode(["error" => "HTML template not found"]);
-            // }
-						// exit;
-						$dir_route = $_SERVER['DOCUMENT_ROOT'] . "/pdf/";
-
-            $filename ="IT診断分析表" .  ".pdf";
-
-            $html = file_get_contents($htmlTemplatePath);
-						$html = str_replace("{{logo}}", $logoPath, $html);
-            $html = str_replace("{{name}}", $datas["applicantData"]['name'], $html);
-            $html = str_replace("{{birth}}", $datas["applicantData"]['birth'], $html);
-            $html = str_replace("{{education}}", $datas["recordData"]['education'], $html);
-            $html = str_replace("{{class2nd}}", $optionDatasClass2nd, $html);
-            $html = str_replace("{{skill}}", $skillTexts[$recordDataSkill], $html);
-						$html = str_replace("{{apply_date}}", date("Y-m-d", strtotime($datas["applicantData"]['apply_date'])), $html);
-
-						$options = new Options();
-						$dompdf = new Dompdf();
-						$dompdf->set_option("paperSize", "a4");
-            $dompdf->set_option('defaultMediaType', 'all');
-            $dompdf->set_option('isFontSubsettingEnabled', true);
-            $dompdf->setPaper('a4', 'portrait');
-            $dompdf->loadHtml($html, 'UTF-8');
-            $dompdf->render();
-						$contents_data = $dompdf->output();
-
-
-						file_put_contents($dir_route . $filename, $contents_data);
+		$htmlTemplatePath = $_SERVER['DOCUMENT_ROOT'] . "/pdf/diagnosis_sheet.html";
+	
+		$dir_route = $_SERVER['DOCUMENT_ROOT'] . "/pdf/";
+		$filename = "IT診断分析表" .  ".pdf";
+	
+		$html = file_get_contents($htmlTemplatePath);
+		$html = str_replace("{{logo}}", $logoPath, $html);
+		$html = str_replace("{{name}}", $datas["applicantData"]['name'], $html);
+		$html = str_replace("{{birth}}", $datas["applicantData"]['birth'], $html);
+		$html = str_replace("{{education}}", $datas["recordData"]['education'], $html);
+		$html = str_replace("{{get_point}}", $datas["recordData"]['get_point'], $html);
+		$html = str_replace("{{solve_time}}", $datas["recordData"]['solve_time'], $html);
+		$html = str_replace("{{rank}}", $datas["recordData"]['rank'], $html);
+		$html = str_replace("{{class2nd}}", $optionDatasClass2nd, $html);
+		$html = str_replace("{{skill}}", $skillTexts[$recordDataSkill], $html);
+		$html = str_replace("{{apply_date}}", date("Y-m-d", strtotime($datas["applicantData"]['apply_date'])), $html);
+		$html = str_replace("{{diagnosis_comment}}", $datas["recordData"]['diagnosis_comment'], $html);
+		$html = str_replace("{{chartData}}", $chartImagePath, $html); // 차트 이미지 삽입
+		$html = str_replace("{{chartData2}}", $barChartPath, $html); // 차트 이미지 삽입
 		
-						$pdf_url = "/pdf/" . $filename;
-		
-						$result[] = [
-								"pdf_url" => $pdf_url
-						];
+		$values = array_values(array_slice($count, 0, 3));
+		foreach ($values as $i => $data) {
+			$percentPoint = ceil($data["point_total"]/$diagnosisData['point_total']*100);
+			$point_correct = ceil($data["point_correct"]/$diagnosisData['point_total']*100);
 
-						header('Pragma: public');
-						header('Expires: 0');
-						header('Content-Type: application/pdf');
-						header('Content-Description: File Transfer');
-						header("Content-Disposition: inline; filename*=UTF-8''" . rawurlencode($pdf_url));
-						header('Content-Transfer-Encoding: binary');
-						header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
-						header('Content-Length: ' . strlen($contents_data));
-						ob_clean();
-						flush();
-						echo $contents_data;
-					
-					echo json_encode($result);
-				exit;
+			$html = str_replace("{{count" . ($i + 1) . "}}", $data["total"], $html);
+			$html = str_replace("{{count" . ($i + 4) . "}}", $data["correct"], $html);
+			$html = str_replace("{{count" . ($i + 7) . "}}", $percentPoint, $html);
+			$html = str_replace("{{count" . ($i + 10) . "}}", $point_correct, $html);
 		}
+		
+		$options = new Options();
+		$dompdf = new Dompdf();
+		$dompdf->set_option("paperSize", "a4");
+		$dompdf->set_option('defaultMediaType', 'all');
+		$dompdf->set_option('isFontSubsettingEnabled', true);
+		$dompdf->setPaper('a4', 'portrait');
+		$dompdf->loadHtml($html, 'UTF-8');
+		$dompdf->render();
+		$contents_data = $dompdf->output();
+	
+		file_put_contents($dir_route . $filename, $contents_data);
+	
+		$pdf_url = "/pdf/" . $filename;
+	
+		$result[] = [
+			"pdf_url" => $pdf_url
+		];
+	
+		header('Pragma: public');
+		header('Expires: 0');
+		header('Content-Type: application/pdf');
+		header('Content-Description: File Transfer');
+		header("Content-Disposition: inline; filename*=UTF-8''" . rawurlencode($pdf_url));
+		header('Content-Transfer-Encoding: binary');
+		header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+		header('Content-Length: ' . strlen($contents_data));
+		ob_clean();
+		flush();
+		echo $contents_data;
+	
+		echo json_encode($result);
+		exit;
+	}
+	
 }

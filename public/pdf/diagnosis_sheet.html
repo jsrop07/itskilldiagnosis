@@ -12,7 +12,7 @@
             margin-top: -127px;
             position: relative;
             width: 100%;
-            height: 750px;
+            height: 870px;
             border: 0.5px solid #90EE90;
             border-top: none;
             box-sizing: border-box;
@@ -52,12 +52,12 @@
 <body>
     <div style="display: flex; align-items: flex-start;">
         <div style="border: 0.5px solid #90EE90; width: 311px;  height: 100px; padding: 20px; border-bottom: none; box-sizing: border-box;">
-            <div style="display: flex;">
-                <img src="{{logo}}" alt="" style="height: 100px;margin-top: 15px;">
-                <div style="">
-                <div style="margin-left: 115px;margin-top:20px;font-size: 13px;">株式会社ジエンジサービス</div>
-                <div style="margin-left:100px;font-size: 22px;margin-top:15px;">ITスキル診断分析表</div>
-                    </div>
+            <div style="border: 0.5px solid #90EE90;">
+                <img src="{{logo}}" alt="" style="height: 90px;margin-top: 15px;margin-left:10px;">
+                <div>
+                    <div style="margin-left: 115px;margin-top:-80px;font-size: 13px;">株式会社ジエンジサービス</div>
+                    <div style="margin-left:100px;font-size: 22px;margin-top:15px;">ITスキル診断分析表</div>
+                </div>
             </div>
         </div>
         <div style="margin-left: 370px;">
@@ -89,7 +89,117 @@
           </table>
         </div>
       </div>
-      <div class="half-border-box"></div>
 
+    <div class="half-border-box">
+        <div class="card" style="padding: 15px;">
+            <div style="border: 0.5px solid #90EE90;height: 210px;">
+                <div style="padding: 10px;">
+                    <div style="display: flex;">
+                        <div style="margin-left:20px;margin-top: 15px;">問題タイプ</div>
+                        <div style="margin-left:300px;margin-top: 15px;">診断結果</div>
+                    </div>
+                    <div style="border: 2px solid #90EE90;width:70px;margin-top:-40px;margin-left:15px;"></div>
+                    <div style="border: 2px solid #90EE90;width:70px;margin-top:-40px;margin-left:290px;"></div>
+                </div>
+                <div style="display: flex;">
+                    <div style="padding-top:-2px;padding-left: 15px;">
+                        <table cellpadding="1" cellspacing="1" style="border:1px solid #90EE90; border-collapse: collapse;">
+                        <thead style="background:linear-gradient(111deg, #87D782 0%, #22BC8E 100%);">
+                            <tr>
+                            <th class="title_td" colspan="2">区分</th>
+                            <th class="title_td" style="width:60px;">点数</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                            <td class="data_td" style="width: 100px;">論理的思考</td>
+                            <td class="data_td" style="width: 80px;">{{count1}}問項</td>
+                            <td class="data_td" style="width: 60px;">{{count7}}点</td>
+                            </tr>
+                            <tr>
+                            <td class="data_td">初級</td>
+                            <td class="data_td">{{count2}}問項</td>
+                            <td class="data_td">{{count8}}点</td>
+                            </tr>
+                            <tr>
+                            <td class="data_td">Algorithm</td>
+                            <td class="data_td">{{count3}}問項</td>
+                            <td class="data_td">{{count9}}点</td>
+                            </tr>
+                        </tbody>
+                        </table>
+                    </div>
+                    <div style="padding-top:-2px;padding-left: 15px;margin-left: 280px;">
+                        <table cellpadding="1" cellspacing="1" style="border:1px solid #90EE90; border-collapse: collapse;">
+                            <thead style="background:linear-gradient(111deg, #87D782 0%, #22BC8E 100%);">
+                            <tr>
+                                <th class="title_td" style="width:80px;">所要時間</th>
+                                <th class="title_td" style="width:60px;">正解</th>
+                                <th class="title_td" style="width:60px;">点数</th>
+                                <th class="title_td" style="width:70px;">合計</th>
+                                <th class="title_td" style="width:70px;">ランク</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td class="data_td" rowspan="3">{{solve_time}}分</td>
+                                <td class="data_td" >{{count4}}問項</td>
+                                <td class="data_td" >{{count10}}点</td>
+                                <td class="data_td" rowspan="3">{{get_point}}点</td>
+                                <td class="data_td" rowspan="3">{{rank}}</td>
+                            </tr>
+                            <tr>
+                                <td class="data_td">{{count5}}問項</td>
+                                <td class="data_td">{{count11}}点</td>
+                            </tr>
+                            <tr>
+                                <td class="data_td">{{count6}}問項</td>
+                                <td class="data_td">{{count12}}点</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card" style="padding: 15px;margin-top:-20px;">
+            <div style="border: 0.5px solid #90EE90;height: 270px;">
+                <div style="padding: 10px;">
+                    <div style="display: flex;">
+                        <div style="margin-left:20px;margin-top: 15px;">診断グラフ</div>
+                    </div>
+                    <div style="border: 2px solid #90EE90;width:70px;margin-top:-10px;margin-left:15px;"></div>
+                        <img src="{{chartData}}" alt="" style="height: 200px;margin-top: 30px;margin-left:50px;">
+                        <img src="{{chartData2}}" alt="" style="height: 200px;margin-top: 20px;margin-left:70px;">
+                </div>
+            </div>
+        </div>
+        <div class="card" style="padding: 15px;margin-top:-20px;">
+            <div style="border: 0.5px solid #90EE90;height: 330px;width:100%">
+                <div style="padding: 10px;">
+                    <div style="margin-left:20px;">診断解説</div>
+                    <div style="border: 2px solid #90EE90;width:70px;margin-top:5px;margin-left:15px;"></div>
+                </div>
+                <div style="padding: 0 25px;">
+                    <div style="margin-bottom: 15px;">
+                        <div style="font-size: 14px; color: #186118;margin-bottom: 5px; font-weight: 700;">論理的思考</div>
+                        <div style="margin-left: 5px;">{{diagnosis_comment}}</div>
+                    </div>
+                    <div style="margin-bottom: 10px;">
+                        <div style="font-size: 14px; color: #186118;margin-bottom: 5px;font-weight: 700;">基礎</div>
+                        <div style="margin-left: 5px;">{{diagnosis_comment}}</div>
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <div style="font-size: 14px; color: #186118;margin-bottom: 5px;font-weight: 700;">Algorithm</div>
+                        <div style="margin-left: 5px;">{{diagnosis_comment}}</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 14px; color: #186118;margin-bottom: 5px;font-weight: 700;">総点</div>
+                        <div style="margin-left: 5px;">{{diagnosis_comment}}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

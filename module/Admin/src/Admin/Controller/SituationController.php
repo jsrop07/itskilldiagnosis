@@ -1300,153 +1300,181 @@ class SituationController extends AbstractActionController {
 			];
 		}
 
-		// 전체 문제 수
+		// 全体問題数
 		$count[$key]["total"]++;
 
-		// 포인트 누적
+		// ポイント累積
 		$point = $data["point"] ?? 0;
 		$count[$key]["point_total"] += $point;
 
-		// 정답 처리
+		// 正答処理
 		if (isset($data["answerDatas"], $data["correct"]) && $data["answerDatas"] == $data["correct"]) {
 			$count[$key]["correct"]++;
 			$count[$key]["point_correct"] += $point;
 		}
 	}
 
-	$datass = [];
-
-	foreach ($count as $key => $data) {
-		$datass[] = [$key, $data["point_correct"]];
-	}
+	// $values = array_values(array_slice($count, 0, 3));
+	// $percentPoints = []; 
+	// $pointCorrects = [];
 	
-	$width = 800;
-	$height = 800;
+	// foreach ($values as $i => $data) {
+	// 	$percentPoint = ceil($data["point_total"] / $diagnosisData['point_total'] * 100);
+	// 	$point_correct = ceil($data["point_correct"] / $diagnosisData['point_total'] * 100);
 	
-	$image = imagecreatetruecolor($width, $height);
-	imagesavealpha($image, true);
-	$bg_color = imagecolorallocatealpha($image, 255, 255, 255, 0);
-	imagefill($image, 0, 0, $bg_color);
-	
-	$line_color = imagecolorallocate($image, 0, 0, 255);
-	$gray_color = imagecolorallocate($image, 220, 220, 220);
-	$text_color = imagecolorallocate($image, 0, 0, 0);
-	$fill_color = imagecolorallocatealpha($image, 0, 0, 255, 80);
-	
-	$centerX = $width / 2;
-	$centerY = $height / 2;
-	$radius = 300;
-	$angle = 360 / count($datass);
-	
-	// ✅ 폰트 경로
-	$fontPath = dirname(__DIR__, 5)  . '/vendor/dompdf/dompdf/lib/fonts/ipaexm.ttf'; // TTF 경로
-	
-	// ▶ 원형 보조선 + 수치
-	for ($i = 1; $i <= 4; $i++) {
-		$r = $radius * $i / 4;
-		imageellipse($image, $centerX, $centerY, $r * 2, $r * 2, $gray_color);
-		$value = 	$diagnosisData['point_total'] * $i / 4;
-		imagettftext($image, 20, 0, $centerX + 10, $centerY - $r + 10, $text_color, $fontPath, (string)$value);
-	}
-	
-	// ▶ 축선 + 라벨
-	foreach ($datass as $index => $data) {
-		$currentAngle = deg2rad($index * $angle - 90);
-		$x = $centerX + cos($currentAngle) * $radius;
-		$y = $centerY + sin($currentAngle) * $radius;
-		imageline($image, $centerX, $centerY, $x, $y, $gray_color);
-	
-		$labelX = $centerX + cos($currentAngle) * ($radius + 30);
-		$labelY = $centerY + sin($currentAngle) * ($radius + 30);
-		imagettftext($image, 24, 0, $labelX - 40, $labelY, $text_color, $fontPath, $data[0]);
-	}
-	
-	// ▶ 데이터 점 좌표 계산
-	$points = [];
-	foreach ($datass as $index => $data) {
-		$currentAngle = deg2rad($index * $angle - 90); 
-		$x = $centerX + cos($currentAngle) * ($radius * ($data[1] / 100));
-		$y = $centerY + sin($currentAngle) * ($radius * ($data[1] / 100));
-		$points[] = $x;
-		$points[] = $y;
-	}
-	
-	// ▶ 내부 면 채우기 + 외곽선
-	imagefilledpolygon($image, $points, count($datass), $fill_color);
-	imagepolygon($image, $points, count($datass), $line_color);
-	
-	// ▶ 저장
-	$chartImagePath = $_SERVER['DOCUMENT_ROOT'] . "/img/radar_chart.png";
-	imagepng($image, $chartImagePath);
-	imagedestroy($image);
+	// 	$percentPoints[] = $percentPoint;
+	// 	$pointCorrects[] = $point_correct;
+	// }
 
 
 
-	// // 예시 데이터
+	// 250327診断分析グラフ
+
+		$datass = [];
+
+		foreach ($count as $key => $data) {
+			$datass[] = [
+				'label' => $key,
+				'correct' => $data["point_correct"],
+				'total' => $data["point_total"]
+			];
+		}
+
+		$width = 800;
+		$height = 800;
+		
+		$image = imagecreatetruecolor($width, $height);
+		imagesavealpha($image, true);
+		$bg_color = imagecolorallocatealpha($image, 255, 255, 255, 0);
+		imagefill($image, 0, 0, $bg_color);
+		
+		$line_color = imagecolorallocate($image, 0, 0, 255);
+		$gray_color = imagecolorallocate($image, 220, 220, 220);
+		$text_color = imagecolorallocate($image, 0, 0, 0);
+		$fill_color = imagecolorallocatealpha($image, 144, 238, 144, 80); 
+		
+		$centerX = $width / 2;
+		$centerY = $height / 2;
+		$radius = 300;
+		$angle = 360 / count($datass);
+		
+		$fontPath = dirname(__DIR__, 5)  . '/vendor/dompdf/dompdf/lib/fonts/ipaexm.ttf'; // TTF 경로
+		
+		// ▶ 원형 보조선 + 수치
+		for ($i = 1; $i <= 4; $i++) {
+			$r = $radius * $i / 4;
+			imageellipse($image, $centerX, $centerY, $r * 2, $r * 2, $gray_color);
+			$value = 	$diagnosisData['point_total'] * $i / 4;
+			// imagettftext($image, 20, 0, $centerX + 10, $centerY - $r + 10, $text_color, $fontPath, (string)$value);
+		}
+		
+		// ▶ 축선 + 라벨
+		foreach ($datass as $index => $data) {
+			$currentAngle = deg2rad($index * $angle - 90);
+			$x = $centerX + cos($currentAngle) * $radius;
+			$y = $centerY + sin($currentAngle) * $radius;
+			imageline($image, $centerX, $centerY, $x, $y, $gray_color);
+		
+			$labelX = $centerX + cos($currentAngle) * ($radius + 30);
+			$labelY = $centerY + sin($currentAngle) * ($radius + 30);
+			imagettftext($image, 28, 0, $labelX - 20, $labelY, $text_color, $fontPath, $data['label']);
+		}
+		
+		// ▶ 데이터 점 좌표 계산
+		$points = [];
+		foreach ($datass as $index => $data) {
+			$currentAngle = deg2rad($index * $angle - 90);
+			
+			// 비율: 자기 자신의 총점 기준
+			$rate = $data['correct'] / $data['total'];
+			$x = $centerX + cos($currentAngle) * ($radius * $rate);
+			$y = $centerY + sin($currentAngle) * ($radius * $rate);
+			
+			$points[] = $x;
+			$points[] = $y;
+		}
+		
+		
+		// ▶ 내부 면 채우기 + 외곽선
+		imagefilledpolygon($image, $points, count($datass), $fill_color);
+		imagepolygon($image, $points, count($datass), $line_color);
+		
+		// ▶ 저장
+		$chartImagePath = $_SERVER['DOCUMENT_ROOT'] . "/img/radar_chart.png";
+		imagepng($image, $chartImagePath);
+		imagedestroy($image);
+
+
+
+	// 예시 데이터
 	$barData = [];
-
 	foreach ($count as $key => $data) {
-		$barData[] = [$key, $data["point_correct"]];
+			$barData[] = [$key, $data["point_correct"], $data["point_total"]];
 	}
-	
-	// ▶ 이미지 크기 설정
-	$canvasW = 600;
-	$canvasH = 450;
-	
-	// ▶ 이미지 생성
+
+	// 크기 설정
+	$canvasW = 900; // 넉넉하게
+	$canvasH = 600;
+
 	$chartImg = imagecreatetruecolor($canvasW, $canvasH);
 	imagesavealpha($chartImg, true);
 	$bgAlpha = imagecolorallocatealpha($chartImg, 255, 255, 255, 0);
 	imagefill($chartImg, 0, 0, $bgAlpha);
-	
-	// ▶ 색상 정의
-	$barFill = imagecolorallocate($chartImg, 0, 0, 255); // 도돈 블루
-	$gridLine = imagecolorallocate($chartImg, 200, 200, 200);
+
+	// 색상
+	$correctColor = imagecolorallocate($chartImg, 144, 238, 144); // #90EE90
+	$wrongColor = imagecolorallocate($chartImg, 255, 153, 153);   // #FF9999
 	$fontColor = imagecolorallocate($chartImg, 0, 0, 0);
-	
-	$jpFont = dirname(__DIR__, 5)  . '/vendor/dompdf/dompdf/lib/fonts/ipaexm.ttf'; // TTF 경로
-	
-	// ▶ 레이아웃 값
-	$leftPad = 60;
-	$bottomPad = 60;
-	$topPad = 50;
-	$rightPad = 30;
-	
-	$eachWidth = 70;
-	$gapBetween = 50;
-	
-	$maxY = $diagnosisData['point_total'];
-	$chartAreaH = $canvasH - $topPad - $bottomPad;
-	
-	// ▶ Y축 보조선 및 눈금
-	for ($tick = 0; $tick <= 5; $tick++) {
-		$lineY = $topPad + $chartAreaH - ($chartAreaH / 5 * $tick);
-		imageline($chartImg, $leftPad, $lineY, $canvasW - $rightPad, $lineY, $gridLine);
-		$labelVal = $tick * 20;
-		imagettftext($chartImg, 13, 0, 20, $lineY + 5, $fontColor, $jpFont, (string)$labelVal);
-	}
-	
-	// ▶ 막대 출력
+
+	$jpFont = dirname(__DIR__, 5)  . '/vendor/dompdf/dompdf/lib/fonts/ipaexm.ttf';
+
+	$leftPad = 200;
+	$topPad = 130;
+	$rightPad = 60;
+	$bottomPad = 50;
+	$barHeight = 40;
+	$barGap = 40;
+
+	$totalBars = count($barData);
+	$chartAreaW = $canvasW - $leftPad - $rightPad;
+	$startY = $topPad;
+	$percent = [];
 	foreach ($barData as $idx => $item) {
-		list($title, $score) = $item;
-	
-		$startX = $leftPad + ($eachWidth + $gapBetween) * $idx;
-		$barH = ($score / $maxY) * $chartAreaH;
-		$topY = $topPad + $chartAreaH - $barH;
-		$bottomY = $topPad + $chartAreaH;
-	
-		imagefilledrectangle($chartImg, $startX, $topY, $startX + $eachWidth, $bottomY, $barFill);
-	
-		// 라벨
-		$labelPosX = $startX + 5;
-		$labelPosY = $bottomY + 25;
-		imagettftext($chartImg, 14, 0, $labelPosX - 10, $labelPosY, $fontColor, $jpFont, $title);
+			list($label, $correct, $total) = $item;
+			$percent = $correct / $total;
+			$correctLength = $chartAreaW * $percent;
+			$wrongLength = $chartAreaW * (1 - $percent);
+
+			$topY = $startY + ($barHeight + $barGap) * $idx;
+
+			// ▶ 정답 부분
+			imagefilledrectangle($chartImg, $leftPad, $topY, $leftPad + $correctLength, $topY + $barHeight, $correctColor);
+
+			// ▶ 오답 부분
+			imagefilledrectangle($chartImg, $leftPad + $correctLength, $topY, $leftPad + $correctLength + $wrongLength, $topY + $barHeight, $wrongColor);
+
+			// ▶ 항목 라벨
+			imagettftext($chartImg, 28, 0, 10, $topY + $barHeight - 10, $fontColor, $jpFont, $label);
+
+			// ▶ 퍼센트 텍스트
+			$percentText = ceil($percent * 100) . '%';
+			$textX = $leftPad + $correctLength + 10;
+
+			// 텍스트가 캔버스 오른쪽 끝을 넘어가면 안쪽으로
+			if ($textX + 50 > $canvasW - $rightPad) {
+					$textX = $leftPad + $correctLength - 45;
+			}
+
+			imagettftext($chartImg, 20, 0, $textX, $topY + $barHeight - 10, $fontColor, $jpFont, $correct);
 	}
-	
-	// ▶ 저장
-	$barChartPath = $_SERVER['DOCUMENT_ROOT'] . "/img/bar_chart2.png";
+	// print_r($barData);exit;
+
+	$barChartPath = $_SERVER['DOCUMENT_ROOT'] . "/img/bar_chart_horizontal_stacked_percent.png";
 	imagepng($chartImg, $barChartPath);
 	imagedestroy($chartImg);
+
+// ここまで
+
 
 		// PDF에 차트 이미지 삽입
 		$recordClass2nd = $datas['optionDatas']['recordData']['class2nd'];
@@ -1477,15 +1505,14 @@ class SituationController extends AbstractActionController {
 		
 		$values = array_values(array_slice($count, 0, 3));
 		foreach ($values as $i => $data) {
-			$percentPoint = ceil($data["point_total"]/$diagnosisData['point_total']*100);
-			$point_correct = ceil($data["point_correct"]/$diagnosisData['point_total']*100);
+			// $percentPoint = ceil($data["point_total"]/$diagnosisData['point_total']*100);
+			// $point_correct = ceil($data["point_correct"]/$diagnosisData['point_total']*100);
 
 			$html = str_replace("{{count" . ($i + 1) . "}}", $data["total"], $html);
 			$html = str_replace("{{count" . ($i + 4) . "}}", $data["correct"], $html);
-			$html = str_replace("{{count" . ($i + 7) . "}}", $percentPoint, $html);
-			$html = str_replace("{{count" . ($i + 10) . "}}", $point_correct, $html);
+			$html = str_replace("{{count" . ($i + 7) . "}}", $data["point_total"], $html);
+			$html = str_replace("{{count" . ($i + 10) . "}}", $data["point_correct"], $html);
 		}
-		
 		$options = new Options();
 		$dompdf = new Dompdf();
 		$dompdf->set_option("paperSize", "a4");

@@ -1289,7 +1289,6 @@ class SituationController extends AbstractActionController {
 		} else {
 			$key = $class2nd;
 		}
-
 		// 초기화
 		if (!isset($count[$key])) {
 			$count[$key] = [
@@ -1377,7 +1376,7 @@ class SituationController extends AbstractActionController {
 		
 			$labelX = $centerX + cos($currentAngle) * ($radius + 30);
 			$labelY = $centerY + sin($currentAngle) * ($radius + 30);
-			imagettftext($image, 28, 0, $labelX - 20, $labelY, $text_color, $fontPath, $data['label']);
+			imagettftext($image, 28, 0, $labelX - 20, $labelY, $text_color, $fontPath, ucfirst($data['label']));
 		}
 		
 		// ▶ 데이터 점 좌표 계산
@@ -1454,7 +1453,7 @@ class SituationController extends AbstractActionController {
 			imagefilledrectangle($chartImg, $leftPad + $correctLength, $topY, $leftPad + $correctLength + $wrongLength, $topY + $barHeight, $wrongColor);
 
 			// ▶ 항목 라벨
-			imagettftext($chartImg, 28, 0, 10, $topY + $barHeight - 10, $fontColor, $jpFont, $label);
+			imagettftext($chartImg, 28, 0, 10, $topY + $barHeight - 10, $fontColor, $jpFont, ucfirst($label));
 
 			// ▶ 퍼센트 텍스트
 			$percentText = ceil($percent * 100) . '%';
@@ -1480,7 +1479,9 @@ class SituationController extends AbstractActionController {
 		$recordClass2nd = $datas['optionDatas']['recordData']['class2nd'];
 		$optionDatasClass2nd = $datas['optionDatas']['optionDatas'][$recordClass2nd];
 		$skillTexts = ["有", "無"];
+		$genderTexts = ["男", "女"];
 		$recordDataSkill = $datas["recordData"]['skill'];
+		$recordDataGender = $datas["applicantData"]['gender'];
 		$logoPath = $_SERVER['DOCUMENT_ROOT'] . "/img/logo_about.png";
 		$result = [];   
 		$htmlTemplatePath = $_SERVER['DOCUMENT_ROOT'] . "/pdf/diagnosis_sheet.html";
@@ -1491,7 +1492,7 @@ class SituationController extends AbstractActionController {
 		$html = file_get_contents($htmlTemplatePath);
 		$html = str_replace("{{logo}}", $logoPath, $html);
 		$html = str_replace("{{name}}", $datas["applicantData"]['name'], $html);
-		$html = str_replace("{{birth}}", $datas["applicantData"]['birth'], $html);
+		$html = str_replace("{{gender}}", $genderTexts[$recordDataGender], $html);
 		$html = str_replace("{{education}}", $datas["recordData"]['education'], $html);
 		$html = str_replace("{{get_point}}", $datas["recordData"]['get_point'], $html);
 		$html = str_replace("{{solve_time}}", $datas["recordData"]['solve_time'], $html);
@@ -1500,9 +1501,34 @@ class SituationController extends AbstractActionController {
 		$html = str_replace("{{skill}}", $skillTexts[$recordDataSkill], $html);
 		$html = str_replace("{{apply_date}}", date("Y-m-d", strtotime($datas["applicantData"]['apply_date'])), $html);
 		$html = str_replace("{{diagnosis_comment}}", $datas["recordData"]['diagnosis_comment'], $html);
-		$html = str_replace("{{chartData}}", $chartImagePath, $html); // 차트 이미지 삽입
-		$html = str_replace("{{chartData2}}", $barChartPath, $html); // 차트 이미지 삽입
+		$html = str_replace("{{chartData}}", $chartImagePath, $html);
+		$html = str_replace("{{chartData2}}", $barChartPath, $html);
 		
+        $explanations = [
+            // 配列1：論理問題
+            "logic" => [
+                "不十分" => "論理的思考力が不足しており、問題解決に困難を感じています。 基本的な推論問題を繰り返し解くことをおすすめします。",
+                "普通" => "基本的な論理的思考は可能ですが、複雑な問題ではやや混乱する傾向があります。 さまざまな問題形式に触れてみましょう。",
+                "優秀" => "論理的思考力が優れており、ほとんどの問題を的確に解決できています。 より難易度の高い問題にも挑戦してみましょう。",
+                "卓越" => "非常に優れた論理的思考力を持ち、問題解決能力が卓越しています。さらに深い思考や多様な問題に取り組むことで、 より高い成長が期待できます。"
+            ],
+            // 配列2：コーディング言語の基礎
+            "basic" => [
+                "不十分" => "プログラミング言語に関する理解が不足しています。変数、条件分岐、ループなど、 基本的な文法から再学習することをおすすめします。",
+                "普通" => "基本的な文法はある程度理解していますが、ミスが多く見られます。 短いコードから実際に書いてみて、慣れていきましょう。",
+                "優秀" => "基礎文法をしっかり理解しており、実際のコード記述にも慣れています。 さまざまな言語でも練習してみましょう。",
+                "卓越" => "プログラミング言語の基礎を完璧に理解しており、 実際の問題解決にも自然に応用できています。"
+            ],
+            // 配列3：アルゴリズム（応用）
+            "advanced" => [
+                "不十分" => "アルゴリズムの理解度が低く、問題解決に困難を感じています。 基本的なアルゴリズムから少しずつ学習を進めましょう。",
+                "普通" => "基本的なアルゴリズムは理解していますが、複雑な問題の解決には時間がかかります。 アルゴリズム問題の演習を増やしましょう。",
+                "優秀" => "アルゴリズムへの理解が深く、多様な問題にも柔軟に対応できています。 さらに多角的なアプローチを試してみてください。",
+                "卓越" => "複雑なアルゴリズムの問題にも迅速かつ正確に対応できます。 最適化や計算量の改善にも挑戦してみましょう。"
+            ]
+        ];
+        
+
 		$values = array_values(array_slice($count, 0, 3));
 		foreach ($values as $i => $data) {
 			// $percentPoint = ceil($data["point_total"]/$diagnosisData['point_total']*100);
@@ -1512,7 +1538,33 @@ class SituationController extends AbstractActionController {
 			$html = str_replace("{{count" . ($i + 4) . "}}", $data["correct"], $html);
 			$html = str_replace("{{count" . ($i + 7) . "}}", $data["point_total"], $html);
 			$html = str_replace("{{count" . ($i + 10) . "}}", $data["point_correct"], $html);
+
+
+            if($data['point_total'] == 0){
+                $grade = "評価不可";
+            }else{
+                $rate = $data['point_correct'] / $data['point_total'];
+                if($rate <0.4){
+                    $grade = "不十分";
+                }elseif ($rate >= 0.4 && $rate < 0.6) {
+                    $grade = "普通";
+                } elseif ($rate >= 0.6 && $rate < 0.8) {
+                    $grade = "優秀";
+                } else {
+                    $grade = "卓越";
+                }
+            }
+                // 분야별 키 설정
+            if ($i == 0) $key = "logic";
+            elseif ($i == 1) $key = "basic";
+            else $key = "advanced";
+
+            // 해설 가져오기
+            $comment = $explanations[$key][$grade];
+
+            $html = str_replace("{{comment" . ($i + 1) . "}}", $comment, $html);
 		}
+
 		$options = new Options();
 		$dompdf = new Dompdf();
 		$dompdf->set_option("paperSize", "a4");

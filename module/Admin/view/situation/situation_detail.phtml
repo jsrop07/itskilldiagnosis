@@ -201,7 +201,8 @@
 </div>
 
 <div class="emegra card" style="margin-top: 32px;">
-  <div class="card-header"><a href="/admin/situation/diagnosis/899">ITスキル診断状況</a></div>
+<div class="card-header">ITスキル診断状況</div>
+<!-- <div class="card-header"><a href="/admin/situation/diagnosis/899">ITスキル診断状況</a></div> -->
 
   <div class="card-body">
     <style type="text/css">
@@ -317,7 +318,7 @@
 
 <?php if (!$isRequest): ?>
     <button class="emegra" style="background:orange;" onclick="self.location.href='../edit/<?php echo $recordData['idx']	?>';">修正</button>
-    <button class="emegra" style="width:150px;" onclick="Request(this);">ITスキル診断依頼</button>
+    <button class="emegra" style="width:150px;" onclick="sendRequest();">ITスキル診断依頼</button>
   <?php else: ?>
     <?php if ($recordData["rank"] != null && $recordData["date_mail"] == null): ?>
       <button class="emegra" onclick="SendMail(this);">結果送信</button>
@@ -344,7 +345,7 @@ function sendData() {
 	const idx = <?php echo $recordData["idx"]; ?>
   const buttonElements = document.getElementsByTagName("button");
 
-  function Request(button) {
+  function sendRequest(button) {
 		if (confirm("診断予定日時は <?php echo $recordData["date_schedule"]; ?>です。\n依頼しますか？") === false) { return false; }
 
     <?php

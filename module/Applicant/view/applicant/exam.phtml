@@ -31,8 +31,9 @@ $lineChange = "<br>";
   <div class="card emegra" style="margin-top:-10px;">
     <div class="card-body" style="padding-top:25px;">
     <form id="myForm" name="input_form" action="/applicant/exam" method="post">
-      <input type="hidden" id="solveTime" name="solveTime" value=""/>
-        <div class="welcomeText" id="welcomeId">
+    <input type="hidden" id="solveTime" name="solveTime" value=""/>
+    <input type="hidden" id="examidx" name="examidx" value="<?php echo $examIdx?>"/>
+    <div class="welcomeText" id="welcomeId">
           <p>与えられた問題に従って回答してください。</p>			
           <!-- 240531 丁錫圓 作成-->
           <p>1問題ずつ提示されます。戻るボタンはありませんので、慎重に解いてください。</p>
@@ -106,7 +107,6 @@ $lineChange = "<br>";
   </div>
 </div>
 <button type="submit" class="timeout_submit" name="submit_post" value="btn_submit" hidden></button>
-
 </form>
 
 <!-- modal -->

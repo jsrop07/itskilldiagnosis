@@ -223,7 +223,6 @@ class ApplicantController extends AbstractActionController
 		$situTbl= $this->getServiceLocator()->get("SituTable");
 		$diagnosisTb = $this->getServiceLocator()->get("DiagnosisTable-Admin");
 		$recordIdx = $situTbl->getRecord();
-
 	  // Read manager info
 	  $managerInfo=$applicantExamTbl->readByManagerInfo();
 	  $managerArray=[$managerInfo["id"], $managerInfo["password"],$managerInfo["name"],$managerInfo["smtp_password"]];
@@ -240,7 +239,7 @@ class ApplicantController extends AbstractActionController
 			$result = $applicantExamTbl->executeExam($post["idx"]);
 			die(json_encode($result));
 		}
-		
+
 		// Read record's diagnosis_code & Read selected diagnosis_code's info
 	  $recordCode    = $examRecordInfo["diagnosis_code"];
 
@@ -375,7 +374,7 @@ class ApplicantController extends AbstractActionController
 		
 			echo "
 			<script>
-			self.location.href='/applicant/examclear';
+					self.location.href='/applicant/examclear?examIdx=" . $datas['examIdx'] . "';
 			</script>
 			";
 		}
@@ -592,6 +591,8 @@ function mailByApplicantExam($applicantInfo,$sqlSet,$managerArray,$examRecordIdx
   }
 
 	function examclearAction() {
+		$p = $this->params()->fromPost();
+		print_r($p);exit;
 		$this->layout("/applicant/examclear");
 	}
 

@@ -1331,149 +1331,149 @@ class SituationController extends AbstractActionController {
 	
 		$datass = [];
 
-		foreach ($count as $key => $data) {
-			$datass[] = [
-				'label' => $key,
-				'correct' => $data["point_correct"],
-				'total' => $data["point_total"]
-			];
-		}
+	// 	foreach ($count as $key => $data) {
+	// 		$datass[] = [
+	// 			'label' => $key,
+	// 			'correct' => $data["point_correct"],
+	// 			'total' => $data["point_total"]
+	// 		];
+	// 	}
 
-		$width = 800;
-		$height = 800;
+	// 	$width = 800;
+	// 	$height = 800;
 
-		$image = imagecreatetruecolor($width, $height);
-		if (!function_exists('imagecreatetruecolor')) {
-			die('GD 라이브러리가 설치되어 있지 않습니다.');
-		}
-		imagesavealpha($image, true);
-		$bg_color = imagecolorallocatealpha($image, 255, 255, 255, 0);
-		imagefill($image, 0, 0, $bg_color);
+	// 	$image = imagecreatetruecolor($width, $height);
+	// 	if (!function_exists('imagecreatetruecolor')) {
+	// 		die('GD 라이브러리가 설치되어 있지 않습니다.');
+	// 	}
+	// 	imagesavealpha($image, true);
+	// 	$bg_color = imagecolorallocatealpha($image, 255, 255, 255, 0);
+	// 	imagefill($image, 0, 0, $bg_color);
 		
-		$line_color = imagecolorallocate($image, 0, 0, 255);
-		$gray_color = imagecolorallocate($image, 220, 220, 220);
-		$text_color = imagecolorallocate($image, 0, 0, 0);
-		$fill_color = imagecolorallocatealpha($image, 144, 238, 144, 80); 
+	// 	$line_color = imagecolorallocate($image, 0, 0, 255);
+	// 	$gray_color = imagecolorallocate($image, 220, 220, 220);
+	// 	$text_color = imagecolorallocate($image, 0, 0, 0);
+	// 	$fill_color = imagecolorallocatealpha($image, 144, 238, 144, 80); 
 		
-		$centerX = $width / 2;
-		$centerY = $height / 2;
-		$radius = 300;
-		$angle = 360 / count($datass);
+	// 	$centerX = $width / 2;
+	// 	$centerY = $height / 2;
+	// 	$radius = 300;
+	// 	$angle = 360 / count($datass);
 
 		
 		$fontPath = dirname(__DIR__, 5)  . '/vendor/dompdf/dompdf/lib/fonts/ipaexm.ttf'; // TTF 경로
-		// ▶ 원형 보조선 + 수치
-		for ($i = 1; $i <= 4; $i++) {
-			$r = $radius * $i / 4;
-			imageellipse($image, $centerX, $centerY, $r * 2, $r * 2, $gray_color);
-			$value = 	$diagnosisData['point_total'] * $i / 4;
-			// imagettftext($image, 20, 0, $centerX + 10, $centerY - $r + 10, $text_color, $fontPath, (string)$value);
-		}
+	// 	// ▶ 원형 보조선 + 수치
+	// 	for ($i = 1; $i <= 4; $i++) {
+	// 		$r = $radius * $i / 4;
+	// 		imageellipse($image, $centerX, $centerY, $r * 2, $r * 2, $gray_color);
+	// 		$value = 	$diagnosisData['point_total'] * $i / 4;
+	// 		// imagettftext($image, 20, 0, $centerX + 10, $centerY - $r + 10, $text_color, $fontPath, (string)$value);
+	// 	}
 		
-		// ▶ 축선 + 라벨
-		foreach ($datass as $index => $data) {
-			$currentAngle = deg2rad($index * $angle - 90);
-			$x = $centerX + cos($currentAngle) * $radius;
-			$y = $centerY + sin($currentAngle) * $radius;
-			imageline($image, $centerX, $centerY, $x, $y, $gray_color);
+	// 	// ▶ 축선 + 라벨
+	// 	foreach ($datass as $index => $data) {
+	// 		$currentAngle = deg2rad($index * $angle - 90);
+	// 		$x = $centerX + cos($currentAngle) * $radius;
+	// 		$y = $centerY + sin($currentAngle) * $radius;
+	// 		imageline($image, $centerX, $centerY, $x, $y, $gray_color);
 		
-			$labelX = $centerX + cos($currentAngle) * ($radius + 30);
-			$labelY = $centerY + sin($currentAngle) * ($radius + 30);
-			imagettftext($image, 28, 0, $labelX - 20, $labelY, $text_color, $fontPath, ucfirst($data['label']));
-		}
+	// 		$labelX = $centerX + cos($currentAngle) * ($radius + 30);
+	// 		$labelY = $centerY + sin($currentAngle) * ($radius + 30);
+	// 		imagettftext($image, 28, 0, $labelX - 20, $labelY, $text_color, $fontPath, ucfirst($data['label']));
+	// 	}
 		
-		// ▶ 데이터 점 좌표 계산
-		$points = [];
-		foreach ($datass as $index => $data) {
-			$currentAngle = deg2rad($index * $angle - 90);
+	// 	// ▶ 데이터 점 좌표 계산
+	// 	$points = [];
+	// 	foreach ($datass as $index => $data) {
+	// 		$currentAngle = deg2rad($index * $angle - 90);
 			
-			// 비율: 자기 자신의 총점 기준
-			$rate = $data['correct'] / $data['total'];
-			$x = $centerX + cos($currentAngle) * ($radius * $rate);
-			$y = $centerY + sin($currentAngle) * ($radius * $rate);
+	// 		// 비율: 자기 자신의 총점 기준
+	// 		$rate = $data['correct'] / $data['total'];
+	// 		$x = $centerX + cos($currentAngle) * ($radius * $rate);
+	// 		$y = $centerY + sin($currentAngle) * ($radius * $rate);
 			
-			$points[] = $x;
-			$points[] = $y;
-		}
+	// 		$points[] = $x;
+	// 		$points[] = $y;
+	// 	}
 		
 		
-		// ▶ 내부 면 채우기 + 외곽선
-		imagefilledpolygon($image, $points, count($datass), $fill_color);
-		imagepolygon($image, $points, count($datass), $line_color);
+	// 	// ▶ 내부 면 채우기 + 외곽선
+	// 	imagefilledpolygon($image, $points, count($datass), $fill_color);
+	// 	imagepolygon($image, $points, count($datass), $line_color);
 		
-		// ▶ 저장
-		$chartImagePath = $_SERVER['DOCUMENT_ROOT'] . "/img/radar_chart.png";
-		imagepng($image, $chartImagePath);
-		imagedestroy($image);
+	// 	// ▶ 저장
+	// 	$chartImagePath = $_SERVER['DOCUMENT_ROOT'] . "/img/radar_chart.png";
+	// 	imagepng($image, $chartImagePath);
+	// 	imagedestroy($image);
 
 
 
-	// 예시 데이터
-	$barData = [];
-	foreach ($count as $key => $data) {
-			$barData[] = [$key, $data["point_correct"], $data["point_total"]];
-	}
+	// // 예시 데이터
+	// $barData = [];
+	// foreach ($count as $key => $data) {
+	// 		$barData[] = [$key, $data["point_correct"], $data["point_total"]];
+	// }
 
-	// 크기 설정
-	$canvasW = 900; // 넉넉하게
-	$canvasH = 600;
+	// // 크기 설정
+	// $canvasW = 900; // 넉넉하게
+	// $canvasH = 600;
 
-	$chartImg = imagecreatetruecolor($canvasW, $canvasH);
-	imagesavealpha($chartImg, true);
-	$bgAlpha = imagecolorallocatealpha($chartImg, 255, 255, 255, 0);
-	imagefill($chartImg, 0, 0, $bgAlpha);
+	// $chartImg = imagecreatetruecolor($canvasW, $canvasH);
+	// imagesavealpha($chartImg, true);
+	// $bgAlpha = imagecolorallocatealpha($chartImg, 255, 255, 255, 0);
+	// imagefill($chartImg, 0, 0, $bgAlpha);
 
-	// 색상
-	$correctColor = imagecolorallocate($chartImg, 144, 238, 144); // #90EE90
-	$wrongColor = imagecolorallocate($chartImg, 255, 153, 153);   // #FF9999
-	$fontColor = imagecolorallocate($chartImg, 0, 0, 0);
+	// // 색상
+	// $correctColor = imagecolorallocate($chartImg, 144, 238, 144); // #90EE90
+	// $wrongColor = imagecolorallocate($chartImg, 255, 153, 153);   // #FF9999
+	// $fontColor = imagecolorallocate($chartImg, 0, 0, 0);
 
-	$jpFont = dirname(__DIR__, 5)  . '/vendor/dompdf/dompdf/lib/fonts/ipaexm.ttf';
+	// $jpFont = dirname(__DIR__, 5)  . '/vendor/dompdf/dompdf/lib/fonts/ipaexm.ttf';
 
-	$leftPad = 200;
-	$topPad = 130;
-	$rightPad = 60;
-	$bottomPad = 50;
-	$barHeight = 40;
-	$barGap = 40;
+	// $leftPad = 200;
+	// $topPad = 130;
+	// $rightPad = 60;
+	// $bottomPad = 50;
+	// $barHeight = 40;
+	// $barGap = 40;
 
-	$totalBars = count($barData);
-	$chartAreaW = $canvasW - $leftPad - $rightPad;
-	$startY = $topPad;
-	$percent = [];
-	foreach ($barData as $idx => $item) {
-			list($label, $correct, $total) = $item;
-			$percent = $correct / $total;
-			$correctLength = $chartAreaW * $percent;
-			$wrongLength = $chartAreaW * (1 - $percent);
+	// $totalBars = count($barData);
+	// $chartAreaW = $canvasW - $leftPad - $rightPad;
+	// $startY = $topPad;
+	// $percent = [];
+	// foreach ($barData as $idx => $item) {
+	// 		list($label, $correct, $total) = $item;
+	// 		$percent = $correct / $total;
+	// 		$correctLength = $chartAreaW * $percent;
+	// 		$wrongLength = $chartAreaW * (1 - $percent);
 
-			$topY = $startY + ($barHeight + $barGap) * $idx;
+	// 		$topY = $startY + ($barHeight + $barGap) * $idx;
 
-			// ▶ 정답 부분
-			imagefilledrectangle($chartImg, $leftPad, $topY, $leftPad + $correctLength, $topY + $barHeight, $correctColor);
+	// 		// ▶ 정답 부분
+	// 		imagefilledrectangle($chartImg, $leftPad, $topY, $leftPad + $correctLength, $topY + $barHeight, $correctColor);
 
-			// ▶ 오답 부분
-			imagefilledrectangle($chartImg, $leftPad + $correctLength, $topY, $leftPad + $correctLength + $wrongLength, $topY + $barHeight, $wrongColor);
+	// 		// ▶ 오답 부분
+	// 		imagefilledrectangle($chartImg, $leftPad + $correctLength, $topY, $leftPad + $correctLength + $wrongLength, $topY + $barHeight, $wrongColor);
 
-			// ▶ 항목 라벨
-			imagettftext($chartImg, 28, 0, 10, $topY + $barHeight - 10, $fontColor, $jpFont, ucfirst($label));
+	// 		// ▶ 항목 라벨
+	// 		imagettftext($chartImg, 28, 0, 10, $topY + $barHeight - 10, $fontColor, $jpFont, ucfirst($label));
 
-			// ▶ 퍼센트 텍스트
-			$percentText = ceil($percent * 100) . '%';
-			$textX = $leftPad + $correctLength + 10;
+	// 		// ▶ 퍼센트 텍스트
+	// 		$percentText = ceil($percent * 100) . '%';
+	// 		$textX = $leftPad + $correctLength + 10;
 
-			// 텍스트가 캔버스 오른쪽 끝을 넘어가면 안쪽으로
-			if ($textX + 50 > $canvasW - $rightPad) {
-					$textX = $leftPad + $correctLength - 45;
-			}
+	// 		// 텍스트가 캔버스 오른쪽 끝을 넘어가면 안쪽으로
+	// 		if ($textX + 50 > $canvasW - $rightPad) {
+	// 				$textX = $leftPad + $correctLength - 45;
+	// 		}
 
-			imagettftext($chartImg, 20, 0, $textX, $topY + $barHeight - 10, $fontColor, $jpFont, $correct);
-	}
-	// print_r($barData);exit;
+	// 		imagettftext($chartImg, 20, 0, $textX, $topY + $barHeight - 10, $fontColor, $jpFont, $correct);
+	// }
+	// // print_r($barData);exit;
 
-	$barChartPath = $_SERVER['DOCUMENT_ROOT'] . "/img/bar_chart_horizontal_stacked_percent.png";
-	imagepng($chartImg, $barChartPath);
-	imagedestroy($chartImg);
+	// $barChartPath = $_SERVER['DOCUMENT_ROOT'] . "/img/bar_chart_horizontal_stacked_percent.png";
+	// imagepng($chartImg, $barChartPath);
+	// imagedestroy($chartImg);
 
 // ここまで
 
@@ -1504,8 +1504,8 @@ class SituationController extends AbstractActionController {
 		$html = str_replace("{{skill}}", $skillTexts[$recordDataSkill], $html);
 		$html = str_replace("{{apply_date}}", date("Y-m-d", strtotime($datas["applicantData"]['apply_date'])), $html);
 		$html = str_replace("{{diagnosis_comment}}", $datas["recordData"]['diagnosis_comment'], $html);
-		$html = str_replace("{{chartData}}", $chartImagePath, $html);
-		$html = str_replace("{{chartData2}}", $barChartPath, $html);
+		// $html = str_replace("{{chartData}}", $chartImagePath, $html);
+		// $html = str_replace("{{chartData2}}", $barChartPath, $html);
 		
         $explanations = [
             // 配列1：論理問題
@@ -1585,7 +1585,8 @@ class SituationController extends AbstractActionController {
 		$result[] = [
 			"pdf_url" => $pdf_url
 		];
-	
+		ini_set('display_errors', 1);
+		error_reporting(E_ALL);
 		header('Pragma: public');
 		header('Expires: 0');
 		header('Content-Type: application/pdf');

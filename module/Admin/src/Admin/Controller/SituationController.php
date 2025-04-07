@@ -1209,6 +1209,8 @@ class SituationController extends AbstractActionController {
 	/* temp */
 
 	public function itdiagnosisAction() {
+		error_reporting(E_ALL); ini_set("display_errors", 1);
+
 		$p = $this->params()->fromPost();
 		$q = $this->params()->fromQuery();
 		$recordTb = $this->getServiceLocator()->get("RecordTable-Admin");
@@ -1343,24 +1345,10 @@ class SituationController extends AbstractActionController {
 		$height = 800;
 
 		$image = imagecreatetruecolor($width, $height);
-		if (!$image) {
-			die("imagecreatetruecolor 실패");
-		}
 
 		imagesavealpha($image, true);
-
 		$bg_color = imagecolorallocatealpha($image, 255, 255, 255, 0);
-		if ($bg_color === false) {
-			die("imagecolorallocatealpha 실패");
-		}
-
-		$filled = imagefill($image, 0, 0, $bg_color);
-		if (!$filled) {
-			die("imagefill 실패");
-		}
-		print_r("asd");
-		exit;
-
+		imagefill($image, 0, 0, $bg_color);
 		
 		$line_color = imagecolorallocate($image, 0, 0, 255);
 		$gray_color = imagecolorallocate($image, 220, 220, 220);

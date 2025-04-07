@@ -1209,7 +1209,7 @@ class SituationController extends AbstractActionController {
 	/* temp */
 
 	public function itdiagnosisAction() {
-		error_reporting(E_ALL); ini_set("display_errors",1);
+		// error_reporting(E_ALL); ini_set("display_errors",1);
 
 		$p = $this->params()->fromPost();
 		$q = $this->params()->fromQuery();
@@ -1504,8 +1504,8 @@ class SituationController extends AbstractActionController {
 		$html = str_replace("{{skill}}", $skillTexts[$recordDataSkill], $html);
 		$html = str_replace("{{apply_date}}", date("Y-m-d", strtotime($datas["applicantData"]['apply_date'])), $html);
 		$html = str_replace("{{diagnosis_comment}}", $datas["recordData"]['diagnosis_comment'], $html);
-		$html = str_replace("{{chartData}}", $chartImagePath, $html);
-		$html = str_replace("{{chartData2}}", $barChartPath, $html);
+		// $html = str_replace("{{chartData}}", $chartImagePath, $html);
+		// $html = str_replace("{{chartData2}}", $barChartPath, $html);
 		
         $explanations = [
             // 配列1：論理問題

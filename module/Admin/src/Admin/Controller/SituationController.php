@@ -1328,7 +1328,7 @@ class SituationController extends AbstractActionController {
 
 
 	// 250327診断分析グラフ
-	exit;
+	
 		$datass = [];
 
 		foreach ($count as $key => $data) {
@@ -1358,7 +1358,7 @@ class SituationController extends AbstractActionController {
 		$angle = 360 / count($datass);
 		
 		$fontPath = dirname(__DIR__, 5)  . '/vendor/dompdf/dompdf/lib/fonts/ipaexm.ttf'; // TTF 경로
-		
+		print_r($fontPath);exit;
 		// ▶ 원형 보조선 + 수치
 		for ($i = 1; $i <= 4; $i++) {
 			$r = $radius * $i / 4;

@@ -1328,7 +1328,7 @@ class SituationController extends AbstractActionController {
 
 
 	// 250327診断分析グラフ
-
+	exit;
 		$datass = [];
 
 		foreach ($count as $key => $data) {

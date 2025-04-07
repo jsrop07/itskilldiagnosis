@@ -592,7 +592,7 @@ function mailByApplicantExam($applicantInfo,$sqlSet,$managerArray,$examRecordIdx
 
 	function examclearAction() {
 		$p = $this->params()->fromPost();
-		print_r($p);exit;
+		// print_r($p);exit;
 		$this->layout("/applicant/examclear");
 	}
 

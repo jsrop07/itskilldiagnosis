@@ -1341,13 +1341,26 @@ class SituationController extends AbstractActionController {
 
 		$width = 800;
 		$height = 800;
-		print_r("hello");
-		exit;		
+
 		$image = imagecreatetruecolor($width, $height);
+		if (!$image) {
+			die("imagecreatetruecolor 실패");
+		}
 
 		imagesavealpha($image, true);
+
 		$bg_color = imagecolorallocatealpha($image, 255, 255, 255, 0);
-		imagefill($image, 0, 0, $bg_color);
+		if ($bg_color === false) {
+			die("imagecolorallocatealpha 실패");
+		}
+
+		$filled = imagefill($image, 0, 0, $bg_color);
+		if (!$filled) {
+			die("imagefill 실패");
+		}
+		print_r("asd");
+		exit;
+
 		
 		$line_color = imagecolorallocate($image, 0, 0, 255);
 		$gray_color = imagecolorallocate($image, 220, 220, 220);

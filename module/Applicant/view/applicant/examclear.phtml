@@ -25,11 +25,22 @@
         <br><br>
         recruit@gngs.co.jp
         <div style="padding-top:60px; justify-content:center; display:flex;">
-            <a class='btn btn-success' href='https://gngs.co.jp'>ホーム</a>
+        <a class='btn btn-success' href='https://gngs.co.jp'>ホーム</a>
+        <a class='btn btn-success' onclick="sendData()">分析表を見る</a>
         </div>
 </div>
 </main>
-
+<script>
+function sendData() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const examIdx = urlParams.get('examIdx');
+    if (examIdx) {
+        window.location.href = '/pdf_diagnosis.html?id=' + examIdx;
+    } else {
+        alert("examIdx パラメータが見つかりません。");
+    }
+}
+</script>
 
 <script>
 function getDayOfWeek(day) {

@@ -592,8 +592,404 @@ function mailByApplicantExam($applicantInfo,$sqlSet,$managerArray,$examRecordIdx
 
 	function examclearAction() {
 		$p = $this->params()->fromPost();
-		// print_r($p);exit;
+		$q = $this->params()->fromQuery();
+				
 		$this->layout("/applicant/examclear");
+	}
+
+	public function itdiagnosisAction() {
+		$p = $this->params()->fromPost();
+		$q = $this->params()->fromQuery();
+		$recordTb = $this->getServiceLocator()->get("RecordTable-Admin");
+		$recordData = "";
+		try {
+			$recordData = $recordTb->ReadByIdx($p);
+		} catch (\Exception $e) {
+			$logData["reason"] = "exception at SituationController detailAction RecordTable ReadByIdx";
+			$logData["message"] = $e->getMessage();
+			$log = $LogModule->SaveLog($logData);
+			die($log);
+		}
+	
+		if (is_null($recordData["diagnosis_date"])) {
+			header("Location: ../edit/" . $idx);
+			exit;
+		}
+		$datas["recordData"] = $recordData;
+		$datas['optionDatas'] = $this->GetOptionDatas($datas);
+	
+		$applicantTb = $this->getServiceLocator()->get("ApplicantTable-Admin");
+		try {
+			$datas["applicantData"] = $applicantTb->ReadByIdx($recordData["applicant_idx"]);
+		} catch (\Exception $e) {
+			$logData["reason"] = "exception at SituationController detailAction ApplicantTable ReadByIdx";
+			$logData["message"] = $e->getMessage();
+			$log = $LogModule->SaveLog($logData);
+			die($log);
+		}
+
+	
+		$diagnosisTb = $this->getServiceLocator()->get("DiagnosisTable-Admin");
+		$questionTb = $this->getServiceLocator()->get("QuestionTable");
+		$optionTb = $this->getServiceLocator()->get("OptionTable");
+
+		$diagnosisData = $diagnosisTb->ReadByCode($recordData["diagnosis_code"]);
+		$answerDatas = explode(",", $recordData["answer_data"]);
+		$questionIdxDatas = explode(",", $diagnosisData["question_idxs"]);
+
+		$tableDatas = array();
+		for ($i = 0; $i < count($questionIdxDatas); $i++) {
+			$questionData = $questionTb->ReadByIdx($questionIdxDatas[$i]);
+
+			$correctChar = "X";
+			if ($questionData["correct"] == $answerDatas[$i]) { $correctChar = "O"; }
+
+			$tableData["no"] = $i + 1;
+			$tableData["title"] = $questionData["title"];
+			$tableData["level"] = $questionData["level"];
+			$tableData["point"] = $questionData["point"];
+
+
+			$tableData["answerDatas"] = $answerDatas[$i];
+			
+			
+			$tableData["correct"] = $questionData["correct"];
+			$tableData["point"] = $questionData["point"];
+			$tableData["class1st"] = $optionTb->ReadByIdx($questionData["class1st"])["text"];
+			$tableData["class2nd"] = $optionTb->ReadByIdx($questionData["class2nd"])["text"];
+			$tableData["correctChar"] = $correctChar;
+
+			$tableDatas[] = $tableData;
+		}
+
+		$datas["tableDatas"] = $tableDatas;
+		$count = [];
+		
+	// 분류별 집계
+	foreach ($tableDatas as $data) {
+		$class2nd = $data["class2nd"];
+		$title = $data["title"];
+
+		// 분류 기준
+		if ($class2nd === "論理的思考") {
+			$key = "論理的思考";
+		} elseif (strpos($title, "algorithm") !== false) {
+			$key = "algorithm";
+		} else {
+			$key = $class2nd;
+		}
+		// 초기화
+		if (!isset($count[$key])) {
+			$count[$key] = [
+				"total" => 0,
+				"correct" => 0,
+				"point_total" => 0,
+				"point_correct" => 0
+			];
+		}
+
+		// 全体問題数
+		$count[$key]["total"]++;
+
+		// ポイント累積
+		$point = $data["point"] ?? 0;
+		$count[$key]["point_total"] += $point;
+
+		// 正答処理
+		if (isset($data["answerDatas"], $data["correct"]) && $data["answerDatas"] == $data["correct"]) {
+			$count[$key]["correct"]++;
+			$count[$key]["point_correct"] += $point;
+		}
+	}
+
+	// $values = array_values(array_slice($count, 0, 3));
+	// $percentPoints = []; 
+	// $pointCorrects = [];
+	
+	// foreach ($values as $i => $data) {
+	// 	$percentPoint = ceil($data["point_total"] / $diagnosisData['point_total'] * 100);
+	// 	$point_correct = ceil($data["point_correct"] / $diagnosisData['point_total'] * 100);
+	
+	// 	$percentPoints[] = $percentPoint;
+	// 	$pointCorrects[] = $point_correct;
+	// }
+
+
+
+	// 250327診断分析グラフ
+	
+		$datass = [];
+
+		foreach ($count as $key => $data) {
+			$datass[] = [
+				'label' => $key,
+				'correct' => $data["point_correct"],
+				'total' => $data["point_total"]
+			];
+		}
+
+		$width = 800;
+		$height = 800;
+
+		$image = imagecreatetruecolor($width, $height);
+		if (!function_exists('imagecreatetruecolor')) {
+			die('GD 라이브러리가 설치되어 있지 않습니다.');
+		}
+		imagesavealpha($image, true);
+		$bg_color = imagecolorallocatealpha($image, 255, 255, 255, 0);
+		imagefill($image, 0, 0, $bg_color);
+		
+		$line_color = imagecolorallocate($image, 0, 0, 255);
+		$gray_color = imagecolorallocate($image, 220, 220, 220);
+		$text_color = imagecolorallocate($image, 0, 0, 0);
+		$fill_color = imagecolorallocatealpha($image, 144, 238, 144, 80); 
+		
+		$centerX = $width / 2;
+		$centerY = $height / 2;
+		$radius = 300;
+		$angle = 360 / count($datass);
+
+		
+		$fontPath = dirname(__DIR__, 5)  . '/vendor/dompdf/dompdf/lib/fonts/ipaexm.ttf'; // TTF 경로
+		// ▶ 원형 보조선 + 수치
+		for ($i = 1; $i <= 4; $i++) {
+			$r = $radius * $i / 4;
+			imageellipse($image, $centerX, $centerY, $r * 2, $r * 2, $gray_color);
+			$value = 	$diagnosisData['point_total'] * $i / 4;
+			// imagettftext($image, 20, 0, $centerX + 10, $centerY - $r + 10, $text_color, $fontPath, (string)$value);
+		}
+		
+		// ▶ 축선 + 라벨
+		foreach ($datass as $index => $data) {
+			$currentAngle = deg2rad($index * $angle - 90);
+			$x = $centerX + cos($currentAngle) * $radius;
+			$y = $centerY + sin($currentAngle) * $radius;
+			imageline($image, $centerX, $centerY, $x, $y, $gray_color);
+		
+			$labelX = $centerX + cos($currentAngle) * ($radius + 30);
+			$labelY = $centerY + sin($currentAngle) * ($radius + 30);
+			imagettftext($image, 28, 0, $labelX - 20, $labelY, $text_color, $fontPath, ucfirst($data['label']));
+		}
+		
+		// ▶ 데이터 점 좌표 계산
+		$points = [];
+		foreach ($datass as $index => $data) {
+			$currentAngle = deg2rad($index * $angle - 90);
+			
+			// 비율: 자기 자신의 총점 기준
+			$rate = $data['correct'] / $data['total'];
+			$x = $centerX + cos($currentAngle) * ($radius * $rate);
+			$y = $centerY + sin($currentAngle) * ($radius * $rate);
+			
+			$points[] = $x;
+			$points[] = $y;
+		}
+		
+		
+		// ▶ 내부 면 채우기 + 외곽선
+		imagefilledpolygon($image, $points, count($datass), $fill_color);
+		imagepolygon($image, $points, count($datass), $line_color);
+		
+		// ▶ 저장
+		$chartImagePath = $_SERVER['DOCUMENT_ROOT'] . "/img/radar_chart.png";
+		imagepng($image, $chartImagePath);
+		imagedestroy($image);
+
+
+
+	// 예시 데이터
+	$barData = [];
+	foreach ($count as $key => $data) {
+			$barData[] = [$key, $data["point_correct"], $data["point_total"]];
+	}
+
+	// 크기 설정
+	$canvasW = 900; // 넉넉하게
+	$canvasH = 600;
+
+	$chartImg = imagecreatetruecolor($canvasW, $canvasH);
+	imagesavealpha($chartImg, true);
+	$bgAlpha = imagecolorallocatealpha($chartImg, 255, 255, 255, 0);
+	imagefill($chartImg, 0, 0, $bgAlpha);
+
+	// 색상
+	$correctColor = imagecolorallocate($chartImg, 144, 238, 144); // #90EE90
+	$wrongColor = imagecolorallocate($chartImg, 255, 153, 153);   // #FF9999
+	$fontColor = imagecolorallocate($chartImg, 0, 0, 0);
+
+	$jpFont = dirname(__DIR__, 5)  . '/vendor/dompdf/dompdf/lib/fonts/ipaexm.ttf';
+
+	$leftPad = 200;
+	$topPad = 130;
+	$rightPad = 60;
+	$bottomPad = 50;
+	$barHeight = 40;
+	$barGap = 40;
+
+	$totalBars = count($barData);
+	$chartAreaW = $canvasW - $leftPad - $rightPad;
+	$startY = $topPad;
+	$percent = [];
+	foreach ($barData as $idx => $item) {
+			list($label, $correct, $total) = $item;
+			$percent = $correct / $total;
+			$correctLength = $chartAreaW * $percent;
+			$wrongLength = $chartAreaW * (1 - $percent);
+
+			$topY = $startY + ($barHeight + $barGap) * $idx;
+
+			// ▶ 정답 부분
+			imagefilledrectangle($chartImg, $leftPad, $topY, $leftPad + $correctLength, $topY + $barHeight, $correctColor);
+
+			// ▶ 오답 부분
+			imagefilledrectangle($chartImg, $leftPad + $correctLength, $topY, $leftPad + $correctLength + $wrongLength, $topY + $barHeight, $wrongColor);
+
+			// ▶ 항목 라벨
+			imagettftext($chartImg, 28, 0, 10, $topY + $barHeight - 10, $fontColor, $jpFont, ucfirst($label));
+
+			// ▶ 퍼센트 텍스트
+			$percentText = ceil($percent * 100) . '%';
+			$textX = $leftPad + $correctLength + 10;
+
+			// 텍스트가 캔버스 오른쪽 끝을 넘어가면 안쪽으로
+			if ($textX + 50 > $canvasW - $rightPad) {
+					$textX = $leftPad + $correctLength - 45;
+			}
+
+			imagettftext($chartImg, 20, 0, $textX, $topY + $barHeight - 10, $fontColor, $jpFont, $correct);
+	}
+	// print_r($barData);exit;
+
+	$barChartPath = $_SERVER['DOCUMENT_ROOT'] . "/img/bar_chart_horizontal_stacked_percent.png";
+	imagepng($chartImg, $barChartPath);
+	imagedestroy($chartImg);
+
+// ここまで
+
+
+		// PDF에 차트 이미지 삽입
+		$recordClass2nd = $datas['optionDatas']['recordData']['class2nd'];
+		$optionDatasClass2nd = $datas['optionDatas']['optionDatas'][$recordClass2nd];
+		$skillTexts = ["有", "無"];
+		$genderTexts = ["男", "女"];
+		$recordDataSkill = $datas["recordData"]['skill'];
+		$recordDataGender = $datas["applicantData"]['gender'];
+		$logoPath = $_SERVER['DOCUMENT_ROOT'] . "/img/logo_about.png";
+		$result = [];   
+		$htmlTemplatePath = $_SERVER['DOCUMENT_ROOT'] . "/pdf/diagnosis_sheet.html";
+	
+		$dir_route = $_SERVER['DOCUMENT_ROOT'] . "/pdf/";
+		$filename = "IT診断分析表" .  ".pdf";
+	
+		$html = file_get_contents($htmlTemplatePath);
+		$html = str_replace("{{logo}}", $logoPath, $html);
+		$html = str_replace("{{name}}", $datas["applicantData"]['name'], $html);
+		$html = str_replace("{{gender}}", $genderTexts[$recordDataGender], $html);
+		$html = str_replace("{{education}}", $datas["recordData"]['education'], $html);
+		$html = str_replace("{{get_point}}", $datas["recordData"]['get_point'], $html);
+		$html = str_replace("{{solve_time}}", $datas["recordData"]['solve_time'], $html);
+		$html = str_replace("{{rank}}", $datas["recordData"]['rank'], $html);
+		$html = str_replace("{{class2nd}}", $optionDatasClass2nd, $html);
+		$html = str_replace("{{skill}}", $skillTexts[$recordDataSkill], $html);
+		$html = str_replace("{{apply_date}}", date("Y-m-d", strtotime($datas["applicantData"]['apply_date'])), $html);
+		$html = str_replace("{{diagnosis_comment}}", $datas["recordData"]['diagnosis_comment'], $html);
+		$html = str_replace("{{chartData}}", $chartImagePath, $html);
+		$html = str_replace("{{chartData2}}", $barChartPath, $html);
+		
+        $explanations = [
+            // 配列1：論理問題
+            "logic" => [
+                "不十分" => "論理的思考力が不足しており、問題解決に困難を感じています。 基本的な推論問題を繰り返し解くことをおすすめします。",
+                "普通" => "基本的な論理的思考は可能ですが、複雑な問題ではやや混乱する傾向があります。 さまざまな問題形式に触れてみましょう。",
+                "優秀" => "論理的思考力が優れており、ほとんどの問題を的確に解決できています。 より難易度の高い問題にも挑戦してみましょう。",
+                "卓越" => "非常に優れた論理的思考力を持ち、問題解決能力が卓越しています。さらに深い思考や多様な問題に取り組むことで、 より高い成長が期待できます。"
+            ],
+            // 配列2：コーディング言語の基礎
+            "basic" => [
+                "不十分" => "プログラミング言語に関する理解が不足しています。変数、条件分岐、ループなど、 基本的な文法から再学習することをおすすめします。",
+                "普通" => "基本的な文法はある程度理解していますが、ミスが多く見られます。 短いコードから実際に書いてみて、慣れていきましょう。",
+                "優秀" => "基礎文法をしっかり理解しており、実際のコード記述にも慣れています。 さまざまな言語でも練習してみましょう。",
+                "卓越" => "プログラミング言語の基礎を完璧に理解しており、 実際の問題解決にも自然に応用できています。"
+            ],
+            // 配列3：アルゴリズム（応用）
+            "advanced" => [
+                "不十分" => "アルゴリズムの理解度が低く、問題解決に困難を感じています。 基本的なアルゴリズムから少しずつ学習を進めましょう。",
+                "普通" => "基本的なアルゴリズムは理解していますが、複雑な問題の解決には時間がかかります。 アルゴリズム問題の演習を増やしましょう。",
+                "優秀" => "アルゴリズムへの理解が深く、多様な問題にも柔軟に対応できています。 さらに多角的なアプローチを試してみてください。",
+                "卓越" => "複雑なアルゴリズムの問題にも迅速かつ正確に対応できます。 最適化や計算量の改善にも挑戦してみましょう。"
+            ]
+        ];
+        
+
+		$values = array_values(array_slice($count, 0, 3));
+		foreach ($values as $i => $data) {
+			// $percentPoint = ceil($data["point_total"]/$diagnosisData['point_total']*100);
+			// $point_correct = ceil($data["point_correct"]/$diagnosisData['point_total']*100);
+
+			$html = str_replace("{{count" . ($i + 1) . "}}", $data["total"], $html);
+			$html = str_replace("{{count" . ($i + 4) . "}}", $data["correct"], $html);
+			$html = str_replace("{{count" . ($i + 7) . "}}", $data["point_total"], $html);
+			$html = str_replace("{{count" . ($i + 10) . "}}", $data["point_correct"], $html);
+
+
+            if($data['point_total'] == 0){
+                $grade = "評価不可";
+            }else{
+                $rate = $data['point_correct'] / $data['point_total'];
+                if($rate <0.4){
+                    $grade = "不十分";
+                }elseif ($rate >= 0.4 && $rate < 0.6) {
+                    $grade = "普通";
+                } elseif ($rate >= 0.6 && $rate < 0.8) {
+                    $grade = "優秀";
+                } else {
+                    $grade = "卓越";
+                }
+            }
+                // 분야별 키 설정
+            if ($i == 0) $key = "logic";
+            elseif ($i == 1) $key = "basic";
+            else $key = "advanced";
+
+            // 해설 가져오기
+            $comment = $explanations[$key][$grade];
+
+            $html = str_replace("{{comment" . ($i + 1) . "}}", $comment, $html);
+		}
+
+		$options = new Options();
+		$dompdf = new Dompdf();
+		$dompdf->set_option("paperSize", "a4");
+		$dompdf->set_option('defaultMediaType', 'all');
+		$dompdf->set_option('isFontSubsettingEnabled', true);
+		$dompdf->setPaper('a4', 'portrait');
+		$dompdf->loadHtml($html, 'UTF-8');
+		$dompdf->render();
+		$contents_data = $dompdf->output();
+	
+		file_put_contents($dir_route . $filename, $contents_data);
+	
+		$pdf_url = "/pdf/" . $filename;
+	
+		$result[] = [
+			"pdf_url" => $pdf_url
+		];
+		ini_set('display_errors', 1);
+		error_reporting(E_ALL);
+		header('Pragma: public');
+		header('Expires: 0');
+		header('Content-Type: application/pdf');
+		header('Content-Description: File Transfer');
+		header("Content-Disposition: inline; filename*=UTF-8''" . rawurlencode($pdf_url));
+		header('Content-Transfer-Encoding: binary');
+		header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+		header('Content-Length: ' . strlen($contents_data));
+		ob_clean();
+		flush();
+		echo $contents_data;
+	
+		echo json_encode($result);
+		exit;
 	}
 
 	function CancelToLogin() {

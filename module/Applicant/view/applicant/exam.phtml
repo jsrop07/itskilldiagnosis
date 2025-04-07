@@ -85,6 +85,7 @@ $lineChange = "<br>";
     <div class="button_box" id="buttonId" style="margin-bottom: 32px; gap:30px">
       <button  class="applicant_cancel" id="cancel" name="submit_post"  value="cancel" onclick="CancelConfirm()">キャンセル</button>
       <button class="exam_submit" id="stopBtn" style=" display:flex; align-items:center; text-align:center; border:none;"  data-bs-toggle="modal" data-bs-target="#staticBackdrop2" hidden>一時停止</button>
+      <button type="button" class="exam_submit" id='previousId' name=""  value="" onclick="showPreviousQuestion()" >前へ</button>
       <button type="button" class="exam_submit" id='nextId' name="submit_post"  value="btn_submit" onclick="showNextQuestion()" >次へ</button>
     </div>
 
@@ -222,6 +223,37 @@ $lineChange = "<br>";
     var startTime = '';
     var pausedTime = '';
     var timer = '';
+
+    function showPreviousQuestion() {
+  if (currentNumber <= 1) {
+    return; // 첫 문제일 경우 아무 작업도 안 함
+  }
+
+  const currentExam = document.getElementById('exam' + currentNumber);
+  const previousExam = document.getElementById('exam' + (currentNumber - 1));
+
+  currentNumber--;
+
+  if (currentExam) currentExam.style.display = 'none';
+  if (previousExam) previousExam.style.display = 'block';
+
+  // '次へ' 버튼 상태 초기화
+  // const submitButton = document.getElementById('btn_submit') || document.getElementById('nextId');
+  // if (submitButton) {
+  //   submitButton.innerText = '次へ';
+  //   submitButton.id = 'nextId';
+  // }
+
+  // // 안내 문구와 여백 초기화
+  // const endMessage = document.querySelector('#examContent div');
+  // if (endMessage) endMessage.remove();
+
+  // const buttonId = document.getElementById('buttonId');
+  // if (buttonId) buttonId.style.marginTop = "0px";
+
+  // stopBtn.hidden = false; // 스톱 버튼 다시 보이기 (필요 시)
+}
+
 
     function showNextQuestion() {
         const currentExam = document.getElementById('exam' + currentNumber);

@@ -63,38 +63,43 @@ class ApplicantLoginTable
 
     $currentDateTime = date("Y-m-d H:i:s"); // current time
     $dateSchedule = $resultqry['date_schedule']; // diagnosis schedule time 
-    $currentDateTimeObj = date_create($currentDateTime); //turn to datetime object by cureenttDateTime 
-    $dateScheduleObj = date_create($dateSchedule); // turn to datetime object by dateScheduleTime
     
-    $dateInterval = $currentDateTimeObj -> diff($dateScheduleObj); // calculate dateScheduletime - cureentDateTime
-    $minutesDifference = ($dateInterval->days * 24 * 60) + ($dateInterval->h * 60) + $dateInterval->i; //turn days, hour, minute to minute
-
-    $dateSchedulePlus = date("Y-m-d H:i:s", strtotime($dateSchedule . ' +30 minutes'));
-
-    if($minutesDifference <= 30 && $currentDateTimeObj > $dateScheduleObj){
-      
-      $response = array(
-        'status' => 'success',
-    );
-    return json_encode($response);
-    } elseif($minutesDifference > 30 && $currentDateTimeObj > $dateScheduleObj){
-      $updateQry = $this->sql->update('record')->set(array('rank' => 'F'))->where(array('idx' => $resultqry['idx']));
-      $updateResult = $this->sql->prepareStatementForSqlObject($updateQry)->execute();
-
-      $response = array(
-        'status' => 'timeout',
+    $currentDateTimeObj = date_create($currentDateTime); // current time as DateTime object
+    $dateScheduleObj = date_create($dateSchedule); // schedule time as DateTime object
+    
+    // 날짜만 비교 (Y-m-d 형식)
+    $currentDate = $currentDateTimeObj->format('Y-m-d');
+    $scheduleDate = $dateScheduleObj->format('Y-m-d');
+    
+    // timeout 기준 시간: 예약 시간 기준 +1일
+    $dateSchedulePlus = date("Y-m-d 23:59:59", strtotime($dateSchedule));
+    
+    if ($currentDate === $scheduleDate) {
+        // 같은 날짜면 success
+        $response = array(
+            'status' => 'success',
+        );
+        return json_encode($response);
+    } else {
+        // 날짜가 다르면 timeout 처리
+        $updateQry = $this->sql->update('record')->set(array('rank' => 'F'))->where(array('idx' => $resultqry['idx']));
+        $updateResult = $this->sql->prepareStatementForSqlObject($updateQry)->execute();
+    
+        $response = array(
+            'status' => 'timeout',
+            'timein' => $dateSchedule,
+            'timeout' => $dateSchedulePlus
+        );
+        return json_encode($response);
+    }
+    
+    // 예약일이 오기 전 호출된 경우 (예외 처리)
+    $response = array(
+        'status' => 'wrongtime',
         'timein' => $dateSchedule,
         'timeout' => $dateSchedulePlus
-      );
-    return json_encode($response);
-    }
-    $response = array(
-      'status' => 'wrongtime',
-      'timein' => $dateSchedule,
-      'timeout' => $dateSchedulePlus
     );
     return json_encode($response);
     exit;
-    }
-
+  }    
 }

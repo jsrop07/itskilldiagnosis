@@ -1209,7 +1209,7 @@ class SituationController extends AbstractActionController {
 	/* temp */
 
 	public function itdiagnosisAction() {
-		error_reporting(E_ALL); ini_set("display_errors", 1);
+		error_reporting(E_ALL); ini_set("display_errors",1);
 
 		$p = $this->params()->fromPost();
 		$q = $this->params()->fromQuery();

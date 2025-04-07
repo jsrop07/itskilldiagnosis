@@ -1356,9 +1356,11 @@ class SituationController extends AbstractActionController {
 		$centerY = $height / 2;
 		$radius = 300;
 		$angle = 360 / count($datass);
+		print_r("Asd");
+		print_r(__DIR__);
+		exit;
 		
 		$fontPath = dirname(__DIR__, 5)  . '/vendor/dompdf/dompdf/lib/fonts/ipaexm.ttf'; // TTF 경로
-		print_r($fontPath);exit;
 		// ▶ 원형 보조선 + 수치
 		for ($i = 1; $i <= 4; $i++) {
 			$r = $radius * $i / 4;

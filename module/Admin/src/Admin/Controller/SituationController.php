@@ -1343,6 +1343,8 @@ class SituationController extends AbstractActionController {
 		$height = 800;
 		
 		$image = imagecreatetruecolor($width, $height);
+		print_r($image);
+		exit;
 		imagesavealpha($image, true);
 		$bg_color = imagecolorallocatealpha($image, 255, 255, 255, 0);
 		imagefill($image, 0, 0, $bg_color);
@@ -1356,9 +1358,7 @@ class SituationController extends AbstractActionController {
 		$centerY = $height / 2;
 		$radius = 300;
 		$angle = 360 / count($datass);
-		print_r("Asd");
-		print_r(__DIR__);
-		exit;
+
 		
 		$fontPath = dirname(__DIR__, 5)  . '/vendor/dompdf/dompdf/lib/fonts/ipaexm.ttf'; // TTF 경로
 		// ▶ 원형 보조선 + 수치

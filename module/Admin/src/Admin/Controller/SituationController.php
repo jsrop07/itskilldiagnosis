@@ -1080,7 +1080,10 @@ class SituationController extends AbstractActionController {
 
 		$param["title"] = "ITスキル診断結果のお知らせ（ジエンジサービス）";
 		$caseText = "新卒";
-		$diagnosisPdf = "https://diagnosisbeta.goms.jp/pdf_diagnosis.html?id=" . $recordData['idx'];
+		$protocol = $_SERVER['SERVER_PORT'] === 443 ? 'https://' : 'http://';
+		$pdfUrl = $protocol . $_SERVER['SERVER_NAME'];
+
+
 		if ($recordData["case"] == 1) { $caseText = "中途"; }
 		$param["content"] = "{{applicant_name}}様\n"
 											. "お世話になっております。\n"
@@ -1100,7 +1103,7 @@ class SituationController extends AbstractActionController {
 											. "得　　点：{{get_point}}/100点\n"
 											. "評　　価：{{rank}}/（A~F）\n"
 											. "診断評価：{{diagnosis_comment}}\n"
-											. "診断結果分析表：{{diagnosis}}\n"
+											. "診断結果分析表：{{diagnosis}}/pdf_diagnosis.html?id=" . $recordData['idx'] . "\n"
 											. "\n"
 											. "※ITスキル診断に不明点などございましたら下記の宛先まで\n"
 											. "　お問い合わせください。\n"
@@ -1122,8 +1125,7 @@ class SituationController extends AbstractActionController {
 		$param["content"] = str_replace("{{diagnosis_comment}}", $recordData["diagnosis_comment"], $param["content"]);
 		$param["content"] = str_replace("{{admin_name}}", $adminData["name"], $param["content"]);
 		$param["content"] = str_replace("{{admin_id}}", $adminData["id"], $param["content"]);
-		$param["content"] = str_replace("{{diagnosis}}", $diagnosisPdf, $param["content"]);
-
+		$param["content"] = str_replace("{{diagnosis}}", $pdfUrl, $param["content"]);
 		$param["managerEmail"] = $adminData["id"];
 		$param["email"] = $applicantData["email"];;
 		$param["password"] = $adminData["password"];

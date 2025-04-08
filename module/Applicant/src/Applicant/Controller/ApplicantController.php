@@ -526,6 +526,10 @@ function mailByApplicantExam($applicantInfo,$sqlSet,$managerArray,$examRecordIdx
 	// 사람마다 변환해야 할 부분은 {{이렇게}} 메일폼에 넣어놓는다.
 	$param['title']="ITスキル診断結果のお知らせ（ジエンジサービス）";
 
+
+	$protocol = $_SERVER['SERVER_PORT'] === 443 ? 'https://' : 'http://';
+	$pdfUrl = $protocol . $_SERVER['SERVER_NAME'];
+
 	$param["content"] = "{{applicant_name1}}様\n"
 										. "お世話になっております。\n"
 										. "株式会社ジエンジサービスITスキル診断担当です。\n\n"
@@ -542,6 +546,7 @@ function mailByApplicantExam($applicantInfo,$sqlSet,$managerArray,$examRecordIdx
 										. "得     点：{{get_point}}\n"
 										. "評     価：{{rank}}/（A~F）\n"
 										. "評価結果：{{diagnosis_comment}}\n\n"
+										. "診断結果分析表：{{diagnosis}}/pdf_diagnosis.html?id=" . $examRecordRecent['idx'] . "\n"
 										. "※ITスキル診断に不明点などございましたら下記の宛先まで\n"
 										. "   お問い合わせください。\n\n"
 										. "＜問い合わせ先＞\n"
@@ -560,6 +565,7 @@ function mailByApplicantExam($applicantInfo,$sqlSet,$managerArray,$examRecordIdx
 	$param['content']=str_replace("{{rank}}",$examRecordRecent["rank"],$param['content']);
 	$param['content']=str_replace("{{diagnosis_comment}}",$examRecordRecent["diagnosis_comment"],$param['content']);
 	$param['content']=str_replace("{{admin_id}}",$managerArray[0],$param['content']);
+	$param["content"]=str_replace("{{diagnosis}}", $pdfUrl, $param["content"]);
 
 	// 수신자 이메일과 이름 설정
 	$param['managerEmail']=$managerArray[0];

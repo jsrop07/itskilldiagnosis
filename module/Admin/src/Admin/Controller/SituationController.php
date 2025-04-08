@@ -473,48 +473,6 @@ class SituationController extends AbstractActionController {
 		return json_encode($questionDatas);
 	}
 
-// 修正の時
-/* log
-	作成：丁錫圓
-	修正：丁錫圓
-	修正日：24/06/10
-*/
-
-/* 修正前：
-	function mailByRequest($managerInfo,$recentPassword,$recordSet){
-		$mail = new MailRequest();
-
-		// 기본 메일 전송 관련 설정 로드
-		$param['config']=$this->getConfig();
-		// 메일 제목 지정 (일반적으로 DB에 메일폼 테이블을 만들어서 그것을 가져와서 아래의 title contents에 넣지만, 이건 샘플이므로 간단히.)
-		// 사람마다 변환해야 할 부분은 {{이렇게}} 메일폼에 넣어놓는다.
-
-			$param['title']="ITスキル診断依頼のお知らせ（ジエンジサービス）";
-		$param["content"] = "{{applicant_name}}様\n"
-											. "お世話になっております。\n\n"
-											. "ITスキル診断についてお知らせさせていただきます。\n"
-                      . "以下URLより「ITスキル診断サイト」にログインし診断を行ってください。\n\n"
-											. "ログインID：{{login_id}}\n"
-											. "ログインPWD：{{login_password}}\n\n"
-											. "＜ITスキル診断URL＞\n"
-											. "http://18.181.4.65/applicant/login\n\n"
-											. "※ITスキル診断が可能な有効期限は{{dateSchedule}}分 ~ {{dateSchduleEnd}}です。\n"
-											. "   有効期限内に受験を受けない場合、自動的に失格となりますのでご了承ください。\n\n"
-											. "※ITスキル診断に不明点などございましたら下記の宛先まで\n"
-											. "   お問い合わせください。\n\n"
-											. "＜問い合わせ先＞\n"
-											. "担当者：ITスキル診断担当\n"
-											. "連絡先：tech@gngs.co.jp\n\n"
-											. "以上、よろしくお願いいたします。\n"
-											. "※このメールに返信しないでください。";
-		$param["content"] = str_replace("{{applicant_name}}", $recentPassword["name"], $param["content"]);
-		$param["content"] = str_replace("{{login_id}}", $recentPassword["email"], $param["content"]);
-		$param["content"] = str_replace("{{login_password}}", $recentPassword["password"], $param["content"]);
-		$param["content"] = str_replace("{{dateSchedule}}", $applicantInfo["date_schedule"], $param["content"]);
-		$param["content"] = str_replace("{{dateSchduleEnd}}", $dateSchduleEnd, $param["content"]);
-*/
-
-/* 修正後： */
 		function mailByRequest($managerInfo,$recentPassword){
 			$mail = new MailRequest();
 			$applicantTb = $this->getServiceLocator()->get("ApplicantExamTable");
@@ -730,53 +688,23 @@ class SituationController extends AbstractActionController {
 					'other' => $other,
 					'code' => $code,
 					'method' => $method,
-					/*
-						作成：丁錫圓
-						修正：丁錫圓
-						修正日：24/05/29
-					*/
-
-					/* 修正前：
-					'language' => $language
-					*/
-
-					/* 修正後： */
 					'language' => $language,
 					'mail_delay' => $mail_delay,
-					'schedule' => $schedule
-					/* ここまで */
+					'date_schedule' => $schedule
 				];      
 				$situTb->insertAndUpdateApplication($arr);
 				 
 				$applicantInfo = $situTb->getRecord();
-				
+				$arr['applicant_idx'] = $applicantInfo['applicant_idx'];
 				$this->mailByAdmin($arr,$skillText,$caseText,$managerInfo,$applicantInfo);
 				$this->mailByRequest($managerInfo,$arr);
 
-				/*
-					作成：丁錫圓
-					修正：朴昰成
-					修正日：24/06/19
-				*/
-
-				/* 修正前：
-				echo "
-				<script>
-				alert('依頼が完了しました')
-				self.location.href='/admin/situation/list';
-				</script>
-				";	
-				*/
-
-				/* 修正後： */
 				echo "
 				<script>
 					alert('依頼しました。');
 					self.location.href='/admin/situation/list';
 				</script>
-				";
-				/* ここまで */
-		
+				";		
 				exit;
 			} elseif($inputDatas == "btn_save"){
 				$email = $this->params()->fromPost('email');
@@ -823,13 +751,8 @@ class SituationController extends AbstractActionController {
 						'code' => $code,
 						'method' => $method,
 						'language' => $language,
-						/*
-							作成：丁錫圓
-							作成日：24/05/29
-						*/
 						'mail_delay' => $mail_delay,
 						'schedule' => $schedule,
-						/* ここまで */			
 						'save' => "save"
 					];
 				$situTb->insertAndUpdateApplication($saveArr);

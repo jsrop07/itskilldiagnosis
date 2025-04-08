@@ -291,7 +291,7 @@ public function getRecord(){
 			'diagnosis_code' => $dataArray['code'],
 			'method' => $dataArray['method'],
 			'language' => $dataArray['language'],
-			'date_schedule' => $dataArray['schedule'],
+			'date_schedule' => $dataArray['date_schedule'],
 			'applicant_idx' => $applicant_idx 
 		);
 		if ($dataArray['mail_delay'] != "") {

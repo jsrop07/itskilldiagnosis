@@ -1212,7 +1212,7 @@ class SituationController extends AbstractActionController {
 
 	public function itdiagnosisAction() {
 		// error_reporting(E_ALL); ini_set("display_errors",1);
-		phpinfo();exit;
+		// phpinfo();exit;
 		$p = $this->params()->fromPost();
 		$q = $this->params()->fromQuery();
 		$recordTb = $this->getServiceLocator()->get("RecordTable-Admin");

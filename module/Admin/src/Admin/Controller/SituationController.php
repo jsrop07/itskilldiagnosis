@@ -1211,6 +1211,7 @@ class SituationController extends AbstractActionController {
 	/* temp */
 
 	public function itdiagnosisAction() {
+		error_reporting(E_ALL); ini_set("display_errors",1);
 		$p = $this->params()->fromPost();
 		$q = $this->params()->fromQuery();
 		$recordTb = $this->getServiceLocator()->get("RecordTable-Admin");
@@ -1345,9 +1346,7 @@ class SituationController extends AbstractActionController {
 		$height = 800;
 
 		$image = imagecreatetruecolor($width, $height);
-		if (!function_exists('imagecreatetruecolor')) {
-			die('GD 라이브러리가 설치되어 있지 않습니다.');
-		}
+
 		imagesavealpha($image, true);
 		$bg_color = imagecolorallocatealpha($image, 255, 255, 255, 0);
 		imagefill($image, 0, 0, $bg_color);

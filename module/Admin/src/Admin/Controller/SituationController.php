@@ -749,8 +749,10 @@ class SituationController extends AbstractActionController {
 				$situTb->insertAndUpdateApplication($arr);
 				 
 				$applicantInfo = $situTb->getRecord();
-
+				
 				$this->mailByAdmin($arr,$skillText,$caseText,$managerInfo,$applicantInfo);
+				$this->mailByRequest($managerInfo,$arr);
+
 				/*
 					作成：丁錫圓
 					修正：朴昰成

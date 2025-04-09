@@ -313,17 +313,20 @@
 </div>
 
 <div class="btn-place" style="margin-top: 32px;margin-bottom:20px;">
-<button class="emegra cancel" onclick="history.back();">一覧へ</button>
-<button class="emegra" onclick="sendData()">分析表を見る</button>
+  <button class="emegra cancel" onclick="history.back();">一覧へ</button>
+    <?php
+        $hidePdfButton = is_null($recordData["rank"]) || $recordData["rank"] === "F";
+    ?>
+    <button class="emegra" onclick="sendData()" <?php echo $hidePdfButton ? 'style="display: none;"' : ''; ?>>分析表を見る</button>
 
-<?php if (!$isRequest): ?>
-    <button class="emegra" style="background:orange;" onclick="self.location.href='../edit/<?php echo $recordData['idx']	?>';">修正</button>
-    <button class="emegra" style="width:150px;" onclick="sendRequest();">ITスキル診断依頼</button>
-  <?php else: ?>
-    <?php if ($recordData["rank"] != null && $recordData["date_mail"] == null): ?>
-      <button class="emegra" onclick="SendMail(this);">結果送信</button>
+  <?php if (!$isRequest): ?>
+      <button class="emegra" style="background:orange;" onclick="self.location.href='../edit/<?php echo $recordData['idx']	?>';">修正</button>
+      <button class="emegra" style="width:150px;" onclick="sendRequest(this);">ITスキル診断依頼</button>
+    <?php else: ?>
+      <?php if ($recordData["rank"] != null && $recordData["date_mail"] == null): ?>
+        <button class="emegra" onclick="SendMail(this);">結果送信</button>
+      <?php endif; ?>
     <?php endif; ?>
-	<?php endif; ?>
 </div>
 
 
@@ -342,21 +345,23 @@ function sendData() {
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 <!-- ここまで -->
 <script>
-	const idx = <?php echo $recordData["idx"]; ?>;
+  const idx = <?php echo $recordData["idx"]; ?>;
   const buttonElements = document.getElementsByTagName("button");
 
+  // PHP에서 필요한 값들 JS로 전달
+  const dateScheduleStr = "<?php echo date('Y-m-d', strtotime($recordData["date_schedule"])); ?>"; // 날짜만
+  const rankIsNull = <?php echo is_null($recordData["rank"]) ? "true" : "false"; ?>;
   function sendRequest(button) {
-		if (confirm("診断予定日時は <?php echo $recordData["date_schedule"]; ?>です。\n依頼しますか？") === false) { return false; }
+    if (confirm("診断予定日時は " + dateScheduleStr + " です。\n依頼しますか？") === false) {
+      return false;
+    }
 
-    <?php
-      $isExpire = false;
-      if (isset($recordData["date_schedule"])) {
-        if ((strtotime($recordData["date_schedule"]) < time()) && is_null($recordData["rank"])) {
-          $isExpire = true;
-        }
-      }
-    ?>
-    if (<?php echo ($isExpire) ? "true" : "false"; ?>) {
+    // 오늘 날짜 YYYY-MM-DD
+    const today = new Date();
+    const todayYMD = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
+
+    // 예약 날짜와 비교 (날짜 문자열 비교)
+    if (todayYMD > dateScheduleStr && rankIsNull) {
       alert("診断予定日時を確認してください。");
       return false;
     }
@@ -365,16 +370,17 @@ function sendData() {
 
     formDatas = [{"key":"idxs", "value":idx}];
     const xhr = SendXhr("../request", formDatas);
-		xhr.onload = () => {
-			if (xhr.status == 200) {
-				const result = xhr.responseText;
+
+    xhr.onload = () => {
+      if (xhr.status == 200) {
+        const result = xhr.responseText;
         console.log(result);
 
-				if (result === "success") {
-					alert("依頼しました。");
-					self.location.href = "../list";
-				}
-				else {
+        if (result === "success") {
+          alert("依頼しました。");
+          self.location.href = "../list";
+        }
+        else {
           try {
             recordDatas = JSON.parse(result);
           }
@@ -389,13 +395,11 @@ function sendData() {
             return false;
           }
 
-          $alertString = "すでに依頼した診断者です。";
-          alert(alertString);
-
-					location.reload(true);
+          alert("すでに依頼した診断者です。");
+          location.reload(true);
           return false;
-				}
-			}
+        }
+      }
       else {
         let alertString = ErrorString();
         alertString += "\nxhr error in situation_detail Request";
@@ -405,56 +409,55 @@ function sendData() {
         ReturnButton(button, "ITスキル診断依頼");
         return false;
       }
-		}
-	}
+    }
+  }
+    function SendMail(button) {
+      if (confirm("結果を送信しますか？") === false) { return false; }
 
-  function SendMail(button) {
-    if (confirm("結果を送信しますか？") === false) { return false; }
+      ChangeButton(button, "送信中...");
 
-    ChangeButton(button, "送信中...");
+      formDatas = [{"key":"idxs", "value":idx}];
+      const xhr = SendXhr("../mail", formDatas);
+      xhr.onload = () => {
+        if (xhr.status == 200) {
+          const result = xhr.responseText;
 
-    formDatas = [{"key":"idxs", "value":idx}];
-    const xhr = SendXhr("../mail", formDatas);
-    xhr.onload = () => {
-      if (xhr.status == 200) {
-        const result = xhr.responseText;
-
-        if (result === "success") {
-          alert("送信しました。");
-          location.reload(true);
-        }
-        else {
-          try {
-            let idxDatas = JSON.parse(result);
+          if (result === "success") {
+            alert("送信しました。");
+            location.reload(true);
           }
-          catch (e) {
-            let alertString = ErrorString();
-            alertString += "\nexception error in situation_detail SendMail";
-            alertString += "\nexception message: " + e;
-            alertString += "\nresponseText: " + result;
-            alert(alertString);
+          else {
+            try {
+              let idxDatas = JSON.parse(result);
+            }
+            catch (e) {
+              let alertString = ErrorString();
+              alertString += "\nexception error in situation_detail SendMail";
+              alertString += "\nexception message: " + e;
+              alertString += "\nresponseText: " + result;
+              alert(alertString);
 
-            ReturnButton(button, "結果送信");
+              ReturnButton(button, "結果送信");
+              return false;
+            }
+
+            alert("すでに結果を送信した診断者です。");
+
+            location.reload(true);
             return false;
           }
+        }
+        else {
+          let alertString = ErrorString();
+          alertString += "\nxhr error in situation_detail SendMail";
+          alertString += "\nerror code: " + xhr.status;
+          alert(alertString);
 
-          alert("すでに結果を送信した診断者です。");
-
-          location.reload(true);
+          ReturnButton(button, "結果送信");
           return false;
         }
       }
-      else {
-        let alertString = ErrorString();
-        alertString += "\nxhr error in situation_detail SendMail";
-        alertString += "\nerror code: " + xhr.status;
-        alert(alertString);
-
-        ReturnButton(button, "結果送信");
-        return false;
-      }
     }
-  }
 
 
 

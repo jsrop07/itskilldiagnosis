@@ -146,7 +146,7 @@ $question_num = isset($diagnosisData['question_num']) ? $diagnosisData['question
 
 <h1 class="title">ITスキル診断状況管理</h1>
 
-<form id="form" method="post" action="../editok" onsubmit="return handleSubmit()">
+<form id="form" method="post" action="../editok">
 	<style type="text/css">
 		option { color: black; }
 		/* input::placeholder { font-style: italic; } */
@@ -447,7 +447,7 @@ $question_num = isset($diagnosisData['question_num']) ? $diagnosisData['question
       <dd><input class="form-control" type="text" style="width:220px;" id="currentDateTime" readonly></dd> -->
 
       <dt class="essential">診断予定日</dt>
-      <dd><input class="form-control" name="schedule" id="scheduleId" type="text" style="width:220px;" value="<?php echo $recordArray['date_schedule'] ? $recordArray['date_schedule'] : $dateSchedule ?>"></dd>
+      <dd><input class="form-control" name="date_schedule" id="scheduleId" type="text" style="width:220px;" value="<?php echo $recordArray['date_schedule'] ? $recordArray['date_schedule'] : $dateSchedule ?>"></dd>
 
       <!-- <dt hidden>備考</dt>
       <dd><input class="form-control" name="note" type="text" style="width:220px; " value="<?php echo $recordArray['note']?>" hidden></dd> -->

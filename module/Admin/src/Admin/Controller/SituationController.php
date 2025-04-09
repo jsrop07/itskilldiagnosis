@@ -725,13 +725,8 @@ class SituationController extends AbstractActionController {
 				$code = $this->params()->fromPost('code');	
 				$method = $this->params()->fromPost('method');	
 				$language = $this->params()->fromPost('language');	
-				/*
-					作成：丁錫圓
-					作成日：24/05/29
-				*/
 				$mail_delay = $this->params()->fromPost('mail_delay');	
-				$schedule = $this->params()->fromPost('schedule');	
-				/* ここまで */
+				$schedule = $this->params()->fromPost('date_schedule');	
 				$saveArr=[
 						'email' => $email,
 						'password' => $password,
@@ -752,7 +747,7 @@ class SituationController extends AbstractActionController {
 						'method' => $method,
 						'language' => $language,
 						'mail_delay' => $mail_delay,
-						'schedule' => $schedule,
+						'date_schedule' => $schedule,
 						'save' => "save"
 					];
 				$situTb->insertAndUpdateApplication($saveArr);
@@ -845,7 +840,7 @@ class SituationController extends AbstractActionController {
 					作成日：24/05/29
 				*/
 				$recordSet['mail_delay']=$post['mail_delay'];
-				$recordSet['date_schedule']=$post['schedule'];
+				$recordSet['date_schedule']=$post['date_schedule'];
 				/* ここまで */
 				$situTb->updateRecordInfo($recordlWhere, $recordSet);	
 				$situTb->updateApplicantInfo($applicantWhere, $applicantSet);
@@ -903,7 +898,7 @@ class SituationController extends AbstractActionController {
 					作成日：24/05/29
 				*/
 				$recordSet['mail_delay']=$post['mail_delay'];
-				$recordSet['date_schedule']=$post['schedule'];
+				$recordSet['date_schedule']=$post['date_schedule'];
 				/* ここまで */
 				$situTb->saveRecordInfo($recordlWhere, $recordSet);	
 				$situTb->saveApplicantInfo($applicantWhere, $applicantSet);	

@@ -268,12 +268,17 @@
               <?php
                 $isExpire = false;
                 if (isset($data["date_schedule"])) {
-                  if ((strtotime($data["date_schedule"]) < time()) && is_null($data["rank"])) {
+                  $scheduleDate = date("Y-m-d", strtotime($data["date_schedule"]));
+                  $today = date("Y-m-d");
+
+                  if ($scheduleDate < $today && is_null($data["rank"])) {
                     $isExpire = true;
                   }
                 }
               ?>
-              <td style="<?php echo ($isExpire) ? "color: red;" : "" ?>"><?php echo (isset($data["date_schedule"])) ?  date("y.m.d H:i:s", strtotime($data["date_schedule"])) : "未設定"; ?></td>
+              <td style="<?php echo ($isExpire) ? "color: red;" : ""; ?>">
+                <?php echo (isset($data["date_schedule"])) ? date("y.m.d", strtotime($data["date_schedule"])) : "未設定"; ?>
+              </td>
               <?php if (isset($data["rank"])): ?>
                 <td><?php echo (isset($data["solve_time"])) ? $data["solve_time"] : "0"; ?>分</td>
                 <td><?php echo ($data["rank"] != "F") ? $data["get_point"] . "/100" : "失格"; ?></td>

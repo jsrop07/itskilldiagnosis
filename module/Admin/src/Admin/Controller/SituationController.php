@@ -1014,16 +1014,16 @@ class SituationController extends AbstractActionController {
 											. "診断内容についてご確認をお願いいたします。\n"
 											. "\n"
 											. "＜申請者情報＞\n"
-											. "申請者：{{applicant_name}}（{{kana}}）\n"
+											. "申  請  者：{{applicant_name}}（{{kana}}）\n"
 											. "応募区分：{{case}}\n"
 											. "学　　歴：{{education}}\n"
 											. "専　　攻：{{major}}\n"
-											. "試 験 日：{{execute_date}}\n"
-											. "\n"
+											. "診  断  日：{{execute_date}}\n\n"
+											. "＜診断結果＞\n"
 											. "得　　点：{{get_point}}/100点\n"
 											. "評　　価：{{rank}}/（A~F）\n"
 											. "診断評価：{{diagnosis_comment}}\n"
-											. "診断結果分析表：{{diagnosis}}/pdf_diagnosis.html?id=" . $recordData['idx'] . "\n"
+											. "診断結果表：{{diagnosis}}/pdf_diagnosis.html?id=" . $recordData['idx'] . "\n"
 											. "\n"
 											. "※ITスキル診断に不明点などございましたら下記の宛先まで\n"
 											. "　お問い合わせください。\n"
@@ -1201,7 +1201,11 @@ class SituationController extends AbstractActionController {
 
 		$datas["tableDatas"] = $tableDatas;
 		$count = [];
-		
+
+		$tableCategoryResult = [];
+		$allNos = []; // 모든 no를 합치는 배열
+		$categoryPointResult = []; // class2nd별로 point와 correctChar를 저장
+
 	// 분류별 집계
 	foreach ($tableDatas as $data) {
 		$class2nd = $data["class2nd"];
@@ -1215,6 +1219,22 @@ class SituationController extends AbstractActionController {
 		} else {
 			$key = $class2nd;
 		}
+		// 전체 no 배열에 추가
+		$allNos[] = $data["no"];
+		// 항목별로 저장
+		$tableCategoryResult[$key]["no"][] = $data["no"];
+		$tableCategoryResult[$key]["point"][] = $data["point"];
+		$tableCategoryResult[$key]["correctChar"][] = $data["correctChar"];
+		
+		if (!isset($categoryPointResult[$key])) {
+			$categoryPointResult[$key] = [
+					"point" => [],
+					"correctChar" => []
+			];
+		}
+		$categoryPointResult[$key]["point"][] = $data["point"];
+		$categoryPointResult[$key]["correctChar"][] = $data["correctChar"];
+			
 		// 초기화
 		if (!isset($count[$key])) {
 			$count[$key] = [
@@ -1400,8 +1420,6 @@ class SituationController extends AbstractActionController {
 	imagedestroy($chartImg);
 
 // ここまで
-
-
 		// PDF에 차트 이미지 삽입
 		$recordClass2nd = $datas['optionDatas']['recordData']['class2nd'];
 		$optionDatasClass2nd = $datas['optionDatas']['optionDatas'][$recordClass2nd];
@@ -1414,7 +1432,7 @@ class SituationController extends AbstractActionController {
 		$htmlTemplatePath = $_SERVER['DOCUMENT_ROOT'] . "/pdf/diagnosis_sheet.html";
 	
 		$dir_route = $_SERVER['DOCUMENT_ROOT'] . "/pdf/";
-		$filename = "IT診断分析表" .  ".pdf";
+		$filename = "IT診断結果表" .  ".pdf";
 	
 		$html = file_get_contents($htmlTemplatePath);
 		$html = str_replace("{{logo}}", $logoPath, $html);
@@ -1426,7 +1444,7 @@ class SituationController extends AbstractActionController {
 		$html = str_replace("{{rank}}", $datas["recordData"]['rank'], $html);
 		$html = str_replace("{{class2nd}}", $optionDatasClass2nd, $html);
 		$html = str_replace("{{skill}}", $skillTexts[$recordDataSkill], $html);
-		$html = str_replace("{{apply_date}}", date("Y-m-d", strtotime($datas["applicantData"]['apply_date'])), $html);
+		$html = str_replace("{{execute_date}}", date("Y-m-d", strtotime($datas["recordData"]['execute_date'])), $html);
 		$html = str_replace("{{diagnosis_comment}}", $datas["recordData"]['diagnosis_comment'], $html);
 		$html = str_replace("{{chartData}}", $chartImagePath, $html);
 		$html = str_replace("{{chartData2}}", $barChartPath, $html);
@@ -1455,17 +1473,17 @@ class SituationController extends AbstractActionController {
             ]
         ];
         
-
+		$total_sum = 0;
+		$correct_sum = 0;
 		$values = array_values(array_slice($count, 0, 3));
 		foreach ($values as $i => $data) {
-			// $percentPoint = ceil($data["point_total"]/$diagnosisData['point_total']*100);
-			// $point_correct = ceil($data["point_correct"]/$diagnosisData['point_total']*100);
-
 			$html = str_replace("{{count" . ($i + 1) . "}}", $data["total"], $html);
 			$html = str_replace("{{count" . ($i + 4) . "}}", $data["correct"], $html);
 			$html = str_replace("{{count" . ($i + 7) . "}}", $data["point_total"], $html);
 			$html = str_replace("{{count" . ($i + 10) . "}}", $data["point_correct"], $html);
 
+			$total_sum += $data["total"];
+			$correct_sum += $data["correct"];
 
             if($data['point_total'] == 0){
                 $grade = "評価不可";
@@ -1491,6 +1509,77 @@ class SituationController extends AbstractActionController {
 
             $html = str_replace("{{comment" . ($i + 1) . "}}", $comment, $html);
 		}
+
+// ✅ 가장 많은 문제수를 가진 class2nd 선택
+$maxCount = 0;
+$referenceClass = '';
+foreach ($tableCategoryResult as $class2nd => $data) {
+    if (count($data["no"]) > $maxCount) {
+        $maxCount = count($data["no"]);
+        $referenceClass = $class2nd;
+    }
+}
+
+// 기준 번호 (인덱스 기준으로 1~N 番 표시)
+$refNos = $tableCategoryResult[$referenceClass]["no"];
+$refCount = count($refNos);
+
+// ✅ 테이블 시작
+$htmlTable = '<table cellpadding="5" cellspacing="0" style="width:650px;border-collapse: collapse; text-align: center; font-size: 8px;margin-left:10px;">';
+
+// ───── 헤더 행
+// 첫 번째 헤더 줄 (번호, 결과 등)
+$htmlTable .= '<tr>';
+$htmlTable .= '<td colspan="2" row:span="2"style="border: 1px solid #90EE90; background-color:#CEF2D3; text-align:center;">問題番号</td>';
+for ($i = 1; $i <= $refCount; $i++) {
+    $htmlTable .= "<td style='border: 1px solid #90EE90; background-color:#CEF2D3; text-align:center;'>{$i}</td>";
+}
+$htmlTable .= '<td style="border: 1px solid #90EE90; background-color:#CEF2D3; text-align:center;">結果</td>';
+$htmlTable .= '</tr>';
+
+// ───── 각 class2nd 출력
+foreach ($tableCategoryResult as $class2nd => $data) {
+    $nos = array_values($data["no"]); // 인덱스 재정렬
+    $points = array_values($data["point"]);
+    $results = array_values($data["correctChar"]);
+		$class2ndFormatted = ucfirst($class2nd);
+    $htmlTable .= "<tr>";
+    $htmlTable .= "<td rowspan='2' style='border: 1px solid #90EE90;width:60px;'>{$class2ndFormatted}</td>";
+    $htmlTable .= "<td style='background:#cceeff; border: 1px solid #90EE90;'>付与点数</td>";
+    $sumPoint = 0;
+    for ($i = 0; $i < $refCount; $i++) {
+        if (isset($points[$i])) {
+            $htmlTable .= "<td style='background:#cceeff;border: 1px solid #90EE90;'>{$points[$i]}</td>";
+            $sumPoint += $points[$i];
+        } else {
+            $htmlTable .= "<td style='background:#ccc; border: 1px solid #90EE90;'></td>";
+        }
+    }
+    $htmlTable .= "<td style='border: 1px solid #90EE90;'>{$sumPoint}点</td>";
+    $htmlTable .= "</tr>";
+
+    $htmlTable .= "<tr><td style='border: 1px solid #90EE90;'>正解</td>";
+    $correctPoint  = 0;
+    for ($i = 0; $i < $refCount; $i++) {
+        if (isset($results[$i])) {
+            $char = $results[$i];
+            $htmlTable .= "<td style='border: 1px solid #90EE90;'>{$char}</td>";
+						if ($char === "O" || $char === "〇") {
+							$correctPoint += $points[$i];
+					}        
+				} else {
+            $htmlTable .= "<td style='background:#ccc; border: 1px solid #90EE90;'></td>";
+        }
+    }
+    $htmlTable .= "<td style='border: 1px solid #90EE90;'>{$correctPoint}点</td></tr>";
+}
+
+$htmlTable .= '</table>';
+$html = str_replace("{{htmlTable}}", $htmlTable, $html);
+		$html = str_replace("{{allNo}}", $allNo, $html);
+		$html = str_replace("{{total_sum}}", $total_sum, $html);
+		$html = str_replace("{{correct_sum}}", $correct_sum, $html);
+
 
 		$options = new Options();
 		$dompdf = new Dompdf();

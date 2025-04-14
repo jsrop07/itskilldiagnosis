@@ -322,7 +322,7 @@
     <?php
         $hidePdfButton = is_null($recordData["rank"]) || $recordData["rank"] === "F";
     ?>
-    <button class="emegra" onclick="sendData()" <?php echo $hidePdfButton ? 'style="display: none;"' : ''; ?>>分析表を見る</button>
+    <button class="emegra" onclick="sendData()" <?php echo $hidePdfButton ? 'style="display: none;"' : ''; ?>>結果を見る</button>
 
   <?php if (!$isRequest): ?>
       <button class="emegra" style="background:orange;" onclick="self.location.href='../edit/<?php echo $recordData['idx']	?>';">修正</button>

@@ -885,7 +885,7 @@ function mailByApplicantExam($applicantInfo,$sqlSet,$managerArray,$examRecordIdx
 		$htmlTemplatePath = $_SERVER['DOCUMENT_ROOT'] . "/pdf/diagnosis_sheet.html";
 	
 		$dir_route = $_SERVER['DOCUMENT_ROOT'] . "/pdf/";
-		$filename = "IT診断分析表" .  ".pdf";
+		$filename = "IT診断結果表" .  ".pdf";
 	
 		$html = file_get_contents($htmlTemplatePath);
 		$html = str_replace("{{logo}}", $logoPath, $html);

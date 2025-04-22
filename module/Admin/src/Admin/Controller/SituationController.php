@@ -1576,10 +1576,8 @@ foreach ($tableCategoryResult as $class2nd => $data) {
 
 $htmlTable .= '</table>';
 $html = str_replace("{{htmlTable}}", $htmlTable, $html);
-		$html = str_replace("{{allNo}}", $allNo, $html);
 		$html = str_replace("{{total_sum}}", $total_sum, $html);
 		$html = str_replace("{{correct_sum}}", $correct_sum, $html);
-
 
 		$options = new Options();
 		$dompdf = new Dompdf();
@@ -1599,6 +1597,7 @@ $html = str_replace("{{htmlTable}}", $htmlTable, $html);
 			"pdf_url" => $pdf_url
 		];
 		ini_set('display_errors', 1);
+		ini_set('display_startup_errors', 1);
 		error_reporting(E_ALL);
 		header('Pragma: public');
 		header('Expires: 0');

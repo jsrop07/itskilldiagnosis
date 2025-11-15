@@ -74,10 +74,11 @@
 #### 1-1. 진단 신청 화면(`/applicant/application`)
 - **필수입력(유효성 검사) :** 메일 | 이름(전각) | 이름(가타카나) | 생년월일 | 응모구분 | 학력 | IT스킬유무 | 경험분야 | 문제종별 | IT경력
 - **그외입력 :** 성별 | 전공 | IT관련자격증 | 기타
-  
-  <div align="center">
-        ![application](https://github.com/user-attachments/assets/c2287c30-2bd8-47dd-8b44-968e8c428bb8)
-  </div>
+
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/111fd7a3-d332-4d37-b2fd-943278f41846" alt="application" width="800px" />
+</div>
+
 
 
 #### 1-2. 응시(테스트) 화면
@@ -94,7 +95,7 @@
 - 로그인시 응시자 신청일람으로 이동
 
    <div align="center">
-      ![adminlogin](https://github.com/user-attachments/assets/d0f9860f-5053-477b-8216-4e74f4d8eea7)
+       <img src="https://github.com/user-attachments/assets/06c024c8-f394-44cf-b5e8-4800003f2a02" alt="adminlogin" width="800px" />
    </div>
   
 #### 2-1. 응시자 신청 일람 및 진단 관리

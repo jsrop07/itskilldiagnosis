@@ -23,7 +23,7 @@ use Zend\Mvc\Controller\ActionController;
 use Zend\Mail;
 use Zend\Mime\Message as MimeMessage;
 use Zend\Mime\Part as MimePart;
-use Zend\Mime as Mimes;
+// use Zend\Mime as Mimes;
 use Zend\Mail\Transport\Smtp as SmtpTransport;
 use Zend\Mail\Transport\SmtpOptions;
 
@@ -44,9 +44,9 @@ class MailRequest extends AbstractActionController
 	public function mailsender($params){
 		$mail_title=$params['title'];
 
-		$params['config']['smtp']['connection_config']['username']=$params['managerEmail'];
-		$params['config']['smtp']['connection_config']['password']=$params['smtp_password'];
-		$params['config']['smtp']['fromemail']=$params['managerEmail'];
+		// $params['config']['smtp']['connection_config']['username']=$params['managerEmail'];
+		// $params['config']['smtp']['connection_config']['password']=$params['smtp_password'];
+		// $params['config']['smtp']['fromemail']=$params['managerEmail'];
 
 		$params=array(
 			'config'=>$params['config'],
@@ -77,8 +77,11 @@ class MailRequest extends AbstractActionController
 		$mail = new Mail\Message();
 		$mail->setEncoding('ASCII');
 		$mail->setBody($body);
-		$mail->setFrom($params['fromemail'],$params['fromname']);
-		$mail->setTo($params['email'],'');
+		$fromEmail = trim(str_replace(["\r", "\n"], '', $params['fromemail']));
+    	$toEmail   = trim(str_replace(["\r", "\n"], '', $params['email']));
+		$fromName = str_replace(["\r", "\n"], '', $fromName);
+		$mail->setFrom($fromEmail);      // 이름 없이
+    	$mail->setTo($toEmail);          // 받는 사람
 
 		$mail->setSubject("=?iso-2022-jp?B?".base64_encode(mb_convert_encoding($params['title'],"JIS","UTF-8"))."?=");
 
@@ -105,9 +108,9 @@ class MailRequest extends AbstractActionController
 	public function mailAdmin($params){
 		$mail_title=$params['title'];
 
-		$params['config']['smtp']['connection_config']['username']=$params['email'];
-		$params['config']['smtp']['connection_config']['password']=$params['smtp_password'];
-		$params['config']['smtp']['fromemail']=$params['email'];
+		// $params['config']['smtp']['connection_config']['username']=$params['email'];
+		// $params['config']['smtp']['connection_config']['password']=$params['smtp_password'];
+		// $params['config']['smtp']['fromemail']=$params['email'];
 
 		$params=array(
 			'config'=>$params['config'],
@@ -138,8 +141,11 @@ class MailRequest extends AbstractActionController
 		$mail = new Mail\Message();
 		$mail->setEncoding('ASCII');
 		$mail->setBody($body);
-		$mail->setFrom($params['fromemail'],$params['fromname']);
-		$mail->setTo($params['email'],'');
+		$fromEmail = trim(str_replace(["\r", "\n"], '', $params['fromemail']));
+    	$toEmail   = trim(str_replace(["\r", "\n"], '', $params['email']));
+		$fromName = str_replace(["\r", "\n"], '', $fromName);
+		$mail->setFrom($fromEmail);      // 이름 없이
+    	$mail->setTo($toEmail);          // 받는 사람
 
 		$mail->setSubject("=?iso-2022-jp?B?".base64_encode(mb_convert_encoding($params['title'],"JIS","UTF-8"))."?=");
 

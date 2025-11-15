@@ -5,11 +5,11 @@ $_SERVER['SITE_URL'] = $_SERVER['HTTP_HOST'];
 return array(
 	"db" => array(
 		"driver"         => "Pdo",
-		"dsn"            => "mysql:dbname=itds_db;host=18.181.4.65",
+		"dsn"            => "mysql:dbname=itskilldiagnosis;host=localhost",
 		"username" => "root",
-		"password" => "gngs1234",
-		"dbname" => "itds_db",
-		"host" => "18.181.4.65",
+		"password" => "1234",
+		"dbname" => "itskilldiagnosis",
+		"host" => "localhost",
 		"driver_options" => array(
 			PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8mb4",
 			"buffer_results" => true,
@@ -29,14 +29,14 @@ return array(
                 ),
         ),
 		'smtp' => array(
-			'name'              => 'gngs.co.jp',
-			'host'              => 'smtp.mail.us-east-1.awsapps.com',
-			'port' => 465,
+			'name'              => 'gmail.com',
+		    'host'              => 'smtp.gmail.com',
+			'port' => 587,
 			'fromname' => '',
 			'connection_class' => 'login',
-			'connection_config' => array(
-					'ssl'=> 'ssl',
-			),
+			'username' => 'jsrop07@gmail.com',      // Gmail 주소
+			'password' => 'mvkp gsss rrse oyto',  // 앱 비밀번호
+			'ssl'      => 'tls',  
 		),
 
     'session' => array(
@@ -45,7 +45,7 @@ return array(
       'cookie_httponly'   => false,
       'cookie_lifetime'   => 2419200,
       'gc_maxlifetime'    => 2419200,
-      'cookie_domain' => 'diagnosis.goms.jp',
+      'cookie_domain' => 'diagnosisbeta.goms.jp',
 ),
 
 );

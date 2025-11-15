@@ -72,26 +72,13 @@
 ### 1. 응시자 화면
 
 #### 1-1. 진단 신청 화면(`/applicant/application`)
-<table>
-  <tr>
-    <td align="center" width="50%">
-      <figure>
-        <figcaption>📌 IT스킬 진단 신청 화면(팝업창)</figcaption>
-        <img src="https://github.com/user-attachments/assets/f00e4857-2e28-4865-a7f0-e0e662d2907c" width="100%" />
-      </figure>
-    </td>
-    <td align="center" width="50%">
-      <figure>
-        <figcaption>📌 IT스킬 진단 신청 화면 </figcaption>
-        <img src="https://github.com/user-attachments/assets/92f45d1f-ff1a-4486-ba09-22e4ebd2d020" width="100%" />
-      </figure>
-    </td>
-  </tr>
-</table>
+- **필수입력(유효성 검사) :** 메일 | 이름(전각) | 이름(가타카나) | 생년월일 | 응모구분 | 학력 | IT스킬유무 | 경험분야 | 문제종별 | IT경력
+- **그외입력 :** 성별 | 전공 | IT관련자격증 | 기타
+  
+  <div align="center">
+        ![application](https://github.com/user-attachments/assets/c2287c30-2bd8-47dd-8b44-968e8c428bb8)
+  </div>
 
-- 직무별로 제공되는 IT 스킬 진단에 응시 신청
-- 이름, 지원 직무, 지원 구분(신입/경력) 등 기본 정보 입력
-- 시험 시간, 응시 가능 기간, 유의사항 안내 및 동의 처리
 
 #### 1-2. 응시(테스트) 화면
 - 안내된 시간 내에서 코딩 문제 및 객관식/주관식 문항 풀이
@@ -102,6 +89,14 @@
 
 ### 2. 관리자 화면
 
+#### 2-1. 관리자 로그인
+- 이메일 | 비밀번호
+- 로그인시 응시자 신청일람으로 이동
+
+   <div align="center">
+      ![adminlogin](https://github.com/user-attachments/assets/d0f9860f-5053-477b-8216-4e74f4d8eea7)
+   </div>
+  
 #### 2-1. 응시자 신청 일람 및 진단 관리
 - 진단 신청자 목록 조회 (지원 직무, 전형, 상태별 필터/검색)
 - 응시 상태(미응시, 진행 중, 완료) 및 진단 결과 요약 확인
